@@ -35,10 +35,29 @@
                                                         
                                                         <!-- Text Box / Email / Tel / Number / Date -->
                                                         <t t-if="field.field_type in ['text', 'email', 'tel', 'number', 'date']">
-                                                            <input t-att-type="field.field_type if field.field_type != 'text' else 'text'" 
-                                                                   t-att-name="field.field_name" 
-                                                                   class="form-control" 
-                                                                   t-att-required="field.is_required"/>
+                                                            <t t-if="field.field_name == 'x_id_number'">
+                                                                <input type="text" 
+                                                                       t-att-name="field.field_name" 
+                                                                       t-attf-class="form-control #{'is-invalid' if error and error.get(field.field_name) else ''}" 
+                                                                       required="1"
+                                                                       pattern="[0-9]{12}"
+                                                                       maxlength="12"
+                                                                       minlength="12"
+                                                                       inputmode="numeric"
+                                                                       title="Số CMT/CCCD/Hộ chiếu phải gồm đúng 12 chữ số"
+                                                                       t-att-value="default.get(field.field_name, '') if default else ''"/>
+                                                                <div t-if="error and error.get(field.field_name)" class="invalid-feedback">
+                                                                    <t t-esc="error.get(field.field_name)"/>
+                                                                </div>
+                                                                <small class="text-muted mt-1 d-block">Vui lòng nhập đúng 12 chữ số</small>
+                                                            </t>
+                                                            <t t-else="">
+                                                                <input t-att-type="field.field_type if field.field_type != 'text' else 'text'" 
+                                                                       t-att-name="field.field_name" 
+                                                                       class="form-control" 
+                                                                       t-att-required="field.is_required"
+                                                                       t-att-value="default.get(field.field_name, '') if default else ''"/>
+                                                            </t>
                                                         </t>
                                                         
                                                         <!-- Textarea -->

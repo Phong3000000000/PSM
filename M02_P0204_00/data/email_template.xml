@@ -5,7 +5,7 @@
         <record id="email_interview_invitation" model="mail.template">
             <field name="name">Thư Mời Phỏng Vấn Cửa Hàng</field>
             <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
-            <field name="subject">Thư Mời Phỏng Vấn - {{object.company_id.name ||| Cửa Hàng}}</field>
+            <field name="subject">Thư Mời Phỏng Vấn - {{ object.company_id.name or 'Cửa Hàng' }}</field>
             <field name="email_from">{{object.user_id.email_formatted or object.company_id.email_formatted or 'noreply@example.com'}}</field>
             <field name="email_to">{{object.email_from}}</field>
             <field name="body_html" type="html">
@@ -162,7 +162,6 @@
 </div>
             </field>
         </record>
-    </data>
 
     <!-- Email Template: Survey Invitation Post-Apply -->
     <record id="email_applicant_survey_invite" model="mail.template">
@@ -227,10 +226,10 @@
     <record id="email_congratulations" model="mail.template">
         <field name="name">Chúc Mừng - Đậu Phỏng Vấn</field>
         <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
-        <field name="subject">Chúc Mừng! Bạn đã trúng tuyển - {{object.job_id.name}}</field>
+        <field name="subject">[McDonald's Viet Nam] - Thư mời làm việc chính thức</field>
         <field name="email_from">{{object.user_id.email_formatted or object.company_id.email_formatted or 'noreply@recruitment.com'}}</field>
         <field name="email_to">{{object.email_from}}</field>
-        <field name="body_html" type="html">
+        <field name="body_html"><![CDATA[
 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
     <!-- Header -->
     <div style="background-color: #28a745; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
@@ -239,88 +238,105 @@
     </div>
 
     <!-- Content -->
-    <div style="background-color: white; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #dee2e6; border-top: none;">
+        <div style="background-color: white; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #dee2e6; border-top: none;">
         <p style="font-size: 16px; line-height: 1.6; color: #333;">
-            Kính gửi <strong style="color: #28a745;"><t t-out="object.partner_name"/></strong>,
+            Chào <t t-out="object.partner_name"/>,
         </p>
 
         <p style="font-size: 16px; line-height: 1.6; color: #333;">
-            Chúng tôi rất vui mừng thông báo rằng bạn đã <strong>trúng tuyển</strong> vị trí 
-            <strong><t t-out="object.job_id.name or 'N/A'"/></strong> 
-            tại <strong><t t-out="object.company_id.name or 'Công ty'"/></strong>.
+            McDonald's Việt Nam chân thành gửi lời cảm ơn tới <t t-out="object.partner_name"/> vì đã dành thời gian quan tâm và ứng tuyển cho vị trí <strong><t t-out="object.job_id.name"/></strong>. Chúng tôi xin được trân trọng thông báo, bạn đã nhận được lời mời làm việc chính thức tại vị trí này.
+        </p>
+
+        <p style="font-size: 16px; line-height: 1.6; color: #333; margin: 0 0 8px 0;">
+            <strong>Địa điểm:</strong> <t t-out="object.department_id.name or 'N/A'"/>
+        </p>
+
+        <p style="font-size: 16px; line-height: 1.6; color: #333; margin: 0 0 16px 0;">
+            <strong>Thời gian:</strong> Sẽ cập nhật | Cửa hàng trưởng sẽ gửi lịch chi tiết đến bạn.
+        </p>
+
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            Khi chưa có đồng phục, bạn có thể mặc áo (sơ mi, áo thun) đen, quần tây/kaki đen, vớ đen, thắt lưng đen và giày đen bít mũi
         </p>
 
         <div style="background-color: #d4edda; padding: 20px; border-left: 4px solid #28a745; margin: 20px 0; border-radius: 4px;">
-            <h3 style="margin-top: 0; color: #155724;">Thông tin tuyển dụng</h3>
-            <p style="color: #155724; margin-bottom: 5px;">
-                <strong>Vị trí:</strong> <t t-out="object.job_id.name or 'N/A'"/>
+            <h3 style="margin-top: 0; color: #155724;">1. Bạn vui lòng:</h3>
+            <ul style="color: #155724; padding-left: 20px; margin-bottom: 16px;">
+                <li>Chuẩn bị các giấy tờ cá nhân nộp lại cho cửa hàng.</li>
+                <li>Thực hiện khám sức khỏe theo thông tư 32.</li>
+                <li>Mở tài khoản Ngân hàng Timo để nhận lương (Nếu đã từng có tài khoản BVBank thì cung cấp thông tin BVBank, nếu chưa, vui lòng đăng kí tài khoản Timo).</li>
+                <li>Tham khảo Bộ câu hỏi VSATTP để thực hiện bài đánh giá kiến thức.</li>
+                <li>👉 Xem thông tin hướng dẫn chi tiết tại Link này.</li>
+            </ul>
+
+            <h3 style="margin-top: 20px; color: #155724;">2. Hợp đồng thử việc và Hợp đồng lao động:</h3>
+
+            <p style="color: #155724; margin: 0 0 12px 0;">
+                Hiện tại McDonald's Vietnam đang hợp tác với Adecco Vietnam cho các thủ tục nhân sự. Với vị trí tại cấp bậc Quản lý, các bạn sẽ có tối đa 4 tháng thử việc tương đương với 4 tháng đào tạo theo lộ trình của McDonald's. Trong đó:
             </p>
-            <p style="color: #155724; margin-bottom: 5px;">
-                <strong>Đơn vị:</strong> <t t-out="object.company_id.name or 'N/A'"/>
-            </p>
+
+            <ul style="color: #155724; padding-left: 20px; margin-bottom: 0;">
+                <li>Trong 2 tháng đầu tiên, bạn kí Hợp đồng thử việc với Adecco. Phía Adecco sẽ gửi email trực tiếp đến bạn với tiêu đề [Adecco – McDonald's] Thư chào mừng nhân viên và thông tin hồ sơ trong vòng 5 ngày làm việc đầu tiên, bạn vui lòng thực hiện theo đúng hướng dẫn.</li>
+                <li>Còn lại, bạn kí Hợp đồng lao động có thời hạn với Cty CP Good Day Hospitality (Là công ty độc quyền thương hiệu McDonald's tại Việt Nam).</li>
+            </ul>
         </div>
 
         <p style="font-size: 16px; line-height: 1.6; color: #333;">
-            Phòng Nhân sự sẽ liên hệ với bạn trong thời gian sớm nhất để hướng dẫn các bước tiếp theo.
+            Mọi thắc mắc, xin liên hệ qua email hoặc số điện thoại <t t-out="object.user_id.phone or ''"/>.
         </p>
 
-        <p style="margin-top: 30px; font-size: 16px; color: #333;">
-            Chúc mừng và hẹn gặp bạn!<br/>
-            <strong>Phòng Nhân Sự</strong><br/>
-            <t t-out="object.company_id.name or 'Công ty'"/>
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            Bạn vui lòng phản hồi chấp nhận lời mời làm việc từ McDonald's Việt Nam trong ngày hôm nay. Theo đó, bạn gửi lại số đo (chiều cao, cân nặng hoặc size đồng phục) và tên Tiếng Anh để Công ty tiến hành đặt bảng tên và đồng phục cho quá trình làm việc của bạn.
+        </p>
+
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            Chúng tôi rất vui được chào đón bạn trở thành thành viên của công ty. Chúc bạn sẽ có những trải nghiệm tuyệt vời tại ngôi nhà McFamily.
+        </p>
+
+        <p style="margin-top: 30px; font-size: 16px; line-height: 1.6; color: #333;">
+            Trân trọng cảm ơn,<br/>
+            <strong>McDonald's Vietnam.</strong>
         </p>
     </div>
+
+
+
 
     <!-- Footer -->
     <div style="text-align: center; padding: 20px; color: #999; font-size: 12px;">
-        <p>© <t t-out="object.company_id.name or 'Company'"/> Recruitment System</p>
+        <p>© <t t-out="object.company_id.name"/> Recruitment System</p>
     </div>
 </div>
-        </field>
+        ]]></field>
     </record>
     <!-- Email Template: Rejection / Not Selected -->
     <record id="email_rejection" model="mail.template">
         <field name="name">Thông báo Kết quả Phỏng Vấn (Không trúng tuyển)</field>
         <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
-        <field name="subject">Thông Báo Kết Quả Phỏng Vấn - {{object.job_id.name}}</field>
+        <field name="subject">Kết quả ứng tuyển cho vị trí {{ object.job_id.name }}</field>
         <field name="email_from">{{object.user_id.email_formatted or object.company_id.email_formatted or 'noreply@recruitment.com'}}</field>
         <field name="email_to">{{object.email_from}}</field>
         <field name="body_html" type="html">
 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
     <!-- Header -->
     <div style="background-color: #6c757d; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-        <h1 style="margin: 0; font-size: 24px;">Thông báo Kết quả Phỏng vấn</h1>
-        <p style="margin: 10px 0 0 0; font-size: 16px;"><t t-out="object.company_id.name"/></p>
+        <h1 style="margin: 0; font-size: 24px;">Kết quả ứng tuyển cho vị trí</h1>
+        <p style="margin: 10px 0 0 0; font-size: 16px;"><t t-out="object.job_id.name"/></p>
     </div>
 
     <!-- Content -->
     <div style="background-color: white; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #dee2e6; border-top: none;">
-        <p style="font-size: 16px; line-height: 1.6; color: #333;">
-            Kính gửi <strong style="color: #6c757d;"><t t-out="object.partner_name"/></strong>,
-        </p>
-
-        <p style="font-size: 16px; line-height: 1.6; color: #333;">
-            Cảm ơn bạn đã quan tâm và dành thời gian tham gia ứng tuyển cho vị trí 
-            <strong><t t-out="object.job_id.name or 'N/A'"/></strong> 
-            tại <strong><t t-out="object.company_id.name or 'Công ty'"/></strong>.
-        </p>
-
-        <p style="font-size: 16px; line-height: 1.6; color: #333;">
-            Sau quá trình đánh giá kỹ lưỡng, chúng tôi rất tiếc phải thông báo rằng ở thời điểm hiện tại, kinh nghiệm và kỹ năng của bạn chưa hoàn toàn phù hợp với yêu cầu của vị trí này.
-        </p>
-
-        <p style="font-size: 16px; line-height: 1.6; color: #333;">
-            Tuy nhiên, chúng tôi đánh giá cao những kinh nghiệm mà bạn đã chia sẻ trong hồ sơ và các vòng phỏng vấn. Hồ sơ của bạn đã được ghi nhận vào hệ thống lưu trữ ứng viên tiềm năng của chúng tôi. Chúng tôi sẽ ưu tiên liên hệ lại với bạn khi có những vị trí tuyển dụng khác phù hợp hơn trong tương lai.
-        </p>
-
-        <p style="font-size: 16px; line-height: 1.6; color: #333;">
-            Chúc bạn luôn thành công trên con đường sự nghiệp của mình!
-        </p>
-
-        <p style="margin-top: 30px; font-size: 16px; color: #333;">
-            Trân trọng,<br/>
-            <strong>Phòng Nhân Sự</strong><br/>
-            <t t-out="object.company_id.name or 'Công ty'"/>
+        <p style="font-size: 16px; line-height: 1.6; color: #333;"><t t-out="object.partner_name or object.name"/> thân mến,</p>
+        
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">Cám ơn bạn đã dành thời gian quan tâm và ứng tuyển cho vị trí <t t-out="object.job_id.name"/> chúng tôi đang tìm kiếm.</p>
+        
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">McDonald’s sẽ tiếp tục lưu giữ thông tin và liên hệ lại với bạn ngay khi có các vị trí khác phù hợp hơn trong tương lai.</p>
+        
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">Chúc <t t-out="object.partner_name or object.name"/> sức khỏe và mọi điều may mắn trong sự nghiệp tương lai.</p>
+        
+        <p style="margin-top: 30px; font-size: 16px; line-height: 1.6; color: #333;">
+            Trân trọng,<br/><br/>
+            McDonald’s Vietnam
         </p>
     </div>
 
@@ -437,7 +453,5 @@
 </div>
         </field>
     </record>
+    </data>
 </odoo>
-
-
-

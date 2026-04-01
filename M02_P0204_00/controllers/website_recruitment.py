@@ -59,6 +59,45 @@ class WebsiteRecruitmentCustom(http.Controller):
         if not job.exists():
             return request.redirect('/jobs')
 
+        import re
+        error = {}
+        default = {k: v for k, v in post.items() if isinstance(v, str)}
+
+        if 'x_id_number' in post:
+            x_id_number = post.get('x_id_number', '').strip()
+            if not re.match(r'^\d{12}$', x_id_number):
+                error['x_id_number'] = "Số CMT/CCCD/Hộ chiếu phải gồm đúng 12 chữ số."
+
+        if error:
+            job_sudo = job.sudo()
+            section_order = {
+                'basic_info': 1,
+                'other_info': 2,
+                'supplementary_question': 3,
+                'internal_question': 4
+            }
+            form_fields = job_sudo.application_field_ids.filtered('is_active').sorted(
+                key=lambda f: (section_order.get(f.section, 99), f.sequence)
+            )
+            survey = job_sudo.generated_survey_template_id or job_sudo.survey_id
+            questions = survey.sudo().question_ids if survey else []
+            schedule = False
+            if job_sudo.recruitment_type == 'store':
+                domain = [('state', '=', 'confirmed'), ('week_end_date', '>=', fields.Date.today())]
+                if job_sudo.department_id:
+                    domain.append(('department_id', '=', job_sudo.department_id.id))
+                schedule = request.env['interview.schedule'].sudo().search(domain, order='week_start_date asc', limit=1)
+
+            return request.render("M02_P0204_00.website_job_apply_custom", {
+                'job': job,
+                'form_fields': form_fields,
+                'survey': survey,
+                'questions': questions,
+                'schedule': schedule,
+                'error': error,
+                'default': default,
+            })
+
         # 1. Thu thập dữ liệu theo cấu hình biểu mẫu
         form_fields = job.application_field_ids.filtered('is_active')
         
