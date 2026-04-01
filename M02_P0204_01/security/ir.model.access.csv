@@ -1,0 +1,12 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_interview_schedule_store_manager,interview.schedule.store_manager,model_interview_schedule,group_store_manager,1,1,1,0
+access_interview_schedule_ops_manager,interview.schedule.ops_manager,model_interview_schedule,group_operations_manager,1,1,1,1
+access_interview_schedule_hr_user,interview.schedule.hr_user,model_interview_schedule,hr_recruitment.group_hr_recruitment_user,1,0,0,0
+access_interview_schedule_hr_manager,interview.schedule.hr_manager,model_interview_schedule,hr_recruitment.group_hr_recruitment_manager,1,1,1,1
+access_mcd_recruitment_session,mcd.recruitment.session,model_mcd_recruitment_session,base.group_user,1,1,1,1
+access_mcd_recruitment_session_line,mcd.recruitment.session.line,model_mcd_recruitment_session_line,base.group_user,1,1,1,1
+access_referral_config_all,employee.referral.config all,model_employee_referral_config,base.group_system,1,1,1,1
+access_referral_program_read,employee.referral.program read,model_employee_referral_program,base.group_user,1,0,0,0
+access_referral_program_hr,employee.referral.program hr,model_employee_referral_program,base.group_system,1,1,1,1
+access_referral_program_line_hr,employee.referral.program.line hr,model_employee_referral_program_line,base.group_system,1,1,1,1
+access_referral_config_bonus_tier_all,employee.referral.config.bonus.tier all,model_employee_referral_config_bonus_tier,base.group_system,1,1,1,1

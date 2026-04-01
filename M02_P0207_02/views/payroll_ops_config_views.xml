@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_payroll_ops_config_form" model="ir.ui.view">
+        <field name="name">payroll.ops.config.form</field>
+        <field name="model">payroll.ops.config</field>
+        <field name="arch" type="xml">
+            <form string="Payroll OPS Configuration">
+                <sheet>
+                    <h2>Cấu hình Quy trình Lương OPS</h2>
+                    <group>
+                        <group string="C-Level Approvers">
+                            <field name="clevel_approver_ids" widget="many2many_tags"
+                                   placeholder="Chọn người phê duyệt UNC..."/>
+                            <p class="text-muted o_form_label" colspan="2">
+                                Những người này sẽ thấy nút <b>Approve</b> trên Payment Authorization và cần duyệt để hoàn tất quy trình.
+                            </p>
+                        </group>
+                        <group string="C&amp;B Notification">
+                            <field name="cb_notify_ids" widget="many2many_tags"
+                                   placeholder="Chọn người nhận thông báo C&amp;B..."/>
+                            <p class="text-muted o_form_label" colspan="2">
+                                Những người này nhận email khi có phiếu lương bị HR từ chối và cần xử lý lại.
+                            </p>
+                        </group>
+                        <group string="Finance Notification">
+                            <field name="finance_notify_ids" widget="many2many_tags"
+                                   placeholder="Chọn người nhận thông báo Finance..."/>
+                            <p class="text-muted o_form_label" colspan="2">
+                                Những người này nhận email UNC sau khi C-Level duyệt Payment Authorization để xử lý chuyển khoản.
+                            </p>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_payroll_ops_config" model="ir.actions.act_window">
+        <field name="name">Payroll OPS Settings</field>
+        <field name="res_model">payroll.ops.config</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <!-- Luôn mở record đầu tiên (singleton) -->
+        <field name="context">{'create': False}</field>
+    </record>
+
+    <!-- Thêm vào menu Configuration của Payroll -->
+    <menuitem
+        id="menu_payroll_ops_config"
+        name="Payroll OPS Settings"
+        parent="hr_payroll.menu_hr_salary_configuration"
+        action="action_payroll_ops_config"
+        sequence="100"/>
+</odoo>

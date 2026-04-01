@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Template Override for Fullscreen Sidebar to add Tabs and Review Panel -->
+    <template id="soc_sidebar_view" inherit_id="website_slides.slide_fullscreen">
+        
+        <!-- 1. Add Tabs to Header -->
+        <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' o_wslides_fs_sidebar_header ')]" position="inside">
+            <t t-if="slide.is_soc">
+                 <div class="o_wslides_fs_sidebar_tabs w-100 mt-2 px-2 border-top pt-2">
+                    <ul class="nav nav-pills nav-fill" role="tablist" style="font-size: 0.85rem;">
+                        <li class="nav-item">
+                            <a class="nav-link active py-1" id="tab-lessons" data-bs-toggle="pill" href="#pills-lessons" role="tab" onclick="document.getElementById('soc_sidebar_content_review').classList.add('d-none'); document.getElementById('soc_sidebar_content_lessons').classList.remove('d-none');">
+                                <i class="fa fa-list me-1"/> Lessons
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link py-1" id="tab-review" data-bs-toggle="pill" href="#pills-review" role="tab" onclick="document.getElementById('soc_sidebar_content_lessons').classList.add('d-none'); document.getElementById('soc_sidebar_content_review').classList.remove('d-none');">
+                                <i class="fa fa-pencil me-1"/> Review
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </t>
+        </xpath>
+
+        <!-- 2. Assign ID to the existing Lesson List for toggling -->
+        <!-- Targeting the UL that contains the categories -->
+        <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' o_wslides_fs_sidebar_content ')]/ul" position="attributes">
+            <attribute name="id">soc_sidebar_content_lessons</attribute>
+        </xpath>
+
+        <!-- 3. Add Review Content Panel (Hidden by default) -->
+        <!-- We add it after the UL (Lessons List) -->
+        <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' o_wslides_fs_sidebar_content ')]/ul" position="after">
+            <t t-if="slide.is_soc">
+                <div id="soc_sidebar_content_review" class="d-none overflow-auto flex-grow-1" style="min-height: 0;">
+                    <div class="p-3">
+                         <!-- SKILLS SECTION -->
+                        <div class="mb-4" t-if="slide.soc_skill_id">
+                            <h6 class="text-uppercase text-white-50 fw-bold mb-2 small">Skills Acquired</h6>
+                            <div class="d-flex align-items-center justify-content-center mb-2 p-2 rounded bg-white text-center">
+                                <div class="me-2">
+                                    <i class="fa fa-trophy text-warning fa-2x"/>
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-dark"><t t-esc="slide.soc_skill_id.name"/></div>
+                                    <small class="text-muted">Level: <t t-esc="slide.soc_skill_level_id.name"/></small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CHECKLIST SECTION -->
+                        <h6 class="text-uppercase text-white-50 fw-bold mb-3 small">Observation Checklist</h6>
+                        <t t-if="slide.soc_item_ids">
+                            <div class="list-group list-group-flush border rounded bg-white text-dark">
+                                <t t-foreach="slide.soc_item_ids" t-as="item">
+                                    <div class="list-group-item p-2">
+                                        <div class="d-flex">
+                                            <span class="badge bg-light text-dark me-2 border" style="height: fit-content;"><t t-esc="item_index + 1"/></span>
+                                            <div>
+                                                <div class="small fw-medium"><t t-esc="item.name"/></div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                           <div class="mt-3 small text-white-50 fst-italic">
+                                <i class="fa fa-info-circle"/> This is a reference view.
+                           </div>
+                        </t>
+                        <t t-else="">
+                            <div class="text-center text-white-50 py-5">
+                                <i class="fa fa-clipboard fa-3x mb-3 opacity-50"/>
+                                <p>No checklist items defined.</p>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+    </template>
+</odoo>

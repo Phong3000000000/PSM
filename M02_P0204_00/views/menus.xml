@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menu đơn giản - không auto-create -->
+    <!-- Cho phép nhóm Vận Hành thấy Menu Tuyển Dụng gốc -->
+    <record id="hr_recruitment.menu_hr_recruitment_root" model="ir.ui.menu">
+        <field name="group_ids" eval="[(4, ref('M02_P0204_00.group_operations_manager')), (4, ref('M02_P0204_00.group_store_manager'))]"/>
+    </record>
+
+    <menuitem 
+        id="menu_interview_schedule"
+        name="Lịch phỏng vấn dự kiến"
+        parent="hr_recruitment.menu_hr_recruitment_root"
+        action="action_interview_schedule"
+        sequence="15"/>
+
+    <!-- Cho phép nhóm Vận Hành thấy Menu Cấu hình Tuyển Dụng (và giữ lại cho nhóm mặc định) -->
+    <record id="hr_recruitment.menu_hr_recruitment_configuration" model="ir.ui.menu">
+        <field name="group_ids" eval="[(4, ref('M02_P0204_00.group_operations_manager')), (4, ref('hr_recruitment.group_hr_recruitment_user'))]"/>
+    </record>
+    
+    <!-- Cho phép nhóm Vận Hành thấy Menu Cấu hình Job Positions -->
+    <record id="hr_recruitment.menu_hr_recruitment_config_jobs" model="ir.ui.menu">
+        <field name="group_ids" eval="[(4, ref('M02_P0204_00.group_operations_manager')), (4, ref('hr_recruitment.group_hr_recruitment_user'))]"/>
+    </record>
+
+    <!-- Menu: Default Application Fields trong Configuration -->
+    <menuitem 
+        id="menu_recruitment_master_fields"
+        name="Trường mặc định biểu mẫu"
+        parent="hr_recruitment.menu_hr_recruitment_configuration"
+        action="action_recruitment_application_field_master"
+        sequence="30"
+        groups="hr_recruitment.group_hr_recruitment_manager"/>
+</odoo>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="email_template_bhxh" model="mail.template">
+            <field name="name">Thông báo Mã số BHXH</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="subject">Thông báo: Cấp mã số Sổ Bảo hiểm Xã hội (BHXH)</field>
+            <field name="email_to">{{ object.work_email }}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 14px;">
+                        Thân gửi <strong>{{ object.name or 'Nhân viên' }}</strong>,<br/><br/>
+                        Phòng Nhân sự xin thông báo mã số Sổ Bảo hiểm Xã hội (BHXH) của bạn đã được cập nhật thành công trên hệ thống.<br/><br/>
+                        <b>Mã số BHXH của bạn là:</b> <strong style="color: red;">{{ object.social_insurance_no or '___' }}</strong><br/><br/>
+                        Bạn có thể sử dụng mã số này để tra cứu quá trình đóng bảo hiểm trên ứng dụng VssID của Bảo hiểm Xã hội Việt Nam.<br/>
+                        Nếu có bất kỳ thắc mắc nào về các chế độ thai sản, ốm đau, vui lòng liên hệ trực tiếp với phòng HR.<br/><br/>
+                        Trân trọng,<br/>
+                        <b>Phòng Nhân Sự (HR Dept)</b>
+                    </p>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_attendance_sheet_form" model="ir.ui.view">
+        <field name="name">hr.attendance.sheet.form</field>
+        <field name="model">hr.attendance.sheet</field>
+        <field name="arch" type="xml">
+            <form string="Attendance Sheet">
+                <header>
+                    <button name="action_confirm" string="Confirm" type="object" invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_done" string="Mark Done" type="object" invisible="state != 'confirmed'" class="btn-success"/>
+                    <button name="action_draft" string="Reset to Draft" type="object" invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="employee_id"/>
+                            <field name="company_id" invisible="1"/>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                        </group>
+                        <group>
+                            <field name="total_standard_hours"/>
+                            <field name="total_overtime_hours"/>
+                            <field name="total_night_hours"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_hr_attendance_sheet_list" model="ir.ui.view">
+        <field name="name">hr.attendance.sheet.list</field>
+        <field name="model">hr.attendance.sheet</field>
+        <field name="arch" type="xml">
+            <list string="Attendance Sheets">
+                <header>
+                    <button name="action_confirm"
+                            string="Confirm All"
+                            type="object"
+                            class="btn-primary"/>
+                </header>
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="total_standard_hours"/>
+                <field name="state" widget="badge"
+                    decoration-success="state == 'confirmed'"
+                    decoration-info="state == 'draft'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_hr_attendance_sheet" model="ir.actions.act_window">
+        <field name="name">Attendance Sheets</field>
+        <field name="res_model">hr.attendance.sheet</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Server action: Confirm All draft attendance sheets (visible in ⚙️ gear menu) -->
+    <record id="action_confirm_all_attendance_sheets" model="ir.actions.server">
+        <field name="name">Confirm All</field>
+        <field name="model_id" search="[('model', '=', 'hr.attendance.sheet')]" />
+        <field name="binding_model_id" search="[('model', '=', 'hr.attendance.sheet')]" />
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+draft_sheets = env['hr.attendance.sheet'].search([('state', '=', 'draft')])
+if draft_sheets:
+    draft_sheets.action_confirm()
+        </field>
+    </record>
+</odoo>
+
+

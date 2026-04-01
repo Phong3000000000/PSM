@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Ẩn (archive) các Work Entry Types mặc định của Odoo không dùng cho McDonald's VN.
+        Dùng noupdate="0" để đảm bảo active=False được áp dụng mỗi lần install/upgrade.
+    -->
+    <data noupdate="0">
+
+        <!-- Attendance (A / WORK100) -->
+        <record id="hr_work_entry.work_entry_type_attendance" model="hr.work.entry.type">
+            <field name="active">False</field>
+        </record>
+
+        <!-- Overtime Hours (OT / OVERTIME) -->
+        <record id="hr_work_entry.work_entry_type_overtime" model="hr.work.entry.type">
+            <field name="active">False</field>
+        </record>
+
+        <!-- Out of Contract (OoC / OUT) -->
+        <record id="hr_work_entry.hr_work_entry_type_out_of_contract" model="hr.work.entry.type">
+            <field name="active">False</field>
+        </record>
+
+        <!-- Generic Time Off (GTO / LEAVE100) -->
+        <record id="hr_work_entry.work_entry_type_leave" model="hr.work.entry.type">
+            <field name="active">False</field>
+        </record>
+
+        <!-- Compensatory Time Off (CTO / LEAVE105) -->
+        <record id="hr_work_entry.work_entry_type_compensatory" model="hr.work.entry.type">
+            <field name="active">False</field>
+        </record>
+
+        <!-- Home Working (HW / WORK110) -->
+        <record id="hr_work_entry.work_entry_type_home_working" model="hr.work.entry.type">
+            <field name="active">False</field>
+        </record>
+
+        <!-- Unpaid (UN / LEAVE90) -->
+        <record id="hr_work_entry.work_entry_type_unpaid_leave" model="hr.work.entry.type">
+            <field name="active">False</field>
+        </record>
+
+        <!-- Sick Time Off (STO / LEAVE110) -->
+        <record id="hr_work_entry.work_entry_type_sick_leave" model="hr.work.entry.type">
+            <field name="active">False</field>
+        </record>
+
+        <!-- Paid Time Off (PTO / LEAVE120) -->
+        <record id="hr_work_entry.work_entry_type_legal_leave" model="hr.work.entry.type">
+            <field name="active">False</field>
+        </record>
+
+        <!-- Overtime Hours Paid at 150% (USOVERTIME150) -->
+        <record id="hr_work_entry.l10n_us_work_entry_type_overtime" model="hr.work.entry.type">
+            <field name="active">False</field>
+        </record>
+
+        <!-- Double Time Hours (USDOUBLE) -->
+        <record id="hr_work_entry.l10n_us_work_entry_type_double" model="hr.work.entry.type">
+            <field name="active">False</field>
+        </record>
+
+        <!-- Retro Overtime Hours (USRETROOVERTIME) -->
+        <record id="hr_work_entry.l10n_us_work_entry_type_retro_overtime" model="hr.work.entry.type">
+            <field name="active">False</field>
+        </record>
+
+        <!-- Retro Regular Pay Hours (USRETROREGULAR) -->
+        <record id="hr_work_entry.l10n_us_work_entry_type_retro_regular" model="hr.work.entry.type">
+            <field name="active">False</field>
+        </record>
+
+    </data>
+</odoo>

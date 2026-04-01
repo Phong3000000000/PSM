@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_soc_select_wizard_form" model="ir.ui.view">
+        <field name="name">soc.select.wizard.form</field>
+        <field name="model">soc.select.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Add SOC to Course">
+                <group>
+                    <field name="channel_id" readonly="1"/>
+                    <field name="soc_ids" widget="many2many_tags" 
+                           domain="[('is_soc', '=', True)]"
+                           options="{'no_create': True}"/>
+                    <div class="alert alert-info" role="alert">
+                        Select one or more SOCs from the list to add them to this course.
+                    </div>
+                </group>
+                <footer>
+                    <button string="Add SOCs" name="action_add_socs" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_soc_select_wizard" model="ir.actions.act_window">
+        <field name="name">Add SOC to Course</field>
+        <field name="res_model">soc.select.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

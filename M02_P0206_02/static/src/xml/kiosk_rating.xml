@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <!-- Rating Popup Template -->
+    <t t-name="M02_P0206_00.RatingPopup">
+        <div class="modal d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">
+                            <i class="fa fa-star me-2" />
+                            Đánh giá cuối ca
+                        </h5>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Rating Stars -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Hiệu suất làm việc hôm nay:</label>
+                            <div class="d-flex justify-content-center gap-2">
+                                <t t-foreach="['1','2','3','4','5']" t-as="star" t-key="star">
+                                    <button t-att-class="'btn btn-lg ' + (state.rating >= star ? 'btn-warning' : 'btn-outline-secondary')" t-on-click="() => this.selectRating(star)">
+                                        <i class="fa fa-star" />
+                                    </button>
+                                </t>
+                            </div>
+                            <div class="text-center mt-2 text-muted">
+                                <t t-if="state.rating == '1'">Rất tệ</t>
+                                <t t-elif="state.rating == '2'">Tệ</t>
+                                <t t-elif="state.rating == '3'">Bình thường</t>
+                                <t t-elif="state.rating == '4'">Tốt</t>
+                                <t t-elif="state.rating == '5'">Xuất sắc</t>
+                            </div>
+                        </div>
+                        <!-- Note -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Ghi chú công việc:</label>
+                            <textarea t-model="state.note" class="form-control" rows="3" placeholder="VD: Đã hoàn thành tốt công việc, khách đông..." />
+                        </div>
+                        <!-- Confirm Hours -->
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input t-model="state.isConfirmed" id="confirmHours" type="checkbox" class="form-check-input" />
+                                <label class="form-check-label" for="confirmHours">
+                                    <strong>Tôi xác nhận giờ làm việc hôm nay là chính xác</strong>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button t-on-click="cancel" type="button" class="btn btn-secondary">Hủy</button>
+                        <button t-att-disabled="!state.isConfirmed" t-on-click="confirm" type="button" class="btn btn-primary">
+                            <i class="fa fa-check me-1" />
+                            Xác nhận và Check-out
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

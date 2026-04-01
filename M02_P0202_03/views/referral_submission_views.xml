@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Form View -->
+    <record id="view_referral_submission_form" model="ir.ui.view">
+        <field name="name">employee.referral.submission.form</field>
+        <field name="model">employee.referral.submission</field>
+        <field name="arch" type="xml">
+            <form string="Giới thiệu Ứng viên" create="false" edit="false" delete="false">
+                <header>
+                    <button name="action_send_candidate_email" string="Gửi email ứng viên"
+                        type="object"
+                        class="btn-primary" invisible="state != 'submitted'" />
+                    <button name="action_start_interview" string="Bắt đầu phỏng vấn" type="object"
+                        invisible="state != 'registered'" />
+                    <button name="action_start_probation" string="Bắt đầu thử việc" type="object"
+                        invisible="state != 'interviewing'" />
+                    <button name="action_pass_probation" string="Pass thử việc" type="object"
+                        class="btn-success" invisible="state != 'probation'" />
+                    <button name="action_fail_probation" string="Không đạt" type="object"
+                        class="btn-danger" invisible="state != 'probation'" />
+                    <button name="action_mark_bonus_paid" string="Đã chi thưởng" type="object"
+                        invisible="state != 'completed' or bonus_paid" />
+                    <field name="state" widget="statusbar"
+                        statusbar_visible="submitted,email_sent,registered,interviewing,probation,completed,done" />
+                </header>
+
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_applicant"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-user"
+                            invisible="not applicant_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Ứng viên</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="referral_code" readonly="1" />
+                        </h1>
+                    </div>
+
+                    <div class="row">
+                        <!-- Left: info fields -->
+                        <div class="col-lg-7">
+                            <group readonly="1">
+                                <group string="Thông tin giới thiệu">
+                                    <field name="program_id" />
+                                    <field name="recruitment_session_id" />
+                                    <field name="referrer_id" />
+                                    <field name="job_id" />
+                                    <field name="store_id" string="Cửa hàng / Phòng ban" />
+                                </group>
+                                <group string="Thông tin ứng viên">
+                                    <field name="candidate_name" />
+                                    <field name="candidate_email" />
+                                    <field name="candidate_phone" />
+                                    <field name="cv_attachment" filename="cv_filename" />
+                                    <field name="cv_filename" invisible="1" />
+                                </group>
+                            </group>
+
+                            <group readonly="1">
+                                <group string="Thử việc">
+                                    <field name="probation_start_date" />
+                                    <field name="probation_end_date" />
+                                </group>
+                                <group string="Thưởng">
+                                    <field name="bonus_amount" />
+                                    <field name="bonus_eligible" />
+                                    <field name="bonus_paid" />
+                                    <field name="bonus_paid_date" />
+                                </group>
+                            </group>
+
+                            <group readonly="1">
+                                <field name="applicant_id" />
+                            </group>
+
+                            <notebook>
+                                <page string="Ghi chú" name="notes">
+                                    <field name="notes" readonly="1" />
+                                </page>
+                            </notebook>
+                        </div>
+
+                        <!-- Right: CV viewer -->
+                        <div class="col-lg-5" invisible="not cv_attachment">
+                            <div class="o_field_widget mb-2">
+                                <strong>CV / Hồ sơ ứng viên</strong>
+                            </div>
+                            <field name="cv_attachment"
+                                widget="pdf_viewer"
+                                filename="cv_filename"
+                                style="height:700px;" />
+                        </div>
+                    </div>
+                </sheet>
+
+                <chatter />
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_referral_submission_tree" model="ir.ui.view">
+        <field name="name">employee.referral.submission.tree</field>
+        <field name="model">employee.referral.submission</field>
+        <field name="arch" type="xml">
+            <list string="Danh sách Giới thiệu">
+                <field name="referral_code" />
+                <field name="candidate_name" />
+                <field name="candidate_email" />
+                <field name="referrer_id" />
+                <field name="program_id" />
+                <field name="state" />
+                <field name="bonus_amount" />
+                <field name="bonus_paid" />
+                <field name="create_date" />
+            </list>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_referral_submission_search" model="ir.ui.view">
+        <field name="name">employee.referral.submission.search</field>
+        <field name="model">employee.referral.submission</field>
+        <field name="arch" type="xml">
+            <search string="Tìm kiếm">
+                <field name="referral_code" />
+                <field name="candidate_name" />
+                <field name="referrer_id" />
+                <field name="program_id" />
+            </search>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_referral_submission" model="ir.actions.act_window">
+        <field name="name">Giới thiệu của tôi</field>
+        <field name="res_model">employee.referral.submission</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_referral_submission_search" />
+    </record>
+
+    <record id="action_referral_submission_all" model="ir.actions.act_window">
+        <field name="name">Tất cả giới thiệu</field>
+        <field name="res_model">employee.referral.submission</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_referral_submission_search" />
+    </record>
+
+    <record id="action_referral_bonus_pending" model="ir.actions.act_window">
+        <field name="name">Thưởng chờ chi</field>
+        <field name="res_model">employee.referral.submission</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('bonus_eligible', '=', True), ('bonus_paid', '=', False)]</field>
+    </record>
+
+</odoo>

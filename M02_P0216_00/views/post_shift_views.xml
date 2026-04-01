@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- List View - only score is editable -->
+    <record id="view_post_shift_list" model="ir.ui.view">
+        <field name="name">post.shift.list</field>
+        <field name="model">post.shift</field>
+        <field name="arch" type="xml">
+            <list string="Post Shift Scores" editable="bottom">
+                <field name="shift_evaluation_id" column_invisible="1"/>
+                <field name="employee_id" readonly="1" force_save="1"/>
+                <field name="shift" readonly="1"/>
+                <field name="date" readonly="1"/>
+                <field name="score"/>
+                <field name="description"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_post_shift_form" model="ir.ui.view">
+        <field name="name">post.shift.form</field>
+        <field name="model">post.shift</field>
+        <field name="arch" type="xml">
+            <form string="Post Shift Score">
+                <sheet>
+                    <group>
+                        <group>
+     
+                            <field name="employee_id" readonly="1" force_save="1"/>
+                            <field name="score"/>
+                            <field name="description"/>
+                        </group>
+                        <group>
+                            <field name="shift_evaluation_id" readonly="1"/>
+                            <field name="shift" readonly="1"/>
+                            <field name="date" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_post_shift" model="ir.actions.act_window">
+        <field name="name">Post Shift Scores</field>
+        <field name="res_model">post.shift</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

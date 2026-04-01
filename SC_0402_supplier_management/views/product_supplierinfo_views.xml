@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_supplierinfo_form_view_inherit_sc_0402" model="ir.ui.view">
+        <field name="name">product.supplierinfo.form.inherit.sc_0402</field>
+        <field name="model">product.supplierinfo</field>
+        <field name="inherit_id" ref="product.product_supplierinfo_form_view" />
+        <field name="arch" type="xml">
+            <field position="after" name="product_code">
+                <field name="x_wrin" />
+            </field>
+            <group position="inside">
+                <group string="McDonald's Logistics">
+                    <field name="x_case_pack" />
+                    <field name="x_lead_time_days" />
+                </group>
+            </group>
+        </field>
+    </record>
+
+    <record id="product_supplierinfo_tree_view_inherit_sc_0402" model="ir.ui.view">
+        <field name="name">product.supplierinfo.tree.inherit.sc_0402</field>
+        <field name="model">product.supplierinfo</field>
+        <field name="inherit_id" ref="product.product_supplierinfo_tree_view" />
+        <field name="arch" type="xml">
+            <field position="after" name="product_code">
+                <field name="x_wrin" optional="show" />
+                <field name="x_case_pack" optional="hide" />
+            </field>
+        </field>
+    </record>
+</odoo>

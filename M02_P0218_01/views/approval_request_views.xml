@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Inherit Approval Request Form View -->
+        <record id="view_approval_request_form_inherit_ops" model="ir.ui.view">
+            <field name="name">approval.request.form.inherit.ops</field>
+            <field name="model">approval.request</field>
+            <field name="inherit_id" ref="approvals.approval_request_view_form"/>
+            <field name="arch" type="xml">
+                <!-- Add button in header -->
+                <xpath expr="//header" position="inside">
+                    <button name="action_send_salary_emails"
+                            string="Send Email Notifications"
+                            type="object"
+                            class="btn-primary"
+                            invisible="request_status != 'approved' or not salary_plan_line_ids"
+                            groups="hr_appraisal.group_hr_appraisal_manager"/>
+                </xpath>
+                
+                <!-- Add salary plan lines tab -->
+                <xpath expr="//notebook" position="inside">
+                    <page string="Salary Plan" invisible="not salary_plan_line_ids">
+                        <field name="salary_plan_line_ids" readonly="1">
+                            <list>
+                                <field name="employee_id"/>
+                                <field name="department_id"/>
+                                <field name="job_id"/>
+                                <field name="performance_rating"/>
+                                <field name="assessment_note"/>
+                                <field name="increase_percentage_final" widget="percentage"/>
+                            </list>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================== REPORT 1: Chương trình tuyển dụng ==================== -->
+
+    <record id="view_referral_program_report_pivot" model="ir.ui.view">
+        <field name="name">employee.referral.program.report.pivot</field>
+        <field name="model">employee.referral.program</field>
+        <field name="arch" type="xml">
+            <pivot string="Thống kê chương trình tuyển dụng">
+                <field name="store_id" type="row" />
+                <field name="state" type="col" />
+                <field name="submission_count" type="measure" />
+                <field name="hired_count" type="measure" />
+                <field name="completed_count" type="measure" />
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_referral_program_report_graph" model="ir.ui.view">
+        <field name="name">employee.referral.program.report.graph</field>
+        <field name="model">employee.referral.program</field>
+        <field name="arch" type="xml">
+            <graph string="Thống kê chương trình tuyển dụng" type="bar" stacked="1">
+                <field name="store_id" type="row" />
+                <field name="submission_count" type="measure" />
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_referral_program_report" model="ir.actions.act_window">
+        <field name="name">Thống kê Chương trình Tuyển dụng</field>
+        <field name="res_model">employee.referral.program</field>
+        <field name="view_mode">graph,pivot,list</field>
+    </record>
+
+    <!-- ==================== REPORT 2: Người giới thiệu ==================== -->
+
+    <record id="view_referral_submission_report_pivot" model="ir.ui.view">
+        <field name="name">employee.referral.submission.report.pivot</field>
+        <field name="model">employee.referral.submission</field>
+        <field name="arch" type="xml">
+            <pivot string="Thống kê người giới thiệu">
+                <field name="referrer_id" type="row" />
+                <field name="state" type="col" />
+                <field name="bonus_amount" type="measure" />
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_referral_submission_report_graph" model="ir.ui.view">
+        <field name="name">employee.referral.submission.report.graph</field>
+        <field name="model">employee.referral.submission</field>
+        <field name="arch" type="xml">
+            <graph string="Thống kê người giới thiệu" type="bar">
+                <field name="referrer_id" type="row" />
+                <field name="bonus_amount" type="measure" />
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_referral_submission_report" model="ir.actions.act_window">
+        <field name="name">Thống kê Người Giới thiệu</field>
+        <field name="res_model">employee.referral.submission</field>
+        <field name="view_mode">graph,pivot,list</field>
+    </record>
+
+    <!-- ==================== MENUS ==================== -->
+
+    <!-- Moved into hr_referral's Reporting menu (menu_hr_referral_reporting) -->
+    <menuitem id="menu_referral_program_report"
+        name="Thống kê chương trình tuyển dụng"
+        parent="hr_referral.menu_hr_referral_reporting"
+        action="action_referral_program_report"
+        sequence="20" />
+
+    <menuitem id="menu_referral_submission_report"
+        name="Thống kê người giới thiệu"
+        parent="hr_referral.menu_hr_referral_reporting"
+        action="action_referral_submission_report"
+        sequence="30" />
+</odoo>

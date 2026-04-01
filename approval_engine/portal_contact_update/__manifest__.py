@@ -1,0 +1,23 @@
+{
+    'name': 'Portal Document Upload',
+    'version': '1.0',
+    'summary': 'Allow candidates to upload personal documents via portal',
+    'category': 'Human Resources',
+    'author': 'Your Company',
+    'depends': ['base', 'portal', 'approvals','mail', 'hr_recruitment'],
+    'data': [
+        'security/ir.model.access.csv',
+        'views/res_partner_views.xml',
+        'views/hr_applicant_views.xml',
+        'views/portal_templates.xml',
+        'views/portal_home_banner.xml',
+        'data/approval_category_data.xml',
+        'data/mail_template_data.xml', 
+        'data/ir_actions_server.xml',
+        'views/request_portal_templates.xml',
+        'views/approval_request_views.xml',
+    ],
+    'installable': True,
+    'application': True,
+    'auto_install': False,
+}

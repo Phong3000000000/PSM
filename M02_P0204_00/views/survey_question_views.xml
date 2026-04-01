@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Thêm field "Không Thể Sai" vào form câu hỏi survey -->
+    <record id="survey_question_form_inherit_mandatory" model="ir.ui.view">
+        <field name="name">survey.question.form.inherit.mandatory</field>
+        <field name="model">survey.question</field>
+        <field name="inherit_id" ref="survey.survey_question_form"/>
+        <field name="arch" type="xml">
+            <!-- Thẻ Options -> Group Constraints -->
+            <xpath expr="//field[@name='constr_mandatory']" position="after">
+                <field name="is_mandatory_correct"
+                       invisible="not is_scored_question"
+                       help="Nếu tick, ứng viên sai câu này sẽ bị ghi nhận lỗi bắt buộc (Store: Under Review, Office: Ghi log cảnh báo)"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Scheduled Action: auto-reject sau 24h ở Under Review (do sai câu bắt buộc) -->
+    <record id="ir_cron_auto_reject_survey_review" model="ir.cron">
+        <field name="name">Recruitment: Auto-Reject Under Review (mandatory fail 24h)</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="state">code</field>
+        <field name="code">model.action_auto_reject_stale_survey_reviews()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

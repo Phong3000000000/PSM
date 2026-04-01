@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- ========================================================= -->
+        <!-- PRODUCT VIEWS (Inheritance for PIF Status)                -->
+        <!-- ========================================================= -->
+        <!-- REMOVED: pif_status statusbar - PIF workflow is managed on pif.object, not product.template -->
+        <record id="product_template_form_view_pif" model="ir.ui.view">
+            <field name="name">product.template.form.pif</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view" />
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="inside">
+                    <group name="pif_info" string="PIF Info">
+                        <group>
+                            <field name="pif_product_type" widget="radio" options="{'horizontal': true}" />
+                        </group>
+                        <group>
+                            <field name="pif_bom_id" invisible="pif_product_type == 'raw'" />
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+        <!-- ACTION for "PIF Products" (Projects) -->
+        <record id="action_pif_product_template" model="ir.actions.act_window">
+            <field name="name">Approved Products (Projects)</field>
+            <field name="res_model">product.template</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[]</field>
+            <!-- Show all, let user filter or create -->
+            <field name="context">{'default_pif_status': 'draft'}</field>
+        </record>
+        <!-- Standalone menu - SC_0402 depends on this module and can reference this menu -->
+        <menuitem id="menu_pif_root" name="PIF Implementation" sequence="50" web_icon="RSG_0801_pif_management,static/description/icon.png" />
+
+        <menuitem id="menu_pif_project" name="Projects (Products)" parent="menu_pif_root" action="action_pif_product_template" sequence="2" />
+
+        <record id="view_pif_object_form" model="ir.ui.view">
+            <field name="name">pif.object.form</field>
+            <field name="model">pif.object</field>
+            <field name="arch" type="xml">
+                <form string="PIF Execution" class="o_pif_form_view">
+                    <header>
+                        <button name="action_rsg_create" string="Done (RSG)" type="object" class="oe_highlight" invisible="state != 'rsg_create' or not user_can_process_step" />
+                        <button name="action_it_config" string="Done (IT)" type="object" class="oe_highlight" invisible="state != 'it_config' or not user_can_process_step" />
+                        <button name="action_master_setup" string="Done (RSG)" type="object" class="oe_highlight" invisible="state != 'master_data' or not user_can_process_step" />
+                        <button name="action_finish_lab_test" string="Done (Menu)" type="object" class="oe_highlight" invisible="state != 'lab_test' or not user_can_process_step" />
+                        <button name="action_pilot_deploy" string="Done (IT)" type="object" class="oe_highlight" invisible="state != 'pilot' or not user_can_process_step" />
+                        <button name="action_valuation_report" string="Done (RSG)" type="object" class="oe_highlight" invisible="state != 'valuation' or not user_can_process_step" />
+                        <button name="%(mrp.mrp_bom_form_action)d" string="BOM Overview" type="action" icon="fa-flask" context="{'search_default_id': pif_bom_id}" />
+                        <field name="state" widget="statusbar" statusbar_visible="rsg_create,it_config,master_data,lab_test,pilot,valuation,approved" />
+                    </header>
+                    <sheet>
+                        <field name="is_request_owner" invisible="1" />
+                        <field name="user_can_process_step" invisible="1" />
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" />
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="request_owner_id" />
+                                <field name="request_owner_department_id" />
+                            </group>
+                            <group>
+                                <!-- NEW: Select BOM directly -->
+                                <field name="pif_bom_id" context="{'default_pif_status': 'approved'}" readonly="state != 'rsg_create'" />
+                                <!-- Display BOM Status as requested -->
+                                <field name="pif_bom_status" />
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Tracking" invisible="not is_request_owner">
+                                <field name="process_tracking_ids" readonly="1">
+                                    <list>
+                                        <field name="process_name" />
+                                        <field name="status" widget="badge" />
+                                        <field name="department_ref" />
+                                        <field name="execution_date" />
+                                        <field name="user_id" />
+                                    </list>
+                                </field>
+                            </page>
+                            <!-- 3 NEW PAGES as requested -->
+                            <page string="SSBI">
+                                <group>
+                                    <field name="file_ssbi_html" widget="html" readonly="state != 'rsg_create'" />
+                                </group>
+                            </page>
+                            <page string="RFM">
+                                <group>
+                                    <field name="file_rfm_html" widget="html" readonly="state != 'rsg_create'" />
+                                </group>
+                            </page>
+                            <page string="POS">
+                                <group>
+                                    <field name="file_pos_html" widget="html" readonly="state != 'rsg_create'" />
+                                </group>
+                            </page>
+                            <page string="Lab Test">
+                                <group string="Current Test Input">
+                                    <field name="lab_test_result" readonly="state != 'lab_test'" />
+                                    <field name="lab_test_proof" filename="lab_test_proof_filename" readonly="state != 'lab_test'" />
+                                    <field name="lab_test_proof_filename" invisible="1" />
+                                    <field name="lab_test_note" readonly="state != 'lab_test'" />
+                                </group>
+                                <separator string="Historical Tests" />
+                                <field name="lab_history_ids" readonly="1">
+                                    <list>
+                                        <field name="test_date" />
+                                        <field name="tester_id" />
+                                        <field name="result" widget="badge" decoration-success="result == 'pass'" decoration-danger="result == 'fail'" />
+                                        <field name="note" />
+                                        <field name="proof_file" filename="proof_filename" widget="binary" />
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter />
+                </form>
+            </field>
+        </record>
+        <record id="view_pif_object_tree" model="ir.ui.view">
+            <field name="name">pif.object.list</field>
+            <field name="model">pif.object</field>
+            <field name="arch" type="xml">
+                <list string="PIF Execution">
+                    <field name="name" />
+                    <field name="pif_request_type" />
+                    <field name="pif_product_id" />
+                    <field name="state" widget="badge" />
+                </list>
+            </field>
+        </record>
+
+        <record id="action_pif_object" model="ir.actions.act_window">
+            <field name="name">PIF Executions</field>
+            <field name="res_model">pif.object</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="menu_pif_object" name="PIF Creation" parent="menu_pif_root" action="action_pif_object" sequence="1" />
+        <!-- ========================================================= -->
+        <!-- PIF DATA LINE VIEWS (System Data)                         -->
+        <!-- ========================================================= -->
+        <record id="view_pif_data_line_list_v3" model="ir.ui.view">
+            <field name="name">pif.data.line.list.v3</field>
+            <field name="model">pif.data.line</field>
+            <field name="arch" type="xml">
+                <list string="System Data" editable="bottom">
+                    <field name="pif_object_id" optional="show" />
+                    <field name="category" />
+                    <field name="key" />
+                    <field name="value" />
+                </list>
+            </field>
+        </record>
+
+        <record id="action_pif_data_line" model="ir.actions.act_window">
+            <field name="name">System Data List</field>
+            <field name="res_model">pif.data.line</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'search_default_grp_pif': 1}</field>
+            <!-- <field name="search_view_id" ref="view_pif_data_line_search_v3"/> -->
+        </record>
+
+        <menuitem id="menu_pif_data_line" name="System Data List" parent="menu_pif_root" action="action_pif_data_line" sequence="5" />
+        <!-- ========================================================= -->
+        <!-- APPROVAL REQUEST INHERITANCE (UPDATED)                    -->
+        <!-- ========================================================= -->
+        <record id="approval_request_view_form_pif" model="ir.ui.view">
+            <field name="name">approval.request.view.form.pif</field>
+            <field name="model">approval.request</field>
+            <field name="inherit_id" ref="approvals.approval_request_view_form" />
+            <field name="arch" type="xml">
+                <!-- 0. Add logic Helpers -->
+                <xpath expr="//field[@name='category_id']" position="after">
+                    <field name="is_pif_category" invisible="1" />
+                </xpath>
+                <!-- 1. Open PIF Button -->
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button name="action_open_pif" type="object" class="oe_stat_button" icon="fa-list-alt" invisible="pif_object_count == 0">
+                        <field name="pif_object_count" string="PIF" widget="statinfo" />
+                    </button>
+                </xpath>
+                <!-- 2. CUSTOM HEADER (Owner | Job) + Request Type -->
+                <xpath expr="//group[@name='request_main']" position="before">
+                    <group name="pif_header_top" invisible="not is_pif_category">
+                        <group>
+                            <field name="request_owner_id" readonly="1" options="{'no_open': True}" />
+                        </group>
+                        <group>
+                            <field name="request_owner_job_id" readonly="1" />
+                        </group>
+                    </group>
+                    <group name="pif_header_type" invisible="not is_pif_category">
+                        <field name="pif_request_type" widget="radio" options="{'horizontal': true}" readonly="request_status != 'new'" />
+                    </group>
+                </xpath>
+                <!-- 3. HIDE STANDARD FIELDS FOR PIF -->
+                <field position="attributes" name="request_owner_id">
+                    <attribute name="invisible">is_pif_category</attribute>
+                </field>
+                <field position="attributes" name="category_id">
+                    <attribute name="invisible">is_pif_category</attribute>
+                </field>
+                <field position="attributes" name="date">
+                    <attribute name="invisible">is_pif_category</attribute>
+                </field>
+                <field position="attributes" name="date_confirmed">
+                    <attribute name="invisible">is_pif_category</attribute>
+                </field>
+                <field position="attributes" name="location">
+                    <attribute name="invisible">is_pif_category</attribute>
+                </field>
+                <field position="attributes" name="amount">
+                    <attribute name="invisible">is_pif_category</attribute>
+                </field>
+                <field position="attributes" name="reference">
+                    <attribute name="invisible">is_pif_category</attribute>
+                </field>
+                <field position="attributes" name="partner_id">
+                    <attribute name="invisible">is_pif_category</attribute>
+                </field>
+                <xpath expr="//label[@for='date']" position="attributes">
+                    <attribute name="invisible">is_pif_category</attribute>
+                </xpath>
+                <xpath expr="//label[@for='date_start']" position="attributes">
+                    <attribute name="invisible">is_pif_category</attribute>
+                </xpath>
+                <xpath expr="//page[@name='products']" position="attributes">
+                    <attribute name="invisible">is_pif_category</attribute>
+                </xpath>
+                <xpath expr="//page[@name='approvers']" position="attributes">
+                    <attribute name="invisible">is_pif_category</attribute>
+                </xpath>
+                <!-- 3b. Read-only Name -->
+                <field position="attributes" name="name">
+                    <attribute name="readonly">is_pif_category</attribute>
+                    <attribute name="force_save">1</attribute>
+                </field>
+                <!-- 5. ADD REQUEST DETAILS PAGE -->
+                <xpath expr="//page[@name='description']" position="after">
+                    <page name="pif_details" string="Request Details" invisible="not is_pif_category">
+                        <!-- Select Project (NOW SELECT APPROVED PRODUCT) -->
+                        <group>
+                            <!-- Using pif_product_id instead of project_id. Domain is handled in python or we can enforce here too -->
+                            <field name="pif_product_id" string="Select Approved Product" options="{'no_create': True, 'no_open': True}" readonly="request_status != 'new'" />
+                        </group>
+                        <!-- Auto-Filled Product Info -->
+                        <group invisible="not pif_product_id">
+                            <group>
+                                <!-- Optional: Hide Name if it's the same as the selector. Mockup showed separate. -->
+                                <field name="pif_product_name" string="Product Name" />
+                                <field name="pif_bom_id" />
+                            </group>
+                            <group>
+                                <field name="pif_vendor_id" />
+                            </group>
+                        </group>
+                        <!-- Raw Item Table -->
+                        <div class="o_horizontal_separator" invisible="not pif_product_id">Raw Item Detail</div>
+                        <field name="raw_item_ids" invisible="not pif_product_id">
+                            <list editable="bottom" create="0" delete="0">
+                                <field name="gri_code" readonly="1" force_save="1" />
+                                <field name="wrin_code" readonly="1" force_save="1" />
+                                <field name="product_id" readonly="1" force_save="1" />
+                                <field name="quantity" />
+                                <field name="uom_id" readonly="1" force_save="1" />
+                            </list>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <!-- CATEGORY CONFIG -->
+        <record id="approval_category_view_form_pif" model="ir.ui.view">
+            <field name="name">approval.category.view.form.pif</field>
+            <field name="model">approval.category</field>
+            <field name="inherit_id" ref="approvals.approval_category_view_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//group" position="inside">
+                    <group string="PIF Configuration">
+                        <field name="is_pif" />
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

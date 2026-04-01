@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- SOC Slide (Template) Form View -->
+    <record id="view_slide_slide_form_soc" model="ir.ui.view">
+        <field name="name">slide.slide.view.form.soc</field>
+        <field name="model">slide.slide</field>
+        <field name="inherit_id" ref="website_slides.view_slide_slide_form" />
+        <field name="arch" type="xml">
+            <field name="is_published" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <field name="is_published" position="before">
+                 <!-- Removed is_soc toggle as requested -->
+                 <field name="is_soc" invisible="1"/> 
+                 <field name="is_locked" invisible="1"/>
+            </field>
+            <!-- Hide Course field for SOCs - Station decides Course -->
+            <xpath expr="//field[@name='channel_id']" position="attributes">
+                <attribute name="invisible">is_soc</attribute>
+                <attribute name="required">not is_soc</attribute>
+            </xpath>
+            <!-- Lock Title and Tags on Save -->
+            <xpath expr="//field[@name='name']" position="attributes">
+                 <attribute name="readonly">is_soc and is_locked</attribute>
+            </xpath>
+            <xpath expr="//field[@name='tag_ids']" position="attributes">
+                 <attribute name="readonly">is_soc and is_locked</attribute>
+            </xpath>
+
+            <!-- Lock Document Fields when is_locked -->
+            <xpath expr="//field[@name='description']" position="attributes">
+                 <attribute name="readonly">is_soc and is_locked</attribute>
+            </xpath>
+            <!-- Lock File Content -->
+            <!-- Note: binary_content is likely datas in view -->
+            <!-- If datas fails, we might need to rely on python constraints, but trying datas first matches soc_version -->
+            <!-- <xpath expr="//field[@name='datas']" position="attributes">
+                 <attribute name="readonly">is_soc and id</attribute>
+            </xpath> -->
+            
+            <!-- Standard URL Field (Video/Link) -->
+            <!-- <xpath expr="//field[@name='url']" position="attributes">
+                 <attribute name="readonly">is_soc and id</attribute>
+            </xpath> -->
+            <!-- Google Drive field might not exist in community/this version, check safety -->
+            <!-- <xpath expr="//field[@name='google_drive_workbook_id']" position="attributes">
+                 <attribute name="readonly">is_soc and id</attribute>
+            </xpath> -->
+
+            <!-- Make Responsible Readonly -->
+            <xpath expr="//field[@name='user_id']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+
+            <!-- Enable Backend HTML Editor for Article Type -->
+            <xpath expr="//page[@name='document']/group" position="after">
+                 <group string="Content Editor" invisible="slide_category != 'article'">
+                     <field name="html_content" nolabel="1" widget="html" options="{'style-inline': true}" readonly="id"/>
+                 </group>
+            </xpath>
+            
+            <xpath expr="//page[@name='external_links']" position="attributes">
+                <attribute name="invisible">is_soc</attribute>
+            </xpath>
+            <xpath expr="//page[@name='quiz']" position="attributes">
+                <attribute name="invisible">is_soc</attribute>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="SOC Definition" invisible="not is_soc">
+                    <field name="id" invisible="1"/>
+                    <group>
+                        <group string="Header">
+                            <field name="soc_code" readonly="is_locked"/>
+                            <!-- soc_version is now free text or can be related? Keeping as is for now -->
+                            <field name="soc_version" invisible="1"/>
+                            <field name="soc_type_id" required="is_soc" readonly="is_locked"/>
+                            <field name="document_type" required="is_soc" readonly="is_locked"/>
+                        </group>
+                        <group string="Classification">
+                            <field name="soc_area_id" required="is_soc" invisible="not soc_type_id" readonly="is_locked"/>
+                            <field name="soc_station_id" required="is_soc" invisible="not soc_area_id" readonly="is_locked"/>
+                        </group>
+                        <group string="Scoring">
+                            <field name="pass_score" readonly="is_locked"/>
+                            <field name="time_allowed" widget="float_time" readonly="is_locked"/>
+                            <separator string="Skill Granting" colspan="2"/>
+                            <field name="soc_skill_type_id" required="is_soc" options="{'no_create': True}" readonly="is_locked"/>
+                            <field name="soc_skill_id" required="is_soc" options="{'no_create': True}" readonly="is_locked"/>
+                            <field name="soc_skill_level_id" required="is_soc" options="{'no_create': True}" readonly="is_locked"/>
+                        </group>
+                    </group>
+                    <!-- Lock/Unlock button bar (div, not header – header breaks page layout) -->
+                    <div class="d-flex gap-2 mb-3" invisible="not is_soc">
+                        <button name="action_unlock" type="object"
+                                string="🔓 Chỉnh sửa"
+                                invisible="not is_locked"
+                                class="btn btn-warning btn-sm"/>
+                        <button name="action_lock" type="object"
+                                string="🔒 Khoá lại"
+                                invisible="is_locked"
+                                class="btn btn-secondary btn-sm"/>
+                        <span invisible="not is_locked" class="text-muted ms-2 align-self-center">
+                            <i class="fa fa-lock"/> SOC đã khoá – bấm 🔓 để chỉnh sửa
+                        </span>
+                    </div>
+                    <separator string="Checklist Content"/>
+                    <field name="soc_item_ids" readonly="is_locked">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="section_id" />
+                            <field name="name"/>
+                            <field name="is_critical" string="K.O" column_invisible="True"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+                <xpath expr="//notebook" position="inside">
+                <page string="Versions" invisible="not is_soc">
+                    <header>
+                         <button name="action_prepare_new_version" type="object" string="Save as New Version" class="btn-secondary"/>
+                    </header>
+                    <group>
+                        <field name="active_version_id" options="{'no_create': True}" domain="[('slide_id', '=', id)]"/>
+                    </group>
+                    <field name="version_ids" context="{'default_slide_id': id}" readonly="1">
+                        <list>
+                            <field name="name"/>
+                            <field name="create_date"/>
+                            <field name="user_id"/>
+                            <field name="pass_score"/>
+                            <field name="time_allowed"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_slide_slide_tree_soc" model="ir.ui.view">
+        <field name="name">slide.slide.view.tree.soc</field>
+        <field name="model">slide.slide</field>
+        <field name="arch" type="xml">
+            <list string="SOC Templates" sample="1">
+                <field name="sequence" widget="handle"/>
+                <field name="name" string="SOC Title"/>
+                <field name="soc_code" optional="show"/>
+                <field name="soc_version" optional="hide"/>
+                <field name="soc_type_id" optional="show"/>
+                <field name="soc_area_id" optional="show"/>
+                <field name="soc_station_id" optional="show" string="Station"/>
+                <field name="channel_id" string="Course/Position"/>
+                <field name="is_published" widget="boolean_toggle"/>
+                <field name="soc_item_ids" widget="list.count_number" string="# Checks"/>
+                <button name="action_open_soc_view" type="object" string="View (Web)" icon="fa-globe" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_slide_slide_search_soc_v3" model="ir.ui.view">
+        <field name="name">slide.slide.view.search.soc.v3</field>
+        <field name="model">slide.slide</field>
+        <field name="arch" type="xml">
+            <search string="Search SOC">
+                <field name="name"/>
+                <field name="channel_id"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ACTION for SOC Templates (Slides) -->
+    <record id="action_lnd_soc_template_slide" model="ir.actions.act_window">
+        <field name="name">SOC Templates</field>
+        <field name="res_model">slide.slide</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'default_is_soc': True, 'default_slide_type': 'article'}</field>
+        <field name="search_view_id" ref="view_slide_slide_search_soc_v3"/>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_slide_slide_tree_soc')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_slide_slide_form_soc')})]"/>
+    </record>
+
+    <!-- Inherit slide.channel form view to rename Content tab to SOC and change Add Section to Add a SOC -->
+    <record id="view_slide_channel_form_soc" model="ir.ui.view">
+        <field name="name">slide.channel.view.form.soc</field>
+        <field name="model">slide.channel</field>
+        <field name="inherit_id" ref="website_slides.view_slide_channel_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <group string="SOC Configuration">
+                    <field name="soc_station_id"/>
+                    <field name="soc_area_id"/>
+                </group>
+            </xpath>
+            <!-- Rename Content tab to SOC -->
+            <xpath expr="//page[@name='content']" position="attributes">
+                <attribute name="string">SOC</attribute>
+            </xpath>
+            
+            <!-- Add Header Button -->
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_open_soc_select_wizard" 
+                            string="Add SOC" 
+                            type="object" 
+                            class="btn-primary"/>
+                </header>
+            </xpath>
+
+            <!-- Define Custom SOC List View (Removed Control Button) -->
+            <xpath expr="//field[@name='slide_ids']/list" position="replace">
+                <list string="SOCs" default_order="sequence">
+                    <field name="sequence" widget="handle"/>
+                    <field name="soc_code" optional="show"/>
+                    <field name="name" string="SOC Title"/>
+                    <field name="soc_type_id" optional="show"/>
+                    <field name="active_version_id" optional="hide" string="Active Version"/>
+                    <field name="soc_station_id" optional="hide"/>
+                    <field name="is_published" widget="boolean_toggle"/>
+                    <field name="soc_item_ids" widget="list.count_number" string="# Checks"/>
+                </list>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Inherit slide.channel Kanban View to add Publish Toggle -->
+    <record id="view_slide_channel_kanban_publish" model="ir.ui.view">
+        <field name="name">slide.channel.view.kanban.publish</field>
+        <field name="model">slide.channel</field>
+        <field name="inherit_id" ref="website_slides.slide_channel_view_kanban"/>
+        <field name="arch" type="xml">
+            <!-- Add Publish button next to View Course button -->
+            <xpath expr="//div[@name='card_primary_left']" position="inside">
+                <field name="is_published" widget="boolean_toggle" class="ms-2"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Inherit slide.channel List View to add Publish Toggle widget -->
+    <record id="view_slide_channel_tree_publish" model="ir.ui.view">
+        <field name="name">slide.channel.view.list.publish</field>
+        <field name="model">slide.channel</field>
+        <field name="inherit_id" ref="website_slides.slide_channel_view_tree"/>
+        <field name="arch" type="xml">
+            <!-- Replace is_published field with boolean_toggle widget -->
+            <xpath expr="//field[@name='is_published']" position="attributes">
+                <attribute name="widget">boolean_toggle</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

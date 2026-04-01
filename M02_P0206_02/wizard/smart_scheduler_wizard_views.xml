@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ========================================== -->
+    <!-- VLH ENGINE - SMART SCHEDULER WIZARD VIEWS  -->
+    <!-- ========================================== -->
+    <record id="smart_scheduler_wizard_form" model="ir.ui.view">
+        <field name="name">smart.scheduler.wizard.form</field>
+        <field name="model">smart.scheduler.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>VLH Engine - Sinh Lịch Thông Minh</h1>
+                        <p class="text-muted">
+                            Tự động tính toán và sinh lịch làm việc dựa trên dữ liệu SSBI (Sales History, Product Mix)
+                        </p>
+                    </div>
+                    
+                    <group>
+                        <group string="Phạm vi áp dụng">
+                            <field name="store_id" options="{'no_create': True}" />
+                            <field name="period_id" options="{'no_create': True}" />
+                            <field name="target_date_from" />
+                            <field name="target_date_to" />
+                        </group>
+                        <group string="Tham số điều chỉnh">
+                            <field name="trend_factor" />
+                            <field name="default_role_id" />
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Dữ liệu SSBI" name="ssbi_data">
+                            <group>
+                                <group string="File Sales History (90 ngày)">
+                                    <field name="sales_history_file" filename="sales_history_filename" />
+                                    <field name="sales_history_filename" invisible="1" />
+                                    <p class="text-muted small">
+                                        File CSV với cột: Date, Hour, GC (Guest Count)
+                                    </p>
+                                </group>
+                                <group string="File Product Mix (Tùy chọn)">
+                                    <field name="product_mix_file" filename="product_mix_filename" />
+                                    <field name="product_mix_filename" invisible="1" />
+                                    <p class="text-muted small">
+                                        File CSV với cột: Date, ItemCode, Qty
+                                    </p>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Cấu hình Ca" name="shift_config">
+                            <group>
+                                <group string="Mẫu ca làm việc">
+                                    <field name="shift_template_ids" widget="many2many_tags" options="{'no_create': True}" />
+                                </group>
+                                <group string="Tùy chọn sinh lịch">
+                                    <field name="use_forecast" />
+                                    <field name="generate_per_station" />
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                
+                <footer>
+                    <button name="action_import_and_generate" string="🚀 Sinh lịch" type="object" class="btn-primary" />
+                    <button string="Hủy" class="btn-secondary" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Action to open wizard -->
+    <record id="action_smart_scheduler_wizard" model="ir.actions.act_window">
+        <field name="name">VLH Engine - Sinh lịch tự động</field>
+        <field name="res_model">smart.scheduler.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>
+

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================== -->
+    <!-- CRON JOBS             -->
+    <!-- ===================== -->
+    
+    <!-- Cron: Tự động đóng kỳ đăng ký hết hạn -->
+    <record id="ir_cron_auto_close_periods" model="ir.cron">
+        <field name="name">Workforce: Tự động đóng kỳ đăng ký</field>
+        <field name="model_id" ref="model_planning_period"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_auto_close_periods()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active">True</field>
+    </record>
+    
+    <!-- Cron: Tạo bản xác nhận công đầu tháng -->
+    <record id="ir_cron_generate_monthly_closings" model="ir.cron">
+        <field name="name">Workforce: Tạo bản xác nhận công hàng tháng</field>
+        <field name="model_id" ref="model_workforce_month_closing"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_generate_monthly_closings()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">months</field>
+        <field name="active">True</field>
+        <!-- 
+             FIX LỖI: Sử dụng datetime.now() thay vì datetime.datetime.now() 
+             Lý do: Trong XML eval context, 'datetime' đã là class.
+        -->
+        <field name="nextcall" eval="(datetime.now() + relativedelta(months=1)).strftime('%Y-%m-01 00:00:00')"/>
+    </record>
+
+</odoo>

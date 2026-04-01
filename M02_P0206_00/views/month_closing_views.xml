@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================== -->
+    <!-- LIST VIEW -->
+    <!-- ===================== -->
+    <record id="view_workforce_month_closing_list" model="ir.ui.view">
+        <field name="name">workforce.month.closing.list</field>
+        <field name="model">workforce.month.closing</field>
+        <field name="arch" type="xml">
+            <!-- Sử dụng thẻ <list> cho Odoo 17+ -->
+            <list string="Xác nhận công tháng" 
+                  decoration-success="state == 'confirmed'" 
+                  decoration-warning="state == 'disputed'" 
+                  decoration-info="state == 'locked'">
+                <field name="employee_id"/>
+                <!-- Tạm thời ẩn 2 trường này nếu chưa store=True -->
+                <!-- <field name="period_month"/> -->
+                <!-- <field name="period_year"/> -->
+                
+                <field name="total_worked_hours" sum="Tổng"/>
+                <field name="total_regular_hours" sum="Tổng"/>
+                <field name="total_night_hours" sum="Tổng"/>
+                <field name="total_penalty_amount" sum="Tổng"/>
+                <field name="total_amount" sum="Tổng"/>
+                <field name="state" widget="badge"/>
+                <field name="employee_confirmed"/>
+                <field name="hr_locked"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ===================== -->
+    <!-- FORM VIEW -->
+    <!-- ===================== -->
+    <record id="view_workforce_month_closing_form" model="ir.ui.view">
+        <field name="name">workforce.month.closing.form</field>
+        <field name="model">workforce.month.closing</field>
+        <field name="arch" type="xml">
+            <form string="Xác nhận công tháng">
+                <header>
+                    <button name="action_employee_confirm" string="Xác nhận ĐÚNG" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_employee_dispute" string="Khiếu nại SAI" type="object" class="btn-warning" invisible="state != 'draft'"/>
+                    <button name="action_hr_lock" string="HR Chốt lương" type="object" class="btn-success" invisible="state != 'confirmed'" groups="hr.group_hr_manager"/>
+                    <button name="action_reset_to_draft" string="Reset" type="object" class="btn-secondary" invisible="state == 'draft'" groups="hr.group_hr_manager"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,locked"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="employee_id" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Thông tin">
+                            <field name="employee_id"/>
+                            <!-- <field name="period_month"/> -->
+                            <!-- <field name="period_year"/> -->
+                        </group>
+                        <group string="Tổng hợp công">
+                            <field name="total_worked_hours"/>
+                            <field name="total_regular_hours"/>
+                            <field name="total_night_hours"/>
+                            <field name="total_penalty_amount"/>
+                            <field name="total_amount" widget="monetary"/>
+                        </group>
+                    </group>
+                    <group string="Xác nhận" invisible="state == 'draft'">
+                        <group>
+                            <field name="employee_confirmed"/>
+                            <field name="confirmed_date"/>
+                        </group>
+                        <group>
+                            <field name="hr_locked"/>
+                            <field name="locked_date"/>
+                            <field name="locked_by"/>
+                        </group>
+                    </group>
+                    <group string="Khiếu nại" invisible="state != 'disputed'">
+                        <field name="dispute_reason"/>
+                        <field name="dispute_date"/>
+                        <field name="dispute_resolved"/>
+                        <field name="dispute_resolution"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ===================== -->
+    <!-- SEARCH VIEW (SAFE MODE) -->
+    <!-- ===================== -->
+    <record id="view_workforce_month_closing_search" model="ir.ui.view">
+        <field name="name">workforce.month.closing.search</field>
+        <field name="model">workforce.month.closing</field>
+        <field name="arch" type="xml">
+            <search string="Tìm kiếm">
+                <!-- Chỉ giữ lại tìm kiếm cơ bản theo nhân viên -->
+                <field name="employee_id"/>
+
+                <!-- 
+                    CHÚ Ý: Tôi đã comment toàn bộ phần Filter và Group By.
+                    Nguyên nhân lỗi thường do Group By các trường không có store=True.
+                    Hãy thử cài đặt file này trước. Nếu thành công, hãy bật lại từng phần sau.
+                -->
+                
+                <!-- 
+                <filter name="filter_draft" string="Chờ xác nhận" domain="[('state', '=', 'draft')]"/>
+                <filter name="filter_confirmed" string="Đã xác nhận" domain="[('state', '=', 'confirmed')]"/>
+                <filter name="filter_disputed" string="Có khiếu nại" domain="[('state', '=', 'disputed')]"/>
+                <filter name="filter_locked" string="Đã chốt" domain="[('state', '=', 'locked')]"/>
+                
+                <group expand="0" string="Nhóm theo">
+                    <filter name="group_employee" string="Nhân viên" context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_state" string="Trạng thái" context="{'group_by': 'state'}"/>
+                </group> 
+                -->
+            </search>
+        </field>
+    </record>
+
+    <!-- ===================== -->
+    <!-- ACTION -->
+    <!-- ===================== -->
+    <record id="action_workforce_month_closing" model="ir.actions.act_window">
+        <field name="name">Xác nhận công tháng</field>
+        <field name="res_model">workforce.month.closing</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_workforce_month_closing_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Chưa có dữ liệu xác nhận công
+            </p>
+        </field>
+    </record>
+
+    <!-- ===================== -->
+    <!-- WIZARD VIEWS -->
+    <!-- ===================== -->
+    <record id="view_workforce_dispute_wizard_form" model="ir.ui.view">
+        <field name="name">workforce.dispute.wizard.form</field>
+        <field name="model">workforce.dispute.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Khiếu nại bảng công">
+                <group>
+                    <field name="month_closing_id" readonly="1"/>
+                    <field name="dispute_reason" placeholder="Nhập lý do khiếu nại chi tiết..." widget="text"/>
+                </group>
+                <footer>
+                    <button name="action_submit_dispute" string="Gửi khiếu nại" type="object" class="btn-primary"/>
+                    <button string="Hủy" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

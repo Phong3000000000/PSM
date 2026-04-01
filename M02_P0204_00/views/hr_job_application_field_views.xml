@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="job_application_field_view_form" model="ir.ui.view">
+        <field name="name">job.application.field.view.form</field>
+        <field name="model">job.application.field</field>
+        <field name="arch" type="xml">
+            <form string="Cấu hình trường">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="is_core_required_field" invisible="1"/>
+                            <field name="field_label" readonly="is_core_required_field"/>
+                            <field name="field_name" readonly="is_default"/>
+                            <field name="field_type" readonly="is_default"/>
+                        </group>
+                        <group>
+                            <field name="is_active" widget="boolean_toggle" readonly="is_core_required_field"/>
+                            <field name="is_required" widget="boolean_toggle" readonly="is_core_required_field"/>
+                            <field name="col_size"/>
+                            <field name="is_default" invisible="1"/>
+                            <field name="is_from_master" invisible="1"/>
+                        </group>
+                    </group>
+                    <!-- Cấu hình Phải đúng -->
+                    <group string="Cấu hình Phải đúng"
+                           invisible="field_type not in ('select', 'radio', 'checkbox')">
+                        <group>
+                            <field name="is_answer_must_match" widget="boolean_toggle" string="Phải đúng"/>
+                            <!-- UI bridge: select/radio chọn từ option -->
+                            <field name="expected_answer_option_id"
+                                   string="Đáp án phải đúng"
+                                   invisible="not is_answer_must_match or field_type not in ('select', 'radio')"/>
+                            <!-- UI bridge: checkbox chọn Có/Không -->
+                            <field name="expected_answer_checkbox"
+                                   string="Đáp án phải đúng"
+                                   invisible="not is_answer_must_match or field_type != 'checkbox'"/>
+                            <!-- Giữ expected_answer ẩn -->
+                            <field name="expected_answer" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook invisible="field_type not in ['select', 'radio']">
+                        <page string="Lựa chọn (Options)" name="options">
+                            <field name="option_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="value"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="hr_job_oje_config_line_view_form" model="ir.ui.view">
+        <field name="name">hr.job.oje.config.line.view.form</field>
+        <field name="model">hr.job.oje.config.line</field>
+        <field name="arch" type="xml">
+            <form string="Cấu hình Tiêu chí OJE">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" string="Nhãn hiển thị"/>
+                            <field name="field_type" string="Loại trường"/>
+                            <field name="is_required" widget="boolean_toggle" string="Bắt buộc"/>
+                        </group>
+                        <group>
+                            <field name="sequence" string="Thứ tự"/>
+                            <field name="text_max_score" invisible="field_type != 'text'" string="Điểm tối đa"/>
+                            <field name="checkbox_score" invisible="field_type != 'checkbox'" string="Điểm đạt được"/>
+                            <field name="col_size" invisible="field_type != 'radio'" string="Chiều rộng (Portal)"/>
+                        </group>
+                    </group>
+                    <notebook invisible="field_type != 'radio'">
+                        <page string="Lựa chọn (Options)" name="options">
+                            <field name="option_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name" string="Nhãn hiển thị"/>
+                                    <field name="value" string="Giá trị (Technical)"/>
+                                    <field name="score" string="Điểm số"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="hr_job_application_field_view_form_inherit" model="ir.ui.view">
+        <field name="name">hr.job.application.field.view.form.inherit</field>
+        <field name="model">hr.job</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_job_survey"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Biểu mẫu Ứng tuyển" name="application_form_config">
+                    <div class="alert alert-info" role="alert">
+                        Cấu hình các trường thông tin ứng viên cần cung cấp khi nộp hồ sơ qua Website. 
+                        Các trường <b>Mặc định</b> liên kết với các trường có sẵn trên hồ sơ ứng viên. 
+                        Các trường <b>Tùy chỉnh</b> (không phải mặc định) sẽ được lưu vào <b>Properties</b> của ứng viên.
+                    </div>
+                    <group>
+                        <button name="action_load_default_fields" 
+                                string="Tải lại từ cấu hình mặc định" 
+                                type="object" 
+                                class="btn-secondary" 
+                                icon="fa-refresh"
+                                confirm="Hệ thống sẽ tải lại danh sách trường từ Configuration > Trường mặc định biểu mẫu. Các dòng custom sẽ được giữ nguyên. Bạn có chắc chắn?"/>
+                    </group>
+                    <field name="application_field_ids" invisible="1"/>
+                    
+                    <separator string="Thông tin cơ bản"/>
+                    <field name="application_field_basic_ids" context="{'default_section': 'basic_info'}">
+                        <list create="0" delete="0" decoration-muted="not is_active">
+                            <field name="sequence" widget="handle"/>
+                            <field name="is_core_required_field" column_invisible="1"/>
+                            <field name="is_active" widget="boolean_toggle" string="Bật/Tắt" readonly="is_core_required_field"/>
+                            <field name="field_label" readonly="1"/>
+                            <field name="field_name" readonly="1"/>
+                            <field name="field_type" readonly="1"/>
+                            <field name="is_required" widget="boolean_toggle" readonly="is_core_required_field"/>
+                            <field name="col_size" readonly="not is_core_required_field"/>
+                            <field name="section" column_invisible="1"/>
+                        </list>
+                    </field>
+
+                    <separator string="Các thông tin khác"/>
+                    <field name="application_field_other_ids" context="{'default_section': 'other_info'}">
+                        <list create="0" delete="0" decoration-muted="not is_active">
+                            <field name="sequence" widget="handle"/>
+                            <field name="is_core_required_field" column_invisible="1"/>
+                            <field name="is_active" widget="boolean_toggle" string="Bật/Tắt" readonly="is_core_required_field"/>
+                            <field name="field_label" readonly="1"/>
+                            <field name="field_name" readonly="1"/>
+                            <field name="field_type" readonly="1"/>
+                            <field name="is_required" widget="boolean_toggle" readonly="is_core_required_field"/>
+                            <field name="col_size" readonly="not is_core_required_field"/>
+                            <field name="section" column_invisible="1"/>
+                        </list>
+                    </field>
+
+                    <separator string="Câu hỏi bổ sung"/>
+                    <field name="application_field_supp_ids" context="{'default_section': 'supplementary_question'}">
+                        <list decoration-muted="not is_active">
+                            <field name="sequence" widget="handle"/>
+                            <field name="is_core_required_field" column_invisible="1"/>
+                            <field name="is_from_master" column_invisible="1"/>
+                            <field name="is_active" widget="boolean_toggle" string="Bật/Tắt" readonly="is_core_required_field"/>
+                            <field name="field_label" readonly="is_from_master"/>
+                            <field name="field_name" readonly="is_default or is_from_master"/>
+                            <field name="field_type" readonly="is_default or is_from_master"/>
+                            <field name="is_required" widget="boolean_toggle" readonly="is_core_required_field"/>
+                            <field name="is_answer_must_match" widget="boolean_toggle" string="Phải đúng"
+                                   invisible="field_type not in ('select', 'radio', 'checkbox')"/>
+                            <field name="expected_answer_option_id" string="Đáp án phải đúng"
+                                   invisible="not is_answer_must_match or field_type not in ('select', 'radio')"/>
+                            <field name="expected_answer_checkbox" string="Đáp án phải đúng"
+                                   invisible="not is_answer_must_match or field_type != 'checkbox'"/>
+                            <field name="expected_answer" column_invisible="1"/>
+                            <field name="col_size"/>
+                            <field name="is_default" column_invisible="1"/>
+                            <field name="section" column_invisible="1"/>
+                        </list>
+                    </field>
+
+                    <separator string="Câu hỏi nội bộ"/>
+                    <field name="application_field_internal_ids" context="{'default_section': 'internal_question'}">
+                        <list decoration-muted="not is_active">
+                            <field name="sequence" widget="handle"/>
+                            <field name="is_core_required_field" column_invisible="1"/>
+                            <field name="is_from_master" column_invisible="1"/>
+                            <field name="is_active" widget="boolean_toggle" string="Bật/Tắt" readonly="is_core_required_field"/>
+                            <field name="field_label" readonly="is_from_master"/>
+                            <field name="field_name" readonly="is_default or is_from_master"/>
+                            <field name="field_type" readonly="is_default or is_from_master"/>
+                            <field name="is_required" widget="boolean_toggle" readonly="is_core_required_field"/>
+                            <field name="is_answer_must_match" widget="boolean_toggle" string="Phải đúng"
+                                   invisible="field_type not in ('select', 'radio', 'checkbox')"/>
+                            <field name="expected_answer_option_id" string="Đáp án phải đúng"
+                                   invisible="not is_answer_must_match or field_type not in ('select', 'radio')"/>
+                            <field name="expected_answer_checkbox" string="Đáp án phải đúng"
+                                   invisible="not is_answer_must_match or field_type != 'checkbox'"/>
+                            <field name="expected_answer" column_invisible="1"/>
+                            <field name="col_size"/>
+                            <field name="is_default" column_invisible="1"/>
+                            <field name="section" column_invisible="1"/>
+                        </list>
+                    </field>
+                </page>
+                <page string="Cấu hình OJE" name="oje_config">
+                    <group>
+                        <group>
+                            <field name="oje_pass_score"/>
+                            <field name="oje_evaluator_user_id"/>
+                        </group>
+                    </group>
+                    <field name="oje_config_line_ids" nolabel="1">
+                        <list>
+                            <field name="sequence" widget="handle"/>
+                            <field name="name"/>
+                            <field name="field_type"/>
+                            <field name="text_max_score" invisible="field_type != 'text'"/>
+                            <field name="checkbox_score" invisible="field_type != 'checkbox'"/>
+                            <field name="col_size" invisible="field_type != 'radio'" optional="show"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

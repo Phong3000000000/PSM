@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_applicant_view_form_inherit_referral" model="ir.ui.view">
+            <field name="name">hr.applicant.view.form.inherit.referral</field>
+            <field name="model">hr.applicant</field>
+            <field name="inherit_id" ref="hr_recruitment.hr_applicant_view_form"/>
+            <field name="arch" type="xml">
+                <div name="button_box" position="inside">
+                    <button name="action_open_referral_submission" 
+                            type="object" 
+                            class="oe_stat_button" 
+                            icon="fa-id-card-o"
+                            invisible="not is_referral">
+                        <div class="o_stat_info">
+                            <span class="o_stat_text">Hồ sơ</span>
+                            <span class="o_stat_text">Giới thiệu</span>
+                        </div>
+                    </button>
+                    
+                    <button name="action_open_onboarding" 
+                            type="object" 
+                            class="oe_stat_button" 
+                            icon="fa-check-circle"
+                            invisible="not referral_submission_id or referral_submission_id.state != 'completed'">
+                        <div class="o_stat_info">
+                            <span class="o_stat_text">Onboarding</span>
+                            <span class="o_stat_text">(Đã đạt)</span>
+                        </div>
+                    </button>
+                    
+                    <button name="action_open_offboarding" 
+                            type="object" 
+                            class="oe_stat_button" 
+                            icon="fa-times-circle"
+                            invisible="not referral_submission_id or referral_submission_id.state != 'failed'">
+                        <div class="o_stat_info">
+                            <span class="o_stat_text">Offboarding</span>
+                            <span class="o_stat_text">(Không đạt)</span>
+                        </div>
+                    </button>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

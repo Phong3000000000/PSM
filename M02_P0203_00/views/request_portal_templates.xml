@@ -1,0 +1,1026 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="request_portal_templates" name="Thông tin yêu cầu">
+        <t t-call="portal.portal_layout">
+            <div id="wrap" class="container mt-4 mb-5">
+
+                <!-- ==================== INLINE CSS ==================== -->
+                <style>
+                    :root {
+                        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        --section-bg: #f8f9ff;
+                        --card-border: #e8ecf4;
+                        --old-value-bg: #fff8e1;
+                        --old-value-border: #ffc107;
+                        --accent-1: #667eea;
+                        --accent-2: #764ba2;
+                        --text-muted: #6c757d;
+                    }
+
+                    .portal-update-header {
+                        background: var(--primary-gradient);
+                        color: #fff;
+                        border-radius: 16px;
+                        padding: 32px 36px;
+                        margin-bottom: 28px;
+                        box-shadow: 0 8px 32px rgba(102, 126, 234, 0.25);
+                    }
+                    .portal-update-header h2 {
+                        font-weight: 700;
+                        margin-bottom: 6px;
+                        font-size: 1.6rem;
+                    }
+                    .portal-update-header p {
+                        opacity: 0.9;
+                        margin-bottom: 0;
+                        font-size: 0.95rem;
+                    }
+
+                    .section-card {
+                        background: #fff;
+                        border: 1px solid var(--card-border);
+                        border-radius: 14px;
+                        margin-bottom: 22px;
+                        overflow: hidden;
+                        transition: box-shadow 0.3s ease, transform 0.2s ease;
+                    }
+                    .section-card:hover {
+                        box-shadow: 0 6px 24px rgba(102, 126, 234, 0.12);
+                        transform: translateY(-2px);
+                    }
+                    .section-card-header {
+                        background: linear-gradient(135deg, #f0f3ff 0%, #faf0ff 100%);
+                        padding: 16px 24px;
+                        border-bottom: 1px solid var(--card-border);
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                    }
+                    .section-card-header .section-icon {
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 10px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 1.1rem;
+                        color: #fff;
+                        flex-shrink: 0;
+                    }
+                    .section-card-header h5 {
+                        margin: 0;
+                        font-weight: 600;
+                        font-size: 1.05rem;
+                        color: #333;
+                    }
+                    .section-card-body {
+                        padding: 22px 24px;
+                    }
+
+                    /* Icon backgrounds per section */
+                    .icon-contact { background: linear-gradient(135deg, #667eea, #764ba2); }
+                    .icon-personal { background: linear-gradient(135deg, #f093fb, #f5576c); }
+                    .icon-emergency { background: linear-gradient(135deg, #ff6b6b, #ee5a24); }
+                    .icon-visa { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+                    .icon-citizen { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+                    .icon-location { background: linear-gradient(135deg, #fa709a, #fee140); }
+                    .icon-family { background: linear-gradient(135deg, #a18cd1, #fbc2eb); }
+                    .icon-education { background: linear-gradient(135deg, #fccb90, #d57eeb); }
+                    .icon-attachment { background: linear-gradient(135deg, #89f7fe, #66a6ff); }
+                    .icon-department { background: linear-gradient(135deg, #6a11cb, #2575fc); }
+                    .icon-contract { background: linear-gradient(135deg, #11998e, #38ef7d); }
+
+                    /* Read-only info display */
+                    .info-display {
+                        padding: 10px 14px;
+                        background-color: #f5f6fa;
+                        border: 1px solid #e8ecf4;
+                        border-radius: 10px;
+                        font-size: 0.93rem;
+                        color: #333;
+                        min-height: 42px;
+                        display: flex;
+                        align-items: center;
+                    }
+                    .info-display .text-muted-placeholder {
+                        color: #adb5bd;
+                        font-style: italic;
+                    }
+
+                    /* Form field styling */
+                    .field-group {
+                        margin-bottom: 18px;
+                        position: relative;
+                    }
+                    .field-group label {
+                        font-weight: 600;
+                        font-size: 0.85rem;
+                        color: #495057;
+                        margin-bottom: 6px;
+                        display: block;
+                        text-transform: uppercase;
+                        letter-spacing: 0.3px;
+                    }
+                    .field-group .form-control,
+                    .field-group .form-select {
+                        border: 2px solid #e8ecf4;
+                        border-radius: 10px;
+                        padding: 10px 14px;
+                        font-size: 0.93rem;
+                        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+                        background-color: #fafbff;
+                    }
+                    .field-group .form-control:focus,
+                    .field-group .form-select:focus {
+                        border-color: var(--accent-1);
+                        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.12);
+                        background-color: #fff;
+                    }
+
+                    /* Old value display */
+                    .old-value-display {
+                        display: none;
+                        margin-top: 6px;
+                        padding: 8px 14px;
+                        background: var(--old-value-bg);
+                        border-left: 3px solid var(--old-value-border);
+                        border-radius: 0 8px 8px 0;
+                        font-size: 0.84rem;
+                        color: #6d5c00;
+                        animation: slideDown 0.25s ease-out;
+                        position: relative;
+                    }
+                    .old-value-display.show {
+                        display: block;
+                    }
+                    .old-value-display .old-value-label {
+                        font-weight: 600;
+                        margin-right: 6px;
+                    }
+                    .old-value-display .old-value-close {
+                        position: absolute;
+                        right: 8px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        background: none;
+                        border: none;
+                        color: #b8960a;
+                        font-size: 1rem;
+                        cursor: pointer;
+                        padding: 2px 6px;
+                        line-height: 1;
+                        opacity: 0.7;
+                    }
+                    .old-value-display .old-value-close:hover {
+                        opacity: 1;
+                    }
+                    @keyframes slideDown {
+                        from { opacity: 0; transform: translateY(-6px); }
+                        to { opacity: 1; transform: translateY(0); }
+                    }
+
+                    /* Submit area */
+                    .submit-area {
+                        padding: 28px 0 0;
+                        display: flex;
+                        gap: 14px;
+                        align-items: center;
+                    }
+                    .btn-submit-gradient {
+                        background: var(--primary-gradient);
+                        border: none;
+                        color: #fff;
+                        padding: 12px 36px;
+                        border-radius: 12px;
+                        font-weight: 600;
+                        font-size: 1rem;
+                        letter-spacing: 0.3px;
+                        transition: transform 0.2s ease, box-shadow 0.3s ease;
+                        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+                    }
+                    .btn-submit-gradient:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 8px 28px rgba(102, 126, 234, 0.4);
+                    }
+                    .btn-back-outline {
+                        background: #fff;
+                        border: 2px solid #e8ecf4;
+                        color: #495057;
+                        padding: 12px 28px;
+                        border-radius: 12px;
+                        font-weight: 600;
+                        font-size: 1rem;
+                        transition: border-color 0.2s ease;
+                        text-decoration: none;
+                    }
+                    .btn-back-outline:hover {
+                        border-color: var(--accent-1);
+                        color: var(--accent-1);
+                        text-decoration: none;
+                    }
+
+                    /* Alert styling */
+                    .alert-success-custom {
+                        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+                        border: none;
+                        border-radius: 12px;
+                        padding: 16px 22px;
+                        color: #155724;
+                        font-weight: 500;
+                        margin-bottom: 24px;
+                        box-shadow: 0 2px 12px rgba(40, 167, 69, 0.12);
+                    }
+
+                    /* Tabs redesign */
+                    .nav-tabs-custom {
+                        border: none;
+                        background: #fff;
+                        border-radius: 14px;
+                        padding: 6px;
+                        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+                        margin-bottom: 28px;
+                    }
+                    .nav-tabs-custom .nav-link {
+                        border: none;
+                        border-radius: 10px;
+                        padding: 12px 24px;
+                        font-weight: 600;
+                        color: var(--text-muted);
+                        transition: all 0.3s ease;
+                    }
+                    .nav-tabs-custom .nav-link.active {
+                        background: var(--primary-gradient);
+                        color: #fff;
+                        box-shadow: 0 4px 14px rgba(102, 126, 234, 0.3);
+                    }
+                    .nav-tabs-custom .nav-link:not(.active):hover {
+                        background: #f0f3ff;
+                        color: var(--accent-1);
+                    }
+                </style>
+
+                <!-- ==================== HEADER ==================== -->
+                <div class="portal-update-header">
+                    <h2><i class="fa fa-pencil-square-o me-2"/>Cập nhật hồ sơ nhân viên</h2>
+                    <p><i class="fa fa-info-circle me-1"/>Nhấp vào ô nhập liệu để xem giá trị hiện tại và nhập giá trị mới</p>
+                </div>
+
+                <!-- ===== Phòng Ban (read-only) ===== -->
+                <div class="section-card">
+                    <div class="section-card-header">
+                        <div class="section-icon icon-department"><i class="fa fa-sitemap"/></div>
+                        <h5>Phòng Ban</h5>
+                    </div>
+                    <div class="section-card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="field-group">
+                                    <label>Phòng ban</label>
+                                    <div class="info-display">
+                                        <t t-if="employee.department_id">
+                                            <t t-esc="employee.department_id.name"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="text-muted-placeholder">Chưa có dữ liệu</span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="field-group">
+                                    <label>Chức vụ (Job Position)</label>
+                                    <div class="info-display">
+                                        <t t-if="employee.job_id">
+                                            <t t-esc="employee.job_id.name"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="text-muted-placeholder">Chưa có dữ liệu</span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="field-group">
+                                    <label>Chức danh (Job Title)</label>
+                                    <div class="info-display">
+                                        <t t-if="employee.job_title">
+                                            <t t-esc="employee.job_title"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="text-muted-placeholder">Chưa có dữ liệu</span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="field-group">
+                                    <label>Quản lý trực tiếp</label>
+                                    <div class="info-display">
+                                        <t t-if="employee.parent_id">
+                                            <t t-esc="employee.parent_id.name"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="text-muted-placeholder">Chưa có dữ liệu</span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== Hợp Đồng (read-only) ===== -->
+                <div class="section-card">
+                    <div class="section-card-header">
+                        <div class="section-icon icon-contract"><i class="fa fa-file-text-o"/></div>
+                        <h5>Hợp Đồng</h5>
+                    </div>
+                    <div class="section-card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="field-group">
+                                    <label>Ngày bắt đầu hợp đồng</label>
+                                    <div class="info-display">
+                                        <t t-if="employee.contract_date_start">
+                                            <t t-esc="employee.contract_date_start"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="text-muted-placeholder">Chưa có dữ liệu</span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="field-group">
+                                    <label>Lương</label>
+                                    <div class="info-display">
+                                        <t t-if="employee.wage">
+                                            <t t-esc="'{:,.0f}'.format(employee.wage)"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="text-muted-placeholder">Chưa có dữ liệu</span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="field-group">
+                                    <label>Loại nhân viên</label>
+                                    <div class="info-display">
+                                        <t t-if="employee.employee_type">
+                                            <t t-esc="employee.employee_type"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="text-muted-placeholder">Chưa có dữ liệu</span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="field-group">
+                                    <label>Loại hợp đồng</label>
+                                    <div class="info-display">
+                                        <t t-if="employee.contract_type_id">
+                                            <t t-esc="employee.contract_type_id.name"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="text-muted-placeholder">Chưa có dữ liệu</span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="field-group">
+                                    <label>Cấu trúc lương</label>
+                                    <div class="info-display">
+                                        <t t-if="employee.structure_type_id">
+                                            <t t-esc="employee.structure_type_id.name"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="text-muted-placeholder">Chưa có dữ liệu</span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="field-group">
+                                    <label>Lịch làm việc</label>
+                                    <div class="info-display">
+                                        <t t-if="employee.resource_calendar_id">
+                                            <t t-esc="employee.resource_calendar_id.name"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="text-muted-placeholder">Chưa có dữ liệu</span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== TABS ==================== -->
+                <ul id="myTab" class="nav nav-tabs-custom mb-4" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button id="info-tab" type="button" class="nav-link active" data-bs-toggle="tab" data-bs-target="#info" role="tab" aria-controls="info" aria-selected="true">
+                            <i class="fa fa-user me-2"/>Thông tin cá nhân
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button id="onboard-tab" type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#onboard" role="tab" aria-controls="onboard" aria-selected="false">
+                            <i class="fa fa-file-text me-2"/>Cập nhật hồ sơ
+                        </button>
+                    </li>
+                </ul>
+
+                <div id="myTabContent" class="tab-content">
+                    <!-- TAB 1: THÔNG TIN CÁ NHÂN -->
+                    <div id="info" class="tab-pane fade show active" role="tabpanel" aria-labelledby="info-tab">
+
+                        <!-- Success Message -->
+                        <t t-if="request.params.get('success')">
+                            <div class="alert-success-custom" role="alert">
+                                <i class="fa fa-check-circle me-2"/>Yêu cầu cập nhật đã được gửi thành công!
+                            </div>
+                        </t>
+
+                        <form action="/my/update_info/submit" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                            <!-- ===== 1. Private Contact ===== -->
+                            <div class="section-card">
+                                <div class="section-card-header">
+                                    <div class="section-icon icon-contact"><i class="fa fa-address-book"/></div>
+                                    <h5>Thông tin liên hệ cá nhân</h5>
+                                </div>
+                                <div class="section-card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="private_email">Email cá nhân</label>
+                                                <input t-att-value="employee.private_email" name="private_email" type="email" class="form-control editable-field"
+                                                       t-att-data-old-value="employee.private_email or ''"
+                                                       placeholder="e.g. myprivateemail@example.com"/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="private_phone">Số điện thoại</label>
+                                                <input t-att-value="employee.private_phone" name="private_phone" type="text" class="form-control editable-field"
+                                                       t-att-data-old-value="employee.private_phone or ''"/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="field-group">
+                                                <label>Tài khoản ngân hàng (Số tài khoản - Ngân hàng)</label>
+                                                <div class="input-group">
+                                                    <input t-att-value="employee.bank_account_ids[0].acc_number if employee.bank_account_ids else ''" name="acc_number" type="text" class="form-control editable-field"
+                                                           t-att-data-old-value="employee.bank_account_ids[0].acc_number if employee.bank_account_ids else ''"
+                                                           placeholder="Nhập số tài khoản..." style="border-radius: 10px 0 0 10px; width: 40%;"/>
+                                                    <select name="bank_id" class="form-select editable-field"
+                                                            t-att-data-old-value="employee.bank_account_ids[0].bank_id.name if employee.bank_account_ids and employee.bank_account_ids[0].bank_id else ''"
+                                                            style="border-radius: 0 10px 10px 0; width: 60%;">
+                                                        <option value="">-- Chọn ngân hàng --</option>
+                                                        <t t-foreach="banks" t-as="b">
+                                                            <option t-att-value="b.id" t-att-selected="employee.bank_account_ids and employee.bank_account_ids[0].bank_id.id == b.id">
+                                                                <t t-esc="b.name"/>
+                                                            </option>
+                                                        </t>
+                                                    </select>
+                                                </div>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ===== 2. Personal Information ===== -->
+                            <div class="section-card">
+                                <div class="section-card-header">
+                                    <div class="section-icon icon-personal"><i class="fa fa-id-card"/></div>
+                                    <h5>Thông tin cá nhân</h5>
+                                </div>
+                                <div class="section-card-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="field-group">
+                                                <label for="legal_name">Họ tên pháp lý</label>
+                                                <input t-att-value="employee.legal_name or employee.name" name="legal_name" type="text" class="form-control editable-field"
+                                                       t-att-data-old-value="employee.legal_name or employee.name or ''"/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="birthday">Ngày sinh</label>
+                                                <input t-att-value="employee.birthday" name="birthday" type="date" class="form-control editable-field"
+                                                       t-att-data-old-value="str(employee.birthday) if employee.birthday else ''"/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="sex">Giới tính</label>
+                                                <select name="sex" class="form-select editable-field"
+                                                        t-att-data-old-value="'Nam' if employee.sex == 'male' else ('Nữ' if employee.sex == 'female' else ('Khác' if employee.sex == 'other' else ''))">
+                                                    <option value="">-- Chọn giới tính --</option>
+                                                    <option t-att-selected="employee.sex == 'male'" value="male">Nam</option>
+                                                    <option t-att-selected="employee.sex == 'female'" value="female">Nữ</option>
+                                                    <option t-att-selected="employee.sex == 'other'" value="other">Khác</option>
+                                                </select>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="place_of_birth">Nơi sinh</label>
+                                                <input t-att-value="employee.place_of_birth" name="place_of_birth" type="text" class="form-control editable-field"
+                                                       t-att-data-old-value="employee.place_of_birth or ''"
+                                                       placeholder="Thành phố"/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="country_of_birth">Quốc gia sinh</label>
+                                                <select name="country_of_birth" class="form-select editable-field"
+                                                        t-att-data-old-value="employee.country_of_birth.name if employee.country_of_birth else ''">
+                                                    <option value="">-- Chọn quốc gia --</option>
+                                                    <t t-foreach="countries" t-as="c">
+                                                        <option t-att-value="c.id" t-att-selected="employee.country_of_birth.id == c.id">
+                                                            <t t-esc="c.name"/>
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ===== 3. Emergency Contact ===== -->
+                            <div class="section-card">
+                                <div class="section-card-header">
+                                    <div class="section-icon icon-emergency"><i class="fa fa-heartbeat"/></div>
+                                    <h5>Liên hệ khẩn cấp</h5>
+                                </div>
+                                <div class="section-card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="emergency_contact">Tên liên hệ</label>
+                                                <input t-att-value="employee.emergency_contact" name="emergency_contact" type="text" class="form-control editable-field"
+                                                       t-att-data-old-value="employee.emergency_contact or ''"/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="emergency_phone">Số điện thoại</label>
+                                                <input t-att-value="employee.emergency_phone" name="emergency_phone" type="text" class="form-control editable-field"
+                                                       t-att-data-old-value="employee.emergency_phone or ''"/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ===== 4. Visa &amp; Work Permit ===== -->
+                            <div class="section-card">
+                                <div class="section-card-header">
+                                    <div class="section-icon icon-visa"><i class="fa fa-plane"/></div>
+                                    <h5>Visa &amp; Giấy phép lao động</h5>
+                                </div>
+                                <div class="section-card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="visa_no">Số visa</label>
+                                                <input t-att-value="employee.visa_no" name="visa_no" type="text" class="form-control editable-field"
+                                                       t-att-data-old-value="employee.visa_no or ''"/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="visa_expire">Ngày hết hạn visa</label>
+                                                <input t-att-value="employee.visa_expire" name="visa_expire" type="date" class="form-control editable-field"
+                                                       t-att-data-old-value="str(employee.visa_expire) if employee.visa_expire else ''"/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="permit_no">Số giấy phép lao động</label>
+                                                <input t-att-value="employee.permit_no" name="permit_no" type="text" class="form-control editable-field"
+                                                       t-att-data-old-value="employee.permit_no or ''"/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="work_permit_expiration_date">Ngày hết hạn giấy phép</label>
+                                                <input t-att-value="employee.work_permit_expiration_date" name="work_permit_expiration_date" type="date" class="form-control editable-field"
+                                                       t-att-data-old-value="str(employee.work_permit_expiration_date) if employee.work_permit_expiration_date else ''"/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="field-group">
+                                                <label for="has_work_permit">Tài liệu giấy phép lao động</label>
+                                                <input name="has_work_permit" type="file" class="form-control"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ===== 5. Citizenship ===== -->
+                            <div class="section-card">
+                                <div class="section-card-header">
+                                    <div class="section-icon icon-citizen"><i class="fa fa-globe"/></div>
+                                    <h5>Quốc tịch</h5>
+                                </div>
+                                <div class="section-card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="country_id">Quốc tịch</label>
+                                                <select name="country_id" class="form-select editable-field"
+                                                        t-att-data-old-value="employee.country_id.name if employee.country_id else ''">
+                                                    <option value="">-- Chọn quốc gia --</option>
+                                                    <t t-foreach="countries" t-as="c">
+                                                        <option t-att-value="c.id" t-att-selected="c.id == employee.country_id.id">
+                                                            <t t-esc="c.name"/>
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="identification_id">Số CMND/CCCD</label>
+                                                <input t-att-value="employee.identification_id" name="identification_id" type="text" class="form-control editable-field"
+                                                       t-att-data-old-value="employee.identification_id or ''"/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="ssnid">Số BHXH</label>
+                                                <input t-att-value="employee.ssnid" name="ssnid" type="text" class="form-control editable-field"
+                                                       t-att-data-old-value="employee.ssnid or ''"/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="passport_id">Số hộ chiếu</label>
+                                                <input t-att-value="employee.passport_id" name="passport_id" type="text" class="form-control editable-field"
+                                                       t-att-data-old-value="employee.passport_id or ''"/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="passport_expiration_date">Ngày hết hạn hộ chiếu</label>
+                                                <input t-att-value="employee.passport_expiration_date" name="passport_expiration_date" type="date" class="form-control editable-field"
+                                                       t-att-data-old-value="str(employee.passport_expiration_date) if employee.passport_expiration_date else ''"/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ===== 6. Location ===== -->
+                            <div class="section-card">
+                                <div class="section-card-header">
+                                    <div class="section-icon icon-location"><i class="fa fa-map-marker"/></div>
+                                    <h5>Địa chỉ cư trú</h5>
+                                </div>
+                                <div class="section-card-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="field-group">
+                                                <label for="private_street">Địa chỉ (Đường)</label>
+                                                <input t-att-value="employee.private_street" name="private_street" type="text" class="form-control editable-field"
+                                                       t-att-data-old-value="employee.private_street or ''"
+                                                       placeholder="Số nhà, đường..."/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="field-group">
+                                                <label for="private_street2">Địa chỉ 2</label>
+                                                <input t-att-value="employee.private_street2" name="private_street2" type="text" class="form-control editable-field"
+                                                       t-att-data-old-value="employee.private_street2 or ''"
+                                                       placeholder="Phường/Xã, Quận/Huyện..."/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="field-group">
+                                                <label for="private_city">Thành phố</label>
+                                                <input t-att-value="employee.private_city" name="private_city" type="text" class="form-control editable-field"
+                                                       t-att-data-old-value="employee.private_city or ''"/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="field-group">
+                                                <label for="private_state_id">Tỉnh/Thành</label>
+                                                <select name="private_state_id" id="private_state_id" class="form-select editable-field"
+                                                        t-att-data-old-value="employee.private_state_id.name if employee.private_state_id else ''">
+                                                    <option value="">-- Chọn tỉnh/thành --</option>
+                                                    <t t-foreach="states" t-as="s">
+                                                        <option t-att-value="s.id" t-att-data-country-id="s.country_id.id" t-att-selected="s.id == employee.private_state_id.id">
+                                                            <t t-esc="s.name"/>
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="field-group">
+                                                <label for="private_zip">Mã bưu chính</label>
+                                                <input t-att-value="employee.private_zip" name="private_zip" type="text" class="form-control editable-field"
+                                                       t-att-data-old-value="employee.private_zip or ''"/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="private_country_id">Quốc gia</label>
+                                                <select name="private_country_id" class="form-select editable-field"
+                                                        t-att-data-old-value="employee.private_country_id.name if employee.private_country_id else ''">
+                                                    <option value="">-- Chọn quốc gia --</option>
+                                                    <t t-foreach="countries" t-as="c">
+                                                        <option t-att-value="c.id" t-att-selected="c.id == employee.private_country_id.id">
+                                                            <t t-esc="c.name"/>
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="distance_home_work">Khoảng cách nhà - công ty</label>
+                                                <div class="input-group">
+                                                    <input t-att-value="employee.distance_home_work" name="distance_home_work" type="number" step="0.1" class="form-control editable-field"
+                                                           t-att-data-old-value="str(employee.distance_home_work) if employee.distance_home_work else '0'"/>
+                                                    <select name="distance_home_work_unit" class="form-select" style="max-width: 90px; border-radius: 0 10px 10px 0;">
+                                                        <option value="kilometers" t-att-selected="employee.distance_home_work_unit == 'kilometers'">km</option>
+                                                        <option value="miles" t-att-selected="employee.distance_home_work_unit == 'miles'">mi</option>
+                                                    </select>
+                                                </div>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ===== 7. Family ===== -->
+                            <div class="section-card">
+                                <div class="section-card-header">
+                                    <div class="section-icon icon-family"><i class="fa fa-users"/></div>
+                                    <h5>Gia đình</h5>
+                                </div>
+                                <div class="section-card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="marital">Tình trạng hôn nhân</label>
+                                                <select name="marital" class="form-select editable-field"
+                                                        t-att-data-old-value="dict(single='Độc thân', married='Đã kết hôn', cohabitant='Sống chung', widower='Goá', divorced='Ly hôn').get(employee.marital, '')">
+                                                    <option value="">-- Chọn --</option>
+                                                    <option t-att-selected="employee.marital == 'single'" value="single">Độc thân</option>
+                                                    <option t-att-selected="employee.marital == 'married'" value="married">Đã kết hôn</option>
+                                                    <option t-att-selected="employee.marital == 'cohabitant'" value="cohabitant">Sống chung</option>
+                                                    <option t-att-selected="employee.marital == 'widower'" value="widower">Goá</option>
+                                                    <option t-att-selected="employee.marital == 'divorced'" value="divorced">Ly hôn</option>
+                                                </select>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="children">Số con</label>
+                                                <input t-att-value="employee.children" name="children" type="number" class="form-control editable-field"
+                                                       t-att-data-old-value="str(employee.children) if employee.children else '0'"/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="spouse_complete_name">Tên vợ/chồng</label>
+                                                <input t-att-value="employee.spouse_complete_name" name="spouse_complete_name" type="text" class="form-control editable-field"
+                                                       t-att-data-old-value="employee.spouse_complete_name or ''"/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field-group">
+                                                <label for="spouse_birthdate">Ngày sinh vợ/chồng</label>
+                                                <input t-att-value="employee.spouse_birthdate" name="spouse_birthdate" type="date" class="form-control editable-field"
+                                                       t-att-data-old-value="str(employee.spouse_birthdate) if employee.spouse_birthdate else ''"/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ===== 8. Education ===== -->
+                            <div class="section-card">
+                                <div class="section-card-header">
+                                    <div class="section-icon icon-education"><i class="fa fa-graduation-cap"/></div>
+                                    <h5>Học vấn</h5>
+                                </div>
+                                <div class="section-card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="field-group">
+                                                <label for="certificate">Trình độ</label>
+                                                <select name="certificate" class="form-select editable-field"
+                                                        t-att-data-old-value="dict(other='Khác', graduate='Tốt nghiệp', bachelor='Cử nhân', master='Thạc sĩ', doctor='Tiến sĩ').get(employee.certificate, '')">
+                                                    <option value="other" t-att-selected="employee.certificate == 'other'">Khác</option>
+                                                    <option value="graduate" t-att-selected="employee.certificate == 'graduate'">Tốt nghiệp</option>
+                                                    <option value="bachelor" t-att-selected="employee.certificate == 'bachelor'">Cử nhân</option>
+                                                    <option value="master" t-att-selected="employee.certificate == 'master'">Thạc sĩ</option>
+                                                    <option value="doctor" t-att-selected="employee.certificate == 'doctor'">Tiến sĩ</option>
+                                                </select>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="field-group">
+                                                <label for="study_field">Chuyên ngành</label>
+                                                <input t-att-value="employee.study_field" name="study_field" type="text" class="form-control editable-field"
+                                                       t-att-data-old-value="employee.study_field or ''"/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="field-group">
+                                                <label for="study_school">Trường học</label>
+                                                <input t-att-value="employee.study_school" name="study_school" type="text" class="form-control editable-field"
+                                                       t-att-data-old-value="employee.study_school or ''"/>
+                                                <div class="old-value-display"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ===== 9. Attachments ===== -->
+                            <div class="section-card">
+                                <div class="section-card-header">
+                                    <div class="section-icon icon-attachment"><i class="fa fa-paperclip"/></div>
+                                    <h5>Tài liệu đính kèm</h5>
+                                </div>
+                                <div class="section-card-body">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="field-group">
+                                                <label for="attachment_ids">Chọn tài liệu</label>
+                                                <input type="file" name="attachment_ids" multiple="multiple" class="form-control"/>
+                                                <small class="text-muted mt-1 d-block">Có thể chọn nhiều tập tin cùng lúc</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit -->
+                            <div class="submit-area">
+                                <button type="submit" class="btn btn-submit-gradient">
+                                    <i class="fa fa-paper-plane me-2"/>Gửi yêu cầu cập nhật
+                                </button>
+                                <a href="/my" class="btn-back-outline">
+                                    <i class="fa fa-arrow-left me-2"/>Quay lại
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- TAB 2: CẬP NHẬT HỒ SƠ (ONBOARD) -->
+
+                </div>
+            </div>
+
+            <!-- ==================== JAVASCRIPT ==================== -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Get all editable fields
+                    var fields = document.querySelectorAll('.editable-field');
+
+                    fields.forEach(function(field) {
+                        var oldValue = field.getAttribute('data-old-value');
+                        // Find the .old-value-display sibling
+                        var wrapper = field.closest('.field-group') || field.parentElement;
+                        var display = wrapper.querySelector('.old-value-display');
+
+                        if (!display) return;
+
+                        // Build the old value content
+                        var displayText = oldValue ? oldValue : '(Chưa có dữ liệu)';
+                        display.innerHTML =
+                            '<span class="old-value-label">📌 Giá trị hiện tại:</span>' +
+                            '<span>' + displayText + '</span>' +
+                            '<button type="button" class="old-value-close" title="Ẩn">✕</button>';
+
+                        // Show on focus/click
+                        field.addEventListener('focus', function() {
+                            display.classList.add('show');
+                        });
+
+                        field.addEventListener('click', function() {
+                            display.classList.add('show');
+                        });
+
+                        // Close button
+                        var closeBtn = display.querySelector('.old-value-close');
+                        if (closeBtn) {
+                            closeBtn.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                display.classList.remove('show');
+                            });
+                        }
+                    });
+
+                    // Tab activation from URL hash
+                    var hash = window.location.hash;
+                    if (hash === '#onboard') {
+                        var tabEl = document.querySelector('#onboard-tab');
+                        if (tabEl) {
+                            var tabTrigger = new bootstrap.Tab(tabEl);
+                            tabTrigger.show();
+                        }
+                    }
+
+                    // ====== LOC TINH THANH THEO QUOC GIA ======
+                    // Find country and state selects by name
+                    var countrySelect = document.querySelector('select[name="private_country_id"]');
+                    var stateSelect = document.querySelector('select[name="private_state_id"]');
+                    
+                    if (countrySelect) {
+                        if (stateSelect) {
+                            var stateOptions = Array.from(stateSelect.querySelectorAll('option'));
+                            
+                            function filterStates() {
+                                var selectedCountryId = countrySelect.value;
+                                var hasValidOption = false;
+                                
+                                stateOptions.forEach(function(opt) {
+                                    // Default placeholder option always shown
+                                    if (!opt.value) {
+                                        opt.style.display = '';
+                                        return;
+                                    }
+                                    
+                                    var optCountryId = opt.getAttribute('data-country-id');
+                                    if (!selectedCountryId) {
+                                        opt.style.display = '';
+                                        hasValidOption = true;
+                                    } else if (optCountryId === selectedCountryId) {
+                                        opt.style.display = '';
+                                        hasValidOption = true;
+                                    } else {
+                                        opt.style.display = 'none';
+                                    }
+                                });
+                                
+                                // If current selected state is now hidden (doesn't match country), reset state to empty
+                                var selectedStateOpt = stateSelect.options[stateSelect.selectedIndex];
+                                if (selectedStateOpt) {
+                                    if (selectedStateOpt.style.display === 'none') {
+                                        stateSelect.value = '';
+                                        // Trigger change to remove any '.old-value-display' visual issues
+                                        stateSelect.dispatchEvent(new Event('change'));
+                                    }
+                                }
+                            }
+                            
+                            // Initial filter on page load
+                            filterStates();
+                            
+                            // Filter on country change
+                            countrySelect.addEventListener('change', filterStates);
+                        }
+                    }
+                });
+            </script>
+        </t>
+    </template>
+</odoo>

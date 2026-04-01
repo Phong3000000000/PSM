@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="job_level_employee" model="hr.job.level">
+            <field name="name">Employee</field>
+            <field name="code">EMPLOYEE</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="job_level_assistant" model="hr.job.level">
+            <field name="name">Assistant</field>
+            <field name="code">ASSISTANT</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="job_level_coordinator" model="hr.job.level">
+            <field name="name">Coordinator</field>
+            <field name="code">COORDINATOR</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="job_level_specialist" model="hr.job.level">
+            <field name="name">Specialist</field>
+            <field name="code">SPECIALIST</field>
+            <field name="sequence">40</field>
+        </record>
+        <record id="job_level_consultant" model="hr.job.level">
+            <field name="name">Consultant</field>
+            <field name="code">CONSULTANT</field>
+            <field name="sequence">50</field>
+        </record>
+        <record id="job_level_manager" model="hr.job.level">
+            <field name="name">Manager</field>
+            <field name="code">MANAGER</field>
+            <field name="sequence">60</field>
+        </record>
+        <record id="job_level_head_of_department" model="hr.job.level">
+            <field name="name">Head of Department</field>
+            <field name="code">HEAD_OF_DEPT</field>
+            <field name="sequence">70</field>
+        </record>
+    </data>
+</odoo>

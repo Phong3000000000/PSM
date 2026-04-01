@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Add Administrator to SC_0402 Manager group -->
+        <function model="res.groups" name="write">
+            <value model="res.groups" search="[('id', '=', ref('group_sc_0402_manager'))]" />
+            <value eval="{'users': [(4, ref('base.user_admin'))]}" />
+        </function>
+    </data>
+</odoo>

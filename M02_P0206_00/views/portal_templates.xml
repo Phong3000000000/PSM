@@ -1,0 +1,1139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================ -->
+    <!-- THÊM MENU VÀO PORTAL HOME                    -->
+    <!-- ============================================ -->
+    <!-- Breadcrumb cho trang shifts -->
+    <template id="portal_my_home_menu_shift" name="Portal layout : Shift Menu" inherit_id="portal.portal_breadcrumbs" priority="30">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'shifts'" class="breadcrumb-item active">Đăng ký Ca làm việc</li>
+        </xpath>
+    </template>
+    
+    <!-- Thêm link vào Portal Home -->
+    <template id="portal_my_home_shift" name="Show Shift Link" inherit_id="portal.portal_my_home" priority="30">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Ca làm việc trống</t>
+                <t t-set="url" t-value="'/my/shifts'" />
+                <t t-set="placeholder_count" t-value="'shift_count'" />
+            </t>
+        </xpath>
+    </template>
+
+    <!-- ============================================ -->
+    <!-- TRANG LỊCH ĐĂNG KÝ CA (WEEKLY CALENDAR)      -->
+    <!-- ============================================ -->
+    <template id="portal_my_shifts_calendar" name="My Shifts Calendar">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True" />
+            
+            <!-- Custom CSS cho trang này -->
+            <style>
+                .shift-calendar-container {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    min-height: 100vh;
+                    padding: 2rem 0;
+                }
+                .shift-header {
+                    background: rgba(255, 255, 255, 0.95);
+                    backdrop-filter: blur(10px);
+                    border-radius: 16px;
+                    padding: 1.5rem 2rem;
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+                }
+                .shift-header h3 {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                    font-weight: 700;
+                }
+                .nav-btn {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    border: none;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 10px;
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                    text-decoration: none;
+                }
+                .nav-btn:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+                    color: white;
+                }
+                .shift-table-wrapper {
+                    background: rgba(255, 255, 255, 0.95);
+                    backdrop-filter: blur(10px);
+                    border-radius: 16px;
+                    overflow: hidden;
+                    box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+                }
+                .shift-table {
+                    margin-bottom: 0;
+                    border-collapse: separate;
+                    border-spacing: 0;
+                }
+                .shift-table thead th {
+                    background: linear-gradient(135deg, #4a1f6b 0%, #2d1b4e 100%);
+                    color: white;
+                    padding: 1rem 0.5rem;
+                    font-weight: 600;
+                    border: none;
+                    text-transform: uppercase;
+                    font-size: 0.85rem;
+                    letter-spacing: 0.5px;
+                }
+                .shift-table thead th.today-col {
+                    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+                    color: #333;
+                }
+                .shift-table tbody td {
+                    padding: 0.5rem;
+                    border: 1px solid #eee;
+                    vertical-align: middle;
+                    transition: background-color 0.2s ease;
+                }
+                .shift-table tbody tr:hover td {
+                    background-color: #f8f9ff;
+                }
+                .shift-type-cell {
+                    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+                    min-width: 160px;
+                    padding: 1rem !important;
+                }
+                .shift-type-icon {
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.1rem;
+                }
+                .shift-type-icon.morning {
+                    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+                    color: white;
+                }
+                .shift-type-icon.afternoon {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                }
+                .shift-type-icon.night {
+                    background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+                    color: white;
+                }
+                .slot-card {
+                    border-radius: 12px;
+                    height: 130px;
+                    transition: all 0.3s ease;
+                    overflow: hidden;
+                }
+                .slot-card:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+                }
+                .slot-open {
+                    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+                    border: 2px dashed #2196f3;
+                }
+                .slot-mine {
+                    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+                    border: 2px solid #4caf50;
+                }
+                .slot-taken {
+                    background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+                    border: 1px solid #ef9a9a;
+                }
+                .slot-empty {
+                    background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+                    border: 1px dashed #e0e0e0;
+                    height: 130px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 12px;
+                }
+                .slot-badge {
+                    padding: 0.4rem 0.8rem;
+                    border-radius: 20px;
+                    font-size: 0.75rem;
+                    font-weight: 600;
+                }
+                .role-badge {
+                    display: inline-block;
+                    padding: 0.35rem 0.7rem;
+                    border-radius: 20px;
+                    font-size: 0.7rem;
+                    font-weight: 600;
+                    max-width: 100%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+                .btn-register {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    border: none;
+                    color: white;
+                    padding: 0.5rem 1rem;
+                    border-radius: 8px;
+                    font-size: 0.8rem;
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                }
+                .btn-register:hover {
+                    transform: scale(1.05);
+                    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+                    color: white;
+                }
+                .btn-cancel {
+                    background: transparent;
+                    border: 2px solid #e53935;
+                    color: #e53935;
+                    padding: 0.4rem 0.8rem;
+                    border-radius: 8px;
+                    font-size: 0.75rem;
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                }
+                .btn-cancel:hover {
+                    background: #e53935;
+                    color: white;
+                }
+                .legend-container {
+                    background: rgba(255, 255, 255, 0.95);
+                    backdrop-filter: blur(10px);
+                    border-radius: 12px;
+                    padding: 1rem 2rem;
+                    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+                }
+                .legend-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                }
+                .legend-color {
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 6px;
+                }
+                .role-filter-container {
+                    background: rgba(255, 255, 255, 0.95);
+                    backdrop-filter: blur(10px);
+                    border-radius: 12px;
+                    padding: 1rem 1.5rem;
+                    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+                }
+                .role-select {
+                    border: 2px solid #667eea;
+                    border-radius: 10px;
+                    padding: 0.6rem 1rem;
+                    font-weight: 600;
+                    min-width: 200px;
+                    background: white;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                }
+                .role-select:focus {
+                    outline: none;
+                    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+                }
+            </style>
+            
+            <div class="shift-calendar-container">
+                <div class="container-fluid px-4">
+                    
+                    <!-- FILTER ROW -->
+                    <div class="row align-items-center bg-white p-3 rounded shadow-sm mb-4">
+                        <!-- ROLE FILTER -->
+                        <div class="col-md-4 mb-2 mb-md-0">
+                            <label class="small text-muted fw-bold mb-1">CHỌN VAI TRÒ</label>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-primary dropdown-toggle w-100 d-flex justify-content-between align-items-center" 
+                                        type="button" id="roleDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="text-truncate">
+                                        <t t-if="selected_role" t-esc="selected_role.name"/>
+                                        <t t-else="">Tất cả vai trò</t>
+                                    </span>
+                                </button>
+                                <ul class="dropdown-menu w-100" aria-labelledby="roleDropdown">
+                                    <li>
+                                        <a class="dropdown-item" t-att-href="'/my/shifts?role_id=&amp;store_id=%s' % (selected_store.id if selected_store else '')">
+                                            <i class="fa fa-users me-2 text-muted"/>Tất cả vai trò
+                                        </a>
+                                    </li>
+                                    <t t-foreach="available_roles" t-as="role">
+                                        <li>
+                                            <a t-att-class="'dropdown-item' + (' active' if selected_role and role.id == selected_role.id else '')" 
+                                               t-att-href="'/my/shifts?role_id=%s&amp;store_id=%s' % (role.id, selected_store.id if selected_store else '')">
+                                                <t t-esc="role.name"/>
+                                            </a>
+                                        </li>
+                                    </t>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- STORE FILTER -->
+                        <div class="col-md-4 mb-2 mb-md-0">
+                            <label class="small text-muted fw-bold mb-1">CHỌN CỬA HÀNG</label>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-info dropdown-toggle w-100 d-flex justify-content-between align-items-center" 
+                                        type="button" id="storeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="text-truncate">
+                                        <t t-if="selected_store" t-esc="selected_store.name"/>
+                                        <t t-else="">Chọn cửa hàng...</t>
+                                    </span>
+                                </button>
+                                <ul class="dropdown-menu w-100" aria-labelledby="storeDropdown">
+                                    <t t-foreach="stores" t-as="store">
+                                        <li>
+                                            <a t-att-class="'dropdown-item' + (' active' if selected_store and store.id == selected_store.id else '')" 
+                                               t-att-href="'/my/shifts?store_id=%s&amp;role_id=%s' % (store.id, selected_role.id if selected_role else '')">
+                                                <t t-esc="store.name"/>
+                                            </a>
+                                        </li>
+                                    </t>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Header điều hướng tuần -->
+                    <div class="shift-header d-flex justify-content-between align-items-center mb-4">
+                        <a t-attf-href="/my/shifts?date=#{prev_week}&amp;role_id=#{selected_role.id if selected_role else ''}" class="nav-btn">
+                            <i class="fa fa-chevron-left me-2"/>Tuần trước
+                        </a>
+                        <div class="text-center">
+                            <h3 class="mb-1 fs-4">
+                                <i class="fa fa-calendar-check-o me-2"/>
+                                Lịch làm việc
+                            </h3>
+                            <div class="text-muted">
+                                Tuần từ <strong t-esc="week_days[0]['day_str']"/> đến <strong t-esc="week_days[6]['day_str']"/>
+                            </div>
+                        </div>
+                        <a t-attf-href="/my/shifts?date=#{next_week}&amp;role_id=#{selected_role.id if selected_role else ''}" class="nav-btn">
+                            Tuần sau<i class="fa fa-chevron-right ms-2"/>
+                        </a>
+                    </div>
+
+                    <!-- Thông báo nếu chưa chọn role -->
+                    <t t-if="not selected_role">
+                        <div class="alert alert-warning text-center">
+                            <i class="fa fa-exclamation-triangle me-2"/>
+                            Vui lòng chọn vị trí công việc để xem lịch đăng ký.
+                        </div>
+                    </t>
+                    
+                    <t t-if="selected_role">
+                        <!-- Bảng Lịch -->
+                        <div class="shift-table-wrapper mb-4">
+                            <div class="table-responsive">
+                                <table class="table shift-table text-center align-middle">
+                                    <thead>
+                                        <!-- Header Row -->
+                                        <tr class="table-light">
+                                            <th class="align-middle text-center" style="width: 15%; min-width: 120px;">
+                                                CA / THỨ
+                                            </th>
+                                            <t t-foreach="week_days" t-as="day">
+                                                <th class="align-middle text-center" style="min-width: 120px;">
+                                                    <div class="fw-bold text-uppercase">
+                                                        <t t-esc="day['day_name']"/>
+                                                    </div>
+                                                    <div class="small text-muted">
+                                                        <t t-esc="day['day_str']"/>
+                                                    </div>
+                                                </th>
+                                            </t>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Loop through DYNAMIC SHIFT FRAMES -->
+                                        <t t-foreach="shift_frames" t-as="frame">
+                                            <tr>
+                                                <!-- Row Header (Shift Name) -->
+                                                <td class="align-middle bg-light">
+                                                    <div class="d-flex flex-column p-2">
+                                                        <span class="fw-bold text-dark"><t t-esc="frame['name']"/></span>
+                                                        <span class="small text-muted">
+                                                            (<t t-esc="('%02d:%02d' % (int(frame['start']), int((frame['start'] - int(frame['start'])) * 60)))"/> - 
+                                                             <t t-esc="('%02d:%02d' % (int(frame['end']), int((frame['end'] - int(frame['end'])) * 60)))"/>)
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                
+                                                <!-- Loop through Days -->
+                                                <t t-foreach="week_days" t-as="day">
+                                                    <t t-set="date_key" t-value="day['date'].strftime('%Y-%m-%d')"/>
+                                                    
+                                                    <!-- Lookup Cell Data using Template ID -->
+                                                    <t t-set="template_id" t-value="frame['id']"/>
+                                                    <t t-set="cell" t-value="schedule[template_id].get(date_key, {})"/>
+                                                    
+                                                    <t t-set="cell_status" t-value="cell.get('status', 'open')"/>
+                                                    
+                                                    <td style="padding: 0.5rem;">
+                                                        <t t-if="cell_status == 'mine'">
+                                                            <div class="slot-card slot-mine p-2 d-flex flex-column justify-content-between">
+                                                                <div class="text-center">
+                                                                    <span class="slot-badge bg-success text-white">
+                                                                        <i class="fa fa-check me-1"/>Ca của bạn
+                                                                    </span>
+                                                                </div>
+                                                                <div class="text-center my-2">
+                                                                    <span class="role-badge" style="background-color: #c8e6c9; color: #2e7d32;">
+                                                                        <t t-esc="selected_role.name"/>
+                                                                    </span>
+                                                                </div>
+                                                                <div class="text-center">
+                                                                    <button t-att-data-slot-id="cell_slot.id if cell_slot else 0" class="btn-cancel js_unregister_shift">
+                                                                        <i class="fa fa-times me-1"/>Hủy
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </t>
+                                                        
+                                                        <!-- ĐÃ CÓ NGƯỜI KHÁC -->
+                                                        <t t-elif="cell_status == 'taken'">
+                                                            <div class="slot-card slot-taken p-2 d-flex flex-column justify-content-center">
+                                                                <div class="text-center mb-2">
+                                                                    <span class="slot-badge" style="background-color: #ffcdd2; color: #c62828;">
+                                                                        <i class="fa fa-user me-1"/>Đã có người
+                                                                    </span>
+                                                                </div>
+                                                                <div class="text-center">
+                                                                    <div class="fw-bold text-muted small text-truncate" style="max-width: 120px; margin: 0 auto;">
+                                                                        <t t-if="cell_slot" t-esc="cell_slot.resource_id.name"/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </t>
+                                                        
+                                                        <!-- CÒN TRỐNG - KIỂM TRA KHÓA -->
+                                                        <t t-elif="cell_status == 'open'">
+                                                            <t t-set="is_cell_locked" t-value="cell.get('is_locked', False)"/>
+                                                            <div t-att-class="'slot-card slot-open p-2 d-flex flex-column justify-content-between' + (' slot-locked' if is_cell_locked else '')">
+                                                                <div class="text-center">
+                                                                    <t t-if="is_cell_locked">
+                                                                        <span class="slot-badge" style="background-color: #e0e0e0; color: #757575;">
+                                                                            <i class="fa fa-lock me-1"/>Đã khóa
+                                                                        </span>
+                                                                    </t>
+                                                                    <t t-else="">
+                                                                        <span class="slot-badge" style="background-color: #bbdefb; color: #1565c0;">
+                                                                            <i class="fa fa-unlock-alt me-1"/>Còn trống
+                                                                        </span>
+                                                                    </t>
+                                                                </div>
+                                                                
+                                                                <!-- Role Info -->
+                                                                <div class="text-center my-2">
+                                                                    <span t-att-class="'role-badge' + (' text-muted' if is_cell_locked else '')" 
+                                                                          t-att-style="'background-color: #f5f5f5; color: #9e9e9e;' if is_cell_locked else 'background-color: #e3f2fd; color: #1565c0;'">
+                                                                        <t t-esc="selected_role.name"/>
+                                                                    </span>
+                                                                </div>
+
+                                                                <!-- Register Button or Locked Message -->
+                                                                <div class="text-center">
+                                                                    <t t-if="is_cell_locked">
+                                                                        <span class="text-muted small" style="font-size: 0.7rem;">
+                                                                            <i class="fa fa-info-circle me-1"/>Chỉ đăng ký từ tuần tới
+                                                                        </span>
+                                                                    </t>
+                                                                    <t t-else="">
+                                                                        <button class="btn-register js_register_new_shift"
+                                                                                t-att-data-role-id="selected_role.id"
+                                                                                t-att-data-date="date_key"
+                                                                                t-att-data-template-id="template_id"
+                                                                                t-att-data-store-id="selected_store.id if selected_store else 0"
+                                                                                t-att-data-slot-id="cell_slot.id if cell_slot else 0">
+                                                                            <i class="fa fa-plus-circle me-1"/>Đăng ký
+                                                                        </button>
+                                                                    </t>
+                                                                </div>
+                                                            </div>
+                                                        </t>
+                                                        
+                                                        <!-- KHÔNG CÓ LỊCH (UNAVAILABLE) -->
+                                                        <t t-else="">
+                                                            <div class="slot-card slot-empty p-2">
+                                                                <span class="text-muted small" style="opacity: 0.5;">--</span>
+                                                            </div>
+                                                        </t>
+                                                    </td>
+                                                </t>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <!-- Chú thích -->
+                        <div class="legend-container d-flex gap-5 justify-content-center">
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border: 2px dashed #2196f3;"></span>
+                                <small class="text-muted fw-medium">Ca trống</small>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border: 2px solid #4caf50;"></span>
+                                <small class="text-success fw-bold">Ca của bạn</small>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); border: 1px solid #ef9a9a;"></span>
+                                <small class="text-danger fw-medium">Đã có người</small>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================ -->
+    <!-- TRANG DUYỆT CA CHO LINE MANAGER (PORTAL)     -->
+    <!-- ============================================ -->
+    <template id="portal_team_approvals" name="Team Shift Approvals">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            
+            <style>
+                .approval-container {
+                    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+                    min-height: 100vh;
+                    padding: 2rem 0;
+                }
+                .approval-card {
+                    background: rgba(255, 255, 255, 0.98);
+                    border-radius: 16px;
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+                    overflow: hidden;
+                }
+                .approval-header {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    padding: 1.5rem 2rem;
+                }
+                .shift-item {
+                    border-left: 4px solid #ffc107;
+                    transition: all 0.3s ease;
+                }
+                .shift-item:hover {
+                    background: #f8f9fa;
+                    transform: translateX(5px);
+                }
+                .btn-approve {
+                    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+                    border: none;
+                    color: white;
+                    padding: 0.5rem 1.2rem;
+                    border-radius: 8px;
+                    font-weight: 600;
+                }
+                .btn-approve:hover {
+                    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+                    color: white;
+                }
+                .btn-reject {
+                    background: transparent;
+                    border: 2px solid #f44336;
+                    color: #f44336;
+                    padding: 0.4rem 1rem;
+                    border-radius: 8px;
+                    font-weight: 600;
+                }
+                .btn-reject:hover {
+                    background: #f44336;
+                    color: white;
+                }
+                .approved-badge {
+                    background: #4caf50;
+                    color: white;
+                }
+                .rejected-badge {
+                    background: #f44336;
+                    color: white;
+                }
+            </style>
+            
+            <div class="approval-container">
+                <div class="container">
+                    <!-- Header -->
+                    <div class="approval-card mb-4">
+                        <div class="approval-header">
+                            <h3 class="mb-0">
+                                <i class="fa fa-check-square-o me-2"/>Duyệt Ca Làm Việc
+                            </h3>
+                            <small class="opacity-75">Xác nhận ca đăng ký của nhân viên trong team</small>
+                        </div>
+                        
+                        <div class="p-4">
+                            <!-- Thông tin manager -->
+                            <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
+                                <div class="bg-primary rounded-circle text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <i class="fa fa-user-circle fa-lg"/>
+                                </div>
+                                <div class="ms-3">
+                                    <div class="fw-bold text-dark" t-esc="employee.name"/>
+                                    <small class="text-muted">
+                                        <i class="fa fa-users me-1"/>
+                                        Quản lý <span t-esc="len(subordinates)"/> nhân viên
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <!-- Danh sách ca chờ duyệt -->
+                            <h5 class="text-warning mb-3">
+                                <i class="fa fa-clock-o me-2"/>
+                                Ca Chờ Duyệt 
+                                <span class="badge bg-warning text-dark ms-2" t-esc="len(pending_shifts)"/>
+                            </h5>
+                            
+                            <t t-if="not pending_shifts">
+                                <div class="text-center py-5 text-muted">
+                                    <i class="fa fa-check-circle fa-3x mb-3 opacity-50"/>
+                                    <p>Không có ca nào đang chờ duyệt</p>
+                                </div>
+                            </t>
+                            
+                            <t t-foreach="pending_shifts" t-as="shift">
+                                <div class="shift-item p-3 mb-3 bg-white rounded shadow-sm">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-4">
+                                            <div class="fw-bold text-dark">
+                                                <t t-esc="shift.resource_id.name"/>
+                                            </div>
+                                            <small class="text-muted">
+                                                <i class="fa fa-briefcase me-1"/>
+                                                <t t-if="shift.role_id" t-esc="shift.role_id.name"/>
+                                                <t t-else="">Chưa xác định</t>
+                                            </small>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="text-primary fw-bold">
+                                                <i class="fa fa-calendar me-1"/>
+                                                <span t-field="shift.start_datetime" t-options="{'format': 'EEEE, dd/MM/yyyy'}"/>
+                                            </div>
+                                            <div class="text-muted">
+                                                <i class="fa fa-clock-o me-1"/>
+                                                <span t-field="shift.start_datetime" t-options="{'format': 'HH:mm'}"/>
+                                                - 
+                                                <span t-field="shift.end_datetime" t-options="{'format': 'HH:mm'}"/>
+                                                (<span t-esc="'%.1f' % shift.allocated_hours"/>h)
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 text-end">
+                                            <button t-att-data-slot-id="shift.id" class="btn-approve js_portal_approve me-2">
+                                                <i class="fa fa-check me-1"/>Duyệt
+                                            </button>
+                                            <button t-att-data-slot-id="shift.id" class="btn-reject js_portal_reject">
+                                                <i class="fa fa-times me-1"/>Từ chối
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                    
+                    <!-- Ca đã xử lý gần đây -->
+                    <t t-if="recent_approved">
+                        <div class="approval-card">
+                            <div class="p-4">
+                                <h5 class="text-muted mb-3">
+                                    <i class="fa fa-history me-2"/>Đã xử lý gần đây
+                                </h5>
+                                <div class="table-responsive">
+                                    <table class="table table-sm mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Nhân viên</th>
+                                                <th>Ca làm</th>
+                                                <th>Trạng thái</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="recent_approved" t-as="shift">
+                                                <tr>
+                                                    <td>
+                                                        <t t-esc="shift.resource_id.name"/>
+                                                    </td>
+                                                    <td>
+                                                        <span t-field="shift.start_datetime" t-options="{'format': 'dd/MM HH:mm'}"/>
+                                                    </td>
+                                                    <td>
+                                                        <span t-if="shift.approval_state == 'approved'" class="badge approved-badge">
+                                                            <i class="fa fa-check me-1"/>Đã duyệt
+                                                        </span>
+                                                        <span t-elif="shift.approval_state == 'rejected'" class="badge rejected-badge">
+                                                            <i class="fa fa-times me-1"/>Từ chối
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Thêm menu Team Approvals vào Portal Home -->
+    <template id="portal_my_home_team_approvals" name="Portal Team Approvals Link" inherit_id="portal.portal_my_home" priority="35">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Duyệt ca nhân viên</t>
+                <t t-set="url" t-value="'/my/team/approvals'" />
+                <t t-set="placeholder_count" t-value="'approval_count'" />
+            </t>
+        </xpath>
+    </template>
+    
+    <!-- Breadcrumb cho Team Approvals -->
+    <template id="portal_breadcrumb_team_approvals" name="Portal Breadcrumb Team Approvals" inherit_id="portal.portal_breadcrumbs" priority="35">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'team_approvals'" class="breadcrumb-item active">Duyệt ca nhân viên</li>
+        </xpath>
+    </template>
+
+    <!-- ============================================ -->
+    <!-- TRANG LỖI: CHƯA LIÊN KẾT EMPLOYEE            -->
+    <!-- ============================================ -->
+    <template id="portal_no_employee" name="No Employee Linked">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card border-warning">
+                            <div class="card-header bg-warning text-dark">
+                                <i class="fa fa-exclamation-triangle me-2" />
+                                Lỗi liên kết tài khoản
+                            </div>
+                            <div class="card-body text-center">
+                                <i class="fa fa-user-times fa-4x text-muted mb-3" />
+                                <p t-esc="message" class="mb-3" />
+                                <a href="/my/home" class="btn btn-primary">
+                                    <i class="fa fa-arrow-left me-1" />
+                                    Quay lại trang chủ
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    <!-- ============================================ -->
+    <!-- TRANG BẢNG CÔNG THÁNG                        -->
+    <!-- ============================================ -->
+    <template id="portal_my_timesheets" name="My Timesheets Portal">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4">
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <h2 class="mb-0">
+                            <i class="fa fa-clock-o text-primary me-2" />
+                            Bảng công tháng
+                        </h2>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="card bg-light d-inline-block">
+                            <div class="card-body py-2 px-3">
+                                <small class="text-muted">Tổng giờ tháng này</small>
+                                <h4 class="mb-0 text-primary">
+                                    <t t-esc="'%.1f' % total_hours" />
+                                    giờ
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Alert -->
+                <t t-if="request.params.get('success')">
+                    <div class="alert alert-success">
+                        <i class="fa fa-check me-2" />
+                        Yêu cầu sửa công đã được gửi thành công!
+                    </div>
+                </t>
+                <!-- Correction Button -->
+                <div class="mb-3">
+                    <a href="/my/timesheets/correction" class="btn btn-outline-warning">
+                        <i class="fa fa-edit me-1" />
+                        Yêu cầu sửa công
+                        <span class="badge bg-secondary ms-1">
+                            Còn
+                            <t t-esc="correction_remaining" />
+                            /3 lượt
+                        </span>
+                    </a>
+                </div>
+                <!-- Attendance Table -->
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <i class="fa fa-list me-2" />
+                        Lịch sử chấm công
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Ngày</th>
+                                    <th>Giờ vào</th>
+                                    <th>Giờ ra</th>
+                                    <th>Tổng giờ</th>
+                                    <th>Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="attendances" t-as="att">
+                                    <tr>
+                                        <td>
+                                            <span t-field="att.check_in" t-options="{'format': 'EEEE dd/MM'}" />
+                                        </td>
+                                        <td>
+                                            <span t-field="att.check_in" t-options="{'format': 'HH:mm'}" />
+                                        </td>
+                                        <td>
+                                            <t t-if="att.check_out">
+                                                <span t-field="att.check_out" t-options="{'format': 'HH:mm'}" />
+                                            </t>
+                                            <t t-else="">
+                                                <span class="text-warning">Chưa ra</span>
+                                            </t>
+                                        </td>
+                                        <td>
+                                            <t t-esc="'%.1f' % att.worked_hours" />
+                                            giờ
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success">OK</span>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <tr t-if="not attendances">
+                                    <td colspan="5" class="text-center py-4 text-muted">Chưa có dữ liệu chấm công trong tháng này</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    <!-- ============================================ -->
+    <!-- FORM YÊU CẦU SỬA CÔNG                        -->
+    <!-- ============================================ -->
+    <template id="portal_correction_form" name="Correction Form">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-warning text-dark">
+                                <i class="fa fa-edit me-2" />
+                                Yêu cầu sửa công
+                                <span class="float-end badge bg-secondary">
+                                    Còn
+                                    <t t-esc="correction_remaining" />
+                                    lượt
+                                </span>
+                            </div>
+                            <div class="card-body">
+                                <form method="post" action="/my/timesheets/correction">
+                                    <input t-att-value="request.csrf_token()" name="csrf_token" type="hidden" />
+                                    <div class="mb-3">
+                                        <label class="form-label">Ngày cần sửa</label>
+                                        <input name="date" type="date" class="form-control" required="required" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Giờ vào thực tế</label>
+                                        <input name="check_in" type="datetime-local" class="form-control" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Giờ ra thực tế</label>
+                                        <input name="check_out" type="datetime-local" class="form-control" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Lý do</label>
+                                        <textarea name="reason" class="form-control" rows="3" required="required" placeholder="VD: Quên chấm công khi vào, máy chấm công lỗi..." />
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fa fa-paper-plane me-1" />
+                                            Gửi yêu cầu
+                                        </button>
+                                        <a href="/my/timesheets" class="btn btn-secondary">Hủy</a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    <!-- ============================================ -->
+    <!-- TRANG HẾT LƯỢT SỬA CÔNG                      -->
+    <!-- ============================================ -->
+    <template id="portal_correction_limit" name="Correction Limit Reached">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card border-danger">
+                            <div class="card-header bg-danger text-white">
+                                <i class="fa fa-ban me-2" />
+                                Hết lượt sửa công
+                            </div>
+                            <div class="card-body text-center">
+                                <i class="fa fa-exclamation-triangle fa-4x text-danger mb-3" />
+                                <p t-esc="message" class="mb-3" />
+                                <a href="/my/timesheets" class="btn btn-primary">
+                                    <i class="fa fa-arrow-left me-1" />
+                                    Quay lại
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    <!-- ============================================ -->
+    <!-- TRANG XÁC NHẬN CÔNG THÁNG (Phase 1)         -->
+    <!-- ============================================ -->
+    <template id="portal_my_home_timesheet_confirm" name="Show Timesheet Confirm Link" inherit_id="portal.portal_my_home" priority="40">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Xác nhận công tháng</t>
+                <t t-set="url" t-value="'/my/timesheet/confirm'" />
+                <t t-set="placeholder_count" t-value="'closing_count'" />
+            </t>
+        </xpath>
+    </template>
+    
+    <template id="portal_timesheet_confirm" name="Timesheet Confirmation Page">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4">
+                <!-- Header -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <h2 class="mb-0">
+                            <i class="fa fa-check-square-o text-success me-2"/>
+                            Xác nhận công tháng <t t-esc="month_closing.period_month"/>/<t t-esc="month_closing.period_year"/>
+                        </h2>
+                        <p class="text-muted mt-1">Vui lòng kiểm tra kỹ trước khi xác nhận</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <t t-if="month_closing.state == 'draft'">
+                            <span class="badge bg-warning text-dark fs-6">Chờ xác nhận</span>
+                        </t>
+                        <t t-elif="month_closing.state == 'confirmed'">
+                            <span class="badge bg-success fs-6">Đã xác nhận</span>
+                        </t>
+                        <t t-elif="month_closing.state == 'disputed'">
+                            <span class="badge bg-danger fs-6">Đang khiếu nại</span>
+                        </t>
+                        <t t-elif="month_closing.state == 'locked'">
+                            <span class="badge bg-secondary fs-6">HR đã chốt</span>
+                        </t>
+                    </div>
+                </div>
+                
+                <!-- Summary Card -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <i class="fa fa-table me-2"/>Bảng tổng hợp công
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-3 border-end">
+                                <h4 class="text-primary mb-0"><t t-esc="'%.1f' % month_closing.total_worked_hours"/></h4>
+                                <small class="text-muted">Tổng giờ công</small>
+                            </div>
+                            <div class="col-md-3 border-end">
+                                <h4 class="text-info mb-0"><t t-esc="'%.1f' % month_closing.total_regular_hours"/></h4>
+                                <small class="text-muted">Giờ thường</small>
+                            </div>
+                            <div class="col-md-3 border-end">
+                                <h4 class="text-warning mb-0"><t t-esc="'%.1f' % month_closing.total_night_hours"/></h4>
+                                <small class="text-muted">Giờ đêm (x1.3)</small>
+                            </div>
+                            <div class="col-md-3">
+                                <h4 class="text-danger mb-0"><t t-esc="'{:,.0f}'.format(month_closing.total_penalty_amount)"/></h4>
+                                <small class="text-muted">Phạt (VND)</small>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <table class="table table-sm mb-0">
+                                    <tbody>
+                                        <tr>
+                                            <th>Nhân viên:</th>
+                                            <td><t t-esc="month_closing.employee_id.name"/></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Kỳ công:</th>
+                                            <td>Tháng <t t-esc="month_closing.period_month"/>/<t t-esc="month_closing.period_year"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bg-success text-white rounded p-3 text-center">
+                                    <small>Dự kiến nhận</small>
+                                    <h3 class="mb-0"><t t-esc="'{:,.0f}'.format(month_closing.total_amount)"/> VND</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Attendance Detail -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light">
+                        <i class="fa fa-list me-2"/>Chi tiết chấm công (<t t-esc="len(month_closing.attendance_ids)"/> lượt)
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-secondary">
+                                <tr>
+                                    <th>Ngày</th>
+                                    <th>Giờ vào</th>
+                                    <th>Giờ ra</th>
+                                    <th>Số giờ</th>
+                                </tr>
+                            </thead>
+                            <!-- FILTER ROW -->
+                            <tbody>
+                                <t t-foreach="month_closing.attendance_ids" t-as="att">
+                                    <tr>
+                                        <td><span t-field="att.check_in" t-options="{'format': 'dd/MM/yyyy'}"/></td>
+                                        <td><span t-field="att.check_in" t-options="{'format': 'HH:mm'}"/></td>
+                                        <td>
+                                            <t t-if="att.check_out">
+                                                <span t-field="att.check_out" t-options="{'format': 'HH:mm'}"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="text-warning">--:--</span>
+                                            </t>
+                                        </td>
+                                        <td><span t-esc="'%.2f' % att.worked_hours"/></td>
+                                    </tr>
+                                </t>
+                                <t t-if="not month_closing.attendance_ids">
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">Không có dữ liệu chấm công.</td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                    <!-- DATE NAVIGATION -->
+                <t t-if="month_closing.state == 'draft'">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-2 mb-md-0">
+                                    <form method="post" action="/my/timesheet/confirm/submit">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <input type="hidden" name="closing_id" t-att-value="month_closing.id"/>
+                                        <input type="hidden" name="action" value="confirm"/>
+                                        <button type="submit" class="btn btn-success btn-lg w-100">
+                                            <i class="fa fa-check-circle me-2"/>
+                                            ĐÚNG - Xác nhận công
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="col-md-6">
+                                    <a t-attf-href="/my/timesheet/dispute?closing_id=#{month_closing.id}" class="btn btn-outline-danger btn-lg w-100">
+                                        <i class="fa fa-times-circle me-2"/>
+                                        SAI - Khiếu nại
+                                    </a>
+                                </div>
+                            </div>
+                            <p class="text-muted small mt-3 mb-0 text-center">
+                                <i class="fa fa-info-circle me-1"/>
+                                Sau khi xác nhận, bạn không thể thay đổi. Nếu có sai sót, vui lòng khiếu nại.
+                            </p>
+                        </div>
+                    </div>
+                </t>
+                
+                <!-- Already Confirmed -->
+                <t t-if="month_closing.state == 'confirmed'">
+                    <div class="alert alert-success">
+                        <i class="fa fa-check-circle me-2"/>
+                        Bạn đã xác nhận công ngày <span t-field="month_closing.confirmed_date" t-options="{'format': 'dd/MM/yyyy HH:mm'}"/>.
+                        HR sẽ chốt lương trong thời gian sớm nhất.
+                    </div>
+                </t>
+                
+                <!-- Dispute Info -->
+                <t t-if="month_closing.state == 'disputed'">
+                    <div class="alert alert-warning">
+                        <h5><i class="fa fa-exclamation-triangle me-2"/>Đang xử lý khiếu nại</h5>
+                        <p class="mb-0"><strong>Lý do:</strong> <t t-esc="month_closing.dispute_reason"/></p>
+                        <p class="mb-0 small text-muted">Ngày gửi: <span t-field="month_closing.dispute_date" t-options="{'format': 'dd/MM/yyyy HH:mm'}"/></p>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+    
+    <!-- Dispute Form -->
+    <template id="portal_timesheet_dispute" name="Timesheet Dispute Form">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-danger text-white">
+                                <i class="fa fa-exclamation-circle me-2"/>
+                                Khiếu nại bảng công tháng <t t-esc="month_closing.period_month"/>/<t t-esc="month_closing.period_year"/>
+                            </div>
+                            <div class="card-body">
+                                <div class="alert alert-info">
+                                    <i class="fa fa-info-circle me-2"/>
+                                    Vui lòng mô tả chi tiết vấn đề bạn gặp phải. HR sẽ xem xét và phản hồi sớm nhất.
+                                </div>
+                                <form method="post" action="/my/timesheet/confirm/submit">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <input type="hidden" name="closing_id" t-att-value="month_closing.id"/>
+                                    <input type="hidden" name="action" value="dispute"/>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Lý do khiếu nại <span class="text-danger">*</span></label>
+                                        <textarea name="dispute_reason" class="form-control" rows="5" required="required" 
+                                                  placeholder="Ví dụ: Ngày 15/01 tôi làm từ 6h-14h nhưng hệ thống ghi 8h-14h..."/>
+                                    </div>
+                                    
+                                    <div class="d-flex gap-2">
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="fa fa-paper-plane me-1"/>Gửi khiếu nại
+                                        </button>
+                                        <a t-attf-href="/my/timesheet/confirm" class="btn btn-secondary">
+                                            Quay lại
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

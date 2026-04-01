@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_job_form_inherit_portal_mcd" model="ir.ui.view">
+        <field name="name">hr.job.form.inherit.portal.mcd</field>
+        <field name="model">hr.job</field>
+        <field name="inherit_id" ref="hr.view_hr_job_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_go_to_portal_home"
+                    type="object"
+                    class="oe_stat_button text-danger"
+                    icon="fa-cloud-upload"
+                    help="Đăng tin tuyển dụng và xem trên Portal">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Đăng lên Portal</span>
+                    </div>
+                </button>
+            </xpath>
+            <!-- Thêm tab nội dung website -->
+            <xpath expr="//group[@name='job']/field[@name='department_id']" position="after">
+                <field name="recruitment_type" />
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Nội dung Website" name="website_content">
+                    <group string="Khảo Sát Ứng Viên">
+                        <field name="survey_id"
+                            options="{'no_create': True}"
+                            placeholder="Chọn bài khảo sát dành cho vị trí này..." />
+                        <div class="alert alert-info" role="alert" invisible="not survey_id">
+                            <i class="fa fa-check-circle me-1" /> Ứng viên sẽ thấy nút <b>"Làm bài
+                            Khảo Sát"</b> ngay sau khi nộp đơn thành công. </div>
+                        <div class="alert alert-warning" role="alert" invisible="survey_id">
+                            <i class="fa fa-exclamation-triangle me-1" /> Chưa cấu hình khảo sát —
+                            ứng viên sẽ không thấy bài test sau khi nộp đơn. </div>
+                    </group>
+                    <group string="Mô tả công việc">
+                        <field name="job_intro" nolabel="1"
+                            placeholder="Nhập mô tả tóm tắt về vị trí này. Mỗi đoạn cách nhau bằng dòng trắng..." />
+                    </group>
+                    <div class="row mt-3">
+                        <div class="col-lg-4">
+                            <group string="Trách nhiệm (Responsibilities)">
+                                <field name="responsibilities" nolabel="1"
+                                    placeholder="Lead the entire sales cycle&#10;Achieve monthly objectives&#10;..." />
+                            </group>
+                        </div>
+                        <div class="col-lg-4">
+                            <group string="Yêu cầu bắt buộc (Must Have)">
+                                <field name="must_have" nolabel="1"
+                                    placeholder="Bachelor Degree or Higher&#10;Passion for software products&#10;..." />
+                            </group>
+                        </div>
+                        <div class="col-lg-4">
+                            <group string="Yêu cầu thêm (Nice to have)">
+                                <field name="nice_to_have" nolabel="1"
+                                    placeholder="Experience in writing online content&#10;Additional languages&#10;..." />
+                            </group>
+                        </div>
+                    </div>
+                    <group string="Điểm nổi bật công việc (What's great in the job?)" class="mt-3">
+                        <field name="whats_great" nolabel="1"
+                            placeholder="Great team of smart people&#10;No rigid working hours&#10;..." />
+                    </group>
+                    <div class="alert alert-info mt-2" role="alert">
+                        <i class="fa fa-info-circle" /> Mỗi dòng trong các ô trên sẽ hiển thị thành
+                        một mục riêng trên trang tuyển dụng website. </div>
+                </page>
+            </xpath>
+            <xpath expr="//group[@name='job_posting']/div[@name='recruitment_target']" position="after">
+                <div class="o_form_field_wrapper o_hr_summary_row">
+                    <div class="o_form_label">Current Headcount</div>
+                    <div class="o_form_field">
+                        <field name="current_employee_count" readonly="1" class="o_hr_narrow_field" />
+                    </div>
+                </div>
+                <div class="o_form_field_wrapper o_hr_summary_row">
+                    <div class="o_form_label">Needed Recruitment</div>
+                    <div class="o_form_field">
+                        <field name="needed_recruitment" readonly="1" class="o_hr_narrow_field" />
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

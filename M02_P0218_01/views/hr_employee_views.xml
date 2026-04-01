@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_employee_form_inherit_salary_history" model="ir.ui.view">
+        <field name="name">hr.employee.form.inherit.salary.history</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='personal_information']" position="after">
+                <page name="salary_history" string="Lịch sử tăng lương">
+                    <field name="salary_increase_history_ids" readonly="1">
+                        <list create="0" edit="0" delete="0" default_order="create_date desc">
+                            <field name="create_date" string="Ngày tăng"/>
+                            <field name="approval_request_id" string="Phiếu đề xuất duyệt" widget="many2one"/>
+                            <field name="old_wage" string="Lương cũ" widget="monetary"/>
+                            <field name="increase_percentage_final" string="% Tăng" widget="percentage"/>
+                            <field name="new_wage" string="Lương mới" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

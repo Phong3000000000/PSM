@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="soc_fullscreen_view" name="SOC Evaluation View">
+        <t t-call="website.layout">
+            <div class="container-fluid bg-light o_soc_evaluation_view" style="min-height: 100vh;" t-att-data-slide-id="slide.id">
+                <!-- Header -->
+                <div class="row bg-white shadow-sm py-3 mb-4 sticky-top" style="z-index: 1000;">
+                    <div class="col-md-8">
+                        <h3 class="m-0 text-primary">
+                            <i class="fa fa-clipboard-check me-2"/>
+                            <span t-field="slide.name"/>
+                        </h3>
+                        <small class="text-muted">
+                            Code: <span t-field="slide.soc_code"/> | 
+                            Version: <span t-field="slide.soc_version"/>
+                        </small>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button class="btn btn-success btn-lg" id="btn_submit_soc">
+                            <i class="fa fa-save"/> Submit Result
+                        </button>
+                        <a t-att-href="slide.channel_id.website_url" class="btn btn-secondary btn-lg ms-2">
+                            <i class="fa fa-times"/> Close
+                        </a>
+                    </div>
+                </div>
+
+                <!-- SOC Content -->
+                <div class="container pb-5">
+                    <div class="row">
+                        <!-- Left: Checklist -->
+                        <div class="col-lg-9">
+                            <div class="card shadow-sm border-0">
+                                <div class="card-body p-0">
+                                    <t t-set="current_section" t-value="None"/>
+                                    
+                                    <t t-foreach="slide.soc_item_ids" t-as="item">
+                                        <!-- Section Header -->
+                                        <t t-if="item.section_id != current_section">
+                                            <t t-set="current_section" t-value="item.section_id"/>
+                                            <div class="bg-dark text-white p-3 mt-0">
+                                                <h5 class="m-0"><t t-esc="item.section_id.name if item.section_id else 'General'"/></h5>
+                                            </div>
+                                        </t>
+
+                                        <!-- Item Row -->
+                                        <div class="soc-item-row p-3 border-bottom d-flex align-items-center" t-att-data-item-id="item.id" t-att-data-critical="item.is_critical">
+                                            <div class="me-3 text-center" style="width: 40px;">
+                                                <span class="badge bg-secondary rounded-pill"><t t-esc="item.sequence"/></span>
+                                                <t t-if="item.is_critical">
+                                                    <div class="text-danger mt-1" title="Critical/K.O Factor">
+                                                        <i class="fa fa-star"/>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                            
+                                            <div class="flex-grow-1">
+                                                <div class="fw-bold"><t t-esc="item.name"/></div>
+                                                <t t-if="item.image">
+                                                     <button class="btn btn-sm btn-link text-info p-0" data-bs-toggle="popover" title="Instruction Image" data-bs-html="true" t-att-data-bs-content="'&lt;img src=\'/web/image/mcd.soc.item/%s/image\' class=\'img-fluid\'/&gt;' % item.id">
+                                                        <i class="fa fa-image"/> View Image
+                                                     </button>
+                                                </t>
+                                            </div>
+
+                                            <!-- Action Buttons -->
+                                            <div class="btn-group soc-actions" role="group">
+                                                <input type="radio" class="btn-check" t-att-name="'item_' + str(item.id)" t-att-id="'pass_' + str(item.id)" autocomplete="off" value="pass" checked="checked"/>
+                                                <label class="btn btn-outline-success" t-att-for="'pass_' + str(item.id)">PASS</label>
+
+                                                <input type="radio" class="btn-check" t-att-name="'item_' + str(item.id)" t-att-id="'fail_' + str(item.id)" autocomplete="off" value="fail"/>
+                                                <label class="btn btn-outline-danger" t-att-for="'fail_' + str(item.id)">FAIL</label>
+
+                                                <input type="radio" class="btn-check" t-att-name="'item_' + str(item.id)" t-att-id="'na_' + str(item.id)" autocomplete="off" value="na"/>
+                                                <label class="btn btn-outline-secondary" t-att-for="'na_' + str(item.id)">N/A</label>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Summary Panel -->
+                        <div class="col-lg-3">
+                            <div class="card shadow-sm border-0 sticky-top" style="top: 100px;">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="card-title m-0">Evaluation Summary</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Trainee</label>
+                                        <div class="d-flex align-items-center">
+                                            <img t-att-src="website.image_url(user, 'avatar_128')" class="rounded-circle me-2" width="40"/>
+                                            <span t-field="user.name"/>
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Items:</span>
+                                        <strong id="total_items_count"><t t-esc="len(slide.soc_item_ids)"/></strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2 text-danger">
+                                        <span>Failed:</span>
+                                        <strong id="failed_count">0</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <span>Current Score:</span>
+                                        <strong id="current_score" class="text-success">100%</strong>
+                                    </div>
+                                    
+                                    <div id="critical_fail_alert" class="alert alert-danger d-none">
+                                        <i class="fa fa-exclamation-triangle"/> <strong>K.O FAIL</strong><br/>
+                                        Critical item failed!
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Comments</label>
+                                        <textarea class="form-control" rows="3" id="soc_comments"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

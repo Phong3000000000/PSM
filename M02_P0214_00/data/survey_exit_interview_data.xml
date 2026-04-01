@@ -1,0 +1,591 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- ========================================= -->
+        <!-- EXIT INTERVIEW SURVEY - Khảo sát nghỉ việc -->
+        <!-- ========================================= -->
+        
+        <record id="survey_exit_interview" model="survey.survey">
+            <field name="title">Khảo sát nghỉ việc - Exit Interview</field>
+            <field name="survey_type">survey</field>
+            <field name="access_mode">public</field>
+            <field name="users_can_go_back">True</field>
+            <field name="questions_layout">page_per_section</field>
+            <field name="progression_mode">number</field>
+            <field name="is_attempts_limited">False</field>
+        </record>
+        
+        <!-- ========================================= -->
+        <!-- SECTION 1: Thông tin chung -->
+        <!-- ========================================= -->
+        <record id="survey_exit_section_1" model="survey.question">
+            <field name="title">Phần 1: Thông tin chung</field>
+            <field name="survey_id" ref="survey_exit_interview"/>
+            <field name="is_page">True</field>
+            <field name="sequence">1</field>
+        </record>
+        
+        <!-- Q1: Thời gian làm việc -->
+        <record id="survey_exit_q1" model="survey.question">
+            <field name="title">1. Thời gian làm việc của bạn tại McDonald's Việt Nam</field>
+            <field name="survey_id" ref="survey_exit_interview"/>
+            <field name="sequence">2</field>
+            <field name="question_type">simple_choice</field>
+            <field name="constr_mandatory">True</field>
+        </record>
+        <record id="survey_exit_q1_a1" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q1"/>
+            <field name="value">Thời gian làm việc &lt; 90 ngày</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="survey_exit_q1_a2" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q1"/>
+            <field name="value">Thời gian làm việc &gt; 90 ngày</field>
+            <field name="sequence">2</field>
+        </record>
+        
+        <!-- ========================================= -->
+        <!-- SECTION 2: Lý do nghỉ việc -->
+        <!-- ========================================= -->
+        <record id="survey_exit_section_2" model="survey.question">
+            <field name="title">Phần 2: Lý do nghỉ việc</field>
+            <field name="survey_id" ref="survey_exit_interview"/>
+            <field name="is_page">True</field>
+            <field name="sequence">10</field>
+        </record>
+        
+        <!-- Q2: Lý do nghỉ việc (multiple choice) -->
+        <record id="survey_exit_q2" model="survey.question">
+            <field name="title">2. Lý do khiến bạn nghỉ làm việc tại McDonald's Việt Nam (chọn 2-3 lý do):</field>
+            <field name="survey_id" ref="survey_exit_interview"/>
+            <field name="sequence">11</field>
+            <field name="question_type">multiple_choice</field>
+            <field name="constr_mandatory">True</field>
+        </record>
+        <record id="survey_exit_q2_a1" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q2"/>
+            <field name="value">Lương thưởng, phúc lợi (thu nhập, giờ công, lịch làm, đồng phục)</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="survey_exit_q2_a2" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q2"/>
+            <field name="value">Môi trường làm việc (Sự gắn kết, hỗ trợ, công bằng, máy móc, văn hóa)</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="survey_exit_q2_a3" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q2"/>
+            <field name="value">Cơ hội thăng tiến, chương trình đào tạo (định hướng, đào tạo, kết quả công việc, sự thăng tiến)</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="survey_exit_q2_a4" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q2"/>
+            <field name="value">Yếu tố khách quan</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="survey_exit_q2_a5" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q2"/>
+            <field name="value">Vấn đề cá nhân</field>
+            <field name="sequence">5</field>
+        </record>
+        
+        <!-- Q3: Lý do quan trọng nhất -->
+        <record id="survey_exit_q3" model="survey.question">
+            <field name="title">3. Chọn 1 lý do quan trọng nhất khiến bạn nghỉ việc tại McDonald's Việt Nam:</field>
+            <field name="survey_id" ref="survey_exit_interview"/>
+            <field name="sequence">12</field>
+            <field name="question_type">simple_choice</field>
+            <field name="constr_mandatory">True</field>
+        </record>
+        <record id="survey_exit_q3_a1" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q3"/>
+            <field name="value">Lương thưởng, phúc lợi</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="survey_exit_q3_a2" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q3"/>
+            <field name="value">Môi trường làm việc</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="survey_exit_q3_a3" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q3"/>
+            <field name="value">Cơ hội thăng tiến, chương trình đào tạo</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="survey_exit_q3_a4" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q3"/>
+            <field name="value">Yếu tố khách quan</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="survey_exit_q3_a5" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q3"/>
+            <field name="value">Vấn đề cá nhân</field>
+            <field name="sequence">5</field>
+        </record>
+        
+        <!-- ========================================= -->
+        <!-- SECTION 3: Chi tiết lý do - Lương thưởng -->
+        <!-- ========================================= -->
+        <record id="survey_exit_section_3" model="survey.question">
+            <field name="title">Phần 3: Chi tiết lý do nghỉ việc</field>
+            <field name="survey_id" ref="survey_exit_interview"/>
+            <field name="is_page">True</field>
+            <field name="sequence">20</field>
+        </record>
+        
+        <!-- Q4a: Chi tiết - Lương thưởng, phúc lợi -->
+        <record id="survey_exit_q4a" model="survey.question">
+            <field name="title">4a. Lương thưởng, phúc lợi (chọn các lý do liên quan):</field>
+            <field name="survey_id" ref="survey_exit_interview"/>
+            <field name="sequence">21</field>
+            <field name="question_type">multiple_choice</field>
+            <field name="constr_mandatory">False</field>
+        </record>
+        <record id="survey_exit_q4a_a1" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4a"/>
+            <field name="value">Thu nhập tại McDonald's không đáp ứng được nhu cầu cá nhân hoặc không cạnh tranh so với công ty khác</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="survey_exit_q4a_a2" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4a"/>
+            <field name="value">Tôi không được ghi nhận đủ ngày công theo lịch làm việc thực tế</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="survey_exit_q4a_a3" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4a"/>
+            <field name="value">Tôi không thường xuyên được ghi nhận khi hoàn thành công việc thông qua (Điểm Bravo, Thank you card, BOG,…)</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="survey_exit_q4a_a4" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4a"/>
+            <field name="value">Không được cung cấp đủ thông tin về chính sách, khen thưởng phúc lợi rõ ràng, minh bạch</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="survey_exit_q4a_a5" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4a"/>
+            <field name="value">Lịch làm việc không sắp xếp được các công việc cá nhân như (lịch học, lịch thực tập, gia đình, con cái)</field>
+            <field name="sequence">5</field>
+        </record>
+        <record id="survey_exit_q4a_a6" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4a"/>
+            <field name="value">Chính sách khen thưởng và phúc lợi chưa tương xứng với công sức và đóng góp của tôi</field>
+            <field name="sequence">6</field>
+        </record>
+        <record id="survey_exit_q4a_a7" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4a"/>
+            <field name="value">Giảm giờ công dẫn đến giảm thu nhập</field>
+            <field name="sequence">7</field>
+        </record>
+        <record id="survey_exit_q4a_a8" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4a"/>
+            <field name="value">Khối lượng công việc quá tải và cường độ công việc cao gây áp lực lớn</field>
+            <field name="sequence">8</field>
+        </record>
+        
+        <!-- Q4b: Chi tiết - Môi trường làm việc -->
+        <record id="survey_exit_q4b" model="survey.question">
+            <field name="title">4b. Môi trường làm việc (chọn các lý do liên quan):</field>
+            <field name="survey_id" ref="survey_exit_interview"/>
+            <field name="sequence">22</field>
+            <field name="question_type">multiple_choice</field>
+            <field name="constr_mandatory">False</field>
+        </record>
+        <record id="survey_exit_q4b_a1" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4b"/>
+            <field name="value">Không nhận được sự hỗ trợ từ đồng nghiệp, quản lý trong công việc</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="survey_exit_q4b_a2" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4b"/>
+            <field name="value">Môi trường làm việc thiếu đoàn kết, kỹ năng làm việc nhóm kém, khó hòa nhập với đội ngũ</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="survey_exit_q4b_a3" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4b"/>
+            <field name="value">Quản lý lạm dụng quyền lực, thiếu minh bạch và không công bằng trong phân chia công việc cũng như đánh giá kết quả</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="survey_exit_q4b_a4" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4b"/>
+            <field name="value">Không nhận được sự tôn trọng từ đồng nghiệp, quản lý (phân biệt đối xử về giới tính, tuổi tác, ngôn ngữ giao tiếp,…)</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="survey_exit_q4b_a5" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4b"/>
+            <field name="value">Tôi cảm thấy môi trường làm việc không an toàn (máy móc thiết bị, tiếp xúc với dầu mỡ, hóa chất tẩy rửa,…)</field>
+            <field name="sequence">5</field>
+        </record>
+        <record id="survey_exit_q4b_a6" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4b"/>
+            <field name="value">Tôi không được lắng nghe và thể hiện quan điểm/ ý kiến cá nhân</field>
+            <field name="sequence">6</field>
+        </record>
+        
+        <!-- Q4c: Chi tiết - Cơ hội thăng tiến -->
+        <record id="survey_exit_q4c" model="survey.question">
+            <field name="title">4c. Cơ hội thăng tiến, chương trình đào tạo (chọn các lý do liên quan):</field>
+            <field name="survey_id" ref="survey_exit_interview"/>
+            <field name="sequence">23</field>
+            <field name="question_type">multiple_choice</field>
+            <field name="constr_mandatory">False</field>
+        </record>
+        <record id="survey_exit_q4c_a1" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4c"/>
+            <field name="value">Tôi không nhận được sự giúp đỡ hoặc nhận xét/ đánh giá từ quản lý trong công việc và phát triển định hướng nghề nghiệp</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="survey_exit_q4c_a2" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4c"/>
+            <field name="value">Tôi không hiểu rõ về lộ trình và nội dung đào tạo</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="survey_exit_q4c_a3" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4c"/>
+            <field name="value">Quản lý không hỗ trợ giải quyết khi tôi gặp khó khăn trong công việc</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="survey_exit_q4c_a4" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4c"/>
+            <field name="value">Kết quả công việc và sự đóng góp không được ghi nhận một cách công bằng và khách quan</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="survey_exit_q4c_a5" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4c"/>
+            <field name="value">Không được định hướng rõ ràng về lộ trình thăng tiến</field>
+            <field name="sequence">5</field>
+        </record>
+        <record id="survey_exit_q4c_a6" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4c"/>
+            <field name="value">Tốc độ thăng tiến chậm</field>
+            <field name="sequence">6</field>
+        </record>
+        <record id="survey_exit_q4c_a7" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4c"/>
+            <field name="value">Chương trình đào tạo chưa giúp tôi nhanh chóng thích nghi với công việc và môi trường làm việc</field>
+            <field name="sequence">7</field>
+        </record>
+        <record id="survey_exit_q4c_a8" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4c"/>
+            <field name="value">Chương trình đào tạo không thường xuyên cập nhật và phù hợp với các xu hướng mới</field>
+            <field name="sequence">8</field>
+        </record>
+        
+        <!-- Q4d: Chi tiết - Vấn đề cá nhân -->
+        <record id="survey_exit_q4d" model="survey.question">
+            <field name="title">4d. Vấn đề cá nhân (chọn các lý do liên quan):</field>
+            <field name="survey_id" ref="survey_exit_interview"/>
+            <field name="sequence">24</field>
+            <field name="question_type">multiple_choice</field>
+            <field name="constr_mandatory">False</field>
+        </record>
+        <record id="survey_exit_q4d_a1" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4d"/>
+            <field name="value">Bản thân muốn có thời gian tiếp tục đi học hoặc đi thực tập để nâng cao chuyên môn</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="survey_exit_q4d_a2" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4d"/>
+            <field name="value">Do vi phạm, bị kỉ luật trong công việc, nhà hàng yêu cầu nghỉ</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="survey_exit_q4d_a3" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4d"/>
+            <field name="value">Lịch học không sắp xếp được để có thể đi làm</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="survey_exit_q4d_a4" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4d"/>
+            <field name="value">Tốt nghiệp và tìm công việc khác đúng ngành</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="survey_exit_q4d_a5" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4d"/>
+            <field name="value">Thay đổi định hướng công việc</field>
+            <field name="sequence">5</field>
+        </record>
+        <record id="survey_exit_q4d_a6" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4d"/>
+            <field name="value">Đi thực tập</field>
+            <field name="sequence">6</field>
+        </record>
+        <record id="survey_exit_q4d_a7" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4d"/>
+            <field name="value">Đang có vướng bận về gia đình cần thời gian dài để giải quyết</field>
+            <field name="sequence">7</field>
+        </record>
+        <record id="survey_exit_q4d_a8" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4d"/>
+            <field name="value">Thực hiện nghĩa vụ quân sự</field>
+            <field name="sequence">8</field>
+        </record>
+        <record id="survey_exit_q4d_a9" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4d"/>
+            <field name="value">Thay đổi nơi ở (định cư, về quê, điều chuyển nơi ở,…)</field>
+            <field name="sequence">9</field>
+        </record>
+        <record id="survey_exit_q4d_a10" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4d"/>
+            <field name="value">Vị trí cửa hàng quá xa</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="survey_exit_q4d_a11" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4d"/>
+            <field name="value">Không có phương tiện đi lại làm việc</field>
+            <field name="sequence">11</field>
+        </record>
+        <record id="survey_exit_q4d_a12" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4d"/>
+            <field name="value">Sức khỏe bản thân không đảm bảo được tính chất công việc nặng nhọc</field>
+            <field name="sequence">12</field>
+        </record>
+        <record id="survey_exit_q4d_a13" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4d"/>
+            <field name="value">Không phù hợp, không thích nghi được với môi trường và công việc</field>
+            <field name="sequence">13</field>
+        </record>
+        <record id="survey_exit_q4d_a14" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4d"/>
+            <field name="value">Bị tai nạn rủi ro không thể đi làm được</field>
+            <field name="sequence">14</field>
+        </record>
+        
+        <!-- Q4e: Chi tiết - Yếu tố khách quan -->
+        <record id="survey_exit_q4e" model="survey.question">
+            <field name="title">4e. Yếu tố khách quan (chọn các lý do liên quan):</field>
+            <field name="survey_id" ref="survey_exit_interview"/>
+            <field name="sequence">25</field>
+            <field name="question_type">multiple_choice</field>
+            <field name="constr_mandatory">False</field>
+        </record>
+        <record id="survey_exit_q4e_a1" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4e"/>
+            <field name="value">Nhà hàng đóng cửa</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="survey_exit_q4e_a2" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q4e"/>
+            <field name="value">Thay đổi mô hình kinh doanh</field>
+            <field name="sequence">2</field>
+        </record>
+        
+        <!-- Q4f: Lý do khác -->
+        <record id="survey_exit_q4f" model="survey.question">
+            <field name="title">4f. Lý do khác (nếu có):</field>
+            <field name="survey_id" ref="survey_exit_interview"/>
+            <field name="sequence">26</field>
+            <field name="question_type">text_box</field>
+            <field name="constr_mandatory">False</field>
+        </record>
+        
+        <!-- ========================================= -->
+        <!-- SECTION 4: Góp ý và đề xuất -->
+        <!-- ========================================= -->
+        <record id="survey_exit_section_4" model="survey.question">
+            <field name="title">Phần 4: Góp ý và đề xuất</field>
+            <field name="survey_id" ref="survey_exit_interview"/>
+            <field name="is_page">True</field>
+            <field name="sequence">30</field>
+        </record>
+        
+        <!-- Q5: Sẵn sàng giới thiệu bạn bè -->
+        <record id="survey_exit_q5" model="survey.question">
+            <field name="title">5. Bạn có sẵn sàng giới thiệu bạn bè vào làm việc tại McDonald's Việt Nam?</field>
+            <field name="survey_id" ref="survey_exit_interview"/>
+            <field name="sequence">31</field>
+            <field name="question_type">simple_choice</field>
+            <field name="constr_mandatory">True</field>
+        </record>
+        <record id="survey_exit_q5_a1" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q5"/>
+            <field name="value">Có</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="survey_exit_q5_a2" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q5"/>
+            <field name="value">Không</field>
+            <field name="sequence">2</field>
+        </record>
+        
+        <!-- Q6: Đề xuất -->
+        <record id="survey_exit_q6" model="survey.question">
+            <field name="title">6. Một vài đề xuất của bạn để giúp McDonald's Việt Nam trở thành "Best Place To Work":</field>
+            <field name="survey_id" ref="survey_exit_interview"/>
+            <field name="sequence">32</field>
+            <field name="question_type">text_box</field>
+            <field name="constr_mandatory">False</field>
+        </record>
+        
+        <!-- Q7: Điều thu hút đến công ty mới -->
+        <record id="survey_exit_q7" model="survey.question">
+            <field name="title">7. Điều gì đã thu hút bạn đến với công ty/vị trí mới của bạn?</field>
+            <field name="survey_id" ref="survey_exit_interview"/>
+            <field name="sequence">33</field>
+            <field name="question_type">simple_choice</field>
+            <field name="constr_mandatory">False</field>
+            <field name="comments_allowed">True</field>
+            <field name="comments_message">Lý do khác:</field>
+        </record>
+        <record id="survey_exit_q7_a1" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q7"/>
+            <field name="value">Lương thưởng/phúc lợi hấp dẫn</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="survey_exit_q7_a2" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q7"/>
+            <field name="value">Môi trường làm việc năng động, cởi mở</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="survey_exit_q7_a3" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q7"/>
+            <field name="value">Có nhiều cơ hội thăng tiến</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="survey_exit_q7_a4" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q7"/>
+            <field name="value">Chương trình đào tạo rõ ràng</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="survey_exit_q7_a5" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q7"/>
+            <field name="value">Đúng ngành học &amp; có thể phát triển tốt kỹ năng mà bạn cần</field>
+            <field name="sequence">5</field>
+        </record>
+        
+        <!-- Q8: Cân nhắc quay lại -->
+        <record id="survey_exit_q8" model="survey.question">
+            <field name="title">8. Bạn có cân nhắc việc làm với McDonald's một lần nữa không?</field>
+            <field name="survey_id" ref="survey_exit_interview"/>
+            <field name="sequence">34</field>
+            <field name="question_type">simple_choice</field>
+            <field name="constr_mandatory">True</field>
+        </record>
+        <record id="survey_exit_q8_a1" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q8"/>
+            <field name="value">Có</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="survey_exit_q8_a2" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q8"/>
+            <field name="value">Không</field>
+            <field name="sequence">2</field>
+        </record>
+        
+        <!-- ========================================= -->
+        <!-- SECTION 5: Lý do gia nhập -->
+        <!-- ========================================= -->
+        <record id="survey_exit_section_5" model="survey.question">
+            <field name="title">Phần 5: Lý do gia nhập McDonald's</field>
+            <field name="survey_id" ref="survey_exit_interview"/>
+            <field name="is_page">True</field>
+            <field name="sequence">40</field>
+        </record>
+        
+        <!-- Q9: Lý do gia nhập -->
+        <record id="survey_exit_q9" model="survey.question">
+            <field name="title">9. Lý do bạn gia nhập vào McDonald's Việt Nam (chọn tất cả các lý do phù hợp):</field>
+            <field name="survey_id" ref="survey_exit_interview"/>
+            <field name="sequence">41</field>
+            <field name="question_type">multiple_choice</field>
+            <field name="constr_mandatory">True</field>
+            <field name="comments_allowed">True</field>
+            <field name="comments_message">Lý do khác:</field>
+        </record>
+        <record id="survey_exit_q9_a1" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q9"/>
+            <field name="value">Đúng ngành mà bạn đã học</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="survey_exit_q9_a2" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q9"/>
+            <field name="value">Thời gian làm việc linh hoạt</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="survey_exit_q9_a3" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q9"/>
+            <field name="value">Phù hợp với kỹ năng của bạn và giúp bạn phát triển các kỹ năng cần thiết</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="survey_exit_q9_a4" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q9"/>
+            <field name="value">Lương thưởng/phúc lợi tốt</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="survey_exit_q9_a5" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q9"/>
+            <field name="value">Người thân/bạn bè đang làm việc tại McDonald's</field>
+            <field name="sequence">5</field>
+        </record>
+        <record id="survey_exit_q9_a6" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q9"/>
+            <field name="value">Chương trình đào tạo &amp; Lộ trình thăng tiến rõ ràng</field>
+            <field name="sequence">6</field>
+        </record>
+        <record id="survey_exit_q9_a7" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q9"/>
+            <field name="value">Hình ảnh nhà tuyển dụng</field>
+            <field name="sequence">7</field>
+        </record>
+        <record id="survey_exit_q9_a8" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q9"/>
+            <field name="value">Môi trường làm việc năng động, chuyên nghiệp</field>
+            <field name="sequence">8</field>
+        </record>
+        <record id="survey_exit_q9_a9" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q9"/>
+            <field name="value">Thương hiệu nổi tiếng toàn cầu</field>
+            <field name="sequence">9</field>
+        </record>
+        <record id="survey_exit_q9_a10" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q9"/>
+            <field name="value">Mong muốn tìm hiểu và trải nghiệm công việc</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="survey_exit_q9_a11" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q9"/>
+            <field name="value">Thích sản phẩm của McDonald's</field>
+            <field name="sequence">11</field>
+        </record>
+        <record id="survey_exit_q9_a12" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q9"/>
+            <field name="value">Vị trí đi làm thuận tiện</field>
+            <field name="sequence">12</field>
+        </record>
+        <record id="survey_exit_q9_a13" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q9"/>
+            <field name="value">Nhân viên hòa đồng và thân thiện</field>
+            <field name="sequence">13</field>
+        </record>
+        
+        <!-- ========================================= -->
+        <!-- SECTION 6: Xác nhận -->
+        <!-- ========================================= -->
+        <record id="survey_exit_section_6" model="survey.question">
+            <field name="title">Phần 6: Xác nhận và cam kết</field>
+            <field name="survey_id" ref="survey_exit_interview"/>
+            <field name="is_page">True</field>
+            <field name="sequence">50</field>
+        </record>
+        
+        <!-- Q10: Xác nhận cam kết -->
+        <record id="survey_exit_q10" model="survey.question">
+            <field name="title">10. Tôi hiểu và đồng ý:
+
+(1) Tuân thủ quy trình nghỉ việc của công ty và các trách nhiệm, chế độ thanh toán khi chấm dứt hợp đồng lao động, bao gồm nhưng không giới hạn quy định quyết toán lương, nhận sổ/tờ rời BHXH &amp; Quyết định nghỉ việc;
+
+(2) Nếu tôi chấm dứt làm việc trước thời hạn cho phép, công ty có quyền khấu trừ vào bất kỳ khoản thanh toán nào của tôi một khoản tương ứng với số ngày nghỉ trước hạn.
+
+(3) Cho phép Công ty lưu trữ Dữ liệu cá nhân sau khi các bên kết thúc mối quan hệ lao động, hoặc sau khi các bên chấm dứt hợp đồng là năm (5) năm, trừ trường hợp pháp luật yêu cầu một thời gian dài hơn.
+
+(4) Cam kết thực hiện nghiêm túc các điều khoản tại Thỏa thuận Bảo mật thông tin đã ký tại thời điểm ký kết hợp đồng lao động với công ty, hoặc các thông tin mật, thông tin cần bảo mật mà cá nhân có được trong quá trình làm việc tại công ty.</field>
+            <field name="survey_id" ref="survey_exit_interview"/>
+            <field name="sequence">51</field>
+            <field name="question_type">simple_choice</field>
+            <field name="constr_mandatory">True</field>
+        </record>
+        <record id="survey_exit_q10_a1" model="survey.question.answer">
+            <field name="question_id" ref="survey_exit_q10"/>
+            <field name="value">Tôi xác nhận và đồng ý với tất cả các điều khoản trên</field>
+            <field name="sequence">1</field>
+        </record>
+        
+    </data>
+</odoo>

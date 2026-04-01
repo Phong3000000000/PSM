@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- SOC Types -->
+        <record id="mcd_soc_type_bsoc" model="mcd.soc.type">
+            <field name="name">BSOC (Basic)</field>
+            <field name="code">bsoc</field>
+        </record>
+        <record id="mcd_soc_type_asoc" model="mcd.soc.type">
+            <field name="name">ASOC (Advanced)</field>
+            <field name="code">asoc</field>
+        </record>
+        <record id="mcd_soc_type_quiz" model="mcd.soc.type">
+            <field name="name">Quiz</field>
+            <field name="code">quiz</field>
+        </record>
+
+        <!-- SOC Areas -->
+        <record id="mcd_soc_area_kitchen" model="mcd.soc.area">
+            <field name="name">Kitchen</field>
+            <field name="code">kitchen</field>
+        </record>
+        <record id="mcd_soc_area_service" model="mcd.soc.area">
+            <field name="name">Service</field>
+            <field name="code">service</field>
+        </record>
+
+        <!-- SOC Stations - Kitchen -->
+        <record id="mcd_soc_station_production" model="mcd.soc.station">
+            <field name="name">Production</field>
+            <field name="code">production</field>
+            <field name="area_id" ref="mcd_soc_area_kitchen"/>
+            <field name="soc_type_ids" eval="[(6, 0, [ref('mcd_soc_type_bsoc'), ref('mcd_soc_type_asoc'), ref('mcd_soc_type_quiz')])]"/>
+            <field name="service_type">permanent</field>
+            <field name="has_initial" eval="True"/>
+            <field name="has_unannounced" eval="True"/>
+        </record>
+        <record id="mcd_soc_station_pm_task" model="mcd.soc.station">
+            <field name="name">PM Task</field>
+            <field name="code">pm_task</field>
+            <field name="area_id" ref="mcd_soc_area_kitchen"/>
+            <field name="soc_type_ids" eval="[(6, 0, [ref('mcd_soc_type_bsoc')])]"/>
+            <field name="service_type">permanent</field>
+            <field name="has_initial" eval="True"/>
+            <field name="has_unannounced" eval="False"/>
+        </record>
+        <record id="mcd_soc_station_support" model="mcd.soc.station">
+            <field name="name">Support</field>
+            <field name="code">support</field>
+            <field name="area_id" ref="mcd_soc_area_kitchen"/>
+            <field name="soc_type_ids" eval="[(6, 0, [ref('mcd_soc_type_bsoc')])]"/>
+            <field name="service_type">permanent</field>
+            <field name="has_initial" eval="True"/>
+            <field name="has_unannounced" eval="False"/>
+        </record>
+
+        <!-- SOC Stations - Service -->
+        <record id="mcd_soc_station_foundation" model="mcd.soc.station">
+            <field name="name">Foundation</field>
+            <field name="code">foundation</field>
+            <field name="area_id" ref="mcd_soc_area_service"/>
+            <field name="soc_type_ids" eval="[(6, 0, [ref('mcd_soc_type_bsoc'), ref('mcd_soc_type_quiz')])]"/>
+            <field name="service_type">permanent</field>
+            <field name="has_initial" eval="True"/>
+            <field name="has_unannounced" eval="False"/>
+        </record>
+        <record id="mcd_soc_station_mds" model="mcd.soc.station">
+            <field name="name">MDS/3PO</field>
+            <field name="code">mds</field>
+            <field name="area_id" ref="mcd_soc_area_service"/>
+            <field name="soc_type_ids" eval="[(6, 0, [ref('mcd_soc_type_bsoc')])]"/>
+            <field name="service_type">permanent</field>
+            <field name="has_initial" eval="True"/>
+            <field name="has_unannounced" eval="True"/>
+        </record>
+        <record id="mcd_soc_station_drive_thru" model="mcd.soc.station">
+            <field name="name">Drive-Thru</field>
+            <field name="code">drive_thru</field>
+            <field name="area_id" ref="mcd_soc_area_service"/>
+            <field name="soc_type_ids" eval="[(6, 0, [ref('mcd_soc_type_bsoc')])]"/>
+            <field name="service_type">permanent</field>
+            <field name="has_initial" eval="True"/>
+            <field name="has_unannounced" eval="True"/>
+        </record>
+        <record id="mcd_soc_station_mccafe" model="mcd.soc.station">
+            <field name="name">McCafe</field>
+            <field name="code">mccafe</field>
+            <field name="area_id" ref="mcd_soc_area_service"/>
+            <field name="soc_type_ids" eval="[(6, 0, [ref('mcd_soc_type_bsoc'), ref('mcd_soc_type_asoc')])]"/>
+            <field name="service_type">permanent</field>
+            <field name="has_initial" eval="True"/>
+            <field name="has_unannounced" eval="True"/>
+        </record>
+        <record id="mcd_soc_station_front_counter" model="mcd.soc.station">
+            <field name="name">Front Counter</field>
+            <field name="code">front_counter</field>
+            <field name="area_id" ref="mcd_soc_area_service"/>
+            <field name="soc_type_ids" eval="[(6, 0, [ref('mcd_soc_type_bsoc'), ref('mcd_soc_type_asoc')])]"/>
+            <field name="service_type">permanent</field>
+            <field name="has_initial" eval="True"/>
+            <field name="has_unannounced" eval="True"/>
+        </record>
+        <record id="mcd_soc_station_dining_room" model="mcd.soc.station">
+            <field name="name">Dining Room</field>
+            <field name="code">dining_room</field>
+            <field name="area_id" ref="mcd_soc_area_service"/>
+            <field name="soc_type_ids" eval="[(6, 0, [ref('mcd_soc_type_bsoc')])]"/>
+            <field name="service_type">permanent</field>
+            <field name="has_initial" eval="True"/>
+            <field name="has_unannounced" eval="False"/>
+        </record>
+        <record id="mcd_soc_station_togo" model="mcd.soc.station">
+            <field name="name">Togo</field>
+            <field name="code">togo</field>
+            <field name="area_id" ref="mcd_soc_area_service"/>
+            <field name="soc_type_ids" eval="[(6, 0, [ref('mcd_soc_type_bsoc')])]"/>
+            <field name="service_type">lto</field>
+            <field name="has_initial" eval="True"/>
+            <field name="has_unannounced" eval="False"/>
+        </record>
+    </data>
+</odoo>

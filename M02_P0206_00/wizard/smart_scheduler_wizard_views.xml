@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ========================================== -->
+    <!-- SMART SCHEDULER WIZARD VIEWS               -->
+    <!-- ========================================== -->
+    <record id="smart_scheduler_wizard_form" model="ir.ui.view">
+        <field name="name">smart.scheduler.wizard.form</field>
+        <field name="model">smart.scheduler.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group string="Kỳ đăng ký">
+                        <field name="period_id" options="{'no_create': True}" />
+                        <field name="use_forecast" />
+                    </group>
+                    <group string="Vai trò mặc định">
+                        <field name="default_role_id" />
+                    </group>
+                </group>
+                <group>
+                    <group string="Cấu hình Ca làm việc">
+                        <field name="shift_template_ids" widget="many2many_tags" options="{'no_create': True}" />
+                    </group>
+                </group>
+                <group>
+                    <group string="Giới hạn nhân sự">
+                        <field name="min_headcount" />
+                        <field name="max_headcount" />
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_generate" string="Sinh lịch" type="object" class="btn-primary" />
+                    <button string="Hủy" class="btn-secondary" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+    <!-- Action to open wizard -->
+    <record id="action_smart_scheduler_wizard" model="ir.actions.act_window">
+        <field name="name">Sinh lịch tự động</field>
+        <field name="res_model">smart.scheduler.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

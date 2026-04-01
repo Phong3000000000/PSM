@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- HR Group -->
+        <record id="group_referral_hr" model="res.groups">
+            <field name="name">Referals: HR</field>
+            <field name="implied_ids"
+                eval="[(4, ref('base.group_user')), (4, ref('hr_referral.group_hr_referral_manager'))]" />
+            <field name="comment">HR có quyền xem báo cáo, tạo bài viết, thiết lập cấu hình. Cùng
+                với quyền cấu hình đầy đủ của base hr_referral. Không có quyền tạo/duyệt Yêu cầu
+                tuyển dụng (RGM/OC).</field>
+        </record>
+
+        <!-- RGM Group -->
+        <record id="group_referral_rgm" model="res.groups">
+            <field name="name">Referals: RGM</field>
+            <field name="implied_ids"
+                eval="[(4, ref('base.group_user')), (4, ref('hr_recruitment.group_hr_recruitment_interviewer'))]" />
+            <field name="comment">RGM có quyền tạo Yêu cầu phê duyệt vị trí (Approval Request). Được
+                gán quyền Phỏng vấn viên (Interviewer) để xem hồ sơ ứng viên.</field>
+        </record>
+
+        <!-- OC Group -->
+        <record id="group_referral_oc" model="res.groups">
+            <field name="name">Referals: OC</field>
+            <field name="implied_ids"
+                eval="[(4, ref('base.group_user')), (4, ref('hr_recruitment.group_hr_recruitment_interviewer'))]" />
+            <field name="comment">OC có quyền xem và duyệt Yêu cầu phê duyệt vị trí. Được gán quyền
+                Phỏng vấn viên (Interviewer) để xem hồ sơ ứng viên.</field>
+        </record>
+    </data>
+</odoo>

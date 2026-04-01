@@ -1,0 +1,26 @@
+﻿  develop
+* main
+  remotes/origin/HEAD -> origin/main
+  remotes/origin/deploy
+  remotes/origin/develop
+  remotes/origin/feat/M02_P0200
+  remotes/origin/feat/M02_P0201
+  remotes/origin/feat/M02_P0203
+  remotes/origin/feat/M02_P0204
+  remotes/origin/feat/M02_P0213
+  remotes/origin/feat/M02_P0214
+  remotes/origin/feat/M02_P0216
+  remotes/origin/feat/M02_P0218
+  remotes/origin/feat/M02_P0219
+  remotes/origin/feat/m02-p0202
+  remotes/origin/feat/m02-p0207-00
+  remotes/origin/feat/m02-p0207-02
+  remotes/origin/feat/m02-p0209-02
+  remotes/origin/feat/m02-p0210-02
+  remotes/origin/feat/m02_p0217
+  remotes/origin/feat/portal_custom
+  remotes/origin/main
+  remotes/origin/release
+  remotes/origin/staging
+origin	https://github.com/PSM-Global/Odoo19-for-MCD.git (fetch)
+origin	https://github.com/PSM-Global/Odoo19-for-MCD.git (push)

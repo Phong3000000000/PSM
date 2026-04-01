@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Manager Schedule Tree View -->
+    <record id="view_manager_schedule_tree" model="ir.ui.view">
+        <field name="name">mcd.manager.schedule.tree</field>
+        <field name="model">mcd.manager.schedule</field>
+        <field name="arch" type="xml">
+            <list string="Manager Development Schedules" default_order="schedule_date desc">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="development_type"/>
+                <field name="proposed_by_id"/>
+                <field name="schedule_date"/>
+                <field name="state" widget="badge" 
+                       decoration-success="state == 'done'" 
+                       decoration-info="state in ('b1_course', 'b3_course', 'b5_lff')"
+                       decoration-warning="state in ('b2_rgm_eval', 'b4_oc_eval', 'b5_lff_eval')"
+                       decoration-danger="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+    <!-- Manager Schedule Form View -->
+    <record id="view_manager_schedule_form" model="ir.ui.view">
+        <field name="name">mcd.manager.schedule.form</field>
+        <field name="model">mcd.manager.schedule</field>
+        <field name="arch" type="xml">
+            <form string="Manager Development Schedule">
+                <header>
+                    <!-- Draft → Confirm -->
+                    <button name="action_confirm" string="Start Process" type="object" 
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    
+                    <!-- B1: Course 1 -->
+                    <button name="action_complete_b1" string="Complete Course 1" type="object" 
+                            class="btn-success" invisible="state != 'b1_course'"
+                            groups="base.group_system"/>
+                    
+                    <!-- B2: RGM Eval -->
+                    <button name="action_b2_pass" string="Pass (B2)" type="object" 
+                            class="btn-success" invisible="state != 'b2_rgm_eval'"/>
+                    <button name="action_b2_fail" string="Fail (B2)" type="object" 
+                            class="btn-danger" invisible="state != 'b2_rgm_eval'"/>
+                    
+                    <!-- B3: Course 2 -->
+                    <button name="action_complete_b3" string="Complete Course 2" type="object" 
+                            class="btn-success" invisible="state != 'b3_course'"
+                            groups="base.group_system"/>
+                    
+                    <!-- B4: OC Eval -->
+                    <button name="action_b4_pass" string="Pass (B4)" type="object" 
+                            class="btn-success" invisible="state != 'b4_oc_eval'"/>
+                    <button name="action_b4_fail" string="Fail (B4)" type="object" 
+                            class="btn-danger" invisible="state != 'b4_oc_eval'"/>
+                    
+                    <!-- B5.1: LFF Course -->
+                    <button name="action_complete_lff" string="Complete LFF" type="object" 
+                            class="btn-success" invisible="state != 'b5_lff'"
+                            groups="base.group_system"/>
+                    
+                    <!-- B5.2: LFF Eval -->
+                    <button name="action_lff_pass" string="Pass (LFF)" type="object" 
+                            class="btn-success" invisible="state != 'b5_lff_eval'"/>
+                    <button name="action_lff_fail" string="Fail (LFF)" type="object" 
+                            class="btn-danger" invisible="state != 'b5_lff_eval'"/>
+                    
+                    <!-- Cancel -->
+                    <button name="action_cancel" string="Cancel" type="object" 
+                            class="btn-secondary" 
+                            invisible="state in ('done', 'cancelled')"/>
+                    
+                    <field name="state" widget="statusbar" 
+                           statusbar_visible="b1_course,b2_rgm_eval,b3_course,b4_oc_eval,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Employee Information">
+                            <field name="employee_id" readonly="state != 'draft'"/>
+                            <field name="can_evaluate_lnd" invisible="1"/>
+                            <field name="can_evaluate_employee" invisible="1"/>
+                            <field name="development_type" readonly="state != 'draft'"/>
+                            <field name="proposed_by_id"/>
+                            <field name="oc_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Time">
+                            <field name="schedule_date"/>
+                            <field name="schedule_end_date"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Course Info (read-only) -->
+                    <group string="Courses" invisible="not development_type">
+                        <group>
+                            <field name="config_id" readonly="1"/>
+                            <field name="course_1_name" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="course_2_name" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Evaluation Results -->
+                    <notebook>
+                        <page string="Program Content">
+                            <field name="content"/>
+                        </page>
+                        <page string="Evaluation Results" invisible="state == 'draft'">
+                            <group>
+                                <group string="B2: RGM Evaluation">
+                                    <field name="b2_result" readonly="state != 'b2_rgm_eval'"/>
+                                    <field name="b2_notes"/>
+                                </group>
+                                <group string="B4: OC Evaluation">
+                                    <field name="b4_result" readonly="state != 'b4_oc_eval'"/>
+                                    <field name="b4_notes"/>
+                                </group>
+                            </group>
+                            <group invisible="development_type != 'rgm'">
+                                <group string="B5: LFF Evaluation">
+                                    <field name="b5_lff_result" readonly="state != 'b5_lff_eval'"/>
+                                    <field name="b5_lff_notes"/>
+                                </group>
+                            </group>
+                            
+                            <!-- Feedback Section -->
+                            <group string="Post-Training Evaluation" invisible="state not in ('waiting_feedback', 'done')">
+                                <group string="L&amp;D Evaluation" 
+                                       decoration-success="lnd_feedback_status == 'done'" 
+                                       decoration-warning="lnd_feedback_status == 'pending'">
+                                    <field name="lnd_feedback_status"/>
+                                    <field name="lnd_feedback" readonly="1"/>
+                                    <button name="%(action_ops_feedback_wizard)d" 
+                                            string="L&amp;D Evaluate" 
+                                            type="action" 
+                                            class="btn-primary"
+                                            context="{'default_feedback_type': 'lnd'}"
+                                            invisible="lnd_feedback_status == 'done' or not can_evaluate_lnd"/>
+                                </group>
+                                <group string="Employee Evaluation"
+                                       decoration-success="employee_feedback_status == 'done'" 
+                                       decoration-warning="employee_feedback_status == 'pending'">
+                                    <field name="employee_feedback_status"/>
+                                    <field name="employee_feedback" readonly="1"/>
+                                    <button name="%(action_ops_feedback_wizard)d" 
+                                            string="Employee Evaluate (Admin)" 
+                                            type="action" 
+                                            class="btn-primary"
+                                            context="{'default_feedback_type': 'employee'}"
+                                            invisible="employee_feedback_status == 'done'"
+                                            groups="base.group_system"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    <!-- Manager Schedule Action -->
+    <record id="action_manager_schedule" model="ir.actions.act_window">
+        <field name="name">Manager Development Program</field>
+        <field name="res_model">mcd.manager.schedule</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

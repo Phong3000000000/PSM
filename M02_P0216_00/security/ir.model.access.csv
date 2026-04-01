@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_shift_evaluation_user,shift.evaluation.user,model_shift_evaluation,base.group_user,1,1,1,1
+access_post_shift_user,post.shift.user,model_post_shift,base.group_user,1,1,1,1
+access_shift_reward_user,shift.reward.user,model_shift_reward,base.group_user,1,1,1,1
+access_shift_reward_line_user,shift.reward.line.user,model_shift_reward_line,base.group_user,1,1,1,1
+access_shift_point_fund_user,shift.point.fund.user,model_shift_point_fund,base.group_user,1,1,1,1
+access_point_grant_user,point.grant.user,model_point_grant,base.group_user,1,1,1,1
+access_voucher_voucher_user,voucher.voucher.user,model_voucher_voucher,base.group_user,1,1,1,1
+access_voucher_redeem_user,voucher.redeem.user,model_voucher_redeem,base.group_user,1,1,1,1
+access_voucher_generator_user,voucher.generator.user,model_voucher_generator,base.group_user,1,1,1,1
+access_urbox_partner_user,urbox.partner.user,model_urbox_partner,base.group_user,1,0,0,0
+access_urbox_partner_manager,urbox.partner.manager,model_urbox_partner,base.group_system,1,1,1,1
+

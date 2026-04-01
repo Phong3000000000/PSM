@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_eotq_list" name="Portal EOTQ Winners">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <div class="o_portal_wrap">
+                <div class="container py-4">
+                    <h2 class="text-center mb-4">
+                        <i class="fa fa-trophy text-warning"></i>
+                        Nhân viên xuất sắc của Quý
+                    </h2>
+
+                    <t t-if="rewards">
+                        <div class="row">
+                            <t t-foreach="rewards" t-as="reward">
+                                <div class="col-md-4 mb-4">
+                                    <div class="card h-100 shadow-sm">
+                                        <div class="card-header bg-primary text-white text-center">
+                                            <strong t-field="reward.name"/>
+                                        </div>
+                                        <div class="card-body text-center">
+                                            <h5 class="card-title" t-field="reward.employee_id.name"/>
+                                            <p class="card-text text-muted">
+                                                <span t-field="reward.company_id.name"/>
+                                            </p>
+                                            <p class="mb-0">
+                                                <span class="badge badge-success" style="font-size: 1.1em;">
+                                                    Điểm: <span t-field="reward.score"/>
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+
+                    <t t-else="">
+                        <div class="alert alert-info text-center">
+                            Chưa có nhân viên xuất sắc của Quý nào được xác nhận.
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_my_home_shift_evaluation" name="Show Shift Evaluations" inherit_id="portal.portal_my_home" priority="100">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Shift Evaluations (MIC)</t>
+                <t t-set="url" t-value="'/my/shift_evaluations'"/>
+                <t t-set="placeholder_count" t-value="'0'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_shift_evaluation_list" name="Shift Evaluations">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <div class="o_portal_wrap">
+                <div class="container py-4">
+                    <h3>Shift Evaluations</h3>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Shift</th>
+                                    <th>State</th>
+                                    <th>Employees</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="evaluations" t-as="eval">
+                                    <tr>
+                                        <td><span t-field="eval.date"/></td>
+                                        <td><span t-field="eval.shift"/></td>
+                                        <td>
+                                            <span t-field="eval.state" class="badge badge-info" t-if="eval.state == 'draft'"/>
+                                            <span t-field="eval.state" class="badge badge-warning" t-if="eval.state == 'in_progress'"/>
+                                            <span t-field="eval.state" class="badge badge-success" t-if="eval.state == 'done'"/>
+                                        </td>
+                                        <td><span t-esc="len(eval.employee_ids)"/></td>
+                                        <td>
+                                            <a t-att-href="'/my/shift_evaluation/%s' % eval.id" class="btn btn-sm btn-primary">
+                                                Detail
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_shift_evaluation_detail" name="Shift Evaluation Detail">
+        <t t-call="portal.portal_layout">
+            <div class="container py-4">
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <h3>Evaluation: <span t-field="evaluation.name"/></h3>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <a href="/my/shift_evaluations" class="btn btn-secondary">Back to List</a>
+                    </div>
+                </div>
+
+                <div t-if="request.params.get('success')" class="alert alert-success">
+                    Scores saved successfully!
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Date:</strong> <span t-field="evaluation.date"/><br/>
+                                <strong>Shift:</strong> <span t-field="evaluation.shift"/><br/>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>MIC:</strong> <span t-field="evaluation.mic_id.name"/><br/>
+                                <strong>State:</strong> <span t-field="evaluation.state"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <form t-att-action="'/my/shift_evaluation/grade/%s' % evaluation.id" method="POST">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th style="width: 20%">Employee</th>
+                                    <th style="width: 15%">Score</th>
+                                    <th>Description/Note</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="evaluation.post_shift_ids" t-as="ps">
+                                    <tr>
+                                        <td class="align-middle">
+                                            <span t-field="ps.employee_id.name"/>
+                                            <br/>
+                                            <small class="text-muted" t-field="ps.employee_id.job_id.name"/>
+                                        </td>
+                                        <td>
+                                            <input type="number" step="0.5" class="form-control" 
+                                                   t-att-name="'score_%s' % ps.id" 
+                                                   t-att-value="ps.score"
+                                                   t-att-readonly="evaluation.state == 'done'"/>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" 
+                                                   t-att-name="'desc_%s' % ps.id" 
+                                                   t-att-value="ps.description or ''"
+                                                   t-att-readonly="evaluation.state == 'done'"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="text-center mt-4" t-if="evaluation.state != 'done'">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fa fa-save"/> Save Scores
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </t>
+    </template>
+</odoo>

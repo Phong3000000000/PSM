@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="psm_db_sync.dashboard_template">
+        <div class="o_psm_db_sync_dashboard">
+            <div class="container-fluid">
+
+                <!-- Header -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="page-header">
+                            <h1 class="page-title">
+                                <i class="fa fa-sync-alt me-2"></i>
+                                Dashboard Đồng Bộ Cơ Sở Dữ Liệu
+                            </h1>
+                            <div class="page-subtitle text-muted">
+                                Giám sát và quản lý các kết nối và nhiệm vụ đồng bộ
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div t-if="state.loading" class="row">
+                    <div class="col-12 text-center">
+                        <div class="card">
+                            <div class="card-body py-5">
+                                <i class="fa fa-spinner fa-spin fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">Đang tải dữ liệu dashboard...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div t-if="!state.loading">
+                    <!-- Stats Cards -->
+                    <div class="row mb-4">
+                        <div class="col-lg-2 col-6 mb-3">
+                            <div class="card card-stats">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="icon-big text-center">
+                                                <i class="fa fa-plug text-info"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-8">
+                                            <div class="numbers">
+                                                <p class="card-category">Kết nối</p>
+                                                <h4 class="card-title">
+                                                    <t t-esc="state.data.overview.connections || 0"/>
+                                                </h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-6 mb-3">
+                            <div class="card card-stats">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="icon-big text-center">
+                                                <i class="fa fa-sitemap text-success"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-8">
+                                            <div class="numbers">
+                                                <p class="card-category">Ánh xạ</p>
+                                                <h4 class="card-title">
+                                                    <t t-esc="state.data.overview.mappings || 0"/>
+                                                </h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-6 mb-3">
+                            <div class="card card-stats">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="icon-big text-center">
+                                                <i class="fa fa-tasks text-warning"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-8">
+                                            <div class="numbers">
+                                                <p class="card-category">Nhiệm vụ</p>
+                                                <h4 class="card-title">
+                                                    <t t-esc="state.data.overview.sync_tasks || 0"/>
+                                                </h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-6 mb-3">
+                            <div class="card card-stats">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="icon-big text-center">
+                                                <i class="fa fa-spinner text-primary"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-8">
+                                            <div class="numbers">
+                                                <p class="card-category">Đang chạy</p>
+                                                <h4 class="card-title">
+                                                    <t t-esc="state.data.overview.running_tasks || 0"/>
+                                                </h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-6 mb-3">
+                            <div class="card card-stats">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="icon-big text-center">
+                                                <i class="fa fa-exclamation-triangle text-danger"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-8">
+                                            <div class="numbers">
+                                                <p class="card-category">Lỗi</p>
+                                                <h4 class="card-title">
+                                                    <t t-esc="state.data.overview.error_tasks || 0"/>
+                                                </h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-6 mb-3">
+                            <div class="card card-stats">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="icon-big text-center">
+                                                <i class="fa fa-chart-line text-success"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-8">
+                                            <div class="numbers">
+                                                <p class="card-category">Tỷ lệ thành công</p>
+                                                <h4 class="card-title">
+                                                    <t t-esc="(state.data.overview.success_rate || 0).toFixed(1)"/>%
+                                                </h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Content Row -->
+                    <div class="row">
+                        <!-- Connections Status -->
+                        <div class="col-lg-6 col-12 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">
+                                        <i class="fa fa-database me-2"></i>
+                                        Trạng thái kết nối
+                                    </h4>
+                                </div>
+                                <div class="card-body">
+                                    <t t-if="state.data.connections.length === 0">
+                                        <div class="text-center text-muted">
+                                            <i class="fa fa-database fa-3x mb-3"></i>
+                                            <p>Chưa có kết nối nào được cấu hình</p>
+                                            <a href="/web#action=psm_db_sync.action_psm_db_connection&amp;model=psm.db.connection&amp;view_type=form"
+                                               class="btn btn-primary btn-sm">
+                                                Tạo kết nối đầu tiên
+                                            </a>
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="list-group list-group-flush">
+                                            <t t-foreach="state.data.connections" t-as="conn" t-key="conn.id">
+                                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <div class="d-flex align-items-center">
+                                                            <i t-att-class="getDbTypeIcon(conn.db_type)" class="me-2"></i>
+                                                            <strong t-esc="conn.name"></strong>
+                                                            <span t-if="conn.status === 'connected'" class="badge badge-success ms-2">Kết nối</span>
+                                                            <span t-else="" class="badge badge-danger ms-2">Lỗi</span>
+                                                        </div>
+                                                        <small class="text-muted">
+                                                            <t t-esc="conn.db_type.toUpperCase()"/> •
+                                                            <t t-esc="conn.mapping_count"/> ánh xạ
+                                                        </small>
+                                                    </div>
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button class="btn btn-outline-primary btn-sm"
+                                                                t-on-click="() => this.testConnection(conn.id)">
+                                                            <i class="fa fa-plug"></i>
+                                                        </button>
+                                                        <a t-att-href="'/web#id=' + conn.id + '&amp;action=psm_db_sync.action_psm_db_connection&amp;model=psm.db.connection&amp;view_type=form'"
+                                                           class="btn btn-outline-info btn-sm">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Sync Logs -->
+                        <div class="col-lg-6 col-12 mb-4">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h4 class="card-title mb-0">
+                                        <i class="fa fa-history me-2"></i>
+                                        Nhật ký gần đây
+                                    </h4>
+                                    <button class="btn btn-sm btn-outline-primary" t-on-click="viewAllLogs">
+                                        <i class="fa fa-list me-1"></i>
+                                        Xem tất cả
+                                    </button>
+                                </div>
+                                <div class="card-body scrollable-logs">
+                                    <t t-if="state.data.recent_logs.length === 0">
+                                        <div class="text-center text-muted">
+                                            <i class="fa fa-history fa-3x mb-3"></i>
+                                            <p>Chưa có nhật ký đồng bộ nào</p>
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="list-group list-group-flush">
+                                            <t t-foreach="displayedLogs" t-as="log" t-key="log.id">
+                                                <div class="list-group-item">
+                                                    <div class="d-flex justify-content-between align-items-start">
+                                                        <div class="flex-grow-1">
+                                                            <div class="d-flex align-items-center mb-1">
+                                                                <i t-att-class="getLogStatusIcon(log.status)" class="me-2"></i>
+                                                                <strong t-esc="log.sync_name"></strong>
+                                                            </div>
+                                                            <small class="text-muted">
+                                                                <t t-esc="formatDateTime(log.start_time)"/> •
+                                                                <t t-esc="log.records_created"/> tạo,
+                                                                <t t-esc="log.records_updated"/> cập nhật,
+                                                                <t t-esc="log.records_failed"/> lỗi
+                                                            </small>
+                                                        </div>
+                                                        <div>
+                                                            <small class="text-muted">
+                                                                <t t-if="log.duration">
+                                                                    <t t-esc="Math.round(log.duration)"/>s
+                                                                </t>
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </div>
+
+                                        <t t-if="hasMoreLogs and !state.showAllLogs">
+                                            <div class="text-center mt-3">
+                                                <button class="btn btn-sm btn-link" t-on-click="toggleShowAllLogs">
+                                                    <i class="fa fa-chevron-down me-1"></i>
+                                                    Xem thêm (<t t-esc="state.data.recent_logs.length - state.maxLogsDisplay"/> nhật ký)
+                                                </button>
+                                            </div>
+                                        </t>
+                                        <t t-elif="state.showAllLogs and hasMoreLogs">
+                                            <div class="text-center mt-3">
+                                                <button class="btn btn-sm btn-link" t-on-click="toggleShowAllLogs">
+                                                    <i class="fa fa-chevron-up me-1"></i>
+                                                    Thu gọn
+                                                </button>
+                                            </div>
+                                        </t>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="row quick-actions-section">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">
+                                        <i class="fa fa-bolt me-2"></i>
+                                        Thao tác nhanh
+                                    </h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-lg-3 col-6 mb-3">
+                                            <a href="/web#action=psm_db_sync.action_psm_db_connection&amp;model=psm.db.connection&amp;view_type=form"
+                                               class="btn btn-primary btn-block">
+                                                <i class="fa fa-plus me-2"></i>
+                                                Tạo kết nối mới
+                                            </a>
+                                        </div>
+                                        <div class="col-lg-3 col-6 mb-3">
+                                            <a href="/web#action=psm_db_sync.action_psm_db_mapping_model&amp;model=psm.db.mapping.model&amp;view_type=form"
+                                               class="btn btn-info btn-block">
+                                                <i class="fa fa-sitemap me-2"></i>
+                                                Tạo ánh xạ mới
+                                            </a>
+                                        </div>
+                                        <div class="col-lg-3 col-6 mb-3">
+                                            <a href="/web#action=psm_db_sync.action_psm_db_wizard&amp;model=psm.db.wizard&amp;view_type=form"
+                                               class="btn btn-success btn-block">
+                                                <i class="fa fa-sync me-2"></i>
+                                                Đồng bộ thủ công
+                                            </a>
+                                        </div>
+                                        <div class="col-lg-3 col-6 mb-3">
+                                            <a href="/web#action=psm_db_sync.action_psm_db_sync_log&amp;model=psm.db.sync.log&amp;view_type=list"
+                                               class="btn btn-warning btn-block">
+                                                <i class="fa fa-list me-2"></i>
+                                                Xem nhật ký
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Salary Increase Configuration Data -->
+        
+        <!-- Exceptional Performance: rating >= 3.75 -->
+        <record id="salary_increase_exceptional" model="salary.increase.config">
+            <field name="name">Exceptional Performance</field>
+            <field name="rating_from">3.75</field>
+            <field name="rating_to">10.0</field>
+            <field name="increase_percentage">0.15</field>
+            <field name="sequence">1</field>
+        </record>
+        
+        <!-- Significant High: 3.5 <= rating < 3.75 -->
+        <record id="salary_increase_significant_high" model="salary.increase.config">
+            <field name="name">Significant High</field>
+            <field name="rating_from">3.5</field>
+            <field name="rating_to">3.74</field>
+            <field name="increase_percentage">0.12</field>
+            <field name="sequence">2</field>
+        </record>
+        
+        <!-- Significant Medium: 3.25 <= rating < 3.5 -->
+        <record id="salary_increase_significant_medium" model="salary.increase.config">
+            <field name="name">Significant Medium</field>
+            <field name="rating_from">3.25</field>
+            <field name="rating_to">3.49</field>
+            <field name="increase_percentage">0.10</field>
+            <field name="sequence">3</field>
+        </record>
+        
+        <!-- Significant Low: 3.0 <= rating < 3.25 -->
+        <record id="salary_increase_significant_low" model="salary.increase.config">
+            <field name="name">Significant Low</field>
+            <field name="rating_from">3.0</field>
+            <field name="rating_to">3.24</field>
+            <field name="increase_percentage">0.08</field>
+            <field name="sequence">4</field>
+        </record>
+        
+        <!-- Some Improvement Required: 2.0 <= rating < 3.0 -->
+        <record id="salary_increase_some_improvement" model="salary.increase.config">
+            <field name="name">Some Improvement Required</field>
+            <field name="rating_from">2.0</field>
+            <field name="rating_to">2.99</field>
+            <field name="increase_percentage">0.05</field>
+            <field name="sequence">5</field>
+        </record>
+        
+        <!-- Unacceptable: rating < 2.0 -->
+        <record id="salary_increase_unacceptable" model="salary.increase.config">
+            <field name="name">Unacceptable</field>
+            <field name="rating_from">0.0</field>
+            <field name="rating_to">1.99</field>
+            <field name="increase_percentage">0.0</field>
+            <field name="sequence">6</field>
+        </record>
+        
+    </data>
+</odoo>

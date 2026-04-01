@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ========================================== -->
+    <!-- ATTENDANCE RATING VIEWS                    -->
+    <!-- ========================================== -->
+    <!-- Tree View -->
+    <record id="attendance_rating_tree" model="ir.ui.view">
+        <field name="name">attendance.rating.tree</field>
+        <field name="model">attendance.rating</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="date" />
+                <field name="employee_id" />
+                <field name="performance_rating" />
+                <field name="confirmed_hours" widget="float_time" />
+                <field name="is_confirmed" />
+                <field name="note" />
+            </list>
+        </field>
+    </record>
+    <!-- Form View -->
+    <record id="attendance_rating_form" model="ir.ui.view">
+        <field name="name">attendance.rating.form</field>
+        <field name="model">attendance.rating</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group string="Thông tin">
+                            <field name="employee_id" />
+                            <field name="date" />
+                            <field name="attendance_id" />
+                        </group>
+                        <group string="Đánh giá">
+                            <field name="performance_rating" widget="radio" />
+                            <field name="confirmed_hours" widget="float_time" />
+                            <field name="is_confirmed" />
+                        </group>
+                    </group>
+                    <group string="Ghi chú">
+                        <field name="note" nolabel="1" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- Pivot View -->
+    <record id="attendance_rating_pivot" model="ir.ui.view">
+        <field name="name">attendance.rating.pivot</field>
+        <field name="model">attendance.rating</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="employee_id" type="row" />
+                <field name="date" type="col" interval="month" />
+                <field name="performance_rating" type="measure" />
+            </pivot>
+        </field>
+    </record>
+    <!-- Action -->
+    <record id="action_attendance_rating" model="ir.actions.act_window">
+        <field name="name">Đánh giá cuối ca</field>
+        <field name="res_model">attendance.rating</field>
+        <field name="view_mode">list,form,pivot</field>
+    </record>
+    <!-- Menu (add to Workforce menu) -->
+    <menuitem id="menu_attendance_rating" name="Đánh giá cuối ca" parent="M02_P0206_00.menu_workforce_attendance" action="action_attendance_rating" sequence="20" />
+</odoo>

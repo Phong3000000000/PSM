@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="approval_request_view_form_inherit_ops" model="ir.ui.view">
+        <field name="name">approval.request.view.form.inherit.ops</field>
+        <field name="model">approval.request</field>
+        <field name="inherit_id" ref="approvals.approval_request_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Smart button: link to Payslip Approval UI -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_payslip_run" type="object" class="oe_stat_button" icon="fa-money" invisible="not payslip_run_id">
+                    <field name="payslip_run_id" widget="statinfo" string="Pay Run" nolabel="1"/>
+                </button>
+                <button name="action_view_payment_order" type="object" class="oe_stat_button" icon="fa-file-text-o" invisible="payment_order_count == 0">
+                    <field name="payment_order_count" widget="statinfo" string="Payment Order"/>
+                </button>
+                <!-- Smart button: link trực tiếp tới Payment Authorization (C-Level request) -->
+                <button name="action_view_direct_pa" type="object" class="oe_stat_button" icon="fa-university" invisible="not direct_pa_id">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Payment Authorization</span>
+                    </div>
+                </button>
+            </xpath>
+            <!-- Approve Payslips button in header — approve all pending payslips in the run -->
+            <xpath expr="//button[@name='action_approve']" position="before">
+                <button name="action_approve_payslips"
+                        string="Approve Payslips"
+                        type="object"
+                        class="btn-success"
+                        icon="fa-check-circle"
+                        invisible="not payslip_run_id or request_status in ['approved', 'refused', 'cancel']"
+                        groups="hr.group_hr_manager"/>
+            </xpath>
+            <!-- Show payslip_run_id field in form -->
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="payslip_run_id" readonly="1" invisible="not payslip_run_id"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+

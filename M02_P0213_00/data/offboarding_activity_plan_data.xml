@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Offboarding Activity Plan for Employees -->
+    <record id="offboarding_activity_plan" model="mail.activity.plan">
+        <field name="name">Quy trình nghỉ việc</field>
+        <field name="res_model">hr.employee</field>
+        <field name="active" eval="True"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+
+    <!-- Activity Template 1: Thu hồi tài sản (Asset Recovery) -->
+    <record id="offboarding_template_asset_recovery" model="mail.activity.plan.template">
+        <field name="plan_id" ref="offboarding_activity_plan"/>
+        <field name="sequence">10</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">Thu hồi tài sản công ty (laptop, điện thoại, thẻ nhân viên, chìa khóa...)</field>
+        <field name="note"><![CDATA[<p>Kiểm tra và thu hồi tất cả tài sản công ty đã cấp cho nhân viên:</p>
+<ul>
+    <li>Laptop/Máy tính</li>
+    <li>Điện thoại công ty</li>
+    <li>Thẻ nhân viên</li>
+    <li>Chìa khóa văn phòng</li>
+    <li>Các thiết bị khác</li>
+</ul>]]></field>
+        <field name="delay_count">0</field>
+        <field name="delay_unit">days</field>
+        <field name="delay_from">before_plan_date</field>
+        <field name="responsible_type">manager</field>
+    </record>
+
+    <!-- Activity Template 2: Đánh giá hư hại (Damage Assessment) -->
+    <record id="offboarding_template_damage_assessment" model="mail.activity.plan.template">
+        <field name="plan_id" ref="offboarding_activity_plan"/>
+        <field name="sequence">20</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">Đánh giá tình trạng và hư hại tài sản thu hồi</field>
+        <field name="note"><![CDATA[<p>Kiểm tra tình trạng các tài sản đã thu hồi:</p>
+<ul>
+    <li>Đánh giá mức độ hư hại (nếu có)</li>
+    <li>Xác định chi phí sửa chữa/thay thế</li>
+    <li>Lập biên bản bàn giao tài sản</li>
+    <li>Thông báo cho bộ phận kế toán nếu cần trừ lương</li>
+</ul>]]></field>
+        <field name="delay_count">0</field>
+        <field name="delay_unit">days</field>
+        <field name="delay_from">before_plan_date</field>
+        <field name="responsible_type">manager</field>
+    </record>
+
+    <!-- Activity Template 3: Deactive Email -->
+    <record id="offboarding_template_deactive_email" model="mail.activity.plan.template">
+        <field name="plan_id" ref="offboarding_activity_plan"/>
+        <field name="sequence">30</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">Vô hiệu hóa tài khoản email và hệ thống</field>
+        <field name="note"><![CDATA[<p>Vô hiệu hóa các tài khoản của nhân viên:</p>
+<ul>
+    <li>Tài khoản email công ty</li>
+    <li>Tài khoản Active Directory/LDAP</li>
+    <li>Tài khoản ERP/Odoo</li>
+    <li>Các tài khoản hệ thống nội bộ khác</li>
+    <li>Thu hồi quyền truy cập VPN</li>
+</ul>]]></field>
+        <field name="delay_count">0</field>
+        <field name="delay_unit">days</field>
+        <field name="delay_from">after_plan_date</field>
+        <field name="responsible_type">on_demand</field>
+    </record>
+
+    <!-- Activity Template 4: Hoàn thành Expense Claim -->
+    <record id="offboarding_template_expense_claim" model="mail.activity.plan.template">
+        <field name="plan_id" ref="offboarding_activity_plan"/>
+        <field name="sequence">40</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">Hoàn tất các đề nghị thanh toán chi phí (Expense Claim)</field>
+        <field name="note"><![CDATA[<p>Xử lý các expense claim còn tồn đọng:</p>
+<ul>
+    <li>Kiểm tra các expense report chưa nộp</li>
+    <li>Duyệt/từ chối các expense claim đang chờ</li>
+    <li>Hoàn tất thanh toán các expense đã duyệt</li>
+    <li>Thông báo nhân viên về tình trạng thanh toán cuối cùng</li>
+</ul>]]></field>
+        <field name="delay_count">0</field>
+        <field name="delay_unit">days</field>
+        <field name="delay_from">before_plan_date</field>
+        <field name="responsible_type">employee</field>
+    </record>
+    <!-- Activity Template 5: Exit Interview -->
+    <record id="offboarding_template_exit_interview" model="mail.activity.plan.template">
+        <field name="plan_id" ref="offboarding_activity_plan"/>
+        <field name="sequence">50</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">Hoàn thành Exit Interview</field>
+        <field name="note"><![CDATA[<p>Nhân viên cần hoàn thành khảo sát Exit Interview.</p>]]></field>
+        <field name="delay_count">0</field>
+        <field name="delay_unit">days</field>
+        <field name="delay_from">after_plan_date</field>
+        <field name="responsible_type">employee</field>
+    </record>
+</odoo>

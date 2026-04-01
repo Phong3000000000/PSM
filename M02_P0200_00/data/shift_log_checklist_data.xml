@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ======================== -->
+        <!-- PRE-SHIFT CHECKLIST      -->
+        <!-- ======================== -->
+
+        <record id="checklist_pre_hygiene" model="shift.log.checklist">
+            <field name="name">Kiểm tra vệ sinh khu vực / thiết bị</field>
+            <field name="shift_phase">preshift</field>
+            <field name="category">Vệ sinh</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <record id="checklist_pre_inventory" model="shift.log.checklist">
+            <field name="name">Kiểm tra nguyên liệu / hàng tồn kho</field>
+            <field name="shift_phase">preshift</field>
+            <field name="category">Kho</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <record id="checklist_pre_briefing" model="shift.log.checklist">
+            <field name="name">Họp briefing đầu ca (giao nhiệm vụ)</field>
+            <field name="shift_phase">preshift</field>
+            <field name="category">Quản lý</field>
+            <field name="sequence">3</field>
+        </record>
+
+        <record id="checklist_pre_food_safety" model="shift.log.checklist">
+            <field name="name">Kiểm tra an toàn thực phẩm / nhiệt độ</field>
+            <field name="shift_phase">preshift</field>
+            <field name="category">An toàn</field>
+            <field name="sequence">4</field>
+        </record>
+
+        <record id="checklist_pre_equipment" model="shift.log.checklist">
+            <field name="name">Kiểm tra thiết bị hoạt động</field>
+            <field name="shift_phase">preshift</field>
+            <field name="category">Thiết bị</field>
+            <field name="sequence">5</field>
+        </record>
+
+        <!-- ======================== -->
+        <!-- DURING SHIFT CHECKLIST   -->
+        <!-- ======================== -->
+
+        <record id="checklist_during_food_quality" model="shift.log.checklist">
+            <field name="name">Kiểm tra chất lượng sản phẩm (Food Quality Check)</field>
+            <field name="shift_phase">during</field>
+            <field name="category">Chất lượng</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <record id="checklist_during_sos" model="shift.log.checklist">
+            <field name="name">Kiểm tra tốc độ phục vụ (Speed of Service)</field>
+            <field name="shift_phase">during</field>
+            <field name="category">Hiệu suất</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <record id="checklist_during_hygiene" model="shift.log.checklist">
+            <field name="name">Kiểm tra vệ sinh giữa ca</field>
+            <field name="shift_phase">during</field>
+            <field name="category">Vệ sinh</field>
+            <field name="sequence">3</field>
+        </record>
+
+        <record id="checklist_during_sales" model="shift.log.checklist">
+            <field name="name">Theo dõi doanh số / GC so với target</field>
+            <field name="shift_phase">during</field>
+            <field name="category">Doanh số</field>
+            <field name="sequence">4</field>
+        </record>
+
+        <record id="checklist_during_customer" model="shift.log.checklist">
+            <field name="name">Xử lý sự cố / phản hồi khách hàng</field>
+            <field name="shift_phase">during</field>
+            <field name="category">Khách hàng</field>
+            <field name="sequence">5</field>
+        </record>
+
+        <!-- ======================== -->
+        <!-- POST-SHIFT CHECKLIST     -->
+        <!-- ======================== -->
+
+        <record id="checklist_post_sales" model="shift.log.checklist">
+            <field name="name">Tổng kết doanh số ca</field>
+            <field name="shift_phase">postshift</field>
+            <field name="category">Doanh số</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <record id="checklist_post_hygiene" model="shift.log.checklist">
+            <field name="name">Kiểm tra vệ sinh cuối ca</field>
+            <field name="shift_phase">postshift</field>
+            <field name="category">Vệ sinh</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <record id="checklist_post_handover" model="shift.log.checklist">
+            <field name="name">Bàn giao ca tiếp theo</field>
+            <field name="shift_phase">postshift</field>
+            <field name="category">Quản lý</field>
+            <field name="sequence">3</field>
+        </record>
+
+        <record id="checklist_post_incidents" model="shift.log.checklist">
+            <field name="name">Ghi nhận sự cố / vấn đề trong ca</field>
+            <field name="shift_phase">postshift</field>
+            <field name="category">Sự cố</field>
+            <field name="sequence">4</field>
+        </record>
+
+        <record id="checklist_post_best_emp" model="shift.log.checklist">
+            <field name="name">Chọn nhân viên xuất sắc nhất ca</field>
+            <field name="shift_phase">postshift</field>
+            <field name="category">Đánh giá</field>
+            <field name="sequence">5</field>
+        </record>
+
+    </data>
+</odoo>

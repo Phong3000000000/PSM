@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="approval_category_form_inherit_detail_info" model="ir.ui.view">
+        <field name="name">approval.category.form.detail.info</field>
+        <field name="model">approval.category</field>
+        <field name="inherit_id" ref="approvals.approval_category_view_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Chèn đúng khu vực các has_* -->
+            <xpath expr="//field[@name='has_product']" position="after">
+                <field name="has_detail_information" widget="radio" options="{'horizontal': true}"/>
+                <field name="is_business_trip" widget="radio" options="{'horizontal': true}"/>
+                <field name="default_ticket_purchaser_id" invisible="is_business_trip != 'yes'"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

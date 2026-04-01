@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Email Template: Interview Invitation -->
+        <record id="email_interview_invitation" model="mail.template">
+            <field name="name">Thư Mời Phỏng Vấn Cửa Hàng</field>
+            <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+            <field name="subject">Thư Mời Phỏng Vấn - {{object.company_id.name ||| Cửa Hàng}}</field>
+            <field name="email_from">{{object.user_id.email_formatted or object.company_id.email_formatted or 'noreply@example.com'}}</field>
+            <field name="email_to">{{object.email_from}}</field>
+            <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+    <!-- Header -->
+    <div style="background-color: #00a09d; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1 style="margin: 0; font-size: 28px;">Thư Mời Phỏng Vấn</h1>
+        <p style="margin: 10px 0 0 0; font-size: 16px;"><t t-out="object.company_id.name"/></p>
+    </div>
+
+    <!-- Content -->
+    <div style="background-color: white; padding: 30px; border-radius: 0 0 10px 10px;">
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            Kính gửi <strong style="color: #00a09d;"><t t-out="object.partner_name"/></strong>,
+        </p>
+
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            Chúng tôi rất vui mừng thông báo rằng hồ sơ của bạn đã được chọn để tham gia phỏng vấn cho vị trí 
+            <strong><t t-out="object.job_id.name or 'N/A'"/></strong> tại <strong><t t-out="object.company_id.name"/></strong>.
+        </p>
+
+        <!-- 3 Ngày PV -->
+        <div style="background-color: #f0f8ff; padding: 20px; border-left: 4px solid #00a09d; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #00a09d;">Lịch Phỏng Vấn Dự Kiến</h3>
+            <p style="color: #666; margin-bottom: 15px;">Vui lòng chọn một trong ba thời gian sau (theo thứ tự ưu tiên):</p>
+            
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="padding: 10px; background-color:white; border: 1px solid #ddd;">
+                        <strong style="color: #00a09d;">Lựa chọn 1:</strong><br/>
+                        <span style="font-size: 18px; color: #333;">
+                            <t t-if="object.interview_schedule_id and object.interview_schedule_id.interview_date_1">
+                                <t t-out="format_datetime(object.interview_schedule_id.interview_date_1, tz='Asia/Ho_Chi_Minh', dt_format='EEEE, dd MMMM yyyy - HH:mm', lang_code='vi_VN')"/>
+                            </t>
+                            <t t-else="">Chưa xác định</t>
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; background-color: white; border: 1px solid #ddd;">
+                        <strong style="color: #00a09d;">Lựa chọn 2:</strong><br/>
+                        <span style="font-size: 18px; color: #333;">
+                            <t t-if="object.interview_schedule_id and object.interview_schedule_id.interview_date_2">
+                                <t t-out="format_datetime(object.interview_schedule_id.interview_date_2, tz='Asia/Ho_Chi_Minh', dt_format='EEEE, dd MMMM yyyy - HH:mm', lang_code='vi_VN')"/>
+                            </t>
+                            <t t-else="">Chưa xác định</t>
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; background-color: white; border: 1px solid #ddd;">
+                        <strong style="color: #00a09d;">Lựa chọn 3:</strong><br/>
+                        <span style="font-size: 18px; color: #333;">
+                            <t t-if="object.interview_schedule_id and object.interview_schedule_id.interview_date_3">
+                                <t t-out="format_datetime(object.interview_schedule_id.interview_date_3, tz='Asia/Ho_Chi_Minh', dt_format='EEEE, dd MMMM yyyy - HH:mm', lang_code='vi_VN')"/>
+                            </t>
+                            <t t-else="">Chưa xác định</t>
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Survey CTA -->
+        <div style="background-color: #fff3cd; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+            <h3 style="color: #856404; margin-top: 0;">Vui Lòng Hoàn Thành Khảo Sát</h3>
+            <p style="color: #856404; margin-bottom: 20px;">
+                Trước khi phỏng vấn, vui lòng điền khảo sát để chúng tôi hiểu thêm về bạn:
+            </p>
+            <a t-att-href="object.survey_url" 
+               style="display: inline-block; background-color: #00a09d; color: white; padding: 15px 40px; 
+                      text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">
+                ĐIỀN KHẢO SÁT NGAY
+            </a>
+        </div>
+
+        <!-- Store Info -->
+        <div style="margin-top: 30px; padding: 20px; background-color: #f9f9f9; border-radius: 8px;">
+            <h4 style="margin-top: 0; color: #333;">Thông Tin Cửa Hàng</h4>
+            <p style="margin: 5px 0; color: #666;">
+                <strong>Tên:</strong> <t t-out="object.company_id.name"/><br/>
+                <t t-if="object.company_id.partner_id.street">
+                    <strong>Địa chỉ:</strong> <t t-out="object.company_id.partner_id.street"/><br/>
+                </t>
+                <t t-if="object.company_id.partner_id.phone">
+                    <strong>Điện thoại:</strong> <t t-out="object.company_id.partner_id.phone"/><br/>
+                </t>
+            </p>
+        </div>
+
+        <!-- Footer Note -->
+        <p style="margin-top: 30px; font-size: 14px; color: #666; line-height: 1.6;">
+            Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email hoặc số điện thoại trên.
+        </p>
+
+        <p style="margin-top: 20px; font-size: 16px; color: #333;">
+            Trân trọng,<br/>
+            <strong>Phòng Nhân Sự</strong><br/>
+            <t t-out="object.company_id.name"/>
+        </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; padding: 20px; color: #999; font-size: 12px;">
+        <p style="margin: 0;">Email này được gửi tự động từ hệ thống tuyển dụng</p>
+        <p style="margin: 5px 0 0 0;">© <t t-out="object.company_id.name"/> - All rights reserved</p>
+    </div>
+</div>
+            </field>
+        </record>
+
+        <record id="email_interview_confirmation_accept" model="mail.template">
+            <field name="name">Xác nhận lịch phỏng vấn (Accept)</field>
+            <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+            <field name="subject">Xác nhận lịch phỏng vấn - {{object.company_id.name or 'Công ty'}}</field>
+            <field name="email_from">{{object.user_id.email_formatted or object.company_id.email_formatted or 'noreply@example.com'}}</field>
+            <field name="email_to">{{object.email_from}}</field>
+            <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; max-width: 620px; margin: 0 auto; padding: 20px; background: #f4f6f8;">
+    <div style="background: #006a8e; color: #fff; padding: 24px; border-radius: 10px 10px 0 0; text-align: center;">
+        <h2 style="margin: 0; font-size: 24px;">Xác nhận lịch phỏng vấn</h2>
+        <p style="margin: 10px 0 0 0;">Vui lòng bấm Accept để chốt lịch chính thức</p>
+    </div>
+
+    <div style="background: #fff; padding: 24px; border-radius: 0 0 10px 10px; border: 1px solid #dde3e8; border-top: 0;">
+        <p>Chào <strong><t t-out="object.partner_name or 'Ứng viên'"/></strong>,</p>
+        <p>Hệ thống đã ghi nhận lựa chọn khung giờ ưu tiên của bạn từ survey:</p>
+        <p style="background: #eef7ff; border-left: 4px solid #006a8e; padding: 10px 14px; font-weight: 600; margin: 10px 0 18px 0;">
+            <t t-out="ctx.get('preferred_slot_label') or 'Chưa ghi nhận lựa chọn cụ thể'"/>
+        </p>
+
+        <p>Lịch dự kiến hiện tại:</p>
+        <ul style="padding-left: 20px; margin-top: 8px;">
+            <li><t t-out="ctx.get('slot_1_label')"/></li>
+            <li><t t-out="ctx.get('slot_2_label')"/></li>
+            <li><t t-out="ctx.get('slot_3_label')"/></li>
+        </ul>
+
+        <p style="margin-top: 18px;">Hệ thống sẽ chỉ tạo lịch chính thức sau khi bạn xác nhận.</p>
+        <div style="text-align: center; margin: 24px 0;">
+            <a t-att-href="ctx.get('interview_accept_url')"
+               style="display: inline-block; background: #00a16b; color: #fff; text-decoration: none; padding: 13px 28px; border-radius: 6px; font-weight: 700;">
+                ACCEPT LỊCH PHỎNG VẤN
+            </a>
+        </div>
+
+        <p style="font-size: 13px; color: #66707a;">
+            Nếu nút không hoạt động, vui lòng mở liên kết sau:<br/>
+            <a t-att-href="ctx.get('interview_accept_url')"><t t-out="ctx.get('interview_accept_url')"/></a>
+        </p>
+
+        <p style="margin-top: 22px;">Trân trọng,<br/><strong>Phòng Nhân Sự</strong></p>
+    </div>
+</div>
+            </field>
+        </record>
+    </data>
+
+    <!-- Email Template: Survey Invitation Post-Apply -->
+    <record id="email_applicant_survey_invite" model="mail.template">
+        <field name="name">Thông báo: Mời làm bài test năng lực</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="subject">Mời làm bài test năng lực - {{object.job_id.name}}</field>
+        <field name="email_from">{{object.user_id.email_formatted or object.company_id.email_formatted or 'noreply@recruitment.com'}}</field>
+        <field name="email_to">{{object.email_from}}</field>
+        <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+    <!-- Header -->
+    <div style="background-color: #e9ecef; color: #495057; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1 style="margin: 0; font-size: 24px;">Yêu cầu làm bài Test Năng Lực</h1>
+        <p style="margin: 10px 0 0 0; font-size: 16px;"><t t-out="object.company_id.name"/></p>
+    </div>
+
+    <!-- Content -->
+    <div style="background-color: white; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #dee2e6; border-top: none;">
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            Chào bạn <strong style="color: #00a09d;"><t t-out="object.partner_name"/></strong>,
+        </p>
+
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            Cảm ơn bạn đã ứng tuyển vị trí <strong><t t-out="object.job_id.name"/></strong>. 
+            Để hoàn tất hồ sơ ứng tuyển, bạn vui lòng dành ít phút thực hiện bài đánh giá năng lực dưới đây.
+        </p>
+
+        <!-- CTA Button -->
+        <div style="text-align: center; margin: 30px 0;">
+            <a t-att-href="object.survey_url" 
+               style="display: inline-block; background-color: #007bff; color: white; padding: 15px 40px; 
+                      text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">
+                BẮT ĐẦU LÀM BÀI
+            </a>
+            <p style="margin-top: 10px; font-size: 13px; color: #666;">
+                <i>(Vui lòng hoàn thành trong vòng 24h kể từ khi nhận được email này)</i>
+            </p>
+        </div>
+
+        <p style="margin-top: 20px; font-size: 14px; color: #666;">
+            Nếu nút trên không hoạt động, bạn có thể copy đường dẫn sau dán vào trình duyệt:<br/>
+            <a t-att-href="object.survey_url" style="color: #00a09d; word-break: break-all;">
+                <t t-out="object.survey_url"/>
+            </a>
+        </p>
+        
+        <p style="margin-top: 30px; font-size: 16px; color: #333;">
+            Chúc bạn làm bài tốt!<br/>
+            <strong>Phòng Tuyển Dụng</strong>
+        </p>
+    </div>
+    
+    <!-- Footer -->
+    <div style="text-align: center; padding: 20px; color: #999; font-size: 12px;">
+        <p>© <t t-out="object.company_id.name"/> Recruitment System</p>
+    </div>
+</div>
+        </field>
+    </record>
+
+    <!-- Email Template: Congratulations - Passed Interview -->
+    <record id="email_congratulations" model="mail.template">
+        <field name="name">Chúc Mừng - Đậu Phỏng Vấn</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="subject">Chúc Mừng! Bạn đã trúng tuyển - {{object.job_id.name}}</field>
+        <field name="email_from">{{object.user_id.email_formatted or object.company_id.email_formatted or 'noreply@recruitment.com'}}</field>
+        <field name="email_to">{{object.email_from}}</field>
+        <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+    <!-- Header -->
+    <div style="background-color: #28a745; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1 style="margin: 0; font-size: 28px;">Chúc Mừng!</h1>
+        <p style="margin: 10px 0 0 0; font-size: 16px;">Bạn đã trúng tuyển</p>
+    </div>
+
+    <!-- Content -->
+    <div style="background-color: white; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #dee2e6; border-top: none;">
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            Kính gửi <strong style="color: #28a745;"><t t-out="object.partner_name"/></strong>,
+        </p>
+
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            Chúng tôi rất vui mừng thông báo rằng bạn đã <strong>trúng tuyển</strong> vị trí 
+            <strong><t t-out="object.job_id.name or 'N/A'"/></strong> 
+            tại <strong><t t-out="object.company_id.name or 'Công ty'"/></strong>.
+        </p>
+
+        <div style="background-color: #d4edda; padding: 20px; border-left: 4px solid #28a745; margin: 20px 0; border-radius: 4px;">
+            <h3 style="margin-top: 0; color: #155724;">Thông tin tuyển dụng</h3>
+            <p style="color: #155724; margin-bottom: 5px;">
+                <strong>Vị trí:</strong> <t t-out="object.job_id.name or 'N/A'"/>
+            </p>
+            <p style="color: #155724; margin-bottom: 5px;">
+                <strong>Đơn vị:</strong> <t t-out="object.company_id.name or 'N/A'"/>
+            </p>
+        </div>
+
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            Phòng Nhân sự sẽ liên hệ với bạn trong thời gian sớm nhất để hướng dẫn các bước tiếp theo.
+        </p>
+
+        <p style="margin-top: 30px; font-size: 16px; color: #333;">
+            Chúc mừng và hẹn gặp bạn!<br/>
+            <strong>Phòng Nhân Sự</strong><br/>
+            <t t-out="object.company_id.name or 'Công ty'"/>
+        </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; padding: 20px; color: #999; font-size: 12px;">
+        <p>© <t t-out="object.company_id.name or 'Company'"/> Recruitment System</p>
+    </div>
+</div>
+        </field>
+    </record>
+    <!-- Email Template: Rejection / Not Selected -->
+    <record id="email_rejection" model="mail.template">
+        <field name="name">Thông báo Kết quả Phỏng Vấn (Không trúng tuyển)</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="subject">Thông Báo Kết Quả Phỏng Vấn - {{object.job_id.name}}</field>
+        <field name="email_from">{{object.user_id.email_formatted or object.company_id.email_formatted or 'noreply@recruitment.com'}}</field>
+        <field name="email_to">{{object.email_from}}</field>
+        <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+    <!-- Header -->
+    <div style="background-color: #6c757d; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1 style="margin: 0; font-size: 24px;">Thông báo Kết quả Phỏng vấn</h1>
+        <p style="margin: 10px 0 0 0; font-size: 16px;"><t t-out="object.company_id.name"/></p>
+    </div>
+
+    <!-- Content -->
+    <div style="background-color: white; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #dee2e6; border-top: none;">
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            Kính gửi <strong style="color: #6c757d;"><t t-out="object.partner_name"/></strong>,
+        </p>
+
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            Cảm ơn bạn đã quan tâm và dành thời gian tham gia ứng tuyển cho vị trí 
+            <strong><t t-out="object.job_id.name or 'N/A'"/></strong> 
+            tại <strong><t t-out="object.company_id.name or 'Công ty'"/></strong>.
+        </p>
+
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            Sau quá trình đánh giá kỹ lưỡng, chúng tôi rất tiếc phải thông báo rằng ở thời điểm hiện tại, kinh nghiệm và kỹ năng của bạn chưa hoàn toàn phù hợp với yêu cầu của vị trí này.
+        </p>
+
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            Tuy nhiên, chúng tôi đánh giá cao những kinh nghiệm mà bạn đã chia sẻ trong hồ sơ và các vòng phỏng vấn. Hồ sơ của bạn đã được ghi nhận vào hệ thống lưu trữ ứng viên tiềm năng của chúng tôi. Chúng tôi sẽ ưu tiên liên hệ lại với bạn khi có những vị trí tuyển dụng khác phù hợp hơn trong tương lai.
+        </p>
+
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            Chúc bạn luôn thành công trên con đường sự nghiệp của mình!
+        </p>
+
+        <p style="margin-top: 30px; font-size: 16px; color: #333;">
+            Trân trọng,<br/>
+            <strong>Phòng Nhân Sự</strong><br/>
+            <t t-out="object.company_id.name or 'Công ty'"/>
+        </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; padding: 20px; color: #999; font-size: 12px;">
+        <p>© <t t-out="object.company_id.name or 'Company'"/> Recruitment System</p>
+    </div>
+</div>
+        </field>
+    </record>
+    <!-- Email Template: OJE Rejection -->
+    <record id="email_oje_rejection" model="mail.template">
+        <field name="name">Thông báo Kết quả Đánh Giá OJE (Không đạt)</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="subject">Thông Báo Kết Quả Đánh Giá OJE - {{object.job_id.name}}</field>
+        <field name="email_from">{{object.user_id.email_formatted or object.company_id.email_formatted or 'noreply@recruitment.com'}}</field>
+        <field name="email_to">{{object.email_from}}</field>
+        <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+    <!-- Header -->
+    <div style="background-color: #6c757d; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1 style="margin: 0; font-size: 24px;">Thông báo Kết quả Đánh Giá OJE</h1>
+        <p style="margin: 10px 0 0 0; font-size: 16px;"><t t-out="object.company_id.name"/></p>
+    </div>
+
+    <!-- Content -->
+    <div style="background-color: white; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #dee2e6; border-top: none;">
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            Kính gửi <strong style="color: #6c757d;"><t t-out="object.partner_name"/></strong>,
+        </p>
+
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            Cảm ơn bạn đã tham gia quá trình đánh giá thực tế (OJE) cho vị trí
+            <strong><t t-out="object.job_id.name or 'N/A'"/></strong>
+            tại <strong><t t-out="object.company_id.name or 'Công ty'"/></strong>.
+        </p>
+
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            Sau khi xem xét kỹ lưỡng kết quả đánh giá, chúng tôi rất tiếc phải thông báo rằng bạn chưa đáp ứng được các tiêu chí yêu cầu của vòng đánh giá OJE ở thời điểm hiện tại.
+        </p>
+
+        <!-- Fail Reasons -->
+        <t t-if="object.oje_fail_reason">
+        <div style="background-color: #f8d7da; padding: 20px; border-left: 4px solid #dc3545; margin: 20px 0; border-radius: 4px;">
+            <h3 style="margin-top: 0; color: #721c24;">Các tiêu chí chưa đạt:</h3>
+            <p style="color: #721c24; white-space: pre-line; margin: 0;"><t t-out="object.oje_fail_reason"/></p>
+        </div>
+        </t>
+
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            Chúng tôi đánh giá cao sự nỗ lực và thời gian bạn đã đầu tư trong suốt quá trình tuyển dụng. Hồ sơ của bạn sẽ được lưu lại để xem xét cho các cơ hội phù hợp trong tương lai.
+        </p>
+
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            Chúc bạn luôn thành công trên con đường sự nghiệp!
+        </p>
+
+        <p style="margin-top: 30px; font-size: 16px; color: #333;">
+            Trân trọng,<br/>
+            <strong>Phòng Nhân Sự</strong><br/>
+            <t t-out="object.company_id.name or 'Công ty'"/>
+        </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; padding: 20px; color: #999; font-size: 12px;">
+        <p>© <t t-out="object.company_id.name or 'Company'"/> Recruitment System</p>
+    </div>
+</div>
+        </field>
+    </record>
+
+    <record id="email_interview_slot_confirmed" model="mail.template">
+        <field name="name">Xác nhận lịch phỏng vấn tự động</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="subject">Xác nhận lịch phỏng vấn - {{object.company_id.name or 'Công ty'}}</field>
+        <field name="email_from">{{object.user_id.email_formatted or object.company_id.email_formatted or 'noreply@recruitment.com'}}</field>
+        <field name="email_to">{{object.email_from}}</field>
+        <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; max-width: 620px; margin: 0 auto; padding: 20px; background: #f4f7f8;">
+    <div style="background: #117a65; color: white; padding: 22px; border-radius: 10px 10px 0 0; text-align: center;">
+        <h2 style="margin: 0;">Lịch phỏng vấn đã được xác nhận</h2>
+    </div>
+    <div style="background: white; padding: 24px; border: 1px solid #d9e1e6; border-top: 0; border-radius: 0 0 10px 10px;">
+        <p>Chào <strong><t t-out="object.partner_name or 'Ứng viên'"/></strong>,</p>
+        <p>Bạn đã hoàn thành khảo sát và hệ thống đã giữ chỗ thành công cho lịch phỏng vấn của bạn.</p>
+        <p style="padding: 12px; background: #eefaf5; border-left: 4px solid #117a65;">
+            Thời gian phỏng vấn: <strong><t t-out="format_datetime(object.interview_confirmed_datetime, tz='Asia/Ho_Chi_Minh', dt_format='dd/MM/yyyy HH:mm', lang_code='vi_VN')"/></strong>
+        </p>
+        <p>Nếu có việc gấp cần đổi lịch, vui lòng liên hệ HR sớm để được hỗ trợ.</p>
+        <p>Trân trọng,<br/><strong>Phòng Nhân Sự</strong></p>
+    </div>
+</div>
+        </field>
+    </record>
+
+    <record id="email_interview_slot_full" model="mail.template">
+        <field name="name">Thông báo hết chỗ lịch phỏng vấn</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="subject">Thông báo lịch phỏng vấn đã hết chỗ - {{object.company_id.name or 'Công ty'}}</field>
+        <field name="email_from">{{object.user_id.email_formatted or object.company_id.email_formatted or 'noreply@recruitment.com'}}</field>
+        <field name="email_to">{{object.email_from}}</field>
+        <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; max-width: 620px; margin: 0 auto; padding: 20px; background: #f8f4f4;">
+    <div style="background: #a93226; color: white; padding: 22px; border-radius: 10px 10px 0 0; text-align: center;">
+        <h2 style="margin: 0;">Khung giờ bạn chọn đã hết chỗ</h2>
+    </div>
+    <div style="background: white; padding: 24px; border: 1px solid #ead2d0; border-top: 0; border-radius: 0 0 10px 10px;">
+        <p>Chào <strong><t t-out="object.partner_name or 'Ứng viên'"/></strong>,</p>
+        <p>Cảm ơn bạn đã hoàn thành khảo sát. Tuy nhiên khung giờ bạn chọn hiện đã đầy do ứng viên khác submit trước.</p>
+        <p>Vui lòng liên hệ HR để được sắp xếp lịch phỏng vấn thay thế trong thời gian sớm nhất.</p>
+        <p>Trân trọng,<br/><strong>Phòng Nhân Sự</strong></p>
+    </div>
+</div>
+        </field>
+    </record>
+</odoo>
+
+
+

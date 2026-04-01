@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="approval_category_form_inherit_advance_claim" model="ir.ui.view">
+        <field name="name">approval.category.form.advance.claim</field>
+        <field name="model">approval.category</field>
+        <field name="inherit_id" ref="approvals.approval_category_view_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Is Advance Claim -->
+            <xpath expr="//field[@name='has_product']" position="after">
+                <field name="is_advance_claim"
+                       widget="radio"
+                       options="{'horizontal': true}"/>
+            </xpath>
+
+            <!-- Approver Type -->
+            <xpath expr="//group" position="inside">
+                <field name="approver_type"/>
+            </xpath>
+
+            <!-- Approval Rules -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Approval Rules" invisible="approver_type != 'job'">
+                    <field name="rule_ids"/>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

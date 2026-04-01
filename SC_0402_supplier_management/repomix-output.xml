@@ -1,0 +1,3211 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+__init__.py
+__manifest__.py
+data/admin_access.xml
+data/approval_category_data.xml
+data/ir_sequence_data.xml
+data/sequence_data.xml
+load_test_data.py
+models/__init__.py
+models/lab_test.py
+models/mrp_bom_line.py
+models/mrp_bom.py
+models/product_product.py
+models/product_supplierinfo.py
+models/product_template.py
+models/res_partner.py
+models/sensory_test.py
+models/supplier_audit.py
+models/supplier_capacity.py
+models/supplier_certificate.py
+models/supplier_evaluation.py
+models/supplier_scorecard.py
+security/ir.model.access.csv
+security/sc_0402_security.xml
+tests/__init__.py
+tests/test_sc_0402_flow.py
+views/menu_views.xml
+views/mrp_bom_line_views.xml
+views/mrp_bom_views.xml
+views/product_product_views.xml
+views/product_supplierinfo_views.xml
+views/product_template_views.xml
+views/res_partner_views.xml
+views/supplier_certificate_views.xml
+views/supplier_evaluation_views.xml
+views/vendor_draft_views.xml
+wizard/__init__.py
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="__init__.py">
+# -*- coding: utf-8 -*-
+
+from . import models
+from . import wizard
+</file>
+
+<file path="__manifest__.py">
+# -*- coding: utf-8 -*-
+{
+    'name': 'SC_0402 - Supplier Management & PIF',
+    'version': '19.0.1.0.0',
+    'category': 'Supply Chain/Purchasing',
+    'sequence': 100,
+    'summary': 'McDonald\'s Supplier Management, Product Information Form (PIF), and WRIN Management',
+    'description': """
+SC_0402 - Quản Lý Nhà Cung Cấp & Giá Bán
+==========================================
+
+Quy trình 22 bước:
+- B1-B13: Phát triển sản phẩm mới & Đánh giá NCC
+- B14-B16: PIF Management & Approval
+- B17-B18: Contract Approval
+- B19-B20: WRIN Creation & System Sync
+- B21-B22: Supplier Optimization & Version Control
+
+Features:
+- Supplier Evaluation Workflow (QA Review, Audit, Lab Test)
+- Multi-Vendor Proposal System
+- WRIN Code Management (GRI + Supplier)
+- BOM Integration với conversion rates
+    """,
+    'author': 'McDonald\'s Vietnam',
+    'website': 'https://www.mcdonalds.com.vn',
+    'license': 'LGPL-3',
+    
+    'depends': [
+        'base',
+        'product',
+        'purchase',
+        'purchase_requisition',
+        'stock',
+        'mrp',
+        'mail',
+        'quality_control',  # Required for supplier_audit.quality_check_ids
+        'documents',        # Required for lab_test document management
+        'approvals',        # Required for approval workflow
+    ],
+    
+    'data': [
+        # Security
+        'security/sc_0402_security.xml',
+        'security/ir.model.access.csv',
+        
+        # Data
+        'data/ir_sequence_data.xml',           # NEW: SE & GRI sequences
+        'data/sequence_data.xml',
+        'data/approval_category_data.xml',
+        
+        # Views - NEW: Refactored Models
+        'views/res_partner_views.xml',          # Vendor draft/approval + Filter
+        'views/product_template_views.xml',     # GRI code display
+        
+        # Views - Product & BOM Extensions
+        'views/product_product_views.xml',
+        'views/product_supplierinfo_views.xml',
+        'views/mrp_bom_views.xml',              # Extended BOM views with PIF fields
+        'views/mrp_bom_line_views.xml',         # Extended BOM line views
+        
+        # Menus (must be loaded before views that reference menu items)
+        'views/menu_views.xml',
+        
+        # Views - Supplier Evaluation
+        'views/supplier_evaluation_views.xml',
+        'views/supplier_certificate_views.xml',
+        'views/vendor_draft_views.xml',
+    ],
+    
+    'demo': [],
+    
+    'application': True,
+    'installable': True,
+    'auto_install': False,
+}
+</file>
+
+<file path="data/admin_access.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Add Administrator to SC_0402 Manager group -->
+        <function model="res.groups" name="write">
+            <value model="res.groups" search="[('id', '=', ref('group_sc_0402_manager'))]" />
+            <value eval="{'users': [(4, ref('base.user_admin'))]}" />
+        </function>
+    </data>
+</odoo>
+</file>
+
+<file path="data/approval_category_data.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Approval Category: PIF Approval -->
+        <record id="approval_category_pif" model="approval.category">
+            <field name="name">PIF Approval</field>
+            <field name="description">Product Information Form approval workflow</field>
+            <field name="approval_minimum">4</field>
+            <field name="requirer_document">required</field>
+            <field name="has_date">required</field>
+            <field name="has_reference">required</field>
+            <field name="automated_sequence">True</field>
+            <field name="sequence_code">pif.approval</field>
+        </record>
+        <!-- Mail Activity Type: QA Document Review -->
+        <record id="mail_activity_qa_document_review" model="mail.activity.type">
+            <field name="name">QA Document Review</field>
+            <field name="summary">QA Document Review Required</field>
+            <field name="res_model">supplier.evaluation</field>
+            <field name="icon">fa-check-square-o</field>
+            <field name="delay_count">3</field>
+            <field name="delay_unit">days</field>
+        </record>
+    </data>
+</odoo>
+</file>
+
+<file path="data/ir_sequence_data.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Sequence for Supplier Code (SUP-0001) - Changed from SE- to SUP- -->
+        <record id="seq_supplier_code" model="ir.sequence">
+            <field name="name">Supplier Code</field>
+            <field name="code">res.partner.supplier.code</field>
+            <field name="prefix">SUP-</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+        <!-- Sequence for GRI Code (GRI-00001) -->
+        <record id="seq_gri_code" model="ir.sequence">
+            <field name="name">GRI Code</field>
+            <field name="code">product.gri.code</field>
+            <field name="prefix">GRI-</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+    </data>
+</odoo>
+</file>
+
+<file path="data/sequence_data.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Sequence: Supplier Evaluation -->
+        <record id="seq_supplier_evaluation" model="ir.sequence">
+            <field name="name">Supplier Evaluation Sequence</field>
+            <field name="code">supplier.evaluation</field>
+            <field name="prefix">SE</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+        <!-- Sequence: Supplier Audit -->
+        <record id="seq_supplier_audit" model="ir.sequence">
+            <field name="name">Supplier Audit Sequence</field>
+            <field name="code">supplier.audit</field>
+            <field name="prefix">AUDIT-</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+        <!-- Sequence: Lab Test -->
+        <record id="seq_lab_test" model="ir.sequence">
+            <field name="name">Lab Test Sequence</field>
+            <field name="code">lab.test</field>
+            <field name="prefix">LAB-</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+        <!-- Sequence: Sensory Test -->
+        <record id="seq_sensory_test" model="ir.sequence">
+            <field name="name">Sensory Test Sequence</field>
+            <field name="code">sensory.test</field>
+            <field name="prefix">SENS-</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+        <!-- Sequence: Product PIF -->
+        <record id="seq_product_pif" model="ir.sequence">
+            <field name="name">Product PIF Sequence</field>
+            <field name="code">product.pif</field>
+            <field name="prefix">PIF-</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+    </data>
+</odoo>
+</file>
+
+<file path="load_test_data.py">
+# -*- coding: utf-8 -*-
+import logging
+from datetime import datetime, timedelta
+
+_logger = logging.getLogger(__name__)
+
+def load_demo_data(env):
+    """Manually load demo data for SC_0402"""
+    
+    _logger.info("=" * 60)
+    _logger.info("🚀 Loading SC_0402 Demo Data...")
+    _logger.info("=" * 60)
+    
+    # 1. Create supplier
+    supplier = env['res.partner'].create({
+        'name': 'Golden State Foods Vietnam (Test)',
+        'ref': 'GSF-VN-TEST-001',
+        'is_company': True,
+        'supplier_rank': 1,
+        'email': 'contact@gsf-test.vn',
+        'phone': '+84 28 1234 5678',
+        'street': '123 Nguyen Hue, District 1',
+        'city': 'Ho Chi Minh City',
+    })
+    _logger.info(f"✅ Created supplier: {supplier.name}")
+    
+    # 2. Create component products
+    ProductProduct = env['product.product']
+    
+    chicken = ProductProduct.create({
+        'name': 'Samyang Spicy Chicken Patty (Test)',
+        'default_code': 'TEST-CHICK-SAMYANG-001',
+        'type': 'product',
+        'standard_price': 35000,
+        'list_price': 50000,
+    })
+    chicken.product_tmpl_id.write({
+        'x_gri': 'GRI-CHICK-001',
+        'x_raw_item_desc': 'Samyang Spicy Breaded Chicken Breast',
+    })
+    
+    bun = ProductProduct.create({
+        'name': 'Premium Sesame Seed Bun (Test)',
+        'default_code': 'TEST-BUN-002',
+        'type': 'product',
+        'standard_price': 5000,
+    })
+    bun.product_tmpl_id.write({
+        'x_gri': 'GRI-BUN-002',
+        'x_raw_item_desc': '4-inch Sesame Bun',
+    })
+    
+    lettuce = ProductProduct.create({
+        'name': 'Fresh Iceberg Lettuce (Test)',
+        'default_code': 'TEST-VEG-003',
+        'type': 'product',
+        'uom_id': env.ref('uom.product_uom_kgm').id,
+        'standard_price': 15000,
+    })
+    lettuce.product_tmpl_id.write({
+        'x_gri': 'GRI-VEG-003',
+        'x_raw_item_desc': 'Shredded Iceberg Lettuce',
+    })
+    
+    sauce = ProductProduct.create({
+        'name': 'Samyang Special Sauce (Test)',
+        'default_code': 'TEST-SAUCE-004',
+        'type': 'product',
+        'uom_id': env.ref('uom.product_uom_litre').id,
+        'standard_price': 8000,
+    })
+    sauce.product_tmpl_id.write({
+        'x_gri': 'GRI-SAUCE-004',
+        'x_raw_item_desc': 'Hot Chicken Sauce',
+    })
+    
+    _logger.info(f"✅ Created 4 component products")
+    
+    # 3. Create supplier evaluation
+    evaluation = env['supplier.evaluation'].create({
+        'partner_id': supplier.id,
+        'product_tmpl_id': chicken.product_tmpl_id.id,
+        'evaluation_type': 'new_product',
+        'is_new_supplier': False,
+        'state': 'draft',
+        'note': 'Evaluation for TinyTAN Samyang Burger campaign - GSF as chicken supplier',
+    })
+    _logger.info(f"✅ Created evaluation: {evaluation.name}")
+    
+    # 4. Add certificates
+    env['supplier.certificate'].create({
+        'evaluation_id': evaluation.id,
+        'partner_id': supplier.id,
+        'name': 'HACCP Certificate',
+        'certificate_type': 'haccp',
+        'issue_date': (datetime.now() - timedelta(days=365)).strftime('%Y-%m-%d'),
+        'expiry_date': (datetime.now() + timedelta(days=1095)).strftime('%Y-%m-%d'),
+        'issued_by': 'Vietnam Food Safety Authority',
+        'certificate_number': 'HACCP-VN-2025-TEST-001',
+    })
+    
+    env['supplier.certificate'].create({
+        'evaluation_id': evaluation.id,
+        'partner_id': supplier.id,
+        'name': 'ISO 22000:2018',
+        'certificate_type': 'iso',
+        'issue_date': (datetime.now() - timedelta(days=180)).strftime('%Y-%m-%d'),
+        'expiry_date': (datetime.now() + timedelta(days=1095)).strftime('%Y-%m-%d'),
+        'issued_by': 'Bureau Veritas',
+        'certificate_number': 'ISO-22000-VN-TEST-456',
+    })
+    _logger.info(f"✅ Created 2 certificates")
+    
+    # 5. Add capacity
+    capacity = env['supplier.capacity'].create({
+        'evaluation_id': evaluation.id,
+        'partner_id': supplier.id,
+        'monthly_capacity': 500000,
+        'current_utilization': 70.0,
+        'quality_rating': 'a',
+        'financial_stability': 'stable',
+        'production_lead_time': 7,
+        'notes': 'GSF có đủ năng lực sản xuất 50,000 units cho TinyTAN campaign',
+    })
+    evaluation.capacity_id = capacity.id
+    _logger.info(f"✅ Created capacity assessment")
+    
+    # 6. Add audit
+    admin_user = env.ref('base.user_admin')
+    env['supplier.audit'].create({
+        'evaluation_id': evaluation.id,
+        'partner_id': supplier.id,
+        'audit_type': 'factory_visit',
+        'audit_date': (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d'),
+        'auditor_id': admin_user.id,
+        'overall_score': 92,
+        'result': 'pass',
+        'findings': '<p><strong>Factory Visit Summary:</strong></p><ul><li>Excellent production facility with modern equipment</li><li>Good hygiene practices observed</li><li>Minor improvement needed: Cold storage monitoring system</li><li>Staff well-trained in food safety</li></ul>',
+    })
+    _logger.info(f"✅ Created factory audit")
+    
+    # 7. Add lab test
+    env['lab.test'].create({
+        'evaluation_id': evaluation.id,
+        'product_tmpl_id': chicken.product_tmpl_id.id,
+        'test_date': (datetime.now() - timedelta(days=5)).strftime('%Y-%m-%d'),
+        'test_type': 'microbiological',
+        'lab_name': 'SGS Vietnam',
+        'result': 'pass',
+        'test_report': '<p><strong>Microbiological Test Results:</strong></p><table border="1"><tr><th>Parameter</th><th>Result</th><th>Limit</th><th>Status</th></tr><tr><td>E.coli</td><td>&lt;10 CFU/g</td><td>&lt;100 CFU/g</td><td>✓ Pass</td></tr><tr><td>Salmonella</td><td>Not detected</td><td>Not detected</td><td>✓ Pass</td></tr><tr><td>Total Plate Count</td><td>1.2x10³</td><td>&lt;10⁵</td><td>✓ Pass</td></tr></table>',
+    })
+    _logger.info(f"✅ Created lab test")
+    
+    # 8. Add sensory test
+    env['sensory.test'].create({
+        'evaluation_id': evaluation.id,
+        'product_tmpl_id': chicken.product_tmpl_id.id,
+        'test_date': (datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d'),
+        'tester_ids': [(6, 0, [admin_user.partner_id.id])],
+        'appearance_score': 9,
+        'taste_score': 9,
+        'texture_score': 8,
+        'aroma_score': 9,
+        'overall_score': 8.75,
+        'result': 'pass',
+        'notes': 'Excellent spicy flavor matching Samyang brand. Crispy texture maintained after preparation. Aroma appealing. Compared with reference sample - meets all criteria.',
+    })
+    _logger.info(f"✅ Created sensory test")
+    
+    # 9. Create PIF
+    pif = env['product.pif'].create({
+        'program_name': 'TinyTAN Limited Time Campaign',
+        'launch_date': (datetime.now() + timedelta(days=45)).strftime('%Y-%m-%d'),
+        'forecast_volume': 50000,
+        'initiator_id': admin_user.id,
+        'state': 'draft',
+        'notes': '<p><strong>Campaign Background:</strong></p><ul><li>Partnership with TinyTAN brand (BTS characters)</li><li>Target: Young adults 18-30 years old</li><li>Duration: 6 weeks limited time</li><li>Spicy chicken trend in Vietnam market</li></ul>',
+    })
+    _logger.info(f"✅ Created PIF: {pif.name}")
+    
+    # 10. Create PIF line
+    pif_line = env['product.pif.line'].create({
+        'pif_id': pif.id,
+        'sequence': 1,
+        'level1_category': 'Regular',
+        'level2_category': 'Limited Time',
+        'level3_category': 'TinyTAN Collection',
+        'level4_category': 'Chicken Series',
+        'level5_category': 'Menu Item',
+        'level6_category': '1pc Chicken',
+        'level7_category': 'Samyang Spicy Chicken',
+        'menu_item_code': 'PLU-SAMYANG-TEST-001',
+        'product_name_en': 'TinyTAN Samyang Chicken Burger',
+        'product_name_vn': 'Burger Gà Samyang TinyTAN',
+        'product_type': 'main_item',
+        'price_instore': 75000,
+        'cost_instore': 45000,
+        'price_delivery': 80000,
+        'cost_delivery': 47000,
+        'price_airport': 90000,
+        'cost_airport': 50000,
+    })
+    _logger.info(f"✅ Created PIF line: {pif_line.product_name_en}")
+    
+    # 11. Add components
+    env['product.pif.parent.component'].create({
+        'pif_line_id': pif_line.id,
+        'sequence': 1,
+        'name': 'Samyang Chicken Patty',
+        'product_id': chicken.id,
+        'quantity': 1.0,
+        'uom_id': env.ref('uom.product_uom_unit').id,
+        'conversion_rate': 1.0,
+        'unit_price': 35000,
+        'case_pack': 50,
+        'lead_time_days': 7,
+    })
+    
+    env['product.pif.parent.component'].create({
+        'pif_line_id': pif_line.id,
+        'sequence': 2,
+        'name': 'Sesame Bun',
+        'product_id': bun.id,
+        'quantity': 1.0,
+        'uom_id': env.ref('uom.product_uom_unit').id,
+        'conversion_rate': 1.0,
+        'unit_price': 5000,
+        'case_pack': 100,
+        'lead_time_days': 3,
+    })
+    
+    env['product.pif.parent.component'].create({
+        'pif_line_id': pif_line.id,
+        'sequence': 3,
+        'name': 'Fresh Lettuce',
+        'product_id': lettuce.id,
+        'quantity': 0.02,
+        'uom_id': env.ref('uom.product_uom_kgm').id,
+        'conversion_rate': 50.0,
+        'unit_price': 300,
+        'case_pack': 10,
+        'lead_time_days': 2,
+    })
+    
+    env['product.pif.parent.component'].create({
+        'pif_line_id': pif_line.id,
+        'sequence': 4,
+        'name': 'Samyang Special Sauce',
+        'product_id': sauce.id,
+        'quantity': 0.025,
+        'uom_id': env.ref('uom.product_uom_litre').id,
+        'conversion_rate': 40.0,
+        'unit_price': 200,
+        'case_pack': 20,
+        'lead_time_days': 5,
+    })
+    
+    _logger.info(f"✅ Created 4 parent components")
+    
+    _logger.info("=" * 60)
+    _logger.info("✅✅✅ DEMO DATA LOADED SUCCESSFULLY ✅✅✅")
+    _logger.info("=" * 60)
+    _logger.info(f"📦 Supplier: {supplier.name} (ID: {supplier.id})")
+    _logger.info(f"📋 Evaluation: {evaluation.name} (ID: {evaluation.id})")
+    _logger.info(f"🎯 PIF: {pif.name} (ID: {pif.id})")
+    _logger.info(f"🧪 Components: {len([chicken, bun, lettuce, sauce])} products")
+    _logger.info("=" * 60)
+    _logger.info("📍 To test:")
+    _logger.info(f"   1. Open: SC_0402 > Supplier Evaluation > {evaluation.name}")
+    _logger.info(f"   2. Open: Manufacturing > PIFs > {pif.name}")
+    _logger.info("=" * 60)
+    
+    return {
+        'supplier': supplier,
+        'evaluation': evaluation,
+        'pif': pif,
+        'products': [chicken, bun, lettuce, sauce],
+    }
+</file>
+
+<file path="models/__init__.py">
+# -*- coding: utf-8 -*-
+
+# Product Extensions
+from . import product_product
+from . import product_supplierinfo
+from . import product_template  # NEW: GRI code generation
+from . import mrp_bom
+from . import mrp_bom_line
+
+# Supplier Evaluation Models
+from . import supplier_evaluation
+from . import supplier_certificate
+from . import supplier_capacity
+from . import supplier_audit
+from . import lab_test
+from . import sensory_test
+from . import supplier_scorecard
+
+# NEW: Vendor Approval System
+from . import res_partner  # Vendor draft/approval
+</file>
+
+<file path="models/lab_test.py">
+# -*- coding: utf-8 -*-
+
+from odoo import api, fields, models, _
+
+
+class LabTest(models.Model):
+    _name = 'lab.test'
+    _description = 'Lab Test'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _order = 'test_date desc, id desc'
+    
+    name = fields.Char(string='Test Number', required=True, copy=False, default='New')
+    
+    evaluation_id = fields.Many2one(
+        'supplier.evaluation',
+        string='Evaluation',
+        ondelete='cascade',
+    )
+    
+    product_tmpl_id = fields.Many2one(
+        'product.template',
+        string='Product',
+        required=True,
+    )
+    
+    test_date = fields.Date(string='Test Date', required=True, default=fields.Date.today)
+    
+    test_type = fields.Selection([
+        ('microbiological', 'Microbiological'),
+        ('chemical', 'Chemical'),
+        ('physical', 'Physical'),
+        ('nutritional', 'Nutritional'),
+        ('other', 'Other'),
+    ], string='Test Type', required=True)
+    
+    sample_batch_number = fields.Char(string='Sample Batch Number')
+    
+    # Integration with quality_control module
+    quality_check_ids = fields.Many2many(
+        'quality.check',
+        string='Quality Checks',
+    )
+    
+    # Test results
+    result = fields.Selection([
+        ('pass', 'Pass'),
+        ('fail', 'Fail'),
+        ('pending', 'Pending'),
+    ], string='Result', default='pending', tracking=True)
+    
+    # Documents: COA, Spec, Test Reports
+    coa_document_id = fields.Many2one(
+        'documents.document',
+        string='COA (Certificate of Analysis)',
+    )
+    
+    spec_document_id = fields.Many2one(
+        'documents.document',
+        string='Specification Document',
+    )
+    
+    document_ids = fields.Many2many(
+        'documents.document',
+        string='Test Reports',
+    )
+    
+    findings = fields.Html(string='Test Findings')
+    note = fields.Html(string='Notes')
+    
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('name', 'New') == 'New':
+                vals['name'] = self.env['ir.sequence'].next_by_code('lab.test') or 'New'
+        return super().create(vals_list)
+</file>
+
+<file path="models/mrp_bom_line.py">
+# -*- coding: utf-8 -*-
+
+from odoo import api, fields, models, _
+
+
+class MrpBomLine(models.Model):
+    _inherit = 'mrp.bom.line'
+    
+    # ===== GRI & Description (from product) =====
+    
+    gri = fields.Char(
+        related='product_id.product_tmpl_id.x_gri_code',
+        string='GRI',
+        readonly=True,
+        store=True,
+    )
+    
+    raw_item_desc = fields.Char(
+        related='product_id.x_raw_item_desc',
+        string='Raw Item Description',
+        readonly=True,
+        store=True,
+    )
+    
+    gri_full = fields.Char(
+        string='GRI - Description',
+        compute='_compute_gri_full',
+        help='Column1: GRI-Description',
+    )
+    
+    # ===== Quantity Display =====
+    
+    qty_unit_display = fields.Char(
+        string='Quantity x Unit',
+        compute='_compute_qty_unit_display',
+        help='Column2: Formatted quantity display',
+    )
+    
+    # ===== CONVERSION RATE =====
+    
+    x_conversion_rate = fields.Float(
+        string='Conversion Rate',
+        default=1.0,
+        digits=(12, 6),
+        help='Conversion rate from stock UoM to BOM UoM.',
+    )
+    
+    conversion_rate = fields.Float(
+        string='Conv. Rate',
+        compute='_compute_conversion_rate',
+        inverse='_inverse_conversion_rate',
+        store=True,
+        digits=(12, 6),
+        help='UoM conversion rate',
+    )
+    
+    # ===== COST FIELDS =====
+    
+    inventory_price = fields.Float(
+        related='product_id.standard_price',
+        string='Unit Price',
+        readonly=True,
+        digits='Product Price',
+    )
+    
+    total_cost = fields.Monetary(
+        string='Total Cost',
+        compute='_compute_total_cost',
+        store=True,
+        currency_field='currency_id',
+    )
+    
+    currency_id = fields.Many2one(
+        'res.currency',
+        related='company_id.currency_id',
+        string='Currency',
+        readonly=True,
+    )
+    
+    # ===== NEW: SUPPLIERINFO-BASED VENDOR FIELDS =====
+    
+    # Helper field for domain filtering
+    product_tmpl_id = fields.Many2one(
+        related='product_id.product_tmpl_id',
+        string='Product Template',
+        readonly=True,
+        store=True,
+    )
+    
+    # All available suppliers for this product (computed)
+    valid_supplierinfo_ids = fields.Many2many(
+        'product.supplierinfo',
+        string='Available Vendors',
+        compute='_compute_valid_supplierinfo',
+        help='All vendors that supply this product',
+    )
+    
+    # Selected vendor (Sourcing picks this)
+    selected_supplierinfo_id = fields.Many2one(
+        'product.supplierinfo',
+        string='Selected Vendor',
+        domain="[('product_tmpl_id', '=', product_tmpl_id)]",
+        help='Vendor selected by Sourcing for this BOM line',
+    )
+    
+    # Selected vendor's partner (for display)
+    selected_vendor_id = fields.Many2one(
+        related='selected_supplierinfo_id.partner_id',
+        string='Approved Vendor',
+        readonly=True,
+        store=True,
+    )
+    
+    # Price from selected vendor
+    price_unit = fields.Monetary(
+        string='Cost',
+        related='selected_supplierinfo_id.price',
+        readonly=True,
+        store=True,
+        currency_field='currency_id',
+        help='Price from selected vendor',
+    )
+    
+    # WRIN display (Now related to SupplierInfo)
+    wrin = fields.Char(
+        related='selected_supplierinfo_id.x_wrin',
+        string='WRIN',
+        readonly=True,
+        help='Warehouse Receipt ID - generated immediately upon vendor selection',
+    )
+    
+    case_pack = fields.Integer(
+        string='Case Pack',
+        compute='_compute_supplier_info',
+    )
+    
+    lead_time_days = fields.Integer(
+        string='Lead Time (Days)',
+        compute='_compute_supplier_info',
+    )
+    
+    # ===== WRITE METHOD OVERRIDE =====
+
+    def write(self, vals):
+        """
+        Trigger WRIN generation when Sourcing selects a vendor.
+        """
+        res = super().write(vals)
+        if 'selected_supplierinfo_id' in vals:
+            for line in self:
+                if line.selected_supplierinfo_id:
+                    line._generate_material_wrin(line.selected_supplierinfo_id)
+        return res
+
+    def _generate_material_wrin(self, info):
+        """
+        Generate WRIN immediately: GRI-SUP (e.g., GRI0052-SUP001)
+        Save it to product.supplierinfo so it persists.
+        """
+        vendor = info.partner_id
+        product = info.product_tmpl_id
+        
+        # 1. Ensure Vendor has Supplier Code (SUP)
+        if not vendor.x_supplier_code:
+            vendor.action_approve_vendor()
+            
+        # 2. Ensure Product has GRI Code
+        if not product.x_gri_code:
+            product.x_gri_code = self.env['ir.sequence'].next_by_code('product.gri.code') or f"GRI{product.id}"
+
+        # 3. Generate WRIN
+        gri = product.x_gri_code
+        sup_code = vendor.x_supplier_code
+        new_wrin = f"{gri}-{sup_code}"
+        
+        # 4. Save to SupplierInfo (Master Data)
+        # Avoid unnecessary writes if already set correctly
+        if info.x_wrin != new_wrin:
+            info.write({'x_wrin': new_wrin})
+
+    # ===== COMPUTE METHODS =====
+    
+    @api.depends('product_tmpl_id')
+    def _compute_valid_supplierinfo(self):
+        """Compute all available vendors for this product from product.supplierinfo"""
+        for line in self:
+            if line.product_tmpl_id:
+                supplierinfos = self.env['product.supplierinfo'].search([
+                    ('product_tmpl_id', '=', line.product_tmpl_id.id)
+                ])
+                line.valid_supplierinfo_ids = supplierinfos
+            else:
+                line.valid_supplierinfo_ids = False
+    
+    # _compute_wrin_display removed as WRIN is now a related field
+    
+    @api.depends('gri', 'raw_item_desc')
+    
+    @api.depends('gri', 'raw_item_desc')
+    def _compute_gri_full(self):
+        for line in self:
+            if line.gri and line.raw_item_desc:
+                line.gri_full = f"{line.gri}-{line.raw_item_desc}"
+            elif line.gri:
+                line.gri_full = line.gri
+            else:
+                line.gri_full = ''
+    
+    @api.depends('product_qty', 'product_uom_id')
+    def _compute_qty_unit_display(self):
+        for line in self:
+            if line.product_qty and line.product_uom_id:
+                line.qty_unit_display = f"{line.product_qty} x {line.product_uom_id.name}"
+            else:
+                line.qty_unit_display = ''
+    
+    @api.depends('product_uom_id', 'product_id.uom_id', 'x_conversion_rate')
+    def _compute_conversion_rate(self):
+        for line in self:
+            # Priority 1: Use manual conversion rate if set
+            if line.x_conversion_rate and line.x_conversion_rate != 1.0:
+                line.conversion_rate = line.x_conversion_rate
+            # Priority 2: Calculate from UoM
+            elif line.product_uom_id and line.product_id.uom_id:
+                if line.product_uom_id == line.product_id.uom_id:
+                    line.conversion_rate = 1.0
+                else:
+                    try:
+                        line.conversion_rate = line.product_uom_id._compute_quantity(
+                            1.0, 
+                            line.product_id.uom_id,
+                            round=False
+                        )
+                    except Exception:
+                        line.conversion_rate = 1.0
+            else:
+                line.conversion_rate = 1.0
+    
+    def _inverse_conversion_rate(self):
+        """Allow manual override of conversion rate"""
+        for line in self:
+            line.x_conversion_rate = line.conversion_rate
+    
+    @api.depends('product_qty', 'product_id.standard_price')
+    def _compute_total_cost(self):
+        for line in self:
+            line.total_cost = line.product_qty * line.product_id.standard_price
+    
+    @api.depends('selected_supplierinfo_id')
+    def _compute_supplier_info(self):
+        for line in self:
+            if line.selected_supplierinfo_id:
+                line.case_pack = line.selected_supplierinfo_id.x_case_pack or 0
+                line.lead_time_days = line.selected_supplierinfo_id.x_lead_time_days or 0
+            else:
+                line.case_pack = 0
+                line.lead_time_days = 0
+</file>
+
+<file path="models/mrp_bom.py">
+# -*- coding: utf-8 -*-
+
+from odoo import api, fields, models, _
+from odoo.exceptions import UserError
+
+
+class MrpBom(models.Model):
+    """
+    Extend mrp.bom to support McDonald's PIF workflow
+    Instead of creating separate product.pif model, we use standard BOM
+    """
+    _inherit = 'mrp.bom'
+    
+    # ===== PIF WORKFLOW FIELDS =====
+    
+    # Mark this BOM as a PIF (Product Information Form)
+    is_pif = fields.Boolean(
+        string='Is PIF',
+        default=False,
+        help='This BOM is a Product Information Form requiring approval',
+    )
+    
+    pif_state = fields.Selection([
+        ('draft', 'Draft'),
+        ('menu_review', 'Menu Review'),
+        ('sourcing', 'Sourcing Review'),
+        ('line_manager', 'Line Manager Approval'),
+        ('ceo', 'CEO Approval'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ], string='PIF Status', default='draft', tracking=True)
+    
+    # Step 1: Menu inputs
+    program_name = fields.Char(
+        string='Program Name',
+        help='Marketing program (e.g., TinyTAN Limited)',
+    )
+    
+    launch_date = fields.Date(string='Launch Date')
+    
+    forecast_volume = fields.Integer(string='Forecast Volume')
+    
+    # Step 14: Link to supplier evaluation
+    supplier_evaluation_id = fields.Many2one(
+        'supplier.evaluation',
+        string='Supplier Evaluation',
+        domain="[('state', '=', 'approved')]",
+    )
+    
+    # Approval tracking
+    menu_approved_by = fields.Many2one('res.users', string='Menu Approved By', readonly=True)
+    menu_approved_date = fields.Datetime(string='Menu Approved Date', readonly=True)
+    
+    sourcing_approved_by = fields.Many2one('res.users', string='Sourcing Approved By', readonly=True)
+    sourcing_approved_date = fields.Datetime(string='Sourcing Approved Date', readonly=True)
+    
+    line_manager_approved_by = fields.Many2one('res.users', string='Line Manager Approved By', readonly=True)
+    line_manager_approved_date = fields.Datetime(string='Line Manager Approved Date', readonly=True)
+    
+    ceo_approved_by = fields.Many2one('res.users', string='CEO Approved By', readonly=True)
+    ceo_approved_date = fields.Datetime(string='CEO Approved Date', readonly=True)
+    
+    # WRIN creation status
+    wrin_created = fields.Boolean(string='WRIN Created', default=False, copy=False)
+    
+    # Field containing Finished Good WRIN (Saved to Product Template)
+    finished_wrin = fields.Char(related='product_tmpl_id.default_code', string='WRIN Thành phẩm', readonly=True)
+    
+    # ===== WORKFLOW METHODS =====
+    
+    def action_submit_for_approval(self):
+        """Submit PIF for approval workflow"""
+        self.ensure_one()
+        if not self.is_pif:
+            raise UserError(_('This BOM is not marked as a PIF.'))
+        self.write({'pif_state': 'menu_review'})
+        return True
+    
+    def action_approve_menu(self):
+        """Menu department approves"""
+        self.ensure_one()
+        self.write({
+            'pif_state': 'sourcing',
+            'menu_approved_by': self.env.user.id,
+            'menu_approved_date': fields.Datetime.now(),
+        })
+        return True
+    
+    def action_approve_sourcing(self):
+        """Sourcing approves"""
+        self.ensure_one()
+        self.write({
+            'pif_state': 'line_manager',
+            'sourcing_approved_by': self.env.user.id,
+            'sourcing_approved_date': fields.Datetime.now(),
+        })
+        return True
+    
+    def action_approve_line_manager(self):
+        """Line manager approves"""
+        self.ensure_one()
+        self.write({
+            'pif_state': 'ceo',
+            'line_manager_approved_by': self.env.user.id,
+            'line_manager_approved_date': fields.Datetime.now(),
+        })
+        return True
+    
+    def action_approve_ceo(self):
+        """CEO final approval - triggers master data generation"""
+        self.ensure_one()
+        self.write({
+            'pif_state': 'approved',
+            'ceo_approved_by': self.env.user.id,
+            'ceo_approved_date': fields.Datetime.now(),
+        })
+        # Phase 4: Generate Master Data (Finished Good WRIN)
+        self._generate_master_data()
+        return True
+    
+    def action_reject(self):
+        """Reject PIF"""
+        self.ensure_one()
+        self.write({'pif_state': 'rejected'})
+        return True
+    
+    # ===== MASTER DATA GENERATION =====
+    
+    def _generate_master_data(self):
+        """
+        Phase 4: Generate Master Data after CEO approval.
+        
+        1. Generate WRIN for Finished Good (Menu Item)
+        2. Assign it to product internal reference (default_code)
+        
+        Note: Material WRINs are now generated immediately during Sourcing step.
+        """
+        self.ensure_one()
+        
+        # Generator code for Product (Parent)
+        # Use existing code or generate new one if missing
+        if not self.product_tmpl_id.default_code:
+             # Logic to generate Finished Good WRIN (e.g. P-2024-001)
+             # Using Odoo default sequence for product - or 'NEW-FG' fallback
+             new_code = self.env['ir.sequence'].next_by_code('product.product') or 'NEW-FG'
+             self.product_tmpl_id.write({'default_code': new_code})
+        
+        # Update product standard_price based on BOM cost
+        # (Optional: can also be done by computing BOM cost)
+        total_cost = sum(line.total_cost for line in self.bom_line_ids)
+        if total_cost > 0:
+            self.product_tmpl_id.write({'standard_price': total_cost})
+        
+        # Mark WRIN as created
+        self.write({'wrin_created': True})
+</file>
+
+<file path="models/product_product.py">
+# -*- coding: utf-8 -*-
+
+from odoo import api, fields, models, _
+
+
+class ProductProduct(models.Model):
+    _inherit = 'product.product'
+    
+    # ===== McDonald's Fields =====
+    
+    # GRI - Generic Raw Item Code
+    x_gri = fields.Char(
+        string='GRI Code',
+        help='Generic Raw Item Code - unique material identifier (mã nguyên liệu chung)',
+        index=True,
+        copy=False,
+    )
+    
+    x_raw_item_desc = fields.Char(
+        string='Raw Item Description',
+        help='Full description of raw material',
+    )
+    
+    # Computed display field
+    x_gri_full = fields.Char(
+        string='GRI - Description',
+        compute='_compute_gri_full',
+        store=True,
+        help='Format: GRI-Description (Column1 in BOM)',
+    )
+    
+    @api.depends('x_gri', 'x_raw_item_desc')
+    def _compute_gri_full(self):
+        for product in self:
+            if product.x_gri and product.x_raw_item_desc:
+                product.x_gri_full = f"{product.x_gri}-{product.x_raw_item_desc}"
+            elif product.x_gri:
+                product.x_gri_full = product.x_gri
+            else:
+                product.x_gri_full = ''
+</file>
+
+<file path="models/product_supplierinfo.py">
+# -*- coding: utf-8 -*-
+
+from odoo import api, fields, models, _
+
+
+class ProductSupplierinfo(models.Model):
+    _inherit = 'product.supplierinfo'
+    
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Auto-init vendor fields when adding SupplierInfo"""
+        records = super().create(vals_list)
+        for record in records:
+            partner = record.partner_id
+            if partner:
+                # Auto set supplier_rank so it shows in Vendor menus
+                vals_to_update = {}
+                if partner.supplier_rank == 0:
+                    vals_to_update['supplier_rank'] = 1
+                # Set draft status if not already set
+                if not partner.x_supplier_status:
+                    vals_to_update['x_supplier_status'] = 'draft'
+                if vals_to_update:
+                    partner.sudo().write(vals_to_update)
+        return records
+    
+    def name_get(self):
+        """Display vendor name with price in M2M tags for easy comparison"""
+        result = []
+        for record in self:
+            name = f"{record.partner_id.name} ({record.price:,.0f})"
+            result.append((record.id, name))
+        return result
+    
+    # ===== McDonald's Supplier-Specific Fields =====
+    
+    # WRIN - Warehouse Receipt ID Number (GRI + Supplier)
+    x_wrin = fields.Char(
+        string='WRIN Code',
+        help='Warehouse Receipt ID Number - supplier specific code (mã riêng của NCC)',
+        index=True,
+        copy=False,
+    )
+    
+    x_case_pack = fields.Integer(
+        string='Case Pack',
+        help='Number of units per case from this supplier (số lượng/thùng)',
+        default=1,
+    )
+    
+    x_lead_time_days = fields.Integer(
+        string='Lead Time (Days)',
+        help='Supplier lead time in days (thời gian giao hàng)',
+        default=0,
+    )
+    
+    # Override price field to add currency
+    price = fields.Monetary(
+        currency_field='currency_id',
+        help='Supplier unit price',
+    )
+    
+    currency_id = fields.Many2one(
+        related='company_id.currency_id',
+        readonly=True,
+    )
+</file>
+
+<file path="models/product_template.py">
+# -*- coding: utf-8 -*-
+
+from odoo import api, fields, models, _
+
+class ProductTemplate(models.Model):
+    _inherit = 'product.template'
+
+    # Raw Material checkbox
+    x_is_raw_material = fields.Boolean(
+        string='Is Raw Material',
+        default=False,
+        help='Check this for raw materials used in manufacturing'
+    )
+    
+    # GRI Code for raw materials
+    x_gri_code = fields.Char(
+        string='GRI Code',
+        readonly=True,
+        index=True,
+        copy=False,
+        help='Global Raw Item code. Format: GRI{product_id}'
+    )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('x_is_raw_material'):
+                # LOGIC CHUẨN: Raw Material = Mua vào, Không bán
+                vals['sale_ok'] = False
+                vals['purchase_ok'] = True
+                vals['type'] = 'consu'  # Goods (storable product in Odoo 19)
+                # Sinh GRI nếu chưa có
+                if not vals.get('x_gri_code'):
+                    vals['x_gri_code'] = self.env['ir.sequence'].next_by_code('product.gri.code') or 'NEW'
+        return super().create(vals_list)
+
+    def write(self, vals):
+        # Nếu user tick vào checkbox sau khi tạo, cập nhật lại thuộc tính
+        if vals.get('x_is_raw_material'):
+            vals['sale_ok'] = False
+            vals['purchase_ok'] = True
+        return super().write(vals)
+</file>
+
+<file path="models/res_partner.py">
+# -*- coding: utf-8 -*-
+
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
+
+
+class ResPartner(models.Model):
+    _inherit = 'res.partner'
+
+    # ===== SUPPLIER STATUS =====
+    x_supplier_status = fields.Selection([
+        ('draft', 'SE / Draft'),
+        ('approved', 'Official Vendor')
+    ], string='Supplier Status', default='draft', tracking=True)
+
+    x_supplier_code = fields.Char(
+        string='Supplier Code',
+        readonly=True,
+        index=True,
+        copy=False,
+        help='Auto-generated SE code (e.g., SE-0001)'
+    )
+    
+    # ===== SUPPLIED PRODUCTS (From SupplierInfo) =====
+    
+    supplied_product_ids = fields.Many2many(
+        'product.template',
+        string='Supplied Products',
+        compute='_compute_supplied_products',
+        store=False,
+        help='Products this vendor supplies (from Purchase tab)'
+    )
+    
+    supplied_product_count = fields.Integer(
+        string='# Products',
+        compute='_compute_supplied_products',
+    )
+    
+    supplied_product_info = fields.Char(
+        string='Products & Prices',
+        compute='_compute_supplied_product_info',
+        help='Summary of products and prices for quick reference',
+    )
+    
+    # ===== EVALUATION LINK =====
+    
+    evaluation_ids = fields.One2many(
+        'supplier.evaluation',
+        'partner_id',
+        string='Evaluations',
+    )
+    
+    evaluation_count = fields.Integer(
+        string='# Evaluations',
+        compute='_compute_evaluation_count',
+    )
+    
+    current_evaluation_id = fields.Many2one(
+        'supplier.evaluation',
+        string='Current Evaluation',
+        compute='_compute_current_evaluation',
+        store=False,
+        help='The latest active evaluation for this vendor',
+    )
+    
+    # ===== COMPUTE METHODS =====
+    
+    @api.depends_context('lang')
+    def _compute_supplied_products(self):
+        """Get all products this vendor supplies from product.supplierinfo"""
+        for partner in self:
+            supplierinfos = self.env['product.supplierinfo'].search([
+                ('partner_id', '=', partner.id)
+            ])
+            product_tmpls = supplierinfos.mapped('product_tmpl_id')
+            partner.supplied_product_ids = product_tmpls
+            partner.supplied_product_count = len(product_tmpls)
+    
+    @api.depends_context('lang')
+    def _compute_supplied_product_info(self):
+        """Generate summary text: 'Product1 (50k), Product2 (30k)' """
+        for partner in self:
+            supplierinfos = self.env['product.supplierinfo'].search([
+                ('partner_id', '=', partner.id)
+            ])
+            if supplierinfos:
+                info_parts = []
+                for info in supplierinfos[:5]:  # Max 5 to avoid overflow
+                    product_name = info.product_tmpl_id.name or 'N/A'
+                    price = f"{info.price:,.0f}" if info.price else '0'
+                    info_parts.append(f"{product_name} ({price})")
+                partner.supplied_product_info = ', '.join(info_parts)
+                if len(supplierinfos) > 5:
+                    partner.supplied_product_info += f'... (+{len(supplierinfos) - 5})'
+            else:
+                partner.supplied_product_info = ''
+    
+    def _compute_evaluation_count(self):
+        for partner in self:
+            partner.evaluation_count = len(partner.evaluation_ids)
+    
+    @api.depends('evaluation_ids', 'evaluation_ids.state')
+    def _compute_current_evaluation(self):
+        """Get the latest non-rejected evaluation"""
+        for partner in self:
+            eval_record = self.env['supplier.evaluation'].search([
+                ('partner_id', '=', partner.id),
+                ('state', 'not in', ['approved', 'rejected_sourcing', 'rejected_qa'])
+            ], order='create_date desc', limit=1)
+            partner.current_evaluation_id = eval_record
+    
+    # ===== VALIDATION =====
+    
+    @api.constrains('name', 'vat', 'email', 'x_supplier_status', 'supplier_rank')
+    def _check_draft_vendor_fields(self):
+        """Validate required fields for draft vendors"""
+        for partner in self:
+            # Only check if this is a draft vendor
+            if partner.x_supplier_status == 'draft' and partner.supplier_rank > 0:
+                if not partner.vat:
+                    raise ValidationError(_("Tax ID (VAT) is required for draft vendors"))
+                if not partner.email:
+                    raise ValidationError(_("Email is required for draft vendors"))
+                if not partner.name:
+                    raise ValidationError(_("Name is required for draft vendors"))
+
+    # ===== ACTIONS =====
+    
+    def action_approve_vendor(self):
+        """Approve draft vendor and generate SE code"""
+        for partner in self:
+            if not partner.x_supplier_code:
+                # Generate SE code using sequence
+                partner.x_supplier_code = self.env['ir.sequence'].next_by_code('res.partner.supplier.code') or 'SE-NEW'
+            partner.x_supplier_status = 'approved'
+            partner.supplier_rank = 1  # Mark as vendor
+    
+    def action_create_evaluation(self):
+        """Create a new Supplier Evaluation for this vendor"""
+        self.ensure_one()
+        
+        # Check if there's already an active evaluation
+        active_eval = self.env['supplier.evaluation'].search([
+            ('partner_id', '=', self.id),
+            ('state', 'not in', ['approved', 'rejected_sourcing', 'rejected_qa'])
+        ], limit=1)
+        
+        if active_eval:
+            # Open existing evaluation
+            return {
+                'name': _('Supplier Evaluation'),
+                'type': 'ir.actions.act_window',
+                'res_model': 'supplier.evaluation',
+                'res_id': active_eval.id,
+                'view_mode': 'form',
+                'target': 'current',
+            }
+        
+        # Get supplied products
+        supplierinfos = self.env['product.supplierinfo'].search([
+            ('partner_id', '=', self.id)
+        ])
+        product_tmpls = supplierinfos.mapped('product_tmpl_id')
+        
+        # Auto-fill product if only one
+        default_product = product_tmpls[0].id if len(product_tmpls) == 1 else False
+        
+        # Create new evaluation
+        return {
+            'name': _('Create Supplier Evaluation'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'supplier.evaluation',
+            'view_mode': 'form',
+            'target': 'current',
+            'context': {
+                'default_partner_id': self.id,
+                'default_product_tmpl_id': default_product,
+                'default_is_new_supplier': self.x_supplier_status == 'draft',
+            },
+        }
+    
+    def action_view_evaluations(self):
+        """View all evaluations for this vendor"""
+        self.ensure_one()
+        return {
+            'name': _('Evaluations'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'supplier.evaluation',
+            'view_mode': 'list,form',
+            'domain': [('partner_id', '=', self.id)],
+            'context': {'default_partner_id': self.id},
+        }
+    
+    def action_view_supplied_products(self):
+        """View all products this vendor supplies"""
+        self.ensure_one()
+        return {
+            'name': _('Supplied Products'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'product.template',
+            'view_mode': 'list,form',
+            'domain': [('id', 'in', self.supplied_product_ids.ids)],
+        }
+</file>
+
+<file path="models/sensory_test.py">
+# -*- coding: utf-8 -*-
+
+from odoo import api, fields, models, _
+
+
+class SensoryTest(models.Model):
+    _name = 'sensory.test'
+    _description = 'Sensory Test'
+    _order = 'test_date desc, id desc'
+    
+    name = fields.Char(string='Test Number', required=True, copy=False, default='New')
+    
+    evaluation_id = fields.Many2one(
+        'supplier.evaluation',
+        string='Evaluation',
+        ondelete='cascade',
+    )
+    
+    product_tmpl_id = fields.Many2one(
+        'product.template',
+        string='Product',
+        required=True,
+    )
+    
+    test_date = fields.Date(string='Test Date', required=True, default=fields.Date.today)
+    
+    tester_ids = fields.Many2many(
+        'res.users',
+        string='Testers',
+    )
+    
+    # Sensory attributes (1-5 scale)
+    appearance_score = fields.Selection([
+        ('1', '1 - Poor'),
+        ('2', '2 - Fair'),
+        ('3', '3 - Good'),
+        ('4', '4 - Very Good'),
+        ('5', '5 - Excellent'),
+    ], string='Appearance')
+    
+    aroma_score = fields.Selection([
+        ('1', '1 - Poor'),
+        ('2', '2 - Fair'),
+        ('3', '3 - Good'),
+        ('4', '4 - Very Good'),
+        ('5', '5 - Excellent'),
+    ], string='Aroma')
+    
+    taste_score = fields.Selection([
+        ('1', '1 - Poor'),
+        ('2', '2 - Fair'),
+        ('3', '3 - Good'),
+        ('4', '4 - Very Good'),
+        ('5', '5 - Excellent'),
+    ], string='Taste')
+    
+    texture_score = fields.Selection([
+        ('1', '1 - Poor'),
+        ('2', '2 - Fair'),
+        ('3', '3 - Good'),
+        ('4', '4 - Very Good'),
+        ('5', '5 - Excellent'),
+    ], string='Texture')
+    
+    overall_score = fields.Float(
+        string='Overall Score',
+        compute='_compute_overall_score',
+        store=True,
+    )
+    
+    # Step 12: Sample comparison
+    compared_with_standard = fields.Boolean(string='Compared with Standard Sample')
+    standard_sample_ref = fields.Char(string='Standard Sample Reference')
+    
+    meets_standard = fields.Boolean(string='Meets Standard')
+    
+    result = fields.Selection([
+        ('pass', 'Pass'),
+        ('fail', 'Fail'),
+        ('conditional', 'Conditional'),
+    ], string='Result', tracking=True)
+    
+    comments = fields.Html(string='Comments')
+    
+    @api.depends('appearance_score', 'aroma_score', 'taste_score', 'texture_score')
+    def _compute_overall_score(self):
+        for test in self:
+            scores = [
+                int(test.appearance_score) if test.appearance_score else 0,
+                int(test.aroma_score) if test.aroma_score else 0,
+                int(test.taste_score) if test.taste_score else 0,
+                int(test.texture_score) if test.texture_score else 0,
+            ]
+            test.overall_score = sum(scores) / len([s for s in scores if s > 0]) if any(scores) else 0.0
+    
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('name', 'New') == 'New':
+                vals['name'] = self.env['ir.sequence'].next_by_code('sensory.test') or 'New'
+        return super().create(vals_list)
+</file>
+
+<file path="models/supplier_audit.py">
+# -*- coding: utf-8 -*-
+
+from odoo import api, fields, models, _
+
+
+class SupplierAudit(models.Model):
+    _name = 'supplier.audit'
+    _description = 'Factory Audit'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _order = 'audit_date desc, id desc'
+    
+    name = fields.Char(string='Audit Number', required=True, copy=False, default='New')
+    
+    evaluation_id = fields.Many2one(
+        'supplier.evaluation',
+        string='Evaluation',
+        ondelete='cascade',
+    )
+    
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Supplier',
+        required=True,
+        tracking=True,
+    )
+    
+    audit_type = fields.Selection([
+        ('initial', 'Initial Audit'),
+        ('periodic', 'Periodic Audit'),
+        ('follow_up', 'Follow-up Audit'),
+        ('special', 'Special Audit'),
+    ], string='Audit Type', required=True, default='initial', tracking=True)
+    
+    audit_date = fields.Date(string='Audit Date', required=True, tracking=True)
+    
+    auditor_ids = fields.Many2many(
+        'res.users',
+        string='Auditors',
+    )
+    
+    # Ratings
+    quality_rating = fields.Selection([
+        ('1', 'Poor'),
+        ('2', 'Fair'),
+        ('3', 'Good'),
+        ('4', 'Very Good'),
+        ('5', 'Excellent'),
+    ], string='Quality Rating')
+    
+    safety_rating = fields.Selection([
+        ('1', 'Poor'),
+        ('2', 'Fair'),
+        ('3', 'Good'),
+        ('4', 'Very Good'),
+        ('5', 'Excellent'),
+    ], string='Safety Rating')
+    
+    hygiene_rating = fields.Selection([
+        ('1', 'Poor'),
+        ('2', 'Fair'),
+        ('3', 'Good'),
+        ('4', 'Very Good'),
+        ('5', 'Excellent'),
+    ], string='Hygiene Rating')
+    
+    overall_score = fields.Float(
+        string='Overall Score',
+        compute='_compute_overall_score',
+        store=True,
+    )
+    
+    result = fields.Selection([
+        ('pass', 'Pass'),
+        ('conditional_pass', 'Conditional Pass'),
+        ('fail', 'Fail'),
+    ], string='Result', tracking=True)
+    
+    # Integration with quality_control module
+    quality_check_ids = fields.Many2many(
+        'quality.check',
+        string='Quality Checks',
+    )
+    
+    # Integration with documents module
+    document_ids = fields.Many2many(
+        'documents.document',
+        string='Audit Documents',
+        help='Photos, videos, reports from factory visit',
+    )
+    
+    findings = fields.Html(string='Findings')
+    recommendations = fields.Html(string='Recommendations')
+    
+    follow_up_required = fields.Boolean(string='Follow-up Required')
+    follow_up_deadline = fields.Date(string='Follow-up Deadline')
+    
+    @api.depends('quality_rating', 'safety_rating', 'hygiene_rating')
+    def _compute_overall_score(self):
+        for audit in self:
+            ratings = [
+                int(audit.quality_rating) if audit.quality_rating else 0,
+                int(audit.safety_rating) if audit.safety_rating else 0,
+                int(audit.hygiene_rating) if audit.hygiene_rating else 0,
+            ]
+            audit.overall_score = sum(ratings) / len([r for r in ratings if r > 0]) if any(ratings) else 0.0
+    
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('name', 'New') == 'New':
+                vals['name'] = self.env['ir.sequence'].next_by_code('supplier.audit') or 'New'
+        return super().create(vals_list)
+</file>
+
+<file path="models/supplier_capacity.py">
+# -*- coding: utf-8 -*-
+
+from odoo import api, fields, models, _
+
+
+class SupplierCapacity(models.Model):
+    _name = 'supplier.capacity'
+    _description = 'Supplier Capacity Assessment'
+    
+    name = fields.Char(string='Assessment Name', required=True, default='Capacity Assessment')
+    
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Supplier',
+        required=True,
+    )
+    
+    evaluation_id = fields.Many2one(
+        'supplier.evaluation',
+        string='Evaluation',
+        ondelete='cascade',
+    )
+    
+    assessment_date = fields.Date(string='Assessment Date', default=fields.Date.today)
+    
+    # Capacity metrics
+    daily_capacity = fields.Float(string='Daily Capacity (units)')
+    monthly_capacity = fields.Float(string='Monthly Capacity (units)')
+    
+    current_utilization = fields.Float(
+        string='Current Utilization (%)',
+        help='Current capacity utilization percentage',
+    )
+    
+    available_capacity = fields.Float(
+        string='Available Capacity (%)',
+        compute='_compute_available_capacity',
+        store=True,
+    )
+    
+    # Resources
+    number_of_employees = fields.Integer(string='Number of Employees')
+    number_of_production_lines = fields.Integer(string='Production Lines')
+    warehouse_area = fields.Float(string='Warehouse Area (m²)')
+    
+    # Scalability
+    can_scale_up = fields.Boolean(string='Can Scale Up', default=True)
+    scale_up_timeframe = fields.Integer(string='Scale-Up Timeframe (days)')
+    
+    note = fields.Html(string='Notes')
+    
+    @api.depends('current_utilization')
+    def _compute_available_capacity(self):
+        for capacity in self:
+            capacity.available_capacity = 100 - capacity.current_utilization
+</file>
+
+<file path="models/supplier_certificate.py">
+# -*- coding: utf-8 -*-
+
+from odoo import api, fields, models, _
+
+
+class SupplierCertificate(models.Model):
+    _name = 'supplier.certificate'
+    _description = 'Supplier Certificate'
+    _order = 'expiry_date desc, id desc'
+    
+    name = fields.Char(string='Certificate Name', required=True)
+    
+    evaluation_id = fields.Many2one(
+        'supplier.evaluation',
+        string='Evaluation',
+        ondelete='cascade',
+    )
+    
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Supplier',
+        required=True,
+    )
+    
+    certificate_type = fields.Selection([
+        ('haccp', 'HACCP'),
+        ('iso_9001', 'ISO 9001'),
+        ('iso_22000', 'ISO 22000'),
+        ('halal', 'Halal'),
+        ('brc', 'BRC'),
+        ('gmp', 'GMP'),
+        ('fda', 'FDA'),
+        ('other', 'Other'),
+    ], string='Type', required=True)
+    
+    certificate_number = fields.Char(string='Certificate Number')
+    
+    issue_date = fields.Date(string='Issue Date')
+    
+    expiry_date = fields.Date(string='Expiry Date')
+    
+    is_expired = fields.Boolean(
+        string='Expired',
+        compute='_compute_is_expired',
+        store=True,
+    )
+    
+    issuing_authority = fields.Char(string='Issuing Authority')
+    
+    # Documents module integration
+    document_ids = fields.Many2many(
+        'documents.document',
+        string='Certificate Files',
+    )
+    
+    note = fields.Text(string='Notes')
+    
+    @api.depends('expiry_date')
+    def _compute_is_expired(self):
+        today = fields.Date.today()
+        for cert in self:
+            cert.is_expired = cert.expiry_date and cert.expiry_date < today
+</file>
+
+<file path="models/supplier_evaluation.py">
+# -*- coding: utf-8 -*-
+
+from odoo import api, fields, models, _
+from odoo.exceptions import UserError, ValidationError
+
+
+class SupplierEvaluation(models.Model):
+    _name = 'supplier.evaluation'
+    _description = 'Supplier Evaluation'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _order = 'create_date desc, id desc'
+    
+    # ===== HEADER =====
+    
+    name = fields.Char(
+        string='Evaluation Number',
+        required=True,
+        copy=False,
+        default='New',
+        tracking=True,
+    )
+    
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('sourcing_search', 'Sourcing Search'),          # Step 2
+        ('sourcing_review', 'Sourcing Review'),          # Steps 3-5
+        ('qa_document_review', 'QA Document Review'),    # Steps 6-7
+        ('qa_testing', 'QA Testing'),                    # Steps 8-12
+        ('approved', 'Approved'),                        # Step 13 - Pass
+        ('rejected_sourcing', 'Rejected (Sourcing)'),    # Step 7 - Fail
+        ('rejected_qa', 'Rejected (QA)'),                # Step 13 - Fail
+    ], default='draft', required=True, tracking=True)
+    
+    # ===== TYPE & PURPOSE =====
+    
+    evaluation_type = fields.Selection([
+        ('new_product', 'New Product'),          # From Step 1
+        ('optimization', 'Supplier Optimization'),  # From Step 21
+    ], string='Type', required=True, default='new_product', tracking=True)
+    
+    # ===== SUPPLIER =====
+    
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Supplier',
+        required=True,
+        domain="[('is_company', '=', True), ('supplier_rank', '>', 0)]",
+        tracking=True,
+    )
+    
+    is_new_supplier = fields.Boolean(
+        string='New Supplier',
+        help='Check if this is a completely new supplier',
+        tracking=True,
+    )
+    
+    # ===== PRODUCT =====
+    
+    product_tmpl_id = fields.Many2one(
+        'product.template',
+        string='Product',
+        help='Product being evaluated for this supplier',
+    )
+    
+    # ===== OWNERSHIP =====
+    
+    sourcing_user_id = fields.Many2one(
+        'res.users',
+        string='Sourcing User',
+        default=lambda self: self.env.user,
+        tracking=True,
+    )
+    
+    qa_user_id = fields.Many2one(
+        'res.users',
+        string='QA User',
+        tracking=True,
+    )
+    
+    company_id = fields.Many2one(
+        'res.company',
+        string='Company',
+        default=lambda self: self.env.company,
+    )
+    
+    # ===== SUB-RECORDS =====
+    
+    # Steps 3-4: Certificates
+    certificate_ids = fields.One2many(
+        'supplier.certificate',
+        'evaluation_id',
+        string='Certificates',
+    )
+    
+    certificate_count = fields.Integer(
+        string='# Certificates',
+        compute='_compute_counts',
+    )
+    
+    # Step 5: Capacity
+    capacity_id = fields.Many2one(
+        'supplier.capacity',
+        string='Capacity Assessment',
+    )
+    
+    # Step 9: Factory Audits
+    audit_ids = fields.One2many(
+        'supplier.audit',
+        'evaluation_id',
+        string='Factory Audits',
+    )
+    
+    audit_count = fields.Integer(
+        string='# Audits',
+        compute='_compute_counts',
+    )
+    
+    # Step 10: Lab Tests
+    lab_test_ids = fields.One2many(
+        'lab.test',
+        'evaluation_id',
+        string='Lab Tests',
+    )
+    
+    lab_test_count = fields.Integer(
+        string='# Lab Tests',
+        compute='_compute_counts',
+    )
+    
+    # Step 11: Sensory Tests
+    sensory_test_ids = fields.One2many(
+        'sensory.test',
+        'evaluation_id',
+        string='Sensory Tests',
+    )
+    
+    sensory_test_count = fields.Integer(
+        string='# Sensory Tests',
+        compute='_compute_counts',
+    )
+    
+    # Step 13: Final Scorecard
+    scorecard_id = fields.Many2one(
+        'supplier.scorecard',
+        string='Final Scorecard',
+    )
+    
+    final_score = fields.Float(
+        related='scorecard_id.total_score',
+        string='Final Score',
+        store=True,
+    )
+    
+    # ===== DOCUMENTS INTEGRATION =====
+    
+    document_folder_id = fields.Many2one(
+        'documents.document',
+        string='Document Workspace',
+        help='Folder for all evaluation documents',
+        domain=[('type', '=', 'folder')],
+    )
+    
+    document_count = fields.Integer(
+        string='# Documents',
+        compute='_compute_document_count',
+    )
+    
+    # ===== NOTES =====
+    
+    note = fields.Html(string='Notes')
+    
+    rejection_reason = fields.Text(
+        string='Rejection Reason',
+        help='Reason for rejection (if applicable)',
+    )
+    
+    # ===== COMPUTE METHODS =====
+    
+    @api.depends('certificate_ids', 'audit_ids', 'lab_test_ids', 'sensory_test_ids')
+    def _compute_counts(self):
+        for evaluation in self:
+            evaluation.certificate_count = len(evaluation.certificate_ids)
+            evaluation.audit_count = len(evaluation.audit_ids)
+            evaluation.lab_test_count = len(evaluation.lab_test_ids)
+            evaluation.sensory_test_count = len(evaluation.sensory_test_ids)
+    
+    @api.depends('document_folder_id')
+    def _compute_document_count(self):
+        for evaluation in self:
+            if evaluation.document_folder_id:
+                evaluation.document_count = self.env['documents.document'].search_count([
+                    ('folder_id', '=', evaluation.document_folder_id.id)
+                ])
+            else:
+                evaluation.document_count = 0
+    
+    # ===== CRUD =====
+    
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('name', 'New') == 'New':
+                vals['name'] = self.env['ir.sequence'].next_by_code('supplier.evaluation') or 'New'
+        return super().create(vals_list)
+    
+    # ===== WORKFLOW METHODS =====
+    
+    # Step 2
+    def action_start_sourcing(self):
+        """Start sourcing process"""
+        self.ensure_one()
+        self.write({'state': 'sourcing_search'})
+        self._create_document_workspace()
+        return True
+    
+    # Steps 3-5
+    def action_sourcing_complete(self):
+        """Mark sourcing assessment as complete"""
+        self.ensure_one()
+        # Validation: Check if basic requirements are met
+        if not self.env.is_admin() and not self.certificate_ids:
+            raise UserError(_('Please add at least one certificate before completing sourcing review.'))
+        
+        self.write({'state': 'sourcing_review'})
+        return True
+    
+    # Step 6
+    def action_submit_to_qa(self):
+        """Submit evaluation to QA for document review"""
+        self.ensure_one()
+        if not self.env.is_admin() and not self.qa_user_id:
+            raise UserError(_('Please assign a QA user before submitting.'))
+        
+        self.write({'state': 'qa_document_review'})
+        
+        if self.qa_user_id:
+            # Create activity for QA user
+            self.activity_schedule(
+                'sc_0402_supplier_management.mail_activity_qa_document_review',
+                user_id=self.qa_user_id.id,
+                summary=_('QA Document Review Required'),
+                note=_('Please review supplier documents for evaluation %s', self.name),
+            )
+            
+            # Send notification
+            self.message_post(
+                body=_(
+                    'Supplier evaluation submitted to QA for document review.<br/>'
+                    'Supplier: <b>%s</b><br/>'
+                    'Product: <b>%s</b>',
+                    self.partner_id.name,
+                    self.product_tmpl_id.name if self.product_tmpl_id else 'N/A'
+                ),
+                subject=_('QA Review Required'),
+                partner_ids=[self.qa_user_id.partner_id.id],
+            )
+        
+        return True
+    
+    # Step 7 - Approve
+    def action_qa_document_approve(self):
+        """QA approves documents → proceed to testing"""
+        self.ensure_one()
+        self.write({'state': 'qa_testing'})
+        
+        self.message_post(
+            body=_('Documents approved by QA. Proceeding to testing phase.'),
+            subject=_('Documents Approved'),
+        )
+        
+        return True
+    
+    # Step 7 - Reject
+    def action_qa_document_reject(self):
+        """QA rejects documents → back to sourcing"""
+        self.ensure_one()
+        return self._open_rejection_wizard('rejected_sourcing')
+    
+    # Step 13 - Final Approve
+    def action_qa_final_approve(self):
+        """QA final approval - also approves the vendor if draft"""
+        self.ensure_one()
+        self.write({'state': 'approved'})
+        
+        # Auto-create scorecard if not exists
+        if not self.scorecard_id:
+            self._create_scorecard()
+        
+        # AUTO-APPROVE VENDOR if still draft
+        if self.partner_id.x_supplier_status == 'draft':
+            self.partner_id.action_approve_vendor()
+            self.message_post(
+                body=_('Vendor <b>%s</b> has been approved and assigned code: <b>%s</b>',
+                       self.partner_id.name, self.partner_id.x_supplier_code),
+                subject=_('Vendor Approved'),
+            )
+        
+        self.message_post(
+            body=_('Supplier evaluation <b>APPROVED</b> by QA.<br/>Final Score: <b>%s</b>', 
+                   self.final_score),
+            subject=_('Evaluation Approved'),
+        )
+        
+        return True
+    
+    # Step 13 - Final Reject
+    def action_qa_final_reject(self):
+        """QA final rejection"""
+        self.ensure_one()
+        return self._open_rejection_wizard('rejected_qa')
+    
+    def action_reset_to_draft(self):
+        """Reset to draft"""
+        self.ensure_one()
+        self.write({'state': 'draft', 'rejection_reason': False})
+        return True
+    
+    # ===== HELPER METHODS =====
+    
+    def _create_document_workspace(self):
+        """Create documents folder for this evaluation"""
+        self.ensure_one()
+        if not self.document_folder_id:
+            # Create a folder (documents.document with type='folder')
+            folder = self.env['documents.document'].sudo().create({
+                'name': f"SE{self.id:04d} - {self.partner_id.name}",
+                'type': 'folder',
+                'folder_id': self.env.ref('documents.documents_finance_folder', raise_if_not_found=False).id if self.env.ref('documents.documents_finance_folder', raise_if_not_found=False) else False,
+            })
+            self.document_folder_id = folder.id
+    
+    def _create_scorecard(self):
+        """Auto-create scorecard from evaluation data"""
+        self.ensure_one()
+        if not self.scorecard_id:
+            scorecard = self.env['supplier.scorecard'].create({
+                'evaluation_id': self.id,
+                'partner_id': self.partner_id.id,
+                'product_tmpl_id': self.product_tmpl_id.id,
+            })
+            self.scorecard_id = scorecard.id
+            scorecard.action_calculate_score()
+    
+    def _open_rejection_wizard(self, new_state):
+        """Open wizard to enter rejection reason"""
+        self.ensure_one()
+        return {
+            'name': _('Rejection Reason'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'supplier.evaluation.rejection.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_evaluation_id': self.id,
+                'default_new_state': new_state,
+            },
+        }
+    
+    # ===== SMART BUTTONS =====
+    
+    def action_view_certificates(self):
+        """View certificates"""
+        self.ensure_one()
+        return {
+            'name': _('Certificates'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'supplier.certificate',
+            'view_mode': 'list,form',
+            'domain': [('evaluation_id', '=', self.id)],
+            'context': {'default_evaluation_id': self.id, 'default_partner_id': self.partner_id.id},
+        }
+    
+    def action_view_audits(self):
+        """View audits"""
+        self.ensure_one()
+        return {
+            'name': _('Factory Audits'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'supplier.audit',
+            'view_mode': 'list,form',
+            'domain': [('evaluation_id', '=', self.id)],
+            'context': {'default_evaluation_id': self.id, 'default_partner_id': self.partner_id.id },
+        }
+    
+    def action_view_lab_tests(self):
+        """View lab tests"""
+        self.ensure_one()
+        return {
+            'name': _('Lab Tests'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'lab.test',
+            'view_mode': 'list,form',
+            'domain': [('evaluation_id', '=', self.id)],
+            'context': {'default_evaluation_id': self.id, 'default_product_tmpl_id': self.product_tmpl_id.id},
+        }
+    
+    def action_view_sensory_tests(self):
+        """View sensory tests"""
+        self.ensure_one()
+        return {
+            'name': _('Sensory Tests'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'sensory.test',
+            'view_mode': 'list,form',
+            'domain': [('evaluation_id', '=', self.id)],
+            'context': {'default_evaluation_id': self.id, 'default_product_tmpl_id': self.product_tmpl_id.id},
+        }
+    
+    def action_view_documents(self):
+        """View documents folder"""
+        self.ensure_one()
+        if not self.document_folder_id:
+            self._create_document_workspace()
+        
+        return {
+            'name': _('Documents'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'documents.document',
+            'view_mode': 'kanban,tree,form',
+            'domain': [('folder_id', '=', self.document_folder_id.id)],
+            'context': {'default_folder_id': self.document_folder_id.id},
+        }
+</file>
+
+<file path="models/supplier_scorecard.py">
+# -*- coding: utf-8 -*-
+
+from odoo import api, fields, models, _
+
+
+class SupplierScorecard(models.Model):
+    _name = 'supplier.scorecard'
+    _description = 'Supplier Scorecard'
+    
+    name = fields.Char(string='Scorecard Name', compute='_compute_name', store=True)
+    
+    evaluation_id = fields.Many2one(
+        'supplier.evaluation',
+        string='Evaluation',
+        ondelete='cascade',
+    )
+    
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Supplier',
+        required=True,
+    )
+    
+    product_tmpl_id = fields.Many2one(
+        'product.template',
+        string='Product',
+    )
+    
+    scorecard_date = fields.Date(string='Date', default=fields.Date.today)
+    
+    # Scoring categories (out of 100)
+    quality_score = fields.Float(string='Quality Score')
+    capacity_score = fields.Float(string='Capacity Score')
+    compliance_score = fields.Float(string='Compliance Score')
+    cost_score = fields.Float(string='Cost Score')
+    
+    total_score = fields.Float(
+        string='Total Score',
+        compute='_compute_total_score',
+        store=True,
+    )
+    
+    rating = fields.Selection([
+        ('a', 'A - Excellent (≥90)'),
+        ('b', 'B - Good (80-89)'),
+        ('c', 'C - Fair (70-79)'),
+        ('d', 'D - Poor (60-69)'),
+        ('f', 'F - Fail (<60)'),
+    ], string='Rating', compute='_compute_rating', store=True)
+    
+    recommendation = fields.Selection([
+        ('approved', 'Approved'),
+        ('approved_conditional', 'Approved with Conditions'),
+        ('not_approved', 'Not Approved'),
+    ], string='Recommendation')
+    
+    notes = fields.Html(string='Notes')
+    
+    @api.depends('partner_id', 'product_tmpl_id')
+    def _compute_name(self):
+        for scorecard in self:
+            if scorecard.partner_id and scorecard.product_tmpl_id:
+                scorecard.name = f"{scorecard.partner_id.name} - {scorecard.product_tmpl_id.name}"
+            elif scorecard.partner_id:
+                scorecard.name = scorecard.partner_id.name
+            else:
+                scorecard.name = 'New Scorecard'
+    
+    @api.depends('quality_score', 'capacity_score', 'compliance_score', 'cost_score')
+    def _compute_total_score(self):
+        for scorecard in self:
+            # Weighted average: Quality 40%, Capacity 20%, Compliance 30%, Cost 10%
+            scorecard.total_score = (
+                scorecard.quality_score * 0.4 +
+                scorecard.capacity_score * 0.2 +
+                scorecard.compliance_score * 0.3 +
+                scorecard.cost_score * 0.1
+            )
+    
+    @api.depends('total_score')
+    def _compute_rating(self):
+        for scorecard in self:
+            if scorecard.total_score >= 90:
+                scorecard.rating = 'a'
+            elif scorecard.total_score >= 80:
+                scorecard.rating = 'b'
+            elif scorecard.total_score >= 70:
+                scorecard.rating = 'c'
+            elif scorecard.total_score >= 60:
+                scorecard.rating = 'd'
+            else:
+                scorecard.rating = 'f'
+    
+    def action_calculate_score(self):
+        """Auto-calculate scores from evaluation data"""
+        for scorecard in self:
+            if not scorecard.evaluation_id:
+                continue
+            
+            evaluation = scorecard.evaluation_id
+            
+            # Quality score from lab tests and sensory tests
+            lab_pass_rate = 0
+            if evaluation.lab_test_ids:
+                passed = len(evaluation.lab_test_ids.filtered(lambda t: t.result == 'pass'))
+                lab_pass_rate = (passed / len(evaluation.lab_test_ids)) * 100
+            
+            sensory_avg = 0
+            if evaluation.sensory_test_ids:
+                scores = evaluation.sensory_test_ids.mapped('overall_score')
+                sensory_avg = (sum(scores) / len(scores)) * 20  # Convert 5-scale to 100-scale
+            
+            scorecard.quality_score = (lab_pass_rate + sensory_avg) / 2 if lab_pass_rate or sensory_avg else 0
+            
+            # Capacity score from capacity assessment
+            if evaluation.capacity_id:
+                scorecard.capacity_score = evaluation.capacity_id.available_capacity
+            
+            # Compliance score from certificates and audits
+            cert_score = len(evaluation.certificate_ids.filtered(lambda c: not c.is_expired)) * 20  # Max 100
+            audit_score = 0
+            if evaluation.audit_ids:
+                audit_score = evaluation.audit_ids[0].overall_score * 20  # Convert 5-scale to 100
+            
+            scorecard.compliance_score = min((cert_score + audit_score) / 2, 100)
+            
+            # Cost score (placeholder - would need pricing data)
+            scorecard.cost_score = 75.0  # Default
+</file>
+
+<file path="security/ir.model.access.csv">
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_supplier_evaluation_user,access.supplier.evaluation.user,model_supplier_evaluation,group_sourcing_user,1,1,1,0
+access_supplier_evaluation_qa,access.supplier.evaluation.qa,model_supplier_evaluation,group_qa_user,1,1,1,0
+access_supplier_evaluation_manager,access.supplier.evaluation.manager,model_supplier_evaluation,group_sc_0402_manager,1,1,1,1
+access_supplier_evaluation_admin,access.supplier.evaluation.admin,model_supplier_evaluation,base.group_system,1,1,1,1
+access_supplier_certificate_user,access.supplier.certificate.user,model_supplier_certificate,group_sourcing_user,1,1,1,1
+access_supplier_certificate_qa,access.supplier.certificate.qa,model_supplier_certificate,group_qa_user,1,0,0,0
+access_supplier_certificate_admin,access.supplier.certificate.admin,model_supplier_certificate,base.group_system,1,1,1,1
+access_supplier_capacity_user,access.supplier.capacity.user,model_supplier_capacity,group_sourcing_user,1,1,1,1
+access_supplier_capacity_qa,access.supplier.capacity.qa,model_supplier_capacity,group_qa_user,1,0,0,0
+access_supplier_capacity_admin,access.supplier.capacity.admin,model_supplier_capacity,base.group_system,1,1,1,1
+access_supplier_audit_user,access.supplier.audit.user,model_supplier_audit,group_sourcing_user,1,1,1,0
+access_supplier_audit_qa,access.supplier.audit.qa,model_supplier_audit,group_qa_user,1,1,1,1
+access_supplier_audit_manager,access.supplier.audit.manager,model_supplier_audit,group_sc_0402_manager,1,1,1,1
+access_supplier_audit_admin,access.supplier.audit.admin,model_supplier_audit,base.group_system,1,1,1,1
+access_lab_test_qa,access.lab.test.qa,model_lab_test,group_qa_user,1,1,1,1
+access_lab_test_sourcing,access.lab.test.sourcing,model_lab_test,group_sourcing_user,1,0,0,0
+access_lab_test_admin,access.lab.test.admin,model_lab_test,base.group_system,1,1,1,1
+access_sensory_test_qa,access.sensory.test.qa,model_sensory_test,group_qa_user,1,1,1,1
+access_sensory_test_sourcing,access.sensory.test.sourcing,model_sensory_test,group_sourcing_user,1,0,0,0
+access_sensory_test_admin,access.sensory.test.admin,model_sensory_test,base.group_system,1,1,1,1
+access_supplier_scorecard_qa,access.supplier.scorecard.qa,model_supplier_scorecard,group_qa_user,1,1,1,0
+access_supplier_scorecard_manager,access.supplier.scorecard.manager,model_supplier_scorecard,group_sc_0402_manager,1,1,1,1
+access_supplier_scorecard_admin,access.supplier.scorecard.admin,model_supplier_scorecard,base.group_system,1,1,1,1
+</file>
+
+<file path="security/sc_0402_security.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- SC_0402: Supplier Management Category -->
+        <record id="module_category_sc_0402" model="ir.module.category">
+            <field name="name">SC_0402 Supplier Management</field>
+            <field name="description">Access rights for SC_0402 Supplier Management module</field>
+            <field name="sequence">50</field>
+        </record>
+        <!-- User: Sourcing User -->
+        <record id="group_sourcing_user" model="res.groups">
+            <field name="name">Sourcing User</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+        <!-- User: QA User -->
+        <record id="group_qa_user" model="res.groups">
+            <field name="name">QA User</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+        <!-- User: Menu User -->
+        <record id="group_menu_user" model="res.groups">
+            <field name="name">Menu Department User</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+        <!-- Manager: SC_0402 Manager -->
+        <record id="group_sc_0402_manager" model="res.groups">
+            <field name="name">SC_0402 Manager</field>
+            <field name="implied_ids" eval="[(4, ref('group_sourcing_user')), (4, ref('group_qa_user')), (4, ref('group_menu_user'))]" />
+        </record>
+    </data>
+</odoo>
+</file>
+
+<file path="tests/__init__.py">
+from . import test_sc_0402_flow
+</file>
+
+<file path="tests/test_sc_0402_flow.py">
+# -*- coding: utf-8 -*-
+from odoo.tests.common import TransactionCase, tagged
+
+@tagged('sc_0402')
+class TestSC0402Flow(TransactionCase):
+
+    def setUp(self):
+        super(TestSC0402Flow, self).setUp()
+        self.supplier = self.env['res.partner'].create({'name': 'Test Supplier', 'supplier_rank': 1})
+        self.product_tmpl = self.env['product.template'].create({'name': 'Test Product'})
+        
+        # Create users
+        self.menu_user = self.env['res.users'].create({
+            'name': 'Menu User',
+            'login': 'menu_user',
+            'groups_id': [(4, self.env.ref('SC_0402_supplier_management.group_menu_user').id)],
+        })
+        self.sourcing_user = self.env['res.users'].create({
+            'name': 'Sourcing User',
+            'login': 'sourcing_user',
+            'groups_id': [(4, self.env.ref('SC_0402_supplier_management.group_sourcing_user').id)],
+        })
+        self.manager_user = self.env['res.users'].create({
+            'name': 'Manager User',
+            'login': 'manager_user',
+            'groups_id': [(4, self.env.ref('SC_0402_supplier_management.group_sc_0402_manager').id)],
+        })
+
+    def test_supplier_evaluation_flow(self):
+        """ Test the Supplier Evaluation Workflow """
+        evaluation = self.env['supplier.evaluation'].create({
+            'partner_id': self.supplier.id,
+            'product_tmpl_id': self.product_tmpl.id,
+            'evaluation_type': 'new_product',
+            'qa_user_id': self.manager_user.id,
+        })
+        
+        # 1. Draft -> Sourcing
+        evaluation.action_start_sourcing()
+        self.assertEqual(evaluation.state, 'sourcing_search')
+        
+        # 2. Add certificate (required for completion)
+        self.env['supplier.certificate'].create({
+            'name': 'HACCP',
+            'partner_id': self.supplier.id,
+            'certificate_type': 'haccp',
+            'evaluation_id': evaluation.id,
+        })
+        
+        # 3. Sourcing -> Review
+        evaluation.action_sourcing_complete()
+        self.assertEqual(evaluation.state, 'sourcing_review')
+        
+        # 4. Submit to QA
+        evaluation.action_submit_to_qa()
+        self.assertEqual(evaluation.state, 'qa_document_review')
+        
+        # 5. QA Approve Documents
+        evaluation.action_qa_document_approve()
+        self.assertEqual(evaluation.state, 'qa_testing')
+        
+        # 6. QA Final Approve
+        evaluation.action_qa_final_approve()
+        self.assertEqual(evaluation.state, 'approved')
+        self.assertTrue(evaluation.scorecard_id, "Scorecard should be auto-created")
+
+    def test_pif_bom_flow(self):
+        """ Test PIF/BOM Workflow with McDonald's fields """
+        
+        # 1. Create Evaluation first (approved)
+        evaluation = self.env['supplier.evaluation'].create({
+            'partner_id': self.supplier.id,
+            'state': 'approved',
+            'evaluation_type': 'new_product',
+        })
+        
+        # 2. Create Component Product with GRI
+        component = self.env['product.product'].create({
+            'name': 'Raw Beef',
+            'x_gri': 'GRI-001',
+            'x_raw_item_desc': 'Frozen Beef Pattern',
+            'standard_price': 50.0,
+        })
+        
+        # Verify computed GRI
+        self.assertEqual(component.x_gri_full, 'GRI-001-Frozen Beef Pattern')
+        
+        # 3. Create PIF BOM
+        pif_bom = self.env['mrp.bom'].create({
+            'product_tmpl_id': self.product_tmpl.id,
+            'is_pif': True,
+            'program_name': 'New Burger Campaign',
+            'supplier_evaluation_id': evaluation.id,
+        })
+        
+        # 4. Add Line with McDonald's fields
+        bom_line = self.env['mrp.bom.line'].create({
+            'bom_id': pif_bom.id,
+            'product_id': component.id,
+            'product_qty': 10,
+            'x_conversion_rate': 12.0, # 1 unit = 12 sub-units
+        })
+        
+        # Verify conversion rate logic
+        self.assertEqual(bom_line.conversion_rate, 12.0)
+        self.assertEqual(bom_line.gri, 'GRI-001')
+        
+        # 5. PIF Workflow
+        pif_bom.action_submit_for_approval()
+        self.assertEqual(pif_bom.pif_state, 'menu_review')
+        
+        pif_bom.action_approve_menu()
+        self.assertEqual(pif_bom.pif_state, 'sourcing')
+        
+        pif_bom.action_approve_sourcing()
+        self.assertEqual(pif_bom.pif_state, 'line_manager')
+        
+        pif_bom.with_user(self.manager_user).action_approve_line_manager()
+        self.assertEqual(pif_bom.pif_state, 'ceo')
+        
+        pif_bom.with_user(self.manager_user).action_approve_ceo()
+        self.assertEqual(pif_bom.pif_state, 'approved')
+        
+        # 6. Verify WRIN Creation Trigger
+        self.assertTrue(pif_bom.wrin_created)
+        
+        # Check Supplier Info created
+        supplier_info = self.env['product.supplierinfo'].search([
+            ('product_id', '=', component.id),
+            ('partner_id', '=', self.supplier.id)
+        ])
+        self.assertTrue(supplier_info)
+        # Check WRIN format (GRI-Ref)
+        expected_wrin = 'GRI-001' # No ref on partner yet, likely just GRI or handle fallback
+        # In code: f"{line.product_id.x_gri}-{supplier.ref}" if ... else default_code
+        # Since supplier.ref is empty, it might look like "GRI-001-" or check implementation details again
+</file>
+
+<file path="views/menu_views.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ROOT MENU -->
+    <menuitem id="menu_app_root" name="MENU" web_icon="SC_0402_supplier_management,static/description/icon.png" sequence="40" />
+    <!-- 1. PROJECTS (Product Templates) -->
+    <record id="action_projects" model="ir.actions.act_window">
+        <field name="name">Projects</field>
+        <field name="res_model">product.template</field>
+        <field name="domain">[('x_is_raw_material', '=', False)]</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{'default_detailed_type': 'product'}</field>
+    </record>
+
+    <menuitem id="menu_projects" name="Projects" parent="menu_app_root" action="action_projects" sequence="10" />
+    <!-- 1.1 Raw Materials (Product Templates) -->
+    <record id="action_raw_materials" model="ir.actions.act_window">
+        <field name="name">Raw Materials</field>
+        <field name="res_model">product.template</field>
+        <field name="domain">[('x_is_raw_material', '=', True)]</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{'default_detailed_type': 'product'}</field>
+    </record>
+
+    <menuitem id="menu_raw_materials" name="Raw Materials" parent="menu_app_root" action="action_raw_materials" sequence="11" />
+    <!-- 2. RAW MATERIALS (BOM/PIF) -->
+    <record id="action_pif_bom" model="ir.actions.act_window">
+        <field name="name">BoM (Bill of Materials)</field>
+        <field name="res_model">mrp.bom</field>
+        <field name="domain">[('is_pif', '=', True)]</field>
+        <field name="context">{'default_is_pif': True}</field>
+        <field name="view_mode">list,form,kanban</field>
+    </record>
+
+    <menuitem id="menu_pif_bom" name="BoM (Bill of Materials)" parent="menu_app_root" action="action_pif_bom" sequence="20" />
+    <!-- 3. VENDORS (ĐÃ BỎ - USER YÊU CẦU CHỈ GIỮ VENDOR DRAFTS) -->
+    <!--
+    <record id="action_vendors_management" model="ir.actions.act_window">
+        <field name="name">Vendors</field>
+        <field name="res_model">res.partner</field>
+        <field name="domain">[('supplier_rank', '>', 0)]</field>
+        <field name="context">{'default_x_supplier_status': 'draft', 'default_supplier_rank': 1, 'default_is_company': True}</field>
+        <field name="view_mode">list,form,kanban</field>
+    </record>
+
+    <menuitem id="menu_vendors" name="Vendors" parent="menu_app_root" action="action_vendors_management" sequence="30" />
+    -->
+    <!-- 5. SUPPLIER EVALUATIONS -->
+    <record id="action_supplier_evaluation" model="ir.actions.act_window">
+        <field name="name">Supplier Evaluations</field>
+        <field name="res_model">supplier.evaluation</field>
+        <field name="view_mode">list,form,kanban</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Start a new Supplier Evaluation</p>
+            <p>Evaluate suppliers through the 22-step process including QA review, audits, and tests.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_supplier_evaluation" name="Supplier Evaluations" parent="menu_app_root" action="action_supplier_evaluation" sequence="50" />
+    <!-- Configuration (Ẩn xuống dưới) -->
+    <menuitem id="menu_configuration" name="Configuration" parent="menu_app_root" sequence="100" groups="SC_0402_supplier_management.group_sourcing_user" />
+</odoo>
+</file>
+
+<file path="views/mrp_bom_line_views.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit BOM Line Tree View to show McDonald's fields -->
+    <record id="mrp_bom_line_tree_view_inherit" model="ir.ui.view">
+        <field name="name">mrp.bom.line.tree.inherit.sc_0402</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_form_view" />
+        <field name="arch" type="xml">
+            <!-- Extend BOM lines tree view -->
+            <xpath expr="//field[@name='bom_line_ids']/list" position="attributes">
+                <attribute name="editable">bottom</attribute>
+            </xpath>
+            <xpath expr="//field[@name='bom_line_ids']/list/field[@name='product_id']" position="after">
+                <!-- McDonald's Fields -->
+                <field name="gri" optional="show" />
+                <field name="raw_item_desc" optional="hide" />
+                <field name="gri_full" optional="hide" />
+            </xpath>
+            <xpath expr="//field[@name='bom_line_ids']/list/field[@name='product_qty']" position="after">
+                <field name="qty_unit_display" optional="hide" />
+                <field name="conversion_rate" optional="show" />
+            </xpath>
+            <xpath expr="//field[@name='bom_line_ids']/list/field[@name='product_uom_id']" position="after">
+                <!-- Supplier Info - Using correct field names -->
+                <!-- <field name="selected_vendor_id" string="Vendor" optional="show" />
+                <field name="wrin" optional="show" /> -->
+                <field name="case_pack" optional="hide" />
+                <field name="lead_time_days" optional="hide" />
+                <!-- Cost -->
+                <field name="inventory_price" string="Unit Price" optional="show" />
+                <field name="total_cost" optional="show" sum="Total Cost" />
+                <field name="currency_id" column_invisible="1" />
+            </xpath>
+        </field>
+    </record>
+</odoo>
+</file>
+
+<file path="views/mrp_bom_views.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mrp_bom_form_view_clean_ui" model="ir.ui.view">
+        <field name="name">mrp.bom.form.clean.ui</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_form_view" />
+        <field name="arch" type="xml">
+            <!-- 1. Add Header: Statusbar and Buttons (before sheet) -->
+            <xpath expr="//form/sheet" position="before">
+                <header invisible="not is_pif">
+                    <field name="is_pif" invisible="1" />
+                    <button name="action_submit_for_approval" string="Submit" type="object" class="oe_highlight" invisible="pif_state != 'draft'" />
+                    <button name="action_approve_menu" string="Approve (Menu)" type="object" class="oe_highlight" invisible="pif_state != 'menu_review'" />
+                    <button name="action_approve_sourcing" string="Approve (Sourcing)" type="object" class="oe_highlight" invisible="pif_state != 'sourcing'" />
+                    <button name="action_approve_line_manager" string="Approve (LM)" type="object" class="oe_highlight" invisible="pif_state != 'line_manager'" />
+                    <button name="action_approve_ceo" string="Approve (CEO)" type="object" class="oe_highlight" invisible="pif_state != 'ceo'" />
+                    <field name="pif_state" widget="statusbar" statusbar_visible="draft,menu_review,sourcing,line_manager,ceo,approved" />
+                </header>
+            </xpath>
+            <!-- 2. Add Checkbox PIF after code field -->
+            <xpath expr="//field[@name='code']" position="after">
+                <field name="is_pif" widget="boolean_toggle" />
+            </xpath>
+            <!-- 3. CLEAN UP COMPONENTS TABLE -->
+            <xpath expr="//field[@name='bom_line_ids']/list" position="attributes">
+                <attribute name="editable">bottom</attribute>
+            </xpath>
+            <!-- Product column: Auto-set Raw Material -->
+            <xpath expr="//field[@name='bom_line_ids']/list/field[@name='product_id']" position="attributes">
+                <attribute name="context">{'default_x_is_raw_material': True, 'default_purchase_ok': True, 'default_sale_ok': False}</attribute>
+            </xpath>
+            <!-- Add GRI column after Product (REMOVED - DUPLICATE) -->
+            <!-- <xpath expr="//field[@name='bom_line_ids']/list/field[@name='product_id']" position="after">
+                <field name="gri" string="GRI" optional="show" />
+            </xpath> -->
+            <!-- VENDOR COLUMNS - Using product.supplierinfo directly -->
+            <xpath expr="//field[@name='bom_line_ids']/list/field[@name='product_uom_id']" position="after">
+                <!-- Helper field for domain -->
+                <field name="product_tmpl_id" column_invisible="1" />
+                <!-- Vendor Proposals: Show all vendors as tags -->
+                <field name="valid_supplierinfo_ids" string="Vendor Proposals" widget="many2many_tags" readonly="1" optional="show" />
+                <!-- Selected Vendor: Sourcing picks this -->
+                <field name="selected_supplierinfo_id" string="Selected Vendor" options="{'no_create': True}" />
+                <!-- Approved Vendor display (for non-sourcing users) -->
+                <!-- Approved Vendor shown after selection -->
+                <field name="selected_vendor_id" string="Approved Vendor" readonly="1" column_invisible="1" />
+                <!-- WRIN and Cost -->
+                <field name="wrin" optional="show" readonly="1" />
+                <field name="price_unit" string="Cost" readonly="1" widget="monetary" />
+            </xpath>
+            <!-- Embedded Form for BOM Line (Popup when clicking on a line) -->
+            <xpath expr="//field[@name='bom_line_ids']" position="inside">
+                <form>
+                    <sheet>
+                        <group>
+                            <group string="Product">
+                                <field name="product_id" />
+                                <field name="product_qty" />
+                                <field name="product_uom_id" />
+                            </group>
+                            <group string="Codes">
+                                <field name="gri" readonly="1" />
+                                <field name="wrin" readonly="1" />
+                            </group>
+                        </group>
+                        <group string="Vendor Selection">
+                            <group>
+                                <field name="product_tmpl_id" invisible="1" />
+                                <field name="valid_supplierinfo_ids" string="Available Vendors" widget="many2many_tags" readonly="1" />
+                            </group>
+                            <group>
+                                <field name="selected_supplierinfo_id" string="Select Vendor" options="{'no_create': True}" groups="SC_0402_supplier_management.group_sourcing_user" />
+                                <field name="selected_vendor_id" readonly="1" />
+                                <field name="price_unit" readonly="1" />
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </xpath>
+            <!-- 4. Add PIF-specific fields in notebook -->
+            <xpath expr="//notebook" position="inside">
+                <page name="pif_info" string="PIF Information" invisible="not is_pif">
+                    <group>
+                        <group string="Product Development (Step 1)">
+                            <field name="program_name" />
+                            <field name="launch_date" />
+                            <field name="forecast_volume" />
+                        </group>
+                        <group string="Supplier Evaluation (Step 14)">
+                            <field name="supplier_evaluation_id" domain="[('state', '=', 'approved')]" context="{'default_evaluation_type': 'new_product'}" />
+                            <field name="wrin_created" readonly="1" />
+                        </group>
+                    </group>
+                    <group string="Approval Workflow">
+                        <group string="Menu Department">
+                            <field name="menu_approved_by" readonly="1" />
+                            <field name="menu_approved_date" readonly="1" />
+                        </group>
+                        <group string="Sourcing">
+                            <field name="sourcing_approved_by" readonly="1" />
+                            <field name="sourcing_approved_date" readonly="1" />
+                        </group>
+                        <group string="Line Manager">
+                            <field name="line_manager_approved_by" readonly="1" />
+                            <field name="line_manager_approved_date" readonly="1" />
+                        </group>
+                        <group string="CEO">
+                            <field name="ceo_approved_by" readonly="1" />
+                            <field name="ceo_approved_date" readonly="1" />
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    <!-- Add PIF filter in BOM list view -->
+    <record id="mrp_bom_tree_view_inherit" model="ir.ui.view">
+        <field name="name">mrp.bom.tree.inherit.sc_0402</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_tree_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="decoration-info">is_pif and pif_state == 'draft'</attribute>
+                <attribute name="decoration-success">is_pif and pif_state == 'approved'</attribute>
+                <attribute name="decoration-warning">is_pif and pif_state in ('menu_review', 'sourcing', 'line_manager', 'ceo')</attribute>
+                <attribute name="decoration-danger">is_pif and pif_state == 'rejected'</attribute>
+            </xpath>
+            <xpath expr="//field[@name='code']" position="after">
+                <field name="is_pif" optional="show" />
+                <field name="pif_state" optional="show" invisible="not is_pif" />
+                <field name="program_name" optional="hide" />
+            </xpath>
+        </field>
+    </record>
+</odoo>
+</file>
+
+<file path="views/product_product_views.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_normal_form_view_inherit_sc_0402" model="ir.ui.view">
+        <field name="name">product.product.form.inherit.sc_0402</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view" />
+        <field name="arch" type="xml">
+            <group position="inside" name="group_general">
+                <group string="McDonald's Info">
+                    <field name="x_gri" />
+                    <field name="x_raw_item_desc" />
+                    <field name="x_gri_full" />
+                </group>
+            </group>
+        </field>
+    </record>
+</odoo>
+</file>
+
+<file path="views/product_supplierinfo_views.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_supplierinfo_form_view_inherit_sc_0402" model="ir.ui.view">
+        <field name="name">product.supplierinfo.form.inherit.sc_0402</field>
+        <field name="model">product.supplierinfo</field>
+        <field name="inherit_id" ref="product.product_supplierinfo_form_view" />
+        <field name="arch" type="xml">
+            <field position="after" name="product_code">
+                <field name="x_wrin" />
+            </field>
+            <group position="inside">
+                <group string="McDonald's Logistics">
+                    <field name="x_case_pack" />
+                    <field name="x_lead_time_days" />
+                </group>
+            </group>
+        </field>
+    </record>
+
+    <record id="product_supplierinfo_tree_view_inherit_sc_0402" model="ir.ui.view">
+        <field name="name">product.supplierinfo.tree.inherit.sc_0402</field>
+        <field name="model">product.supplierinfo</field>
+        <field name="inherit_id" ref="product.product_supplierinfo_tree_view" />
+        <field name="arch" type="xml">
+            <field position="after" name="product_code">
+                <field name="x_wrin" optional="show" />
+                <field name="x_case_pack" optional="hide" />
+            </field>
+        </field>
+    </record>
+</odoo>
+</file>
+
+<file path="views/product_template_views.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Product Template View Extension for GRI & Raw Material -->
+    <record id="view_product_template_form_gri" model="ir.ui.view">
+        <field name="name">product.template.form.gri</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view" />
+        <field name="arch" type="xml">
+            <!-- Add Raw Material checkbox in General Information tab -->
+            <xpath expr="//page[@name='general_information']//group[@name='group_general']" position="inside">
+                <group name="raw_material_group" string="Raw Material Information">
+                    <field name="x_is_raw_material" />
+                    <field name="x_gri_code" readonly="1" invisible="not x_is_raw_material" />
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+</file>
+
+<file path="views/res_partner_views.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 1. SỬA FORM VIEW: Thêm Ribbon và Statusbar -->
+    <record id="view_partner_form_sc0402_vendor" model="ir.ui.view">
+        <field name="name">res.partner.form.sc0402.vendor</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+            <!-- HEADER: Nút duyệt & Thanh trạng thái -->
+            <xpath expr="//sheet" position="before">
+                <header invisible="not is_company">
+                    <!-- Nút duyệt chỉ hiện khi đang Draft -->
+                    <button name="action_approve_vendor" string="Approve Vendor (Cấp Mã)" type="object" class="oe_highlight" invisible="x_supplier_status != 'draft'" confirm="Bạn có chắc chắn muốn duyệt và cấp mã cho NCC này?" groups="SC_0402_supplier_management.group_sourcing_user" />
+                    <!-- Thanh trạng thái: Draft -> Approved -->
+                    <field name="x_supplier_status" widget="statusbar" statusbar_visible="draft,approved" />
+                </header>
+            </xpath>
+            <!-- RIBBON: Đóng dấu trạng thái cho dễ nhìn -->
+            <xpath expr="//sheet/div[@name='button_box']" position="after">
+                <!-- Ribbon Vàng: DRAFT / SE -->
+                <widget name="web_ribbon" title="DRAFT (SE)" bg_color="bg-warning" invisible="x_supplier_status != 'draft' or is_company == False" />
+                <!-- Ribbon Xanh: OFFICIAL -->
+                <widget name="web_ribbon" title="OFFICIAL" bg_color="bg-success" invisible="x_supplier_status != 'approved'" />
+            </xpath>
+            <!-- BODY: Hiển thị mã NCC -->
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="x_supplier_code" readonly="1" invisible="supplier_rank == 0" />
+            </xpath>
+        </field>
+    </record>
+    <!-- 2. SỬA LIST VIEW: Thêm cột Status ra ngoài danh sách -->
+    <record id="view_partner_tree_sc0402_vendor" model="ir.ui.view">
+        <field name="name">res.partner.tree.sc0402.vendor</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']" position="after">
+                <!-- Cột Status màu mè -->
+                <field name="x_supplier_status" widget="badge" decoration-warning="x_supplier_status == 'draft'" decoration-success="x_supplier_status == 'approved'" optional="show" />
+                <!-- Cột Mã NCC -->
+                <field name="x_supplier_code" optional="show" />
+            </xpath>
+        </field>
+    </record>
+    <!-- 3. SỬA SEARCH VIEW: Bộ lọc -->
+    <!-- 3. SỬA SEARCH VIEW: ĐÃ XÓA ĐỂ TRÁNH TRÙNG LẶP VỚI vendor_draft_views.xml -->
+    <!-- Bạn xóa hẳn record id="view_res_partner_filter_sc0402" đi nhé -->
+</odoo>
+</file>
+
+<file path="views/supplier_certificate_views.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Supplier Certificate Tree View -->
+    <record id="supplier_certificate_view_tree" model="ir.ui.view">
+        <field name="name">supplier.certificate.tree</field>
+        <field name="model">supplier.certificate</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name" />
+                <field name="partner_id" />
+                <field name="certificate_type" />
+                <field name="certificate_number" />
+                <field name="issue_date" />
+                <field name="expiry_date" />
+            </list>
+        </field>
+    </record>
+    <!-- Supplier Certificate Form View -->
+    <record id="supplier_certificate_view_form" model="ir.ui.view">
+        <field name="name">supplier.certificate.form</field>
+        <field name="model">supplier.certificate</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" />
+                            <field name="partner_id" />
+                            <field name="evaluation_id" />
+                            <field name="certificate_type" />
+                        </group>
+                        <group>
+                            <field name="certificate_number" />
+                            <field name="issue_date" />
+                            <field name="expiry_date" />
+                            <field name="issuing_authority" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Notes">
+                            <field name="note" placeholder="Additional notes..." />
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- Action Window -->
+    <record id="action_supplier_certificate" model="ir.actions.act_window">
+        <field name="name">Certificates</field>
+        <field name="res_model">supplier.certificate</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a new Certificate</p>
+        </field>
+    </record>
+</odoo>
+</file>
+
+<file path="views/supplier_evaluation_views.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Supplier Evaluation Tree View -->
+    <record id="supplier_evaluation_view_tree" model="ir.ui.view">
+        <field name="name">supplier.evaluation.tree</field>
+        <field name="model">supplier.evaluation</field>
+        <field name="arch" type="xml">
+            <list decoration-info="state == 'draft'" decoration-warning="state in ('sourcing_review', 'qa_document_review')" decoration-success="state == 'approved'" decoration-danger="state in ('rejected_sourcing', 'rejected_qa')">
+                <field name="name" />
+                <field name="partner_id" />
+                <field name="product_tmpl_id" />
+                <field name="evaluation_type" />
+                <field name="final_score" widget="progressbar" />
+                <field name="sourcing_user_id" />
+                <field name="qa_user_id" />
+                <field name="state" widget="badge" />
+            </list>
+        </field>
+    </record>
+    <!-- Supplier Evaluation Form View -->
+    <record id="supplier_evaluation_view_form" model="ir.ui.view">
+        <field name="name">supplier.evaluation.form</field>
+        <field name="model">supplier.evaluation</field>
+        <field name="arch" type="xml">
+            <form string="Supplier Evaluation">
+                <header>
+                    <button name="action_start_sourcing" string="Start Sourcing" type="object" class="oe_highlight" invisible="state != 'draft'" />
+                    <button name="action_sourcing_complete" string="Complete Sourcing" type="object" class="oe_highlight" invisible="state != 'sourcing_search'" />
+                    <button name="action_submit_to_qa" string="Submit to QA" type="object" class="oe_highlight" invisible="state != 'sourcing_review'" />
+                    <button name="action_qa_document_approve" string="Approve Documents" type="object" class="oe_highlight" invisible="state != 'qa_document_review'" />
+                    <button name="action_qa_document_reject" string="Reject Documents" type="object" invisible="state != 'qa_document_review'" />
+                    <button name="action_qa_final_approve" string="Final Approve" type="object" class="oe_highlight" invisible="state != 'qa_testing'" />
+                    <button name="action_qa_final_reject" string="Final Reject" type="object" invisible="state != 'qa_testing'" />
+                    <button name="action_reset_to_draft" string="Reset to Draft" type="object" invisible="state not in ('rejected_sourcing', 'rejected_qa', 'get_cancel')" />
+                    <field name="state" widget="statusbar" statusbar_visible="draft,sourcing_search,sourcing_review,qa_document_review,qa_testing,approved" />
+                </header>
+                <sheet>
+                    <div name="button_box" class="oe_button_box">
+                        <button name="action_view_certificates" type="object" class="oe_stat_button" icon="fa-certificate">
+                            <field name="certificate_count" string="Certificates" widget="statinfo" />
+                        </button>
+                        <button name="action_view_audits" type="object" class="oe_stat_button" icon="fa-building-o">
+                            <field name="audit_count" string="Audits" widget="statinfo" />
+                        </button>
+                        <button name="action_view_lab_tests" type="object" class="oe_stat_button" icon="fa-flask">
+                            <field name="lab_test_count" string="Lab Tests" widget="statinfo" />
+                        </button>
+                        <button name="action_view_sensory_tests" type="object" class="oe_stat_button" icon="fa-eye">
+                            <field name="sensory_test_count" string="Sensory" widget="statinfo" />
+                        </button>
+                        <button name="action_view_documents" type="object" class="oe_stat_button" icon="fa-folder-open-o">
+                            <field name="document_count" string="Documents" widget="statinfo" />
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id" readonly="state != 'draft'" />
+                            <field name="product_tmpl_id" readonly="state != 'draft'" />
+                            <field name="evaluation_type" readonly="state != 'draft'" />
+                            <field name="is_new_supplier" />
+                        </group>
+                        <group>
+                            <field name="sourcing_user_id" />
+                            <field name="qa_user_id" />
+                            <field name="company_id" groups="base.group_multi_company" />
+                            <field name="final_score" invisible="state != 'approved'" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="General Information">
+                            <group>
+                                <field name="capacity_id" readonly="1" />
+                                <field name="scorecard_id" readonly="1" />
+                            </group>
+                            <field name="note" placeholder="Notes..." />
+                        </page>
+                        <page string="Rejection Info" invisible="not rejection_reason">
+                            <field name="rejection_reason" readonly="1" />
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter />
+            </form>
+        </field>
+    </record>
+    <!-- Evaluation Action -->
+    <record id="action_supplier_evaluation" model="ir.actions.act_window">
+        <field name="name">Supplier Evaluations</field>
+        <field name="res_model">supplier.evaluation</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a new Supplier Evaluation</p>
+        </field>
+    </record>
+</odoo>
+</file>
+
+<file path="views/vendor_draft_views.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ===== VENDOR DRAFT LIST VIEW ===== -->
+    <record id="view_vendor_draft_tree" model="ir.ui.view">
+        <field name="name">res.partner.vendor.draft.tree</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="x_supplier_status=='draft'" decoration-success="x_supplier_status=='approved'">
+                <field name="name" />
+                <field name="vat" optional="show" />
+                <field name="email" optional="show" />
+                <field name="phone" optional="show" />
+                <field name="supplied_product_ids" string="Sản phẩm cung cấp" widget="many2many_tags" />
+                <field name="supplied_product_info" string="Chi tiết giá" optional="hide" />
+                <field name="current_evaluation_id" string="SE đang chạy" optional="show" />
+                <field name="x_supplier_status" widget="badge" decoration-warning="x_supplier_status=='draft'" decoration-success="x_supplier_status=='approved'" />
+                <field name="x_supplier_code" optional="show" />
+                <button name="action_create_evaluation" string="Tạo SE" type="object" class="btn-primary" icon="fa-clipboard-check" invisible="x_supplier_status == 'approved' or current_evaluation_id" />
+            </list>
+        </field>
+    </record>
+    <!-- ===== VENDOR DRAFT FORM VIEW ===== -->
+    <record id="view_vendor_draft_form" model="ir.ui.view">
+        <field name="name">res.partner.vendor.draft.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet" position="before">
+                <header invisible="supplier_rank == 0">
+                    <button name="action_create_evaluation" string="Tạo Phiếu SE" type="object" class="oe_highlight" invisible="x_supplier_status == 'approved' or current_evaluation_id" />
+                    <button name="action_approve_vendor" string="Duyệt NCC (Cấp mã)" type="object" class="oe_highlight" invisible="x_supplier_status == 'approved'" />
+                    <field name="x_supplier_status" widget="statusbar" statusbar_visible="draft,approved" />
+                </header>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_evaluations" type="object" class="oe_stat_button" icon="fa-clipboard-list" invisible="supplier_rank == 0">
+                    <field name="evaluation_count" string="Evaluations" widget="statinfo" />
+                </button>
+                <button name="action_view_supplied_products" type="object" class="oe_stat_button" icon="fa-cubes" invisible="supplier_rank == 0">
+                    <field name="supplied_product_count" string="Products" widget="statinfo" />
+                </button>
+            </xpath>
+            <xpath expr="//form/sheet" position="inside">
+                <widget name="web_ribbon" title="Draft Vendor" bg_color="text-bg-warning" invisible="x_supplier_status != 'draft' or supplier_rank == 0" />
+                <widget name="web_ribbon" title="Official Vendor" bg_color="text-bg-success" invisible="x_supplier_status != 'approved' or supplier_rank == 0" />
+            </xpath>
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="x_supplier_code" readonly="1" invisible="supplier_rank == 0" />
+                <field name="x_supplier_status" invisible="supplier_rank == 0" />
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page name="supplied_products" string="Sản phẩm cung cấp" invisible="supplier_rank == 0">
+                    <group>
+                        <field name="supplied_product_ids" widget="many2many_tags" readonly="1" />
+                        <field name="supplied_product_info" readonly="1" />
+                        <field name="current_evaluation_id" readonly="1" />
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    <!-- ===== SEARCH VIEW (ĐÃ SỬA LẠI) ===== -->
+    <!-- Sử dụng inherit từ view gốc để giữ lại các tính năng search cơ bản của Odoo -->
+    <record id="view_vendor_draft_search" model="ir.ui.view">
+        <field name="name">res.partner.vendor.draft.search</field>
+        <field name="model">res.partner</field>
+        <!-- Quan trọng: Kế thừa từ view search mặc định để tránh lỗi mất tính năng search cơ bản -->
+        <field name="inherit_id" ref="base.view_res_partner_filter" />
+        <field name="arch" type="xml">
+            <!-- Thêm trường search -->
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="x_supplier_code" />
+                <field name="vat" />
+            </xpath>
+            <!-- Thêm Filter vào Group Filter -->
+            <xpath expr="//filter[@name='type_person']" position="before">
+                <separator />
+                <filter name="draft_vendors" string="Vendor Draft" domain="[('x_supplier_status', '=', 'draft')]" />
+                <filter name="approved_vendors" string="Official Vendors" domain="[('x_supplier_status', '=', 'approved')]" />
+                <separator />
+            </xpath>
+            <!-- Thêm Group By -->
+            <xpath expr="//group" position="inside">
+                <filter name="group_status" string="Status" context="{'group_by': 'x_supplier_status'}" />
+            </xpath>
+        </field>
+    </record>
+    <!-- ===== ACTION: VENDOR DRAFTS ===== -->
+    <record id="action_vendor_drafts" model="ir.actions.act_window">
+        <field name="name">Vendor Drafts</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('supplier_rank', '>', 0)]</field>
+        <field name="context">{
+            'default_supplier_rank': 1, 
+            'default_x_supplier_status': 'draft',
+            'default_is_company': True,
+            'search_default_draft_vendors': 1
+        }</field>
+        <!-- QUAN TRỌNG: Phải mở comment dòng này để Odoo biết dùng Search View chứa filter "draft_vendors" -->
+        <field name="search_view_id" ref="view_vendor_draft_search" />
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Chưa có Vendor Draft nào</p>
+            <p>Vendor Draft sẽ tự động xuất hiện khi Menu team thêm NCC vào tab Purchase của sản phẩm.</p>
+        </field>
+    </record>
+    <!-- View List binding -->
+    <record id="action_vendor_drafts_tree" model="ir.actions.act_window.view">
+        <field name="sequence">1</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_vendor_draft_tree" />
+        <field name="act_window_id" ref="action_vendor_drafts" />
+    </record>
+    <!-- ===== MENU ITEM ===== -->
+    <menuitem id="menu_vendor_drafts" name="Vendor Drafts" parent="SC_0402_supplier_management.menu_app_root" action="action_vendor_drafts" sequence="15" />
+</odoo>
+</file>
+
+<file path="wizard/__init__.py">
+# -*- coding: utf-8 -*-
+
+# from . import pif_import_wizard
+# from . import supplier_onboarding_wizard
+</file>
+
+</files>

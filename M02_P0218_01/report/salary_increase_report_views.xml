@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Pivot View -->
+    <record id="view_salary_increase_plan_line_pivot" model="ir.ui.view">
+        <field name="name">salary.increase.plan.line.pivot</field>
+        <field name="model">salary.increase.plan.line</field>
+        <field name="arch" type="xml">
+            <pivot string="Phân tích tăng lương" sample="1">
+                <field name="department_id" type="row"/>
+                <field name="job_id" type="row"/>
+                <field name="create_date" interval="month" type="col"/>
+                <field name="performance_rating" type="measure"/>
+                <field name="increase_percentage" type="measure" widget="percentage" operator="avg"/>
+                <field name="increase_percentage_final" type="measure" widget="percentage" operator="avg"/>
+                <field name="old_wage" type="measure"/>
+                <field name="new_wage" type="measure"/>
+                <field name="wage_difference" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Graph View -->
+    <record id="view_salary_increase_plan_line_graph" model="ir.ui.view">
+        <field name="name">salary.increase.plan.line.graph</field>
+        <field name="model">salary.increase.plan.line</field>
+        <field name="arch" type="xml">
+            <graph string="Biểu đồ tăng lương" sample="1">
+                <field name="department_id"/>
+                <field name="new_wage" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_salary_increase_report" model="ir.actions.act_window">
+        <field name="name">Báo cáo tăng lương</field>
+        <field name="res_model">salary.increase.plan.line</field>
+        <field name="view_mode">pivot,graph,list,form</field>
+        <field name="domain">[('is_applied', '=', True)]</field>
+        <field name="context">{'search_default_group_by_department': 1}</field>
+    </record>
+
+    <!-- Menu Item in HR -> Reporting -->
+    <menuitem 
+        id="menu_hr_reporting_salary_increase" 
+        name="Lịch sử tăng lương" 
+        parent="hr.hr_menu_hr_reports" 
+        action="action_salary_increase_report" 
+        sequence="30"/>
+</odoo>

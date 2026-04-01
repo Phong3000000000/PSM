@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="email_template_adecco_notification" model="mail.template">
+            <field name="name">Thông báo nghỉ việc - Adecco</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="subject">Thông báo nghỉ việc - {{ object.name }}</field>
+            <field name="email_from">{{ (object.company_id.email or user.email_formatted) }}</field>
+            <field name="email_to">abigail.peterson39@example.com</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Kính gửi Adecco Team,
+                        <br/><br/>
+                        Nhân viên <strong><t t-out="object.name"/></strong> đã hoàn tất thủ tục nghỉ việc tại McDonald's Việt Nam.
+                        <br/><br/>
+                        Bộ phận: <t t-out="object.department_id.name or 'N/A'"/>
+                        <br/>
+                        Chức vụ: <t t-out="object.job_id.name or 'N/A'"/>
+                        <br/><br/>
+                        Vui lòng thực hiện các thủ tục tiếp theo.
+                        <br/><br/>
+                        Trân trọng,
+                        <br/>
+                        Phòng Nhân sự
+                    </p>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

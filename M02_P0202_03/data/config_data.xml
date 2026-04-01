@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Default Referral Configuration -->
+        <record id="referral_config_default" model="employee.referral.config">
+            <field name="name">Cấu hình mặc định</field>
+            <field name="bonus_amount">500000</field>
+            <field name="probation_days">60</field>
+            <field name="auto_create_payslip_input">True</field>
+        </record>
+        
+        <!-- Payslip Input Type for Referral Bonus -->
+        <record id="input_type_referral_bonus" model="hr.payslip.input.type">
+            <field name="name">Thưởng giới thiệu nhân sự</field>
+            <field name="code">REFERRAL_BONUS</field>
+        </record>
+        
+        <!-- Link config to input type -->
+        <record id="referral_config_default" model="employee.referral.config">
+            <field name="payslip_input_type_id" ref="input_type_referral_bonus"/>
+        </record>
+        
+    </data>
+</odoo>

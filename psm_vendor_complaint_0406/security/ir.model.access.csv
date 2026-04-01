@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_vendor_complaint_admin,vendor.complaint.admin,model_vendor_complaint,base.group_system,1,1,1,1
+access_vendor_complaint_line_admin,vendor.complaint.line.admin,model_vendor_complaint_line,base.group_system,1,1,1,1
+access_vendor_complaint_wizard_admin,vendor.complaint.wizard.admin,model_vendor_complaint_wizard,base.group_system,1,1,1,1
+access_vendor_complaint_wizard_line_admin,vendor.complaint.wizard.line.admin,model_vendor_complaint_wizard_line,base.group_system,1,1,1,1
+access_vendor_complaint_store,vendor.complaint.store,model_vendor_complaint,group_store_complaint_user,1,1,1,0
+access_vendor_complaint_line_store,vendor.complaint.line.store,model_vendor_complaint_line,group_store_complaint_user,1,1,1,0
+access_vendor_complaint_wizard_store,vendor.complaint.wizard.store,model_vendor_complaint_wizard,group_store_complaint_user,1,1,1,1
+access_vendor_complaint_wizard_line_store,vendor.complaint.wizard.line.store,model_vendor_complaint_wizard_line,group_store_complaint_user,1,1,1,1
+access_vendor_complaint_qa,vendor.complaint.qa,model_vendor_complaint,group_qa_user,1,1,0,0
+access_vendor_complaint_line_qa,vendor.complaint.line.qa,model_vendor_complaint_line,group_qa_user,1,1,0,0
+access_vendor_complaint_fsc,vendor.complaint.fsc,model_vendor_complaint,group_fsc_manager,1,1,1,1
+access_vendor_complaint_line_fsc,vendor.complaint.line.fsc,model_vendor_complaint_line,group_fsc_manager,1,1,1,1
+access_vendor_complaint_finance,vendor.complaint.finance,model_vendor_complaint,group_finance_user,1,1,0,0
+access_vendor_complaint_line_finance,vendor.complaint.line.finance,model_vendor_complaint_line,group_finance_user,1,0,0,0

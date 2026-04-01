@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ========================================== -->
+    <!-- PLANNING SLOT - VIEW FOR RGM APPROVAL     -->
+    <!-- ========================================== -->
+    <!-- Tree view for approval -->
+    <record id="planning_slot_tree_approval" model="ir.ui.view">
+        <field name="name">planning.slot.tree.approval</field>
+        <field name="model">planning.slot</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <list decoration-warning="approval_state=='to_approve'" decoration-success="approval_state=='approved'" decoration-danger="approval_state=='rejected'">
+                <field name="start_datetime" />
+                <field name="end_datetime" />
+                <field name="role_id" />
+                <field name="resource_id" />
+                <field name="allocated_hours" widget="float_time" />
+                <field name="approval_state" widget="badge" decoration-warning="approval_state=='to_approve'" decoration-success="approval_state=='approved'" decoration-danger="approval_state=='rejected'" />
+                <field name="period_id" />
+                <field name="store_id" optional="show" />
+                <field name="state" />
+                <button name="action_approve" string="Duyệt" type="object" class="btn-primary btn-sm" icon="fa-check" invisible="approval_state != 'to_approve'" />
+                <button name="action_reject" string="Từ chối" type="object" class="btn-danger btn-sm" icon="fa-times" invisible="approval_state != 'to_approve'" />
+            </list>
+        </field>
+    </record>
+    <!-- Form view for approval details -->
+    <record id="planning_slot_form_approval" model="ir.ui.view">
+        <field name="name">planning.slot.form.approval</field>
+        <field name="model">planning.slot</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_approve" string="Duyệt đăng ký" type="object" class="btn-primary" invisible="approval_state != 'to_approve'" groups="planning.group_planning_manager" />
+                    <button name="action_reject" string="Từ chối" type="object" class="btn-danger" invisible="approval_state != 'to_approve'" groups="planning.group_planning_manager" />
+                    <button name="action_reopen" string="Mở lại" type="object" invisible="approval_state not in ['approved', 'rejected']" groups="planning.group_planning_manager" />
+                    <field name="approval_state" widget="statusbar" statusbar_visible="open,to_approve,approved" />
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Thời gian">
+                            <field name="start_datetime" />
+                            <field name="end_datetime" />
+                            <field name="allocated_hours" widget="float_time" />
+                        </group>
+                        <group string="Phân công">
+                            <field name="role_id" />
+                            <field name="resource_id" />
+                            <field name="period_id" />
+                            <field name="store_id" />
+                        </group>
+                    </group>
+                    <group string="Thông tin đăng ký" invisible="not registered_by">
+                        <field name="registered_by" readonly="1" />
+                        <field name="registered_date" readonly="1" />
+                        <field name="max_capacity" />
+                    </group>
+                    <group string="Từ chối" invisible="approval_state != 'rejected'">
+                        <field name="reject_reason" />
+                    </group>
+                </sheet>
+                <chatter />
+            </form>
+        </field>
+    </record>
+    <!-- Search view for filtering -->
+    <record id="planning_slot_search_approval" model="ir.ui.view">
+        <field name="name">planning.slot.search.approval</field>
+        <field name="model">planning.slot</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="resource_id" />
+                <field name="role_id" />
+                <field name="period_id" />
+                <filter name="to_approve" string="Chờ duyệt" domain="[('approval_state', '=', 'to_approve')]" />
+                <filter name="approved" string="Đã duyệt" domain="[('approval_state', '=', 'approved')]" />
+                <filter name="open_slots" string="Còn trống" domain="[('resource_id', '=', False)]" />
+                <separator />
+                <filter name="group_period" string="Theo kỳ" context="{'group_by': 'period_id'}" />
+                <filter name="group_approval" string="Theo trạng thái" context="{'group_by': 'approval_state'}" />
+                <filter name="group_role" string="Theo vai trò" context="{'group_by': 'role_id'}" />
+                <filter name="group_store" string="Theo cửa hàng" context="{'group_by': 'store_id'}" />
+            </search>
+        </field>
+    </record>
+    <!-- Action: Duyệt ca đăng ký -->
+    <record id="action_planning_slot_approval" model="ir.actions.act_window">
+        <field name="name">Duyệt đăng ký ca</field>
+        <field name="res_model">planning.slot</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('approval_state', '=', 'to_approve')]</field>
+        <field name="context">{'search_default_to_approve': 1}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('planning_slot_tree_approval')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('planning_slot_form_approval')})]" />
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Không có ca nào đang chờ duyệt</p>
+            <p>Các ca nhân viên đăng ký sẽ hiển thị ở đây để RGM duyệt.</p>
+        </field>
+    </record>
+</odoo>

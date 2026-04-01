@@ -1,0 +1,1028 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+__init__.py
+__manifest__.py
+controllers/__init__.py
+controllers/portal.py
+data/blog_config.xml
+data/demo_data.xml
+static/src/css/work_schedule.css
+static/src/js/work_schedule.js
+views/portal_templates.xml
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="__init__.py">
+from . import controllers
+</file>
+
+<file path="__manifest__.py">
+{
+    'name': 'Custom Portal',
+    'version': '1.2',
+    'summary': 'Custom Portal Module inheriting from standard Portal',
+    'description': """
+        This module extends the standard Odoo Portal with social media style layout.
+    """,
+    'category': 'Website/Website',
+    'author': 'DuongVan',
+    'depends': ['portal', 'website_blog', 'website_slides', 'M02_P0203_00', 'M02_P0211_00', 'M02_P0212_00'],
+    'data': [
+        'views/portal_templates.xml',
+        'data/blog_config.xml',
+        'data/demo_data.xml',
+    ],
+    'installable': True,
+    'application': False,
+    'license': 'LGPL-3',
+}
+</file>
+
+<file path="controllers/__init__.py">
+from . import portal
+</file>
+
+<file path="controllers/portal.py">
+# -*- coding: utf-8 -*-
+import json
+from odoo import http
+from odoo.addons.portal.controllers.portal import CustomerPortal
+from odoo.http import request
+
+
+from odoo.tools.image import image_data_uri
+
+
+def get_cover_image_url(post):
+    """Extract cover image URL from blog post's cover_properties JSON"""
+    if not post.cover_properties:
+        return None
+    try:
+        props = json.loads(post.cover_properties)
+        bg_image = props.get('background-image', '')
+        # Extract URL from "url('/path/to/image')" format
+        if bg_image.startswith("url("):
+            url = bg_image[4:-1].strip("'").strip('"')
+            return url
+    except (json.JSONDecodeError, ValueError):
+        pass
+    return None
+
+
+class CustomPortal(CustomerPortal):
+
+    @http.route(['/my', '/my/home'], type='http', auth="user", website=True)
+    def home(self, **kw):
+        """ Override home to add blog posts for news feed """
+        response = super(CustomPortal, self).home(**kw)
+        
+        # Fetch published blog posts for news feed
+        BlogPost = request.env['blog.post'].sudo()
+        blog_posts = BlogPost.search([
+            ('is_published', '=', True),
+        ], order='post_date desc', limit=20)
+        
+        # Add blog posts and slug/image helper to response qcontext
+        if hasattr(response, 'qcontext'):
+            response.qcontext['blog_posts'] = blog_posts
+            response.qcontext['slug'] = request.env['ir.http']._slug
+            response.qcontext['image_data_uri'] = image_data_uri
+            response.qcontext['user'] = request.env.user
+            response.qcontext['get_cover_image_url'] = get_cover_image_url
+        
+        return response
+
+    # =====================
+    # PORTAL APPS
+    # =====================
+
+    @http.route(['/my/leaves'], type='http', auth='user', website=True)
+    def portal_leaves(self, **kw):
+        return request.render('portal_custom.portal_app_leaves', {
+            'user': request.env.user,
+            'app_name': 'Leaves',
+        })
+
+    @http.route(['/my/personal-information'], type='http', auth='user', website=True)
+    def portal_personal_information(self, **kw):
+        return request.render('portal_custom.portal_app_personal_information', {
+            'user': request.env.user,
+            'app_name': 'Personal Information',
+        })
+
+    @http.route(['/my/rocks'], type='http', auth='user', website=True)
+    def portal_rocks(self, **kw):
+        return request.render('portal_custom.portal_app_rocks', {
+            'user': request.env.user,
+            'app_name': 'Rocks',
+        })
+
+    @http.route(['/my/performance'], type='http', auth='user', website=True)
+    def portal_performance(self, **kw):
+        return request.render('portal_custom.portal_app_performance', {
+            'user': request.env.user,
+            'app_name': 'Performance',
+        })
+
+    @http.route(['/my/team-accountabilities'], type='http', auth='user', website=True)
+    def portal_team_accountabilities(self, **kw):
+        return request.render('portal_custom.portal_app_team_accountabilities', {
+            'user': request.env.user,
+            'app_name': 'Team Accountabilities',
+        })
+
+    @http.route(['/my/appraisals'], type='http', auth='user', website=True)
+    def portal_appraisals(self, **kw):
+        return request.render('portal_custom.portal_app_appraisals', {
+            'user': request.env.user,
+            'app_name': 'Appraisals',
+        })
+
+    @http.route(['/my/employee-engagement'], type='http', auth='user', website=True)
+    def portal_employee_engagement(self, **kw):
+        return request.render('portal_custom.portal_app_employee_engagement', {
+            'user': request.env.user,
+            'app_name': 'Employee Engagement',
+        })
+
+    @http.route(['/my/expenses'], type='http', auth='user', website=True)
+    def portal_expenses(self, **kw):
+        return request.render('portal_custom.portal_app_expenses', {
+            'user': request.env.user,
+            'app_name': 'Expenses',
+        })
+
+    @http.route(['/my/cond'], type='http', auth='user', website=True)
+    def portal_cond(self, **kw):
+        return request.render('portal_custom.portal_app_cond', {
+            'user': request.env.user,
+            'app_name': 'COND',
+        })
+
+    @http.route(['/my/payslips'], type='http', auth='user', website=True)
+    def portal_payslips(self, **kw):
+        return request.render('portal_custom.portal_app_payslips', {
+            'user': request.env.user,
+            'app_name': 'Payslips',
+        })
+
+    @http.route(['/my/knowledge-hub'], type='http', auth='user', website=True)
+    def portal_knowledge_hub(self, **kw):
+        return request.render('portal_custom.portal_app_knowledge_hub', {
+            'user': request.env.user,
+            'app_name': 'Knowledge Hub',
+        })
+
+    @http.route(['/my/settings'], type='http', auth='user', website=True)
+    def portal_settings(self, **kw):
+        values = self._prepare_portal_layout_values()
+        values.update({
+            'user': request.env.user,
+        })
+        return request.render('portal_custom.portal_settings_page', values)
+</file>
+
+<file path="data/blog_config.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Enable Blog Comments Feature -->
+    <!-- This activates the built-in comment system on blog posts -->
+    <record id="website_blog.opt_blog_post_comment" model="ir.ui.view">
+        <field name="active">True</field>
+    </record>
+    <!-- Create default company blog with comments enabled -->
+    <record id="portal_custom_blog" model="blog.blog" forcecreate="True">
+        <field name="name">Bảng tin Công ty</field>
+        <field name="subtitle">Tin tức và thông báo nội bộ</field>
+    </record>
+</odoo>
+</file>
+
+<file path="data/demo_data.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Tạo Blog "Bảng tin nội bộ" -->
+        <record id="blog_internal_news" model="blog.blog">
+            <field name="name">Bảng tin nội bộ</field>
+            <field name="subtitle">Cập nhật tin tức mới nhất từ công ty</field>
+        </record>
+        <!-- Bài viết 1: Thông báo quan trọng -->
+        <record id="blog_post_1" model="blog.post">
+            <field name="name">🎉 Chúc mừng sinh nhật tháng 1!</field>
+            <field name="subtitle">Gửi lời chúc tốt đẹp nhất đến các thành viên có sinh nhật trong tháng này</field>
+            <field name="blog_id" ref="blog_internal_news" />
+            <field name="is_published">True</field>
+            <field name="content"></field>
+        </record>
+        <!-- Bài viết 2: Sự kiện Year End Party -->
+        <record id="blog_post_2" model="blog.post">
+            <field name="name">🥳 Year End Party 2025 - Đăng ký tham gia ngay!</field>
+            <field name="subtitle">Tiệc tất niên hoành tráng nhất năm sắp diễn ra</field>
+            <field name="blog_id" ref="blog_internal_news" />
+            <field name="is_published">True</field>
+            <field name="content"></field>
+        </record>
+        <!-- Bài viết 3: Thông báo nội quy -->
+        <record id="blog_post_3" model="blog.post">
+            <field name="name">📢 Cập nhật chính sách làm việc từ xa năm 2026</field>
+            <field name="subtitle">Những thay đổi quan trọng về Work From Home policy</field>
+            <field name="blog_id" ref="blog_internal_news" />
+            <field name="is_published">True</field>
+            <field name="content"></field>
+        </record>
+        <!-- Comment mẫu cho bài viết 1 -->
+        <record id="comment_1_1" model="mail.message">
+            <field name="model">blog.post</field>
+            <field name="res_id" ref="blog_post_1" />
+            <field name="message_type">comment</field>
+            <field name="body"></field>
+        </record>
+
+        <record id="comment_1_2" model="mail.message">
+            <field name="model">blog.post</field>
+            <field name="res_id" ref="blog_post_1" />
+            <field name="message_type">comment</field>
+            <field name="body"></field>
+        </record>
+        <!-- Comment mẫu cho bài viết 2 -->
+        <record id="comment_2_1" model="mail.message">
+            <field name="model">blog.post</field>
+            <field name="res_id" ref="blog_post_2" />
+            <field name="message_type">comment</field>
+            <field name="body"></field>
+        </record>
+
+        <record id="comment_2_2" model="mail.message">
+            <field name="model">blog.post</field>
+            <field name="res_id" ref="blog_post_2" />
+            <field name="message_type">comment</field>
+            <field name="body"></field>
+        </record>
+
+        <record id="comment_2_3" model="mail.message">
+            <field name="model">blog.post</field>
+            <field name="res_id" ref="blog_post_2" />
+            <field name="message_type">comment</field>
+            <field name="body"></field>
+        </record>
+    </data>
+</odoo>
+</file>
+
+<file path="static/src/css/work_schedule.css">
+/* Work Schedule Calendar Styles */
+#workScheduleCalendar {
+    background: #fff;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.fc {
+    font-family: inherit;
+}
+
+.fc-event {
+    cursor: pointer;
+    border-radius: 4px;
+    border: none;
+    padding: 2px 6px;
+}
+
+.fc-daygrid-event {
+    padding: 2px 4px;
+}
+
+.fc-toolbar-title {
+    font-size: 1.25rem !important;
+    font-weight: 600;
+}
+
+.fc-button-primary {
+    background-color: #1877f2 !important;
+    border-color: #1877f2 !important;
+}
+
+.fc-button-primary:hover {
+    background-color: #166fe5 !important;
+    border-color: #166fe5 !important;
+}
+
+.fc-button-primary:disabled {
+    background-color: #1877f2 !important;
+    border-color: #1877f2 !important;
+}
+
+.fc-button-active {
+    background-color: #0d47a1 !important;
+    border-color: #0d47a1 !important;
+}
+
+.fc-daygrid-day:hover {
+    background-color: #f0f2f5;
+}
+
+.fc-daygrid-day.fc-day-today {
+    background-color: #e3f2fd !important;
+}
+
+/* Event colors by type */
+.fc-event.event-shift {
+    background-color: #4caf50;
+}
+
+.fc-event.event-leave {
+    background-color: #ff9800;
+}
+
+.fc-event.event-meeting {
+    background-color: #2196f3;
+}
+
+/* Schedule history list */
+.schedule-history-item {
+    transition: background-color 0.2s;
+}
+
+.schedule-history-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* Modal improvements */
+#createScheduleModal .modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+#createScheduleModal .modal-header {
+    border-bottom: 1px solid #f0f2f5;
+}
+
+#createScheduleModal .modal-footer {
+    border-top: 1px solid #f0f2f5;
+}
+
+/* Loading state */
+.calendar-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+}
+
+.calendar-loading::after {
+    content: '';
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f0f2f5;
+    border-top-color: #1877f2;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+</file>
+
+<file path="static/src/js/work_schedule.js">
+/** @odoo-module **/
+
+document.addEventListener('DOMContentLoaded', function () {
+    var calendarEl = document.getElementById('workScheduleCalendar');
+    if (!calendarEl) return;
+
+    // Get CSRF token from Odoo
+    function getCsrfToken() {
+        var csrfInput = document.querySelector('input[name="csrf_token"]');
+        return csrfInput ? csrfInput.value : '';
+    }
+
+    // JSON-RPC call helper
+    function jsonRpc(url, params) {
+        return fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                jsonrpc: '2.0',
+                method: 'call',
+                params: params,
+                id: Math.floor(Math.random() * 1000000)
+            })
+        }).then(function (response) {
+            return response.json();
+        });
+    }
+
+    // Initialize FullCalendar
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'vi',
+        height: 'auto',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,listWeek'
+        },
+        buttonText: {
+            today: 'Hôm nay',
+            month: 'Tháng',
+            week: 'Tuần',
+            list: 'Danh sách'
+        },
+        firstDay: 1, // Monday
+        navLinks: true,
+        editable: false,
+        selectable: true,
+        selectMirror: true,
+        dayMaxEvents: 3,
+
+        // Fetch events from server
+        events: function (info, successCallback, failureCallback) {
+            jsonRpc('/my/work-schedule/events', {
+                start: info.startStr,
+                end: info.endStr
+            }).then(function (data) {
+                if (data.result) {
+                    successCallback(data.result);
+                } else if (data.error) {
+                    console.error('Error:', data.error);
+                    failureCallback(data.error);
+                }
+            }).catch(function (error) {
+                console.error('Error fetching events:', error);
+                failureCallback(error);
+            });
+        },
+
+        // Click on a date to open create modal
+        dateClick: function (info) {
+            var startInput = document.querySelector('#createScheduleForm input[name="start"]');
+            var endInput = document.querySelector('#createScheduleForm input[name="end"]');
+
+            if (startInput && endInput) {
+                // Set default times: 8:00 - 17:00
+                var startDate = info.dateStr + 'T08:00';
+                var endDate = info.dateStr + 'T17:00';
+                startInput.value = startDate;
+                endInput.value = endDate;
+            }
+
+            var modal = new bootstrap.Modal(document.getElementById('createScheduleModal'));
+            modal.show();
+        },
+
+        // Click on an event to view details
+        eventClick: function (info) {
+            alert('Sự kiện: ' + info.event.title + '\nBắt đầu: ' + info.event.start.toLocaleString('vi-VN'));
+        },
+
+        // Select a date range
+        select: function (info) {
+            var startInput = document.querySelector('#createScheduleForm input[name="start"]');
+            var endInput = document.querySelector('#createScheduleForm input[name="end"]');
+
+            if (startInput && endInput) {
+                startInput.value = info.startStr.substring(0, 16);
+                endInput.value = info.endStr.substring(0, 16);
+            }
+
+            var modal = new bootstrap.Modal(document.getElementById('createScheduleModal'));
+            modal.show();
+            calendar.unselect();
+        }
+    });
+
+    calendar.render();
+
+    // Handle form submission
+    var submitBtn = document.getElementById('submitScheduleBtn');
+    if (submitBtn) {
+        submitBtn.addEventListener('click', function () {
+            var form = document.getElementById('createScheduleForm');
+            var title = form.querySelector('input[name="title"]').value;
+            var start = form.querySelector('input[name="start"]').value;
+            var end = form.querySelector('input[name="end"]').value;
+
+            if (!start || !end) {
+                alert('Vui lòng nhập đầy đủ thời gian bắt đầu và kết thúc!');
+                return;
+            }
+
+            // Disable button during submission
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang xử lý...';
+
+            jsonRpc('/my/work-schedule/create', {
+                title: title,
+                start: start,
+                end: end
+            }).then(function (data) {
+                if (data.result && data.result.success) {
+                    // Close modal
+                    var modal = bootstrap.Modal.getInstance(document.getElementById('createScheduleModal'));
+                    modal.hide();
+
+                    // Show success message
+                    showToast('success', data.result.message);
+
+                    // Refresh calendar
+                    calendar.refetchEvents();
+
+                    // Reload page to update history
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1000);
+                } else if (data.result && data.result.error) {
+                    showToast('error', 'Lỗi: ' + data.result.error);
+                } else if (data.error) {
+                    showToast('error', 'Lỗi: ' + data.error.message);
+                }
+            }).catch(function (error) {
+                console.error('Error:', error);
+                showToast('error', 'Có lỗi xảy ra khi đăng ký!');
+            }).finally(function () {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Đăng ký';
+            });
+        });
+    }
+
+    // Toast notification helper
+    function showToast(type, message) {
+        // Create toast container if not exists
+        var toastContainer = document.getElementById('toastContainer');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'toastContainer';
+            toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+            toastContainer.style.zIndex = '9999';
+            document.body.appendChild(toastContainer);
+        }
+
+        var bgClass = type === 'success' ? 'bg-success' : 'bg-danger';
+        var toastHtml = '<div class="toast align-items-center text-white ' + bgClass + ' border-0" role="alert">' +
+            '<div class="d-flex">' +
+            '<div class="toast-body">' + message + '</div>' +
+            '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>' +
+            '</div></div>';
+
+        toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+        var toastEl = toastContainer.lastElementChild;
+        var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+        toast.show();
+
+        // Remove toast after hidden
+        toastEl.addEventListener('hidden.bs.toast', function () {
+            toastEl.remove();
+        });
+    }
+});
+</file>
+
+<file path="views/portal_templates.xml">
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ========================================== -->
+    <!-- CSS TÙY CHỈNH CHO GIỐNG FACEBOOK -->
+    <!-- ========================================== -->
+    <template id="portal_custom_css" inherit_id="portal.frontend_layout" priority="10">
+        <xpath expr="//head" position="inside">
+            <style>body {
+                    background-color: #f0f2f5; /* Màu nền xám đặc trưng của FB */
+                }
+                .social-card {
+                    border-radius: 8px;
+                    border: none;
+                    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+                    background: #fff;
+                    margin-bottom: 16px;
+                }
+                .social-btn {
+                    color: #65676b;
+                    font-weight: 600;
+                    padding: 8px 0;
+                    border-radius: 4px;
+                    transition: 0.2s;
+                }
+                .social-btn:hover {
+                    background-color: #f0f2f5;
+                    color: #1877f2; /* Màu xanh FB */
+                    text-decoration: none;
+                }
+                .app-icon-wrapper {
+                    width: 36px;
+                    height: 36px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 18px;
+                }
+                .sidebar-link {
+                    display: flex;
+                    align-items: center;
+                    padding: 8px;
+                    border-radius: 8px;
+                    color: #050505;
+                    font-weight: 500;
+                    text-decoration: none;
+                    transition: 0.2s;
+                }
+                .sidebar-link:hover {
+                    background-color: #e4e6eb;
+                    color: #050505;
+                }
+                .input-fake {
+                    background-color: #f0f2f5;
+                    border-radius: 20px;
+                    padding: 8px 12px;
+                    color: #65676b;
+                    cursor: pointer;
+                }
+                .input-fake:hover {
+                    background-color: #e4e6eb;
+                }</style>
+        </xpath>
+    </template>
+    <!-- ========================================== -->
+    <!-- PORTAL HOME - GIAO DIỆN SOCIAL MEDIA -->
+    <!-- ========================================== -->
+    <template id="portal_my_home_inherit" name="Portal Social Feed" inherit_id="portal.portal_my_home" priority="99">
+        <!-- Ẩn các phần thừa thãi mặc định -->
+        <xpath expr="//div[@id='portal_common_category']" position="attributes">
+            <attribute name="style">display: none !important;</attribute>
+        </xpath>
+        <xpath expr="//t[@t-set='my_details']" position="attributes">
+            <attribute name="t-value">False</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('o_portal_my_home')]" position="attributes">
+            <attribute name="class" add="d-none" separator=" " />
+        </xpath>
+        <!-- LAYOUT MỚI -->
+        <xpath expr="//div[hasclass('o_portal_my_home')]" position="before">
+            <div class="container mt-4 mb-5">
+                <div class="row">
+                    <!-- CỘT TRÁI: APPS NAV (Giống Menu trái FB) -->
+                    <div class="col-lg-3 d-none d-lg-block">
+                        <div class="sticky-top" style="top: 80px; z-index: 1; max-height: calc(100vh - 100px); overflow-y: auto;">
+                            <div class="social-card p-2">
+                                <!-- Profile Mini -->
+                                <a href="/my/update_info" class="sidebar-link mb-2">
+                                    <img t-att-src="image_data_uri(user.partner_id.avatar_128)" class="rounded-circle me-3" style="width: 36px; height: 36px; object-fit: cover;" />
+                                    <span t-esc="user.name" />
+                                </a>
+                                <hr class="my-2 text-muted" />
+                                <!-- App Shortcuts -->
+                                <div class="text-muted fw-bold px-2 mb-2" style="font-size: 13px;">ỨNG DỤNG</div>
+                                <a href="/my/update_info" class="sidebar-link">
+                                    <div class="app-icon-wrapper me-3" style="background: #e3f2fd; color: #1976d2;">
+                                        <i class="fa fa-user" />
+                                    </div>
+                                    <span>Thông tin cá nhân</span>
+                                </a>
+                                <a href="/my/payslips" class="sidebar-link">
+                                    <div class="app-icon-wrapper me-3" style="background: #fff8e1; color: #ffa000;">
+                                        <i class="fa fa-money" />
+                                    </div>
+                                    <span>Phiếu lương</span>
+                                </a>
+                                <a href="/slides" class="sidebar-link">
+                                    <div class="app-icon-wrapper me-3" style="background: #e0f7fa; color: #0097a7;">
+                                        <i class="fa fa-graduation-cap" />
+                                    </div>
+                                    <span>Khóa học (E-Learning)</span>
+                                </a>
+                                <a href="/my/shifts" class="sidebar-link">
+                                    <div class="app-icon-wrapper me-3" style="background: #e8f5e9; color: #4caf50;">
+                                        <i class="fa fa-calendar" />
+                                    </div>
+                                    <span>Đăng ký Ca làm việc</span>
+                                </a>
+                                <!-- More Apps Level 1 -->
+                                <div id="moreApps1" class="collapse">
+                                    <a href="/my/rocks" class="sidebar-link">
+                                        <div class="app-icon-wrapper me-3" style="background: #ffebee; color: #d32f2f;">
+                                            <i class="fa fa-bullseye" />
+                                        </div>
+                                        <span>Mục tiêu (Rocks)</span>
+                                    </a>
+                                    <a href="/my/team-accountabilities" class="sidebar-link">
+                                        <div class="app-icon-wrapper me-3" style="background: #f3e5f5; color: #7b1fa2;">
+                                            <i class="fa fa-users" />
+                                        </div>
+                                        <span>Team và Đội nhóm</span>
+                                    </a>
+                                    <a href="/my/expenses" class="sidebar-link">
+                                        <div class="app-icon-wrapper me-3" style="background: #fce4ec; color: #c2185b;">
+                                            <i class="fa fa-credit-card" />
+                                        </div>
+                                        <span>Chi phí (Expenses)</span>
+                                    </a>
+                                    <a href="/my/settings" class="sidebar-link">
+                                        <div class="app-icon-wrapper me-3" style="background: #eceff1; color: #455a64;">
+                                            <i class="fa fa-cog" />
+                                        </div>
+                                        <span>Cài đặt</span>
+                                    </a>
+                                </div>
+                                <!-- More Apps Level 2 -->
+                                <div id="moreApps2" class="collapse">
+                                    <a href="/my/resignation" class="sidebar-link">
+                                        <div class="app-icon-wrapper me-3" style="background: #ffe0e0ff; color: #ff0101ff;">
+                                            <i class="fa fa-sign-out" />
+                                        </div>
+                                        <span>Xin nghỉ</span>
+                                    </a>
+                                </div>
+                                <!-- Control Buttons -->
+                                <!-- Button 1: Xem thêm (Hiện Lv1, Ẩn chính nó, Hiện Btn2) -->
+                                <div id="btnShowMore1" class="collapse show">
+                                    <a role="button" data-bs-toggle="collapse" data-bs-target="#moreApps1, #btnShowMore1, #btnShowMore2" class="sidebar-link text-primary justify-content-center mt-1">
+                                        <i class="fa fa-chevron-down me-2" />
+                                        Xem thêm
+                                    </a>
+                                </div>
+                                <!-- Button 2: Xem thêm (Hiện Lv2, Ẩn chính nó, Hiện Collapse) -->
+                                <div id="btnShowMore2" class="collapse">
+                                    <a role="button" data-bs-toggle="collapse" data-bs-target="#moreApps2, #btnShowMore2, #btnCollapse" class="sidebar-link text-primary justify-content-center mt-1">
+                                        <i class="fa fa-chevron-down me-2" />
+                                        Xem thêm
+                                    </a>
+                                </div>
+                                <!-- Button 3: Thu gọn (Ẩn Lv1, Lv2, Ẩn chính nó, Hiện Btn1) -->
+                                <div id="btnCollapse" class="collapse">
+                                    <a role="button" data-bs-toggle="collapse" data-bs-target="#moreApps1, #moreApps2, #btnCollapse, #btnShowMore1" class="sidebar-link text-primary justify-content-center mt-1">
+                                        <i class="fa fa-chevron-up me-2" />
+                                        Thu gọn
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- CỘT GIỮA: NEWS FEED (Trung tâm) -->
+                    <div class="col-lg-6">
+                        <!-- DANH SÁCH BÀI VIẾT (FEED) -->
+                        <t t-foreach="blog_posts or []" t-as="post">
+                            <div class="social-card pb-1">
+                                <!-- Post Header -->
+                                <div class="p-3 d-flex align-items-start justify-content-between">
+                                    <div class="d-flex">
+                                        <img t-att-src="image_data_uri(post.author_id.avatar_128) if post.author_id else '/web/static/img/placeholder.png'" class="rounded-circle me-3 border" style="width: 40px; height: 40px; object-fit: cover;" />
+                                        <div>
+                                            <h6 class="mb-0 fw-bold text-dark">
+                                                <t t-esc="post.author_id.name if post.author_id else 'Công ty'" />
+                                            </h6>
+                                            <small class="text-muted" style="font-size: 12px;">
+                                                <t t-esc="post.post_date" t-options="{'widget': 'date'}" />
+                                                <span class="mx-1">•</span>
+                                                <i class="fa fa-globe" />
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-link text-muted p-0 text-decoration-none">
+                                        <i class="fa fa-ellipsis-h" />
+                                    </button>
+                                </div>
+                                <!-- Post Content -->
+                                <div class="px-3 pb-2">
+                                    <h5 class="mb-2 fw-normal">
+                                        <a t-att-href="'/blog/%s/%s' % (slug(post.blog_id), slug(post))" class="text-dark text-decoration-none">
+                                            <t t-esc="post.name" />
+                                        </a>
+                                    </h5>
+                                    <p t-if="post.subtitle" t-esc="post.subtitle" class="mb-2 text-muted" />
+                                </div>
+                                <!-- Post Cover Image -->
+                                <t t-set="cover_url" t-value="get_cover_image_url(post)" />
+                                <t t-if="cover_url">
+                                    <a t-att-href="'/blog/%s/%s' % (slug(post.blog_id), slug(post))" class="text-decoration-none d-block">
+                                        <img t-att-src="cover_url" class="w-100" style="height: 300px; object-fit: cover;" alt="Cover" />
+                                    </a>
+                                </t>
+                                <!-- Stats removed - directly show Comment button -->
+                                <hr class="my-0 mx-3" style="opacity: 0.1;" />
+                                <!-- Action Button (Comment only) -->
+                                <div class="px-3 py-1 d-flex justify-content-center">
+                                    <a t-att-href="'/blog/%s/%s#discussion' % (slug(post.blog_id), slug(post))" class="btn btn-link social-btn text-decoration-none text-center text-muted">
+                                        <i class="fa fa-comment-o me-2" />
+                                        Bình luận
+                                    </a>
+                                </div>
+                            </div>
+                        </t>
+                        <!-- Empty State -->
+                        <t t-if="not blog_posts">
+                            <div class="social-card p-5 text-center">
+                                <img src="/web/static/img/smiling_face.svg" style="width: 80px; opacity: 0.5;" class="mb-3" />
+                                <h5 class="text-muted">Bảng tin đang trống</h5>
+                                <p class="text-muted small">Hãy quay lại sau nhé!</p>
+                            </div>
+                        </t>
+                    </div>
+                    <!-- CỘT PHẢI: WIDGETS (Sự kiện, Thông báo) -->
+                    <div class="col-lg-3 d-none d-lg-block">
+                        <!-- Widget: Sinh nhật / Sự kiện -->
+                        <div class="social-card p-3">
+                            <h6 class="text-muted fw-bold mb-3" style="font-size: 13px;">SỰ KIỆN SẮP TỚI</h6>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="rounded bg-primary text-white d-flex flex-column align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                    <span style="font-size: 10px; font-weight: bold;">THG 1</span>
+                                    <span style="font-size: 18px; font-weight: bold;">25</span>
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-dark" style="font-size: 14px;">Year End Party</div>
+                                    <small class="text-muted">Hội trường A • 18:00</small>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-gift text-danger fs-4 me-3 text-center" style="width: 50px;" />
+                                <div>
+                                    <div class="fw-bold text-dark" style="font-size: 14px;">Sinh nhật Sếp Tổng</div>
+                                    <small class="text-muted">Chủ nhật này</small>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Widget: Footer -->
+                        <div class="text-muted small px-2">
+                            <a href="#" class="text-muted text-decoration-none">Quyền riêng tư</a>
+                            •
+                            <a href="#" class="text-muted text-decoration-none">Điều khoản</a>
+                            •
+                            <a href="#" class="text-muted text-decoration-none">Odoo Portal © 2026</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+    <!-- Các template con cho từng App giữ nguyên như cũ, chỉ thừa hưởng layout mới -->
+    <template id="portal_app_base" name="Portal App Base">
+        <t t-call="portal.portal_layout">
+            <div class="container py-4">
+                <div class="row">
+                    <!-- Giữ lại menu bên trái để điều hướng dễ hơn khi vào trong App -->
+                    <div class="col-lg-3 d-none d-lg-block">
+                        <div class="social-card p-3">
+                            <a href="/my/home" class="btn btn-outline-primary w-100 mb-2">
+                                <i class="fa fa-arrow-left me-2" />
+                                Quay lại Bảng tin
+                            </a>
+                            <hr />
+                            <h6 class="text-muted mb-3">MENU APP</h6>
+                            <!-- List lại menu app ở đây nếu cần -->
+                        </div>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="social-card p-5 text-center" style="min-height: 400px;">
+                            <h1 class="display-4 mb-4 text-primary">
+                                <i t-if="app_name == 'Leaves'" class="fa fa-calendar-check-o" />
+                                <i t-elif="app_name == 'Payslips'" class="fa fa-money" />
+                                <i t-else="" class="fa fa-cube" />
+                            </h1>
+                            <h2 class="mb-3">
+                                <t t-esc="app_name" />
+                            </h2>
+                            <p class="text-muted lead">
+                                Xin chào
+                                <t t-esc="user.name" />
+                                , chức năng này đang được phát triển.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    <!-- Giữ nguyên các định nghĩa template con -->
+    <template id="portal_app_leaves" name="Portal App Leaves">
+        <t t-call="portal_custom.portal_app_base" />
+    </template>
+
+    <template id="portal_app_personal_information" name="Portal App Personal Information">
+        <t t-call="portal_custom.portal_app_base" />
+    </template>
+
+    <template id="portal_app_rocks" name="Portal App Rocks">
+        <t t-call="portal_custom.portal_app_base" />
+    </template>
+
+    <template id="portal_app_performance" name="Portal App Performance">
+        <t t-call="portal_custom.portal_app_base" />
+    </template>
+
+    <template id="portal_app_team_accountabilities" name="Portal App Team Accountabilities">
+        <t t-call="portal_custom.portal_app_base" />
+    </template>
+
+    <template id="portal_app_appraisals" name="Portal App Appraisals">
+        <t t-call="portal_custom.portal_app_base" />
+    </template>
+
+    <template id="portal_app_employee_engagement" name="Portal App Employee Engagement">
+        <t t-call="portal_custom.portal_app_base" />
+    </template>
+
+    <template id="portal_app_expenses" name="Portal App Expenses">
+        <t t-call="portal_custom.portal_app_base" />
+    </template>
+
+    <template id="portal_app_cond" name="Portal App COND">
+        <t t-call="portal_custom.portal_app_base" />
+    </template>
+
+    <template id="portal_app_payslips" name="Portal App Payslips">
+        <t t-call="portal_custom.portal_app_base" />
+    </template>
+
+    <template id="portal_app_knowledge_hub" name="Portal App Knowledge Hub">
+        <t t-call="portal_custom.portal_app_base" />
+    </template>
+    <!-- ========== SETTINGS PAGE ========== -->
+    <template id="portal_settings_page" name="Portal Settings Page">
+        <t t-call="portal.portal_layout">
+            <div class="container py-4">
+                <div class="social-card p-4 mb-3">
+                    <h3 class="mb-4">Cài đặt</h3>
+                    <!-- Default Portal Content: Addresses & Security -->
+                    <div class="row g-3">
+                        <!-- Addresses Card -->
+                        <div class="col-md-6">
+                            <a href="/my/addresses" class="d-flex gap-3 p-3 rounded text-decoration-none bg-100 h-100">
+                                <div class="o_portal_icon">
+                                    <img src="/portal/static/src/img/portal-addresses.svg" alt="Addresses" />
+                                </div>
+                                <div>
+                                    <div class="fs-5 fw-normal lh-1 mb-1">Địa chỉ</div>
+                                    <div class="opacity-75">Thêm, xóa hoặc sửa địa chỉ của bạn</div>
+                                </div>
+                            </a>
+                        </div>
+                        <!-- Connection & Security Card -->
+                        <div class="col-md-6">
+                            <a href="/my/security" class="d-flex gap-3 p-3 rounded text-decoration-none bg-100 h-100">
+                                <div class="o_portal_icon">
+                                    <img src="/portal/static/src/img/portal-connection.svg" alt="Security" />
+                                </div>
+                                <div>
+                                    <div class="fs-5 fw-normal lh-1 mb-1">Kết nối và Bảo mật</div>
+                                    <div class="opacity-75">Cấu hình mật khẩu và các tùy chọn bảo mật</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>
+</file>
+
+</files>

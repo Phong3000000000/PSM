@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Performance Rating Levels -->
+        
+        <record id="appraisal_note_exceptional" model="hr.appraisal.note">
+            <field name="name">Exceptional</field>
+            <field name="score">3.75</field>
+            <field name="sequence">1</field>
+        </record>
+        
+        <record id="appraisal_note_significant_high" model="hr.appraisal.note">
+            <field name="name">Significant High</field>
+            <field name="score">3.5</field>
+            <field name="sequence">2</field>
+        </record>
+        
+        <record id="appraisal_note_significant_medium" model="hr.appraisal.note">
+            <field name="name">Significant Medium</field>
+            <field name="score">3.25</field>
+            <field name="sequence">3</field>
+        </record>
+        
+        <record id="appraisal_note_significant_low" model="hr.appraisal.note">
+            <field name="name">Significant Low</field>
+            <field name="score">3.0</field>
+            <field name="sequence">4</field>
+        </record>
+        
+        <record id="appraisal_note_some_improvement" model="hr.appraisal.note">
+            <field name="name">Some Improvement Required</field>
+            <field name="score">2.0</field>
+            <field name="sequence">5</field>
+        </record>
+        
+        <record id="appraisal_note_unacceptable" model="hr.appraisal.note">
+            <field name="name">Unacceptable</field>
+            <field name="score">0.0</field>
+            <field name="sequence">6</field>
+        </record>
+        
+    </data>
+</odoo>

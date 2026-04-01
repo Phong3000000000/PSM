@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="survey_user_input_view_form_inherit_ui_clean" model="ir.ui.view">
+        <field name="name">survey.user.input.view.form.inherit.ui.clean</field>
+        <field name="model">survey.user_input</field>
+        <field name="inherit_id" ref="survey.survey_user_input_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Ẩn cột Score -->
+            <xpath expr="//field[@name='user_input_line_ids']/list/field[@name='answer_score']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+            <!-- Thêm cột Phải đúng -->
+            <xpath expr="//field[@name='user_input_line_ids']/list/field[@name='answer_is_correct']" position="before">
+                <field name="is_mandatory_correct" string="Phải đúng" decoration-danger="is_mandatory_correct"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

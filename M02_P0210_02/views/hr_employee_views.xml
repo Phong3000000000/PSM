@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_employee_form_ops_extension" model="ir.ui.view">
+        <field name="name">hr.employee.form.ops.extension</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <header position="inside">
+                <field name="is_part_time" invisible="1"/>
+                <button name="%(action_manager_proposal_wizard)d"
+                        string="Propose Manager Development"
+                        type="action"
+                        class="btn-primary"
+                        context="{'default_employee_id': id}"
+                        invisible="1"/>
+            </header>
+            <notebook position="inside">
+                <page string="OPS Capacity" groups="base.group_user">
+                    <group>
+                        <group>
+                            <field name="ops_capacity_level" widget="badge"/>
+                        </group>
+                    </group>
+                    <field name="ops_capacity_process_ids" readonly="1"/>
+                </page>
+            </notebook>
+        </field>
+    </record>
+</odoo>

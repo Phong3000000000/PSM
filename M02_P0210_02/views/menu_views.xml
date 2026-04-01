@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem id="menu_ops_capacity_root"
+                  name="OPS Capacity Development"
+                  parent="M02_P0209_02.menu_lnd_root"
+                  sequence="50"
+                  active="False"/>
+
+        <menuitem id="menu_ops_capacity_processes"
+                  name="Capacity Processes"
+                  parent="menu_ops_capacity_root"
+                  action="action_ops_capacity_process"
+                  sequence="10"/>
+        
+        <menuitem id="menu_manager_schedule"
+                  name="Manager Development Program"
+                  parent="M02_P0209_02.menu_human_resource"
+                  action="action_manager_schedule"
+                  sequence="20"
+                  groups="hr.group_hr_user"/>
+    </data>
+</odoo>

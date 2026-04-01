@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_planning_slot_tree_manager_soc" model="ir.ui.view">
+        <field name="name">planning.slot.list.manager.soc</field>
+        <field name="model">planning.slot</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <list string="Review Schedules" multi_edit="1" sample="1" editable="bottom" open_form_view="True">
+                <header>
+                    <button name="action_planning_publish_and_send" class="btn btn-secondary mx-1"
+                        string="Publish &amp; Send" type="object" groups="planning.group_planning_manager"/>
+                </header>
+                <field name="employee_id" widget="many2one_avatar_employee"/>
+                <field name="role_id" string="Position"/>
+                <field name="start_datetime" widget="daterange" options="{'end_date_field': 'end_datetime'}"/>
+                <field name="end_datetime" column_invisible="True" />
+                <field name="allocated_hours" widget="float_time" optional="hide"/>
+                <field name="state" widget="badge" decoration-success="state == 'published'" decoration-info="state == 'draft'"/>
+            </list>
+        </field>
+    </record>
+</odoo>

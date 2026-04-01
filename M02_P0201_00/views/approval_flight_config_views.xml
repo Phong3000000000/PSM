@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Airline Views -->
+    <record id="approval_airline_view_tree" model="ir.ui.view">
+        <field name="name">approval.airline.view.list</field>
+        <field name="model">approval.airline</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="approval_airline_action" model="ir.actions.act_window">
+        <field name="name">Airlines</field>
+        <field name="res_model">approval.airline</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Ticket Class Views -->
+    <record id="approval_ticket_class_view_tree" model="ir.ui.view">
+        <field name="name">approval.ticket.class.view.list</field>
+        <field name="model">approval.ticket.class</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="approval_ticket_class_action" model="ir.actions.act_window">
+        <field name="name">Ticket Classes</field>
+        <field name="res_model">approval.ticket.class</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menus -->
+    <menuitem
+        id="menu_approval_airline"
+        name="Airlines"
+        parent="approvals.approvals_menu_config"
+        action="approval_airline_action"
+        sequence="50"/>
+
+    <menuitem
+        id="menu_approval_ticket_class"
+        name="Ticket Classes"
+        parent="approvals.approvals_menu_config"
+        action="approval_ticket_class_action"
+        sequence="60"/>
+</odoo>

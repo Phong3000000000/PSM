@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Email Templates for Training Notification (Commented out as mcd.availability.request was removed) -->
+    <!--
+    <record id="mail_template_trainer_training_notification" model="mail.template">
+        <field name="name">Training Notification - For Trainer</field>
+        <field name="model_id" ref="M02_P0206_00.model_mcd_availability_request"/>
+        <field name="subject">Training Schedule: {{ object.employee_id.name }} on {{ object.date }}</field>
+        <field name="email_to">{{ ctx.get('trainer_email', '') }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: #667eea; padding: 20px; border-radius: 10px 10px 0 0;">
+                    <h2 style="color: white; margin: 0;">Training Schedule Notification</h2>
+                </div>
+                <div style="background: #f8f9fa; padding: 20px; border: 1px solid #dee2e6; border-top: none;">
+                    <p style="color: #333;">Xin chào <strong>{{ ctx.get('trainer_name', 'Trainer') }}</strong>,</p>
+                    
+                    <p>Bạn có lịch hướng dẫn nhân viên mới:</p>
+                    
+                    <div style="background: white; border-left: 4px solid #667eea; padding: 15px; margin: 15px 0; border-radius: 4px;">
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="color: #666; width: 120px;"><strong>Trainee:</strong></td>
+                                <td style="color: #333;"><strong>{{ object.employee_id.name }}</strong></td>
+                            </tr>
+                            <tr>
+                                <td style="color: #666;"><strong>Ngày:</strong></td>
+                                <td style="color: #333;">{{ object.date }}</td>
+                            </tr>
+                            <tr>
+                                <td style="color: #666;"><strong>Giờ:</strong></td>
+                                <td style="color: #333;">{{ object.start_hour }} - {{ object.end_hour }}</td>
+                            </tr>
+                            <tr>
+                                <td style="color: #666;"><strong>Vị trí:</strong></td>
+                                <td style="color: #333;">{{ object.position_id.name }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <p style="color: #666; font-size: 14px;">Vui lòng chuẩn bị nội dung training cho nhân viên trên.</p>
+                    
+                    <hr style="border: none; border-top: 1px solid #dee2e6; margin: 20px 0;"/>
+                    <p style="color: #999; font-size: 12px;">Email này được gửi tự động từ hệ thống quản lý lịch làm việc.</p>
+                </div>
+            </div>
+        </field>
+    </record>
+    
+    <record id="mail_template_trainee_training_notification" model="mail.template">
+        <field name="name">Training Notification - For Trainee</field>
+        <field name="model_id" ref="M02_P0206_00.model_mcd_availability_request"/>
+        <field name="subject">Lịch Training của bạn: {{ object.date }}</field>
+        <field name="email_to">{{ object.employee_id.work_email }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: #11998e; padding: 20px; border-radius: 10px 10px 0 0;">
+                    <h2 style="color: white; margin: 0;">Training Schedule</h2>
+                </div>
+                <div style="background: #f8f9fa; padding: 20px; border: 1px solid #dee2e6; border-top: none;">
+                    <p style="color: #333;">Xin chào <strong>{{ object.employee_id.name }}</strong>,</p>
+                    
+                    <p>Bạn có lịch training như sau:</p>
+                    
+                    <div style="background: white; border-left: 4px solid #11998e; padding: 15px; margin: 15px 0; border-radius: 4px;">
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="color: #666; width: 120px;"><strong>Ngày:</strong></td>
+                                <td style="color: #333;">{{ object.date }}</td>
+                            </tr>
+                            <tr>
+                                <td style="color: #666;"><strong>Giờ:</strong></td>
+                                <td style="color: #333;">{{ object.start_hour }} - {{ object.end_hour }}</td>
+                            </tr>
+                            <tr>
+                                <td style="color: #666;"><strong>Vị trí:</strong></td>
+                                <td style="color: #333;">{{ object.position_id.name }}</td>
+                            </tr>
+                            <tr>
+                                <td style="color: #666;"><strong>Trainer:</strong></td>
+                                <td style="color: #333;">{{ ctx.get('trainer_name', 'Sẽ được thông báo sau') }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <p style="color: #666; font-size: 14px;">Vui lòng đến đúng giờ và mang đầy đủ đồng phục.</p>
+                    
+                    <hr style="border: none; border-top: 1px solid #dee2e6; margin: 20px 0;"/>
+                    <p style="color: #999; font-size: 12px;">Email này được gửi tự động từ hệ thống quản lý lịch làm việc.</p>
+                </div>
+            </div>
+        </field>
+    </record>
+    -->
+</odoo>
+

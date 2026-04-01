@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- System Refuse Reason Record dùng cho Refuse qua wizard -->
+        <record id="system_refuse_reason" model="hr.applicant.refuse.reason">
+            <field name="name">System: Từ chối (Lý do chi tiết trong Profile)</field>
+            <field name="active" eval="True"/>
+        </record>
+    </data>
+</odoo>

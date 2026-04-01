@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extend HR Applicant Form -->
+    <record id="view_hr_applicant_form_inherit" model="ir.ui.view">
+        <field name="name">hr.applicant.form.inherit</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_applicant_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Add Interview Invitation Button -->
+            <xpath expr="//header" position="inside">
+                <button name="action_send_interview_invitation" 
+                        string="Gửi Thư Mời Phỏng Vấn" 
+                        type="object" 
+                        class="btn-success"
+                        invisible="interview_invitation_sent"
+                        icon="fa-envelope"/>
+                <field name="interview_invitation_sent" invisible="1"/>
+            </xpath>
+
+            <!-- Add Brand & Survey Fields after job_id -->
+            <xpath expr="//field[@name='job_id']" position="after">
+                <!-- recruitment_type is now readonly and inherited from job -->
+                <field name="recruitment_type" 
+                       widget="badge"
+                       decoration-success="recruitment_type == 'store'"
+                       decoration-info="recruitment_type == 'office'"/>
+                <field name="company_id"/>
+                <field name="interview_schedule_id" 
+                       domain="[('company_id', '=', company_id), ('state', '=', 'confirmed')]"
+                       options="{'no_create': True}"/>
+                <field name="survey_id" domain="[('is_pre_interview', '=', True)]"/>
+                <field name="survey_url" widget="url" readonly="1"/>
+                <field name="invitation_sent_date" readonly="1"/>
+            </xpath>
+            
+            <!-- Filter stage_id dropdown based on recruitment_type -->
+            <xpath expr="//field[@name='stage_id']" position="attributes">
+                <attribute name="domain">[('recruitment_type', 'in', [recruitment_type, 'both'])]</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Kanban View - Disable Sample Data -->
+    <record id="view_hr_applicant_kanban_no_sample" model="ir.ui.view">
+        <field name="name">hr.applicant.kanban.no.sample</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_kanban_view_applicant"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <kanban position="attributes">
+                <attribute name="sample">0</attribute>
+            </kanban>
+        </field>
+    </record>
+</odoo>

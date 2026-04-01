@@ -1,0 +1,22 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_psm_db_connection_user,PSM DB Connection User,model_psm_db_connection,group_psm_db_sync_user,1,0,0,0
+access_psm_db_connection_manager,PSM DB Connection Manager,model_psm_db_connection,group_psm_db_sync_manager,1,1,1,1
+access_psm_db_connection_admin,PSM DB Connection Admin,model_psm_db_connection,group_psm_db_sync_admin,1,1,1,1
+access_psm_db_mapping_model_user,PSM DB Mapping Model User,model_psm_db_mapping_model,group_psm_db_sync_user,1,0,0,0
+access_psm_db_mapping_model_manager,PSM DB Mapping Model Manager,model_psm_db_mapping_model,group_psm_db_sync_manager,1,1,1,1
+access_psm_db_mapping_model_admin,PSM DB Mapping Model Admin,model_psm_db_mapping_model,group_psm_db_sync_admin,1,1,1,1
+access_psm_db_mapping_field_user,PSM DB Mapping Field User,model_psm_db_mapping_field,group_psm_db_sync_user,1,0,0,0
+access_psm_db_mapping_field_manager,PSM DB Mapping Field Manager,model_psm_db_mapping_field,group_psm_db_sync_manager,1,1,1,1
+access_psm_db_mapping_field_admin,PSM DB Mapping Field Admin,model_psm_db_mapping_field,group_psm_db_sync_admin,1,1,1,1
+access_psm_db_mapping_data_user,PSM DB Mapping Data User,model_psm_db_mapping_data,group_psm_db_sync_user,1,0,0,0
+access_psm_db_mapping_data_manager,PSM DB Mapping Data Manager,model_psm_db_mapping_data,group_psm_db_sync_manager,1,1,1,1
+access_psm_db_mapping_data_admin,PSM DB Mapping Data Admin,model_psm_db_mapping_data,group_psm_db_sync_admin,1,1,1,1
+access_psm_db_sync_user,PSM DB Sync User,model_psm_db_sync,group_psm_db_sync_user,1,0,0,0
+access_psm_db_sync_manager,PSM DB Sync Manager,model_psm_db_sync,group_psm_db_sync_manager,1,1,1,1
+access_psm_db_sync_admin,PSM DB Sync Admin,model_psm_db_sync,group_psm_db_sync_admin,1,1,1,1
+access_psm_db_sync_log_user,PSM DB Sync Log User,model_psm_db_sync_log,group_psm_db_sync_user,1,0,0,0
+access_psm_db_sync_log_manager,PSM DB Sync Log Manager,model_psm_db_sync_log,group_psm_db_sync_manager,1,1,1,0
+access_psm_db_sync_log_admin,PSM DB Sync Log Admin,model_psm_db_sync_log,group_psm_db_sync_admin,1,1,1,1
+access_psm_db_wizard_user,PSM DB Wizard User,model_psm_db_wizard,group_psm_db_sync_user,1,1,1,1
+access_psm_db_test_transformation_wizard_user,PSM DB Test Transformation Wizard User,model_psm_db_test_transformation_wizard,group_psm_db_sync_user,1,1,1,1
+access_psm_db_metadata_wizard_user,PSM DB Metadata Wizard User,model_psm_db_metadata_wizard,group_psm_db_sync_user,1,1,1,1

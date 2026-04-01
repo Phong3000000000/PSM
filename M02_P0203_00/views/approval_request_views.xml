@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="approval_request_view_form_inherit" model="ir.ui.view">
+        <field name="name">approval.request.view.form.inherit</field>
+        <field name="model">approval.request</field>
+        <field name="inherit_id" ref="approvals.approval_request_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='approvers']" position="after">
+                <page string="Tổng hợp thay đổi" name="changes_summary" invisible="category_name != 'Cập nhật thông tin cá nhân'">
+                    <group groups="hr.group_hr_user">
+                        <field name="category_name" invisible="1"/>
+                        <field name="is_government_updated" widget="boolean_toggle" invisible="category_name != 'Cập nhật thông tin cá nhân'"/>
+                    </group>
+                    <field name="changes_summary_html" nolabel="1" readonly="1"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="approval_request_view_tree_inherit_gov" model="ir.ui.view">
+        <field name="name">approval.request.view.tree.inherit.gov</field>
+        <field name="model">approval.request</field>
+        <field name="inherit_id" ref="approvals.approval_request_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='request_status']" position="before">
+                <field name="category_name" column_invisible="True"/>
+                <field name="is_government_updated" 
+                       widget="boolean_toggle" 
+                       optional="show"
+                       groups="hr.group_hr_user"
+                       invisible="category_name != 'Cập nhật thông tin cá nhân'"
+                      />
+            </xpath>
+        </field>
+        
+    </record>
+</odoo>

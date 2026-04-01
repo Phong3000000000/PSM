@@ -1,0 +1,28 @@
+# Python compilation files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Temporary files & Logs
+*.log
+*.tmp
+*.bak
+*~
+
+# IDE / Editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS System files
+.DS_Store
+Thumbs.db
+
+# --- File nén & Backup  ---
+*.7z
+*.zip
+*.rar
+*.tar
+*.gz
+*.bak

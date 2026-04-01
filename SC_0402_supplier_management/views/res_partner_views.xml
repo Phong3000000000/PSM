@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 1. SỬA FORM VIEW: Thêm mã NCC (Header và Ribbon đã chuyển qua vendor_draft_views.xml) -->
+    <record id="view_partner_form_sc0402_vendor" model="ir.ui.view">
+        <field name="name">res.partner.form.sc0402.vendor</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+            <!-- Header và Ribbon đã chuyển qua vendor_draft_views.xml để tránh duplicate -->
+            <!-- BODY: Hiển thị mã NCC -->
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="x_supplier_code" readonly="1" invisible="supplier_rank == 0" />
+            </xpath>
+        </field>
+    </record>
+    <!-- 2. SỬA LIST VIEW: Thêm cột Status ra ngoài danh sách -->
+    <record id="view_partner_tree_sc0402_vendor" model="ir.ui.view">
+        <field name="name">res.partner.tree.sc0402.vendor</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']" position="after">
+                <!-- Cột Status màu mè -->
+                <field name="x_supplier_status" widget="badge" decoration-warning="x_supplier_status == 'draft'" decoration-success="x_supplier_status == 'approved'" optional="show" />
+                <!-- Cột Mã NCC -->
+                <field name="x_supplier_code" optional="show" />
+            </xpath>
+        </field>
+    </record>
+    <!-- 3. SỬA SEARCH VIEW: ĐÃ XÓA ĐỂ TRÁNH TRÙNG LẶP VỚI vendor_draft_views.xml -->
+</odoo>

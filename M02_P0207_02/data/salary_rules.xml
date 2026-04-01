@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="CATEGORY_NON_TAX" model="hr.salary.rule.category">
+            <field name="name">Thu nhập Không chịu thuế</field>
+            <field name="code">NON_TAX</field>
+        </record>
+
+        <record id="structure_type_fb_retail" model="hr.payroll.structure.type">
+            <field name="name">Nhân viên F&amp;B / Bán lẻ</field>
+            <field name="country_id" eval="False"/>
+        </record>
+
+        <record id="structure_time_attendance" model="hr.payroll.structure">
+            <field name="name">Cấu trúc lương F&amp;B / Bán lẻ</field>
+            <field name="type_id" ref="structure_type_fb_retail"/>
+            <field name="country_id" eval="False"/>
+        </record>
+
+        <!-- ==================== Input Types thêm vào đây ==================== -->
+        <record id="input_type_ot_150" model="hr.payslip.input.type">
+            <field name="name">Số giờ OT Ngày thường (150%)</field>
+            <field name="code">OT_150</field>
+            <field name="country_id" eval="False"/>
+        </record>
+
+        <record id="input_type_dependents" model="hr.payslip.input.type">
+            <field name="name">Số người phụ thuộc (Tính thuế)</field>
+            <field name="code">NPT</field>
+            <field name="country_id" eval="False"/>
+        </record>
+
+        <!-- ==================== Lương cơ bản ==================== -->
+        <record id="hr_salary_rule_basic_custom" model="hr.salary.rule">
+            <field name="name">Lương cơ bản</field>
+            <field name="sequence" eval="100"/>
+            <field name="code">BASIC</field>
+            <field name="category_id" ref="hr_payroll.BASIC"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+# Giả định worked_days.WORK100.number_of_days chứa Total Full Payable Days
+payable_days = worked_days.WORK100.number_of_days if worked_days.WORK100 else 0
+daily_salary = contract.wage / 26  # F_DailySalary theo mốc 26 ngày công
+result = payable_days * daily_salary
+            </field>
+        </record>
+
+        <!-- ==================== Phụ cấp ==================== -->
+        <record id="rule_appendix_concurrent" model="hr.salary.rule">
+            <field name="name">Phụ cấp Kiêm nhiệm (Từ Phụ lục)</field>
+            <field name="sequence" eval="201"/>
+            <field name="code">ALW_CONCURRENT</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+# Tìm Phụ lục gắn với Hợp đồng hiện tại
+appendix = contract.env['hr.contract.appendix'].search([('contract_id', '=', contract.id)], limit=1)
+result = appendix.allowance_concurrent if appendix else 0
+            </field>
+        </record>
+
+        <record id="rule_appendix_housing" model="hr.salary.rule">
+            <field name="name">Phụ cấp Nhà ở (Từ Phụ lục)</field>
+            <field name="sequence" eval="202"/>
+            <field name="code">ALW_HOUSING_FIXED</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+appendix = contract.env['hr.contract.appendix'].search([('version_id', '=', contract.id)], limit=1)
+result = appendix.allowance_housing if appendix else 0
+            </field>
+        </record>
+
+        <record id="hr_salary_rule_attendance_allowance" model="hr.salary.rule">
+            <field name="name">Phụ cấp Chuyên cần</field>
+            <field name="sequence" eval="200"/>
+            <field name="code">ATT_ALLOW</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">python</field>
+            <field name="condition_python">result = True</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+allowance = 0
+level = contract.scale_of_level
+
+if contract.code_location == 'region_1':
+    if level in ['6', '7']:
+        allowance = 500000
+    elif level in ['1', '3', '4', '5']:
+        allowance = 1000000
+    elif level == '2':
+        allowance = 700000
+elif contract.code_location == 'region_2':
+    if level in ['6', '7']:
+        allowance = 400000
+    elif level in ['1', '3', '4', '5']:
+        allowance = 800000
+    elif level == '2':
+        allowance = 600000
+
+result = allowance
+            </field>
+        </record>
+
+        <record id="hr_salary_rule_night_allowance" model="hr.salary.rule">
+            <field name="name">Phụ cấp Ca đêm</field>
+            <field name="sequence" eval="210"/>
+            <field name="code">NIGHT_ALLOW</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+allowance = 0
+dept_name = contract.employee_id.department_id.name
+
+if dept_name in ['Bến Thành', 'Đa Kao', 'Hồ Gươm']:
+    allowance = 300000
+elif dept_name in ['Trần Não', 'Quận 7']:
+    allowance = 200000
+
+result = allowance
+            </field>
+        </record>
+
+        <record id="hr_salary_rule_parking" model="hr.salary.rule">
+            <field name="name">Phụ cấp Gửi xe</field>
+            <field name="sequence" eval="220"/>
+            <field name="code">PARKING</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+dept_name = contract.employee_id.department_id.name
+if dept_name in ['Bến Thành', 'Nguyễn Huệ']:
+    result = 150000
+else:
+    result = 0
+            </field>
+        </record>
+
+        <record id="hr_salary_rule_meal_allowance" model="hr.salary.rule">
+            <field name="name">Trợ cấp tiền ăn</field>
+            <field name="sequence" eval="215"/>
+            <field name="code">MEAL_ALLOW</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">python</field>
+            <field name="condition_python">result = worked_days.WORK100 and worked_days.WORK100.number_of_days > 0</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+meal_rate = 30000
+payable_days = worked_days.WORK100.number_of_days
+result = payable_days * meal_rate
+            </field>
+        </record>
+
+        <!-- ==================== Input-driven allowances ==================== -->
+        <record id="rule_inp_delivery" model="hr.salary.rule">
+            <field name="name">Phụ cấp giao hàng (Từ Excel)</field>
+            <field name="sequence" eval="401"/>
+            <field name="code">ALW_DELIVERY</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">python</field>
+            <field name="condition_python">result = inputs.INP_DELIVERY and inputs.INP_DELIVERY.amount != 0</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = inputs.INP_DELIVERY.amount</field>
+        </record>
+
+        <record id="rule_inp_bonus_spot" model="hr.salary.rule">
+            <field name="name">Thưởng nóng (Từ Excel)</field>
+            <field name="sequence" eval="402"/>
+            <field name="code">ALW_BONUS_SPOT</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">python</field>
+            <field name="condition_python">result = inputs.INP_BONUS_SPOT and inputs.INP_BONUS_SPOT.amount != 0</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = inputs.INP_BONUS_SPOT.amount</field>
+        </record>
+
+        <record id="rule_inp_adj_tax" model="hr.salary.rule">
+            <field name="name">Chênh lệch tháng trước (Chịu thuế)</field>
+            <field name="sequence" eval="403"/>
+            <field name="code">ALW_ADJ_TAX</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">python</field>
+            <field name="condition_python">result = inputs.INP_ADJ_TAX and inputs.INP_ADJ_TAX.amount != 0</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = inputs.INP_ADJ_TAX.amount</field>
+        </record>
+
+        <record id="rule_inp_all_performance_bonus" model="hr.salary.rule">
+            <field name="name">Tổng Thưởng Thành Tích &amp; Mục tiêu</field>
+            <field name="sequence" eval="404"/>
+            <field name="code">ALW_ALL_BONUS</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">python</field>
+            <field name="condition_python">
+amt_role = inputs.INP_BONUS_ROLE.amount if inputs.INP_BONUS_ROLE else 0
+amt_perf = inputs.INP_BONUS_PERF.amount if inputs.INP_BONUS_PERF else 0
+amt_rgm = inputs.INP_BONUS_RGM.amount if inputs.INP_BONUS_RGM else 0
+amt_tsi = inputs.INP_BONUS_TSI.amount if inputs.INP_BONUS_TSI else 0
+result = (amt_role + amt_perf + amt_rgm + amt_tsi) != 0
+            </field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+amt_role = inputs.INP_BONUS_ROLE.amount if inputs.INP_BONUS_ROLE else 0
+amt_perf = inputs.INP_BONUS_PERF.amount if inputs.INP_BONUS_PERF else 0
+amt_rgm = inputs.INP_BONUS_RGM.amount if inputs.INP_BONUS_RGM else 0
+amt_tsi = inputs.INP_BONUS_TSI.amount if inputs.INP_BONUS_TSI else 0
+result = amt_role + amt_perf + amt_rgm + amt_tsi
+            </field>
+        </record>
+
+        <!-- ==================== OT ==================== -->
+        <record id="hr_salary_rule_ot_normal" model="hr.salary.rule">
+            <field name="name">Lương làm thêm ban ngày (150%)</field>
+            <field name="sequence" eval="300"/>
+            <field name="code">OT_NORMAL</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">python</field>
+            <field name="condition_python">result = inputs.OT_150 and inputs.OT_150.amount > 0</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+hourly_wage = contract.wage / 26 / 8
+result = hourly_wage * 1.5 * inputs.OT_150.amount
+            </field>
+        </record>
+
+        <record id="hr_salary_rule_ot_weekend" model="hr.salary.rule">
+            <field name="name">Lương làm thêm ngày nghỉ (200%)</field>
+            <field name="sequence" eval="301"/>
+            <field name="code">OT_WEEKEND</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">python</field>
+            <field name="condition_python">result = inputs.OT_200 and inputs.OT_200.amount > 0</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+hourly_wage = contract.wage / 26 / 8
+result = hourly_wage * 2.0 * inputs.OT_200.amount
+            </field>
+        </record>
+
+        <record id="hr_salary_rule_ot_holiday" model="hr.salary.rule">
+            <field name="name">Lương làm thêm ngày lễ (300%)</field>
+            <field name="sequence" eval="302"/>
+            <field name="code">OT_HOLIDAY</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">python</field>
+            <field name="condition_python">result = inputs.OT_300 and inputs.OT_300.amount > 0</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+hourly_wage = contract.wage / 26 / 8
+result = hourly_wage * 3.0 * inputs.OT_300.amount
+            </field>
+        </record>
+
+        <record id="hr_salary_rule_ot_night" model="hr.salary.rule">
+            <field name="name">Lương làm thêm Ban đêm (Ngày thường)</field>
+            <field name="sequence" eval="303"/>
+            <field name="code">OT_NIGHT_PAY</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">python</field>
+            <field name="condition_python">result = inputs.OT_NIGHT and inputs.OT_NIGHT.amount > 0</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+hourly_wage = contract.wage / 26 / 8
+rate = 1.5 + 0.3 + 0.2
+result = hourly_wage * rate * inputs.OT_NIGHT.amount
+            </field>
+        </record>
+
+        <!-- ==================== Non-taxable ==================== -->
+        <record id="rule_inp_perdiem" model="hr.salary.rule">
+            <field name="name">Công tác phí</field>
+            <field name="sequence" eval="450"/>
+            <field name="code">NONTAX_PERDIEM</field>
+            <field name="category_id" ref="CATEGORY_NON_TAX"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">python</field>
+            <field name="condition_python">result = inputs.INP_PERDIEM and inputs.INP_PERDIEM.amount != 0</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = inputs.INP_PERDIEM.amount</field>
+        </record>
+
+        <record id="rule_inp_health_chk" model="hr.salary.rule">
+            <field name="name">Hỗ trợ khám sức khỏe</field>
+            <field name="sequence" eval="451"/>
+            <field name="code">NONTAX_HEALTH</field>
+            <field name="category_id" ref="CATEGORY_NON_TAX"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">python</field>
+            <field name="condition_python">result = inputs.INP_HEALTH_CHK and inputs.INP_HEALTH_CHK.amount != 0</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = inputs.INP_HEALTH_CHK.amount</field>
+        </record>
+
+        <record id="rule_severance_allowance" model="hr.salary.rule">
+            <field name="name">Trợ cấp thôi việc</field>
+            <field name="sequence" eval="460"/>
+            <field name="code">SEVERANCE_ALW</field>
+            <field name="category_id" ref="CATEGORY_NON_TAX"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">python</field>
+            <field name="condition_python">result = inputs.INP_SEVERANCE_YRS and inputs.INP_SEVERANCE_YRS.amount > 0</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+half_month_salary = contract.wage / 2
+result = half_month_salary * inputs.INP_SEVERANCE_YRS.amount
+            </field>
+        </record>
+
+        <!-- ==================== Khấu trừ BHXH/BHYT/BHTN ==================== -->
+        <record id="hr_salary_rule_bhxh" model="hr.salary.rule">
+            <field name="name">Trừ BHXH (8%)</field>
+            <field name="sequence" eval="310"/>
+            <field name="code">BHXH</field>
+            <field name="category_id" ref="hr_payroll.DED"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">python</field>
+            <field name="condition_python">
+unpaid_days = worked_days.UNPAID.number_of_days if worked_days.UNPAID else 0
+result = not contract.is_probation and unpaid_days &lt;= 13
+            </field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+cap_bhxh = 46800000
+salary_base = contract.wage if contract.wage &lt; cap_bhxh else cap_bhxh
+result = -(salary_base * 0.08)
+            </field>
+        </record>
+
+        <record id="hr_salary_rule_bhyt" model="hr.salary.rule">
+            <field name="name">Trừ BHYT (1.5%)</field>
+            <field name="sequence" eval="311"/>
+            <field name="code">BHYT</field>
+            <field name="category_id" ref="hr_payroll.DED"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">python</field>
+            <field name="condition_python">
+unpaid_days = worked_days.UNPAID.number_of_days if worked_days.UNPAID else 0
+result = not contract.is_probation and unpaid_days &lt;= 13
+            </field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+cap_bhyt = 46800000
+salary_base = contract.wage if contract.wage &lt; cap_bhyt else cap_bhyt
+result = -(salary_base * 0.015)
+            </field>
+        </record>
+
+        <record id="hr_salary_rule_bhtn" model="hr.salary.rule">
+            <field name="name">Trừ BHTN (1%)</field>
+            <field name="sequence" eval="312"/>
+            <field name="code">BHTN</field>
+            <field name="category_id" ref="hr_payroll.DED"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">python</field>
+            <field name="condition_python">
+unpaid_days = worked_days.UNPAID.number_of_days if worked_days.UNPAID else 0
+result = not contract.is_probation and unpaid_days &lt;= 13
+            </field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+cap_bhtn = 99200000
+salary_base = contract.wage if contract.wage &lt; cap_bhtn else cap_bhtn
+result = -(salary_base * 0.01)
+            </field>
+        </record>
+
+        <record id="hr_salary_rule_late_deduction" model="hr.salary.rule">
+            <field name="name">Khấu trừ Đi trễ / Về sớm</field>
+            <field name="sequence" eval="305"/>
+            <field name="code">LATE_DED</field>
+            <field name="category_id" ref="hr_payroll.DED"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">python</field>
+            <field name="condition_python">result = worked_days.LATE and worked_days.LATE.number_of_hours > 0</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+hourly_wage = contract.wage / 26 / 8
+result = -(hourly_wage * worked_days.LATE.number_of_hours)
+            </field>
+        </record>
+
+        <record id="rule_resign_penalty" model="hr.salary.rule">
+            <field name="name">Khấu trừ vi phạm thời hạn báo trước</field>
+            <field name="sequence" eval="350"/>
+            <field name="code">RESIGN_PENALTY</field>
+            <field name="category_id" ref="hr_payroll.DED"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">python</field>
+            <field name="condition_python">result = inputs.INP_RESIGN_DAYS and inputs.INP_RESIGN_DAYS.amount > 0</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+daily_rate = contract.wage / 30
+penalty = daily_rate * inputs.INP_RESIGN_DAYS.amount
+result = -penalty
+            </field>
+        </record>
+
+        <record id="rule_refund_bhxh_2_places" model="hr.salary.rule">
+            <field name="name">Hoàn 21.5% BHXH (Đóng 2 nơi)</field>
+            <field name="sequence" eval="210"/>
+            <field name="code">ALW_BHXH_REFUND</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">python</field>
+            <field name="condition_python">
+appendix = contract.env['hr.contract.appendix'].search([('version_id', '=', contract.id)], limit=1)
+result = appendix and appendix.is_bhxh_2_places
+            </field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+cap_bhxh = 46800000
+salary_base = contract.wage if contract.wage &lt; cap_bhxh else cap_bhxh
+result = salary_base * 0.215
+            </field>
+        </record>
+
+        <!-- ==================== PIT ==================== -->
+        <record id="hr_salary_rule_pit" model="hr.salary.rule">
+            <field name="name">Thuế Thu Nhập Cá Nhân (PIT)</field>
+            <field name="sequence" eval="600"/>
+            <field name="code">PIT</field>
+            <field name="category_id" ref="hr_payroll.DED"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+dependents = inputs.NPT.amount if inputs.NPT else 0
+giam_tru = 15000000 + (dependents * 6200000)
+taxable_income = categories.BASIC + categories.ALW
+taxable_after_deduct = taxable_income - giam_tru
+if taxable_after_deduct &lt; 0:
+    taxable_after_deduct = 0
+
+tax = 0
+if taxable_after_deduct &lt;= 10000000:
+    tax = taxable_after_deduct * 0.05
+elif taxable_after_deduct &lt;= 30000000:
+    tax = (taxable_after_deduct - 10000000) * 0.1 + 500000
+elif taxable_after_deduct &lt;= 60000000:
+    tax = (taxable_after_deduct - 30000000) * 0.2 + 2500000
+elif taxable_after_deduct &lt;= 100000000:
+    tax = (taxable_after_deduct - 60000000) * 0.3 + 8500000
+else:
+    tax = (taxable_after_deduct - 100000000) * 0.35 + 20500000
+
+result = -tax
+            </field>
+        </record>
+
+        <!-- ==================== NET ==================== -->
+        <record id="hr_salary_rule_net_custom" model="hr.salary.rule">
+            <field name="name">Thực lãnh (NET)</field>
+            <field name="sequence" eval="999"/>
+            <field name="code">NET</field>
+            <field name="category_id" ref="hr_payroll.NET"/>
+            <field name="struct_id" ref="structure_time_attendance"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+result = categories.BASIC + categories.ALW + categories.NON_TAX + categories.DED
+            </field>
+        </record>
+    </data>
+</odoo>

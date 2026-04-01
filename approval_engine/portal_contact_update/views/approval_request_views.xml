@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="approval_request_view_form_inherit" model="ir.ui.view">
+        <field name="name">approval.request.view.form.inherit</field>
+        <field name="model">approval.request</field>
+        <field name="inherit_id" ref="approvals.approval_request_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='approvers']" position="after" invisible="category_name != 'Cập nhật thông tin cá nhân (Portal)'">
+                <page string="Thông tin yêu cầu" name="request_content">
+                    <group groups="hr.group_hr_user">
+                        <field name="category_name" invisible="1"/>
+                        <field name="is_government_updated" widget="boolean_toggle" invisible="category_name != 'Cập nhật thông tin cá nhân (Portal)'"/>
+                    </group>
+                    <group>
+                        <group string="Thông tin riêng tư">
+                            <field name="private_email"/>
+                            <field name="private_phone"/>
+                            <field name="legal_name"/>
+                        </group>
+                        <group string="Thông tin cá nhân">
+                            <field name="sex"/>
+                            <field name="birthday"/>
+                            <field name="place_of_birth"/>
+                            <field name="country_of_birth"/>
+                        </group>
+                        <group string="Công dân &amp; Hộ chiếu">
+                            <field name="country_id"/>
+                            <field name="identification_id"/>
+                            <field name="passport_id"/>
+                            <field name="ssnid"/>
+                            <field name="passport_expiration_date"/>
+                        </group>
+                        <group string="Visa &amp; GPLĐ">
+                            <field name="visa_no"/>
+                            <field name="visa_expire"/>
+                            <field name="permit_no"/>
+                            <field name="work_permit_expiration_date"/>
+                            <field name="has_work_permit"/>
+                        </group>
+                        <group string="Địa chỉ tư nhân">
+                            <label for="private_street" string="Private Address"/>
+                            <div class="o_address_format">
+                                <field name="private_street" placeholder="Street..." class="o_address_street"/>
+                                <field name="private_street2" placeholder="Street 2..." class="o_address_street"/>
+                                <field name="private_city" placeholder="City" class="o_address_city"/>
+                                <field name="private_state_id" class="o_address_state" placeholder="State" options="{&quot;no_open&quot;: True}" context="{'default_country_id': private_country_id}"/>
+                                <field name="private_zip" placeholder="ZIP" class="o_address_zip"/>
+                                <field name="private_country_id" placeholder="Country" class="o_address_country" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                            </div>
+                            <field name="distance_home_work"/>
+                        </group>
+                        <group string="Gia đình &amp; Khẩn cấp">
+                            <field name="marital"/>
+                            <field name="children"/>
+                            <field name="spouse_complete_name"/>
+                            <field name="spouse_birthdate"/>
+                            <field name="emergency_contact"/>
+                            <field name="emergency_phone"/>
+                        </group>
+                        <group string="Học vấn">
+                            <field name="certificate"/>
+                            <field name="study_field"/>
+                            <field name="study_school"/>
+                        </group>
+                    </group>
+                </page>
+                
+                <page string="Thông tin hiện tại (Trước khi sửa)" name="original_content" invisible="category_name != 'Cập nhật thông tin cá nhân (Portal)'">
+                    <group>
+                        <group string="Thông tin riêng tư">
+                            <field name="employee_id" invisible="1"/>
+                            <field name="employee_private_email"/>
+                            <field name="employee_private_phone"/>
+                            <field name="employee_legal_name"/>
+                        </group>
+                        <group string="Thông tin cá nhân">
+                            <field name="employee_sex"/>
+                            <field name="employee_birthday"/>
+                            <field name="employee_place_of_birth"/>
+                            <field name="employee_country_of_birth"/>
+                        </group>
+                        <group string="Công dân &amp; Hộ chiếu">
+                            <field name="employee_country_id"/>
+                            <field name="employee_identification_id"/>
+                            <field name="employee_passport_id"/>
+                            <field name="employee_ssnid"/>
+                            <field name="employee_passport_expiration_date"/>
+                        </group>
+                        <group string="Visa &amp; GPLĐ">
+                            <field name="employee_visa_no"/>
+                            <field name="employee_visa_expire"/>
+                            <field name="employee_permit_no"/>
+                            <field name="employee_work_permit_expiration_date"/>
+                        </group>
+                        <group string="Địa chỉ tư nhân">
+                            <field name="employee_private_street"/>
+                            <field name="employee_private_street2"/>
+                            <field name="employee_private_city"/>
+                            <field name="employee_private_state_id"/>
+                            <field name="employee_private_zip"/>
+                            <field name="employee_private_country_id"/>
+                            <field name="employee_distance_home_work"/>
+                        </group>
+                        <group string="Gia đình &amp; Khẩn cấp">
+                            <field name="employee_marital"/>
+                            <field name="employee_children"/>
+                            <field name="employee_spouse_complete_name"/>
+                            <field name="employee_spouse_birthdate"/>
+                            <field name="employee_emergency_contact"/>
+                            <field name="employee_emergency_phone"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="approval_request_view_tree_inherit_gov" model="ir.ui.view">
+        <field name="name">approval.request.view.tree.inherit.gov</field>
+        <field name="model">approval.request</field>
+        <field name="inherit_id" ref="approvals.approval_request_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='request_status']" position="before">
+                <field name="category_name" column_invisible="True"/>
+                <field name="is_government_updated" 
+                       widget="boolean_toggle" 
+                       optional="show"
+                       groups="hr.group_hr_user"
+                       invisible="category_name != 'Cập nhật thông tin cá nhân (Portal)'"
+                      />
+            </xpath>
+        </field>
+        
+    </record>
+</odoo>

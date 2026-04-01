@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_food_safety_complaint_all,food.safety.complaint.all,model_food_safety_complaint,base.group_user,1,1,1,0
+access_food_safety_complaint_user,food.safety.complaint.user,model_food_safety_complaint,group_food_safety_user,1,1,1,0
+access_food_safety_complaint_manager,food.safety.complaint.manager,model_food_safety_complaint,group_food_safety_manager,1,1,1,1
+access_food_safety_complaint_qa,food.safety.complaint.qa,model_food_safety_complaint,group_food_safety_qa,1,1,1,0

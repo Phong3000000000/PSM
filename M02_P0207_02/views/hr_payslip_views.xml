@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_payslip_form_inherit_ops" model="ir.ui.view">
+        <field name="name">hr.payslip.form.inherit.ops</field>
+        <field name="model">hr.payslip</field>
+        <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form" />
+        <field name="arch" type="xml">
+            <!-- H5: Smart button - Approval History -->
+            <div name="button_box" position="inside">
+                <button name="action_view_approval_logs"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-history"
+                    invisible="approval_log_count == 0">
+                    <field name="approval_log_count" widget="statinfo" string="Phê duyệt/Từ chối" />
+                </button>
+                <button name="%(M02_P0207_02.action_hr_attendance_sheet)d"
+                    type="action"
+                    class="oe_stat_button"
+                    icon="fa-calendar"
+                    invisible="not attendance_sheet_id"
+                    context="{'search_default_id': attendance_sheet_id}">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Attendance</span>
+                    </div>
+                </button>
+            </div>
+            <field name="date_to" position="after">
+                <field name="attendance_sheet_id" />
+                <field name="payment_order_id" />
+            </field>
+            <!-- Gửi cho HR: resets refused payslip to pending so it reappears in OWL approval -->
+            <xpath expr="//header" position="inside">
+                <button name="action_send_for_hr"
+                    type="object"
+                    class="btn btn-primary"
+                    string="Gửi cho HR"
+                    invisible="x_approval_state != 'refused'" />
+            </xpath>
+            <!-- H1: Move bank info to right column — add top_right group inside group[name=top] -->
+            <xpath expr="//group[@name='top']" position="inside">
+                <group name="top_right" string="Thông tin ngân hàng"
+                    invisible="not x_receiver_bank_account">
+                    <field name="x_receiver_name" string="Người nhận" readonly="1" />
+                    <field name="x_receiver_bank_account" string="Số tài khoản" readonly="1" />
+                    <field name="x_receiver_bank_name" string="Ngân hàng" readonly="1" />
+                </group>
+            </xpath>
+            <notebook position="inside">
+                <page string="OPS Data">
+                    <group>
+                        <group>
+                            <field name="marketing_leave_hours" />
+                            <field name="leave_hours" />
+                        </group>
+                    </group>
+                </page>
+                <!-- H5: Approval history tab -->
+                <page string="Lịch sử Phê duyệt">
+                    <field name="approval_log_ids" readonly="1">
+                        <list string="Approval History" decoration-success="action == 'approved'"
+                            decoration-danger="action == 'refused'">
+                            <field name="date" />
+                            <field name="user_id" string="Thực hiện" />
+                            <field name="action" string="Hành động" widget="badge"
+                                decoration-success="action == 'approved'"
+                                decoration-danger="action == 'refused'" />
+                            <field name="stage" string="Giai đoạn" />
+                            <field name="reason" string="Lý do" />
+                        </list>
+                    </field>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+    <record id="hr_payslip_run_form_inherit_ops" model="ir.ui.view">
+        <field name="name">hr.payslip.run.form.inherit.ops</field>
+        <field name="model">hr.payslip.run</field>
+        <field name="inherit_id" ref="hr_payroll.hr_payslip_run_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//group" position="before">
+                <header>
+                    <button name="action_compute_sheet" string="Compute Sheets" type="object"
+                        class="btn-primary" invisible="state != 'draft'" />
+                    <button name="action_validate_cb" string="Confirm" type="object"
+                        class="btn-warning" invisible="state != 'verifying'" />
+                    <button name="action_create_approval_request_cb"
+                        string="Create Approval Request" type="object" class="btn-primary"
+                        invisible="state != 'validated'" />
+                    <button name="action_approve_hr" string="HR Approve" type="object"
+                        class="btn-success" invisible="state != 'waiting_approval'"
+                        groups="hr.group_hr_manager" />
+                    <button name="action_reject_hr" string="HR Reject" type="object"
+                        class="btn-danger" invisible="state != 'waiting_approval'"
+                        groups="hr.group_hr_manager" />
+                    <button name="check_payment_conditions" string="Check Conditions" type="object"
+                        class="btn-info" invisible="state != 'approved'" />
+
+                    <button name="action_create_payment_order" string="Create Payment Order"
+                        type="object" class="btn-primary" invisible="state != 'unc_verifying'" />
+                    <button name="action_validate_unc" string="Validate UNC" type="object"
+                        class="btn-warning" invisible="state != 'unc_verifying'" />
+                    <!-- C-Level duyệt qua Payment Authorization — không cần button ở đây -->
+                    <button name="check_payment_conditions" string="Kiểm tra điều kiện"
+                        type="object" class="btn-info" invisible="state != 'approved'" />
+
+                    <field name="state" widget="statusbar"
+                        statusbar_visible="draft,verifying,approved,unc_verifying,unc_validated,completed,close" />
+                </header>
+                <div name="button_box" class="oe_button_box">
+                    <button name="action_view_approval_request"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-check-square-o"
+                        invisible="not approval_request_id">
+                        <div class="o_stat_info">
+                            <span class="o_stat_text">Approval</span>
+                        </div>
+                    </button>
+                    <!-- Smart button: danh sách giữa tháng -->
+                    <button type="object"
+                        name="action_view_mid_month_list"
+                        class="oe_stat_button"
+                        icon="fa-clock-o"
+                        invisible="mid_month_count == 0">
+                        <field name="mid_month_count" widget="statinfo" string="Giữa tháng" />
+                    </button>
+                </div>
+            </xpath>
+
+            <xpath expr="//group" position="after">
+                <notebook>
+                    <page string="Payable List"
+                        invisible="state not in ['unc_verifying', 'unc_validated', 'payment_ready', 'close', 'completed']">
+                        <field name="payslip_payable_ids" readonly="1">
+                            <list>
+                                <field name="employee_id" />
+                                <field name="date_from" />
+                                <field name="date_to" />
+                                <field name="net_wage" string="Net Lương" />
+                                <field name="x_approval_state" widget="badge"
+                                    decoration-success="x_approval_state == 'approved'"
+                                    decoration-danger="x_approval_state == 'refused'"
+                                    string="HR Approval" />
+                            </list>
+                        </field>
+                    </page>
+                    <page string="⏳ Giữa tháng (Waitlist)" invisible="mid_month_count == 0">
+                        <p class="text-muted"> Những nhân viên này đang trong quy trình <b>offboarding
+                            hoặc onboarding</b>. Lương sẽ được gửi vào <b>giữa tháng</b> thay vì
+                            cuối tháng. </p>
+                        <field name="payslip_waitlist_ids" readonly="1">
+                            <list decoration-warning="True">
+                                <field name="employee_id" />
+                                <field name="date_from" />
+                                <field name="date_to" />
+                                <field name="net_wage" string="Net Lương" />
+                                <field name="x_is_mid_month" string="Giữa tháng" widget="boolean" />
+                            </list>
+                        </field>
+                    </page>
+                    <page string="Payment Orders">
+                        <field name="payment_order_ids" readonly="1" />
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+    <record id="hr_payslip_run_view_kanban_inherit_ops" model="ir.ui.view">
+        <field name="name">hr.payslip.run.kanban.inherit.ops</field>
+        <field name="model">hr.payslip.run</field>
+        <field name="inherit_id" ref="hr_payroll.hr_payslip_run_view_kanban" />
+        <field name="arch" type="xml">
+            <!-- Hide status bubble on compact kanban card (Image 1) -->
+            <xpath expr="//div[hasclass('o_payrun_state')]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <!-- Replace Confirm (Validate) button -->
+            <xpath expr="//t[@t-name='menu']//button[@name='action_validate']" position="replace">
+                <button name="action_validate_cb" type="object" class="btn oe_highlight"
+                    string="Confirm" invisible="state != 'verifying'" />
+                <button name="action_create_approval_request_cb" type="object"
+                    class="btn oe_highlight" string="Create Approval Request"
+                    invisible="state != 'validated'" />
+                <button name="check_payment_conditions" type="object" class="btn oe_highlight"
+                    string="Check Conditions" invisible="state != 'approved'" />
+                <button name="action_validate_unc" type="object" class="btn oe_highlight"
+                    string="Validate UNC" invisible="state != 'unc_verifying'" />
+                <!-- C-Level duyệt qua Payment Authorization -->
+            </xpath>
+            <xpath expr="//t[@t-name='menu']//button[@name='action_confirm']" position="attributes">
+                <attribute name="invisible">state != 'draft'</attribute>
+                <attribute name="name">action_compute_sheet</attribute>
+                <attribute name="string">Compute Sheets</attribute>
+            </xpath>
+            <!-- Hide native 'Generate Payslips' when in custom workflow states -->
+            <xpath
+                expr="//t[@t-name='menu']//button[@name='action_payroll_hr_version_list_view_payrun']"
+                position="attributes">
+                <attribute name="invisible">state not in ('01_ready', '02_close', '03_paid')</attribute>
+            </xpath>
+        </field>
+    </record>
+
+
+    <!-- Payslip List: H1 - hide Off-Cycle & Approve/Refuse from native list -->
+    <record id="view_hr_payslip_list_inherit_ops" model="ir.ui.view">
+        <field name="name">hr.payslip.list.inherit.ops</field>
+        <field name="model">hr.payslip</field>
+        <field name="inherit_id" ref="hr_payroll.view_hr_payslip_tree" />
+        <field name="arch" type="xml">
+            <!-- Add approval state badge column -->
+            <xpath expr="//field[@name='state_display']" position="after">
+                <field name="x_approval_state" widget="badge"
+                    decoration-warning="x_approval_state == 'pending'"
+                    decoration-success="x_approval_state == 'approved'"
+                    decoration-danger="x_approval_state == 'refused'"
+                    column_invisible="True"
+                    optional="show"
+                    string="Approval" />
+                <field name="payslip_run_id" column_invisible="True" />
+            </xpath>
+            <!-- H1: Hide Off-Cycle button from native list -->
+            <xpath expr="//button[@name='action_move_to_off_cycle']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <!-- Bỏ cột Issues -->
+            <xpath expr="//field[@name='issues']" position="attributes">
+                <attribute name="column_invisible">True</attribute>
+                <attribute name="optional">hide</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         Hold Lương (Giữ lương giữa tháng)
+    ══════════════════════════════════════════════════════════════ -->
+
+    <!-- Form: toggle Hold + lý do -->
+    <record id="view_hr_payslip_form_inherit_hold" model="ir.ui.view">
+        <field name="name">hr.payslip.form.inherit.hold.0207</field>
+        <field name="model">hr.payslip</field>
+        <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='employee_id']" position="after">
+                <field name="is_hold_salary" widget="boolean_toggle" />
+                <field name="hold_reason"
+                    invisible="not is_hold_salary"
+                    required="is_hold_salary"
+                    placeholder="Vd: Chưa trả đồng phục..." />
+            </xpath>
+        </field>
+    </record>
+
+    <!-- List: cột Hold + lý do -->
+    <record id="view_hr_payslip_tree_inherit_hold" model="ir.ui.view">
+        <field name="name">hr.payslip.tree.inherit.hold.0207</field>
+        <field name="model">hr.payslip</field>
+        <field name="inherit_id" ref="hr_payroll.view_hr_payslip_tree" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='employee_id']" position="after">
+                <field name="is_hold_salary" optional="show" widget="boolean_toggle" />
+                <field name="hold_reason" optional="hide" />
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Search: filter nhanh Hold -->
+    <record id="view_hr_payslip_search_inherit_hold" model="ir.ui.view">
+        <field name="name">hr.payslip.search.inherit.hold.0207</field>
+        <field name="model">hr.payslip</field>
+        <field name="inherit_id" ref="hr_payroll.view_hr_payslip_filter" />
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator />
+                <filter string="Đang giữ lương (Hold)"
+                    name="filter_hold_salary"
+                    domain="[('is_hold_salary', '=', True)]" />
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Action: Danh sách Hold lương -->
+    <record id="action_hr_payslip_hold_report" model="ir.actions.act_window">
+        <field name="name">Danh sách Hold lương</field>
+        <field name="res_model">hr.payslip</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_filter_hold_salary': 1}</field>
+    </record>
+
+    <!-- Menu: Báo cáo Hold lương -->
+    <menuitem id="menu_hr_payslip_hold_report_0207"
+        name="Báo cáo Hold lương"
+        parent="hr_work_entry_enterprise.menu_hr_payroll_root"
+        sequence="101"
+        action="action_hr_payslip_hold_report" />
+
+</odoo>

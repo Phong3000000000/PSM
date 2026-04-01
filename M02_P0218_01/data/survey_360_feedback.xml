@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- ===================================== -->
+        <!-- Survey 1: 8 Behaviors Assessment -->
+        <!-- ===================================== -->
+        
+        <record model="survey.survey" id="survey_360_behavior_assessment">
+            <field name="title">360 Feedback - Behavior Assessment</field>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="survey_type">appraisal</field>
+            <field name="scoring_type">scoring_without_answers</field>
+            <field name="access_mode">public</field>
+            <field name="users_can_go_back" eval="True"/>
+            <field name="questions_layout">page_per_section</field>
+            <field name="description" type="html">
+                <p>This survey is designed for 360-degree feedback to assess key behaviors in the workplace.</p>
+                <p>Please rate your colleague on the following 8 behavioral competencies.</p>
+            </field>
+        </record>
+
+        <!-- Page: Introduction -->
+        <record model="survey.question" id="survey_360_behavior_page_intro">
+            <field name="title">Introduction</field>
+            <field name="survey_id" ref="survey_360_behavior_assessment"/>
+            <field name="sequence">1</field>
+            <field name="is_page" eval="True"/>
+            <field name="question_type" eval="False"/>
+            <field name="description" type="html">
+                <p>Thank you for participating in this 360-degree feedback assessment.</p>
+                <p>Your honest feedback will help in the professional development of your colleague.</p>
+            </field>
+        </record>
+
+        <!-- Matrix Question: 8 Behaviors -->
+        <record model="survey.question" id="survey_360_behavior_matrix">
+            <field name="survey_id" ref="survey_360_behavior_assessment"/>
+            <field name="sequence">2</field>
+            <field name="title">Please rate the following behaviors (1 = Needs Improvement, 5 = Outstanding)</field>
+            <field name="question_type">matrix</field>
+            <field name="matrix_subtype">simple</field>
+            <field name="constr_mandatory" eval="True"/>
+        </record>
+
+        <!-- Rating Columns (1-5 scale) -->
+        <record model="survey.question.answer" id="behavior_rating_1">
+            <field name="question_id" ref="survey_360_behavior_matrix"/>
+            <field name="sequence">1</field>
+            <field name="value">1 - Needs Improvement</field>
+            <field name="answer_score" eval="1.0"/>
+        </record>
+        <record model="survey.question.answer" id="behavior_rating_2">
+            <field name="question_id" ref="survey_360_behavior_matrix"/>
+            <field name="sequence">2</field>
+            <field name="value">2 - Below Expectations</field>
+            <field name="answer_score" eval="2.0"/>
+        </record>
+        <record model="survey.question.answer" id="behavior_rating_3">
+            <field name="question_id" ref="survey_360_behavior_matrix"/>
+            <field name="sequence">3</field>
+            <field name="value">3 - Meets Expectations</field>
+            <field name="answer_score" eval="3.0"/>
+        </record>
+        <record model="survey.question.answer" id="behavior_rating_4">
+            <field name="question_id" ref="survey_360_behavior_matrix"/>
+            <field name="sequence">4</field>
+            <field name="value">4 - Exceeds Expectations</field>
+            <field name="answer_score" eval="4.0"/>
+        </record>
+        <!-- <record model="survey.question.answer" id="behavior_rating_5">
+            <field name="question_id" ref="survey_360_behavior_matrix"/>
+            <field name="sequence">5</field>
+            <field name="value">5 - Outstanding</field>
+            <field name="answer_score" eval="5.0"/>
+        </record> -->
+
+        <!-- 8 Behavior Rows -->
+        <record model="survey.question.answer" id="behavior_row_1">
+            <field name="matrix_question_id" ref="survey_360_behavior_matrix"/>
+            <field name="sequence">1</field>
+            <field name="value">Customer Focus - Demonstrates commitment to understanding and meeting customer needs</field>
+        </record>
+        <record model="survey.question.answer" id="behavior_row_2">
+            <field name="matrix_question_id" ref="survey_360_behavior_matrix"/>
+            <field name="sequence">2</field>
+            <field name="value">Teamwork - Collaborates effectively with others to achieve common goals</field>
+        </record>
+        <record model="survey.question.answer" id="behavior_row_3">
+            <field name="matrix_question_id" ref="survey_360_behavior_matrix"/>
+            <field name="sequence">3</field>
+            <field name="value">Communication - Conveys information clearly and listens actively</field>
+        </record>
+        <record model="survey.question.answer" id="behavior_row_4">
+            <field name="matrix_question_id" ref="survey_360_behavior_matrix"/>
+            <field name="sequence">4</field>
+            <field name="value">Problem Solving - Identifies issues and develops effective solutions</field>
+        </record>
+        <record model="survey.question.answer" id="behavior_row_5">
+            <field name="matrix_question_id" ref="survey_360_behavior_matrix"/>
+            <field name="sequence">5</field>
+            <field name="value">Accountability - Takes ownership of responsibilities and commitments</field>
+        </record>
+        <record model="survey.question.answer" id="behavior_row_6">
+            <field name="matrix_question_id" ref="survey_360_behavior_matrix"/>
+            <field name="sequence">6</field>
+            <field name="value">Initiative - Proactively identifies opportunities and takes action</field>
+        </record>
+        <record model="survey.question.answer" id="behavior_row_7">
+            <field name="matrix_question_id" ref="survey_360_behavior_matrix"/>
+            <field name="sequence">7</field>
+            <field name="value">Adaptability - Adjusts effectively to changing circumstances and priorities</field>
+        </record>
+        <record model="survey.question.answer" id="behavior_row_8">
+            <field name="matrix_question_id" ref="survey_360_behavior_matrix"/>
+            <field name="sequence">8</field>
+            <field name="value">Quality Orientation - Consistently delivers high-quality work and attention to detail</field>
+        </record>
+
+        <!-- Additional Comments -->
+        <record model="survey.question" id="survey_360_behavior_comments">
+            <field name="survey_id" ref="survey_360_behavior_assessment"/>
+            <field name="sequence">3</field>
+            <field name="title">Additional Comments or Feedback</field>
+            <field name="question_type">text_box</field>
+            <field name="constr_mandatory" eval="False"/>
+        </record>
+
+
+        <!-- ================================================= -->
+        <!-- Survey 2: 16 Leadership Behaviors Assessment -->
+        <!-- ================================================= -->
+        
+        <record model="survey.survey" id="survey_360_leadership_assessment">
+            <field name="title">360 Feedback - Leadership Behavior Assessment</field>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="survey_type">appraisal</field>
+            <field name="scoring_type">scoring_without_answers</field>
+            <field name="access_mode">public</field>
+            <field name="users_can_go_back" eval="True"/>
+            <field name="questions_layout">page_per_section</field>
+            <field name="description" type="html">
+                <p>This survey is designed for 360-degree feedback to assess leadership behaviors.</p>
+                <p>Please rate your leader/colleague on the following 16 leadership competencies.</p>
+            </field>
+        </record>
+
+        <!-- Page: Introduction -->
+        <record model="survey.question" id="survey_360_leadership_page_intro">
+            <field name="title">Introduction</field>
+            <field name="survey_id" ref="survey_360_leadership_assessment"/>
+            <field name="sequence">1</field>
+            <field name="is_page" eval="True"/>
+            <field name="question_type" eval="False"/>
+            <field name="description" type="html">
+                <p>Thank you for participating in this 360-degree leadership feedback assessment.</p>
+                <p>Your honest and constructive feedback is valuable for leadership development.</p>
+            </field>
+        </record>
+
+        <!-- Matrix Question: 16 Leadership Behaviors -->
+        <record model="survey.question" id="survey_360_leadership_matrix">
+            <field name="survey_id" ref="survey_360_leadership_assessment"/>
+            <field name="sequence">2</field>
+            <field name="title">Please rate the following leadership behaviors (1 = Needs Improvement, 5 = Outstanding)</field>
+            <field name="question_type">matrix</field>
+            <field name="matrix_subtype">simple</field>
+            <field name="constr_mandatory" eval="True"/>
+        </record>
+
+        <!-- Rating Columns (1-5 scale) - Reuse same structure -->
+        <record model="survey.question.answer" id="leadership_rating_1">
+            <field name="question_id" ref="survey_360_leadership_matrix"/>
+            <field name="sequence">1</field>
+            <field name="value">1 - Needs Improvement</field>
+            <field name="answer_score" eval="1.0"/>
+        </record>
+        <record model="survey.question.answer" id="leadership_rating_2">
+            <field name="question_id" ref="survey_360_leadership_matrix"/>
+            <field name="sequence">2</field>
+            <field name="value">2 - Below Expectations</field>
+            <field name="answer_score" eval="2.0"/>
+        </record>
+        <record model="survey.question.answer" id="leadership_rating_3">
+            <field name="question_id" ref="survey_360_leadership_matrix"/>
+            <field name="sequence">3</field>
+            <field name="value">3 - Meets Expectations</field>
+            <field name="answer_score" eval="3.0"/>
+        </record>
+        <record model="survey.question.answer" id="leadership_rating_4">
+            <field name="question_id" ref="survey_360_leadership_matrix"/>
+            <field name="sequence">4</field>
+            <field name="value">4 - Exceeds Expectations</field>
+            <field name="answer_score" eval="4.0"/>
+        </record>
+        <!-- <record model="survey.question.answer" id="leadership_rating_5">
+            <field name="question_id" ref="survey_360_leadership_matrix"/>
+            <field name="sequence">5</field>
+            <field name="value">5 - Outstanding</field>
+            <field name="answer_score" eval="5.0"/>
+        </record> -->
+
+        <!-- 16 Leadership Behavior Rows -->
+        <record model="survey.question.answer" id="leadership_row_1">
+            <field name="matrix_question_id" ref="survey_360_leadership_matrix"/>
+            <field name="sequence">1</field>
+            <field name="value">Strategic Thinking - Develops and articulates long-term vision and strategy</field>
+        </record>
+        <record model="survey.question.answer" id="leadership_row_2">
+            <field name="matrix_question_id" ref="survey_360_leadership_matrix"/>
+            <field name="sequence">2</field>
+            <field name="value">Decision Making - Makes timely, well-informed, and effective decisions</field>
+        </record>
+        <record model="survey.question.answer" id="leadership_row_3">
+            <field name="matrix_question_id" ref="survey_360_leadership_matrix"/>
+            <field name="sequence">3</field>
+            <field name="value">Team Development - Invests in building capabilities and expertise of team members</field>
+        </record>
+        <record model="survey.question.answer" id="leadership_row_4">
+            <field name="matrix_question_id" ref="survey_360_leadership_matrix"/>
+            <field name="sequence">4</field>
+            <field name="value">Coaching &amp; Mentoring - Provides guidance, support, and development opportunities</field>
+        </record>
+        <record model="survey.question.answer" id="leadership_row_5">
+            <field name="matrix_question_id" ref="survey_360_leadership_matrix"/>
+            <field name="sequence">5</field>
+            <field name="value">Vision &amp; Direction - Communicates clear direction and inspires commitment</field>
+        </record>
+        <record model="survey.question.answer" id="leadership_row_6">
+            <field name="matrix_question_id" ref="survey_360_leadership_matrix"/>
+            <field name="sequence">6</field>
+            <field name="value">Delegation - Assigns responsibilities appropriately and trusts team members</field>
+        </record>
+        <record model="survey.question.answer" id="leadership_row_7">
+            <field name="matrix_question_id" ref="survey_360_leadership_matrix"/>
+            <field name="sequence">7</field>
+            <field name="value">Performance Management - Sets clear expectations and provides constructive feedback</field>
+        </record>
+        <record model="survey.question.answer" id="leadership_row_8">
+            <field name="matrix_question_id" ref="survey_360_leadership_matrix"/>
+            <field name="sequence">8</field>
+            <field name="value">Conflict Resolution - Addresses disagreements constructively and facilitates resolution</field>
+        </record>
+        <record model="survey.question.answer" id="leadership_row_9">
+            <field name="matrix_question_id" ref="survey_360_leadership_matrix"/>
+            <field name="sequence">9</field>
+            <field name="value">Innovation - Encourages creativity and supports new ideas and approaches</field>
+        </record>
+        <record model="survey.question.answer" id="leadership_row_10">
+            <field name="matrix_question_id" ref="survey_360_leadership_matrix"/>
+            <field name="sequence">10</field>
+            <field name="value">Change Management - Leads and supports organizational change effectively</field>
+        </record>
+        <record model="survey.question.answer" id="leadership_row_11">
+            <field name="matrix_question_id" ref="survey_360_leadership_matrix"/>
+            <field name="sequence">11</field>
+            <field name="value">Emotional Intelligence - Demonstrates self-awareness and empathy in interactions</field>
+        </record>
+        <record model="survey.question.answer" id="leadership_row_12">
+            <field name="matrix_question_id" ref="survey_360_leadership_matrix"/>
+            <field name="sequence">12</field>
+            <field name="value">Integrity - Acts with honesty, transparency, and ethical principles</field>
+        </record>
+        <record model="survey.question.answer" id="leadership_row_13">
+            <field name="matrix_question_id" ref="survey_360_leadership_matrix"/>
+            <field name="sequence">13</field>
+            <field name="value">Empowerment - Enables others to take initiative and make decisions</field>
+        </record>
+        <record model="survey.question.answer" id="leadership_row_14">
+            <field name="matrix_question_id" ref="survey_360_leadership_matrix"/>
+            <field name="sequence">14</field>
+            <field name="value">Results Orientation - Focuses on achieving objectives and delivering outcomes</field>
+        </record>
+        <record model="survey.question.answer" id="leadership_row_15">
+            <field name="matrix_question_id" ref="survey_360_leadership_matrix"/>
+            <field name="sequence">15</field>
+            <field name="value">Relationship Building - Develops strong, productive relationships across the organization</field>
+        </record>
+        <record model="survey.question.answer" id="leadership_row_16">
+            <field name="matrix_question_id" ref="survey_360_leadership_matrix"/>
+            <field name="sequence">16</field>
+            <field name="value">Communication Excellence - Communicates effectively with clarity, impact, and influence</field>
+        </record>
+
+        <!-- Additional Comments -->
+        <record model="survey.question" id="survey_360_leadership_comments">
+            <field name="survey_id" ref="survey_360_leadership_assessment"/>
+            <field name="sequence">3</field>
+            <field name="title">Additional Comments or Feedback on Leadership</field>
+            <field name="question_type">text_box</field>
+            <field name="constr_mandatory" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

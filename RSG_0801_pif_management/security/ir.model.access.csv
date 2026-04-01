@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pif_object_user,pif.object.user,model_pif_object,base.group_user,1,1,1,1
+access_pif_data_line_user,pif.data.line.user,model_pif_data_line,base.group_user,1,1,1,1
+access_pif_process_tracking_user,pif.process.tracking.user,model_pif_process_tracking,base.group_user,1,1,1,1
+access_pif_request_raw_line_user,pif.request.raw.line.user,model_pif_request_raw_line,base.group_user,1,1,1,1
+access_pif_object_raw_line_user,pif.object.raw.line.user,model_pif_object_raw_line,base.group_user,1,1,1,1
+access_pif_mrp_bom_read,mrp.bom.pif.read,mrp.model_mrp_bom,base.group_user,1,0,0,0
+access_pif_mrp_bom_line_read,mrp.bom.line.pif.read,mrp.model_mrp_bom_line,base.group_user,1,0,0,0
+access_pif_lab_history,pif.lab.history,model_pif_lab_history,base.group_user,1,1,1,1

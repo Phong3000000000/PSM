@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 
+        Set report.url to fix barcode images in PDF reports.
+        When wkhtmltopdf generates PDF, it needs to fetch barcode images.
+        By default, it may not be able to resolve web.base.url from inside Docker.
+        This parameter tells Odoo to use the internal container URL for reports.
+    -->
+    <record id="report_url_parameter" model="ir.config_parameter" forcecreate="True">
+        <field name="key">report.url</field>
+        <!-- Use Docker container name 'web' for internal networking -->
+        <field name="value">http://web:8069</field>
+    </record>
+</odoo>

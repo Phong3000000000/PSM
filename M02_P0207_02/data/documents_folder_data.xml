@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Tạo folder "Payroll" trong Odoo Documents để lưu file UNC -->
+        <record id="documents_folder_payroll" model="documents.folder">
+            <field name="name">Payroll</field>
+            <field name="description">Folder chứa các file UNC (.docx) được tạo từ Payment Authorization</field>
+        </record>
+    </data>
+</odoo>

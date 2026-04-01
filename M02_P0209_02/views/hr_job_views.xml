@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_job_form_inherit_training" model="ir.ui.view">
+        <field name="name">hr.job.form.inherit.training</field>
+        <field name="model">hr.job</field>
+        <field name="inherit_id" ref="hr.view_hr_job_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='department_id']" position="after">
+                <field name="course_ids" widget="many2many_tags" placeholder="Required Training Paths"/>
+                <field name="manager_course_ids" widget="many2many_tags" placeholder="Manager Training Paths (For B17)" groups="hr.group_hr_manager"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

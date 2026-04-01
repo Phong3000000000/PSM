@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Master Checklist - Tree -->
+    <record id="view_shift_log_checklist_tree" model="ir.ui.view">
+        <field name="name">shift.log.checklist.tree</field>
+        <field name="model">shift.log.checklist</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="shift_phase"/>
+                <field name="category"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Master Checklist - Form -->
+    <record id="view_shift_log_checklist_form" model="ir.ui.view">
+        <field name="name">shift.log.checklist.form</field>
+        <field name="model">shift.log.checklist</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="shift_phase"/>
+                            <field name="category"/>
+                        </group>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="description"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_shift_log_checklist" model="ir.actions.act_window">
+        <field name="name">Master Checklist</field>
+        <field name="res_model">shift.log.checklist</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_shift_log_checklist"
+              name="Master Checklist"
+              parent="menu_restaurant_config_root"
+              action="action_shift_log_checklist"
+              sequence="10"/>
+
+</odoo>

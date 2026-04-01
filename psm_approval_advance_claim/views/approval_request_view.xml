@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Inherit approval.request form to add payment fields for advance claim -->
+    <record id="approval_request_view_form_advance_payment" model="ir.ui.view">
+        <field name="name">approval.request.form.advance.payment</field>
+        <field name="model">approval.request</field>
+        <field name="inherit_id" ref="approvals.approval_request_view_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add smart button for expenses -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_expenses"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-money"
+                        invisible="expense_count == 0 or is_advance_claim != 'yes'">
+                    <field name="expense_count" widget="statinfo" string="Expenses"/>
+                </button>
+            </xpath>
+            
+            <!-- Add payment fields after category_id -->
+            <xpath expr="//field[@name='category_id']" position="after">
+                
+                <!-- Hidden field for visibility control -->
+                <field name="is_advance_claim" invisible="1"/>
+                
+                <!-- Budget Check Status - shown for advance claims -->
+                <field name="budget_check_status" 
+                       invisible="is_advance_claim != 'yes'"
+                       readonly="1"
+                       widget="badge"
+                       decoration-success="budget_check_status == 'in_budget'"
+                       decoration-danger="budget_check_status == 'out_of_budget'"/>
+                
+                <!-- Advance Type -->
+                <field name="advance_type" 
+                       invisible="is_advance_claim != 'yes'"
+                       required="is_advance_claim == 'yes'"/>
+                
+                <!-- Payment Mode -->
+                <field name="payment_mode" 
+                       invisible="is_advance_claim != 'yes'"
+                       required="is_advance_claim == 'yes'"/>
+                
+                <!-- Payment Method Line Field -->
+                <field name="payment_method_line_id" 
+                       invisible="is_advance_claim != 'yes'"
+                       required="is_advance_claim == 'yes'"/>
+                
+                <!-- Bank Name Field - always shown for advance claims -->
+                <field name="bank_name" 
+                       invisible="is_advance_claim != 'yes'"/>
+                
+                <!-- Account Number Field - always shown for advance claims -->
+                <field name="account_number" 
+                       invisible="is_advance_claim != 'yes'"/>
+                
+            </xpath>
+            
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Overwrite the website.page record directly to add Survey Button -->
+        <record id="website_hr_recruitment.thankyou" model="website.page">
+            <field name="arch" type="xml">
+                <t name="Thank you (Recruitment)" t-name="website_hr_recruitment.thankyou">
+                    <t t-if="request.session.get('form_builder_model_model', '') == 'hr.applicant'">
+                        <t t-set="job_sudo" t-value="request.website._website_form_last_record().sudo().job_id"/>
+                    </t>
+                    <t t-call="website.layout">
+                        <div id="wrap">
+                            <div class="oe_structure"/>
+                            <div id="jobs_thankyou" class="container">
+                                <div class="row pt24 pb24">
+                                    <div class="col pt24 pb24 text-center">
+                                        <h1 class="fw-bolder">Congratulations!</h1>
+                                        <p class="fw-light pb24">
+                                            Your application has been posted successfully,<br class="mb-2"/>
+                                            We usually respond within 3 days...
+                                        </p>
+                                        <img class="img-fluid o_we_custom_image" t-attf-style="width:{{ '50%' if (job_sudo and job_sudo.user_id) else '25%' }} !important;" src="/website_hr_recruitment/static/src/img/job_congratulations.svg" alt="Congratulations!"/>
+                                        
+                                        <!-- CUSTOM SURVEY BUTTON -->
+                                        <div t-if="job_sudo and job_sudo.survey_id" class="row justify-content-center mt-4 mb-4">
+                                            <div class="col-lg-8 text-center">
+                                                <div class="alert alert-info shadow-sm" style="border: 2px solid #00a09d;">
+                                                    <h4 class="alert-heading" style="color: #00a09d;"><i class="fa fa-pencil-square-o me-2"/>Yêu cầu bổ sung</h4>
+                                                    <p class="mb-3">Vui lòng hoàn thành bài khảo sát năng lực để chúng tôi duyệt hồ sơ của bạn nhanh hơn.</p>
+                                                    <a role="button" t-attf-href="/survey/start/#{slug(job_sudo.survey_id)}" class="btn btn-primary btn-lg px-5" style="background-color: #00a09d; border: none;">
+                                                        <i class="fa fa-play-circle me-2"/>Làm bài Khảo Sát ngay
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- END CUSTOM SURVEY BUTTON -->
+
+                                        <div class="row" id="o_recruitment_thank_cta">
+                                            <div class="col-lg-12 text-center mt32 mb48">
+                                                <p>
+                                                    <span class="h5 fw-light">In the meantime,</span><br/>
+                                                    <span class="h3 mt8 mb32 fw-bold">Take a look around our website:</span>
+                                                </p>
+                                                <a role="button" href="/" class="btn btn-primary btn-lg">Home</a><a role="button" href="/" class="btn btn-primary btn-lg ms-3">About Us</a><a role="button" href="/" class="btn btn-primary btn-lg ms-3">Products</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- HR Recruiter Block -->
+                                    <t t-if="job_sudo and job_sudo.user_id">
+                                        <div class="col-lg-4 align-self-center ps-4 o_cc o_cc2 rounded">
+                                            <section class="s_text_block pt24" data-snippet="s_text_block" data-name="Text">
+                                                <div class="container">
+                                                    <p class="text-center mb-0 fs-3 lead">Your <b>contact</b> information is:</p>
+                                                </div>
+                                            </section>
+                                            <section class="s_company_team pt12" data-snippet="s_company_team" data-name="Team">
+                                                <div class="container-fluid">
+                                                    <div class="row justify-content-center">
+                                                        <div class="o_jobs_hr_recruiter col-10 o_cc o_cc1 mt24 p-4 border border-primary rounded shadow">
+                                                            <div class="row align-items-center">
+                                                                <div class="col-lg-5 pb16 o_not_editable">
+                                                                    <img t-att-src="image_data_uri(job_sudo.user_id.avatar_256)" class="img-fluid" loading="lazy"/>
+                                                                </div>
+                                                                <div class="col-lg-7 px-1">
+                                                                    <h2 class="text-truncate" t-field="job_sudo.user_id.name"/>
+                                                                    <p class="fw-light text-truncate" t-field="job_sudo.user_id.job_title"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <ul class="list-unstyled mb-0">
+                                                                    <li t-if="job_sudo.user_id.work_phone"><i class="fa fa-phone fa-fw me-2"></i><span class="o_force_ltr" t-field="job_sudo.user_id.work_phone"/></li>
+                                                                    <li class="d-inline-flex align-items-baseline"><i class="fa fa-envelope fa-fw me-2"></i><span><a class="text-break" t-attf-href="mailto:#{job_sudo.user_id.email}" t-field="job_sudo.user_id.email"/></span></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </section>
+                                            <section class="s_text_block pt24" data-snippet="s_text_block" data-name="Text">
+                                                <div class="container">
+                                                    <p class="lead alert px-0">
+                                                        I usually <strong>answer applications within 3 days</strong>.
+                                                        <br/><br/>
+                                                        The next step is either a call or a meeting in our offices.
+                                                        <br/><br/>
+                                                        Feel free to <strong>contact me if you want a faster
+                                                        feedback</strong> or if you don't get news from me
+                                                        quickly enough.
+                                                    </p>
+                                                </div>
+                                            </section>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                            <div class="oe_structure"/>
+                        </div>
+                    </t>
+                </t>
+            </field>
+        </record>
+    </data>
+</odoo>

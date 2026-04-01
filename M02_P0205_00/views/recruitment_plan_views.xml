@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- ============================== -->
+        <!-- KẾ HOẠCH TUYỂN DỤNG (Step 0)  -->
+        <!-- ============================== -->
+
+        <!-- Tree View -->
+        <record id="view_recruitment_plan_tree" model="ir.ui.view">
+            <field name="name">recruitment.plan.tree</field>
+            <field name="model">recruitment.plan</field>
+            <field name="arch" type="xml">
+                <list string="Kế Hoạch Tuyển Dụng" multi_edit="1" default_order="create_date desc">
+                    <field name="name" />
+                    <field name="reason" optional="hide" />
+                    <field name="user_id" widget="many2one_avatar_user" optional="show" />
+                    <field name="total_quantity" sum="Total" />
+                    <field name="request_count" optional="hide" />
+                    <field name="state" widget="badge"
+                        decoration-success="state == 'done'"
+                        decoration-info="state == 'draft'"
+                        decoration-warning="state == 'in_progress'"
+                        decoration-primary="state in ('waiting_manager', 'manager_approved', 'hr_validation', 'waiting_ceo')"
+                        decoration-danger="state == 'cancel'"
+                        optional="show" />
+                </list>
+            </field>
+        </record>
+
+        <!-- Form View -->
+        <record id="view_recruitment_plan_form" model="ir.ui.view">
+            <field name="name">recruitment.plan.form</field>
+            <field name="model">recruitment.plan</field>
+            <field name="arch" type="xml">
+                <form string="Kế Hoạch Tuyển Dụng">
+                    <header>
+                        <field name="state" invisible="1" />
+                        <button name="action_notify_department_heads" string="Gửi thông báo"
+                            type="object" class="oe_highlight" invisible="state != 'draft'" />
+                        <button name="action_manager_approve" string="Duyệt Phòng Ban Này"
+                            type="object" class="oe_highlight"
+                            invisible="not can_approve_as_manager" />
+                        <button name="action_hr_validate" string="HR Validate" type="object"
+                            class="oe_highlight" invisible="state != 'manager_approved'" />
+                        <button name="action_ceo_approve" string="CEO Duyệt" type="object"
+                            class="oe_highlight" invisible="state != 'waiting_ceo'" />
+
+                        <button name="action_publish_jobs" string="Đăng tin" type="object"
+                            class="oe_highlight" invisible="state != 'in_progress'" />
+                        <button name="action_done" string="Hoàn thành" type="object"
+                            invisible="state != 'in_progress'" />
+
+                        <button name="action_cancel" string="Hủy" type="object"
+                            invisible="state in ('done', 'cancel')" />
+                        <button name="action_reset_draft" string="Về nháp" type="object"
+                            invisible="state != 'cancel'" />
+
+                        <field name="state" widget="statusbar"
+                            statusbar_visible="draft,waiting_manager,manager_approved,hr_validation,waiting_ceo,in_progress,done" />
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_sub_plans" type="object"
+                                class="oe_stat_button" icon="fa-sitemap"
+                                invisible="is_sub_plan or state == 'draft'">
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_text">Kế hoạch con</span>
+                                </div>
+                            </button>
+                            <button name="action_open_jobs" type="object"
+                                class="oe_stat_button" icon="fa-briefcase"
+                                invisible="job_count == 0">
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="job_count" />
+                                    </span>
+                                    <span class="o_stat_text">Vị trí</span>
+                                </div>
+                            </button>
+                            <button name="action_open_job_page" type="object"
+                                class="oe_stat_button" icon="fa-globe">
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_text">Bản tin</span>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1" />
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="user_id" widget="many2one_avatar_user" />
+                                <field name="company_id" />
+                                <field name="is_sub_plan" invisible="1" />
+                            </group>
+                            <group>
+                                <field name="parent_id" readonly="1" invisible="not is_sub_plan" />
+                                <field name="department_id" readonly="1" invisible="not is_sub_plan" />
+                                <field name="date_submitted" invisible="not date_submitted" />
+                                <field name="priority" widget="priority" />
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Chi tiết tuyển dụng">
+                                <field name="line_ids">
+                                    <list string="Chi tiết" editable="bottom">
+                                        <field name="department_id"
+                                            domain="[('block_id.name', 'ilike', 'Văn phòng')]" />
+                                        <field name="job_id"
+                                            domain="[('department_id', '=', department_id)]" />
+                                        <field name="quantity" />
+                                        <field name="planned_date" />
+                                        <field name="state" widget="badge"
+                                            decoration-info="state in ('waiting_manager', 'manager_approved')"
+                                            decoration-warning="state in ('hr_validation', 'waiting_ceo')"
+                                            decoration-success="state == 'in_progress'"
+                                            decoration-muted="state == 'done'"
+                                            decoration-danger="state == 'cancel'" />
+                                        <field name="reason" optional="hide" />
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Ghi chú">
+                                <field name="reason" placeholder="Ghi chú chung cho kế hoạch..." />
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter />
+                </form>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_recruitment_plan_search" model="ir.ui.view">
+            <field name="name">recruitment.plan.search</field>
+            <field name="model">recruitment.plan</field>
+            <field name="arch" type="xml">
+                <search string="Tìm kiếm Kế Hoạch">
+                    <field name="name" />
+                    <field name="company_id" />
+                </search>
+            </field>
+        </record>
+
+        <!-- Action for Parent Plans -->
+        <record id="action_recruitment_plan" model="ir.actions.act_window">
+            <field name="name">Kế Hoạch Tuyển Dụng</field>
+            <field name="res_model">recruitment.plan</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('is_sub_plan', '=', False)]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Lập kế hoạch tuyển dụng mới
+                </p>
+                <p>
+                    Nhập danh sách các vị trí cần tuyển dụng.
+                    Khi gửi thông báo, hệ thống sẽ tự động tách thành các kế hoạch con theo phòng
+                    ban.
+                </p>
+            </field>
+        </record>
+
+        <!-- Action for Sub Plans -->
+        <record id="action_recruitment_plan_sub" model="ir.actions.act_window">
+            <field name="name">Kế Hoạch Tuyển Dụng Con</field>
+            <field name="res_model">recruitment.plan</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('is_sub_plan', '=', True)]</field>
+            <field name="context">{'default_is_sub_plan': True}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Chưa có kế hoạch con nào
+                </p>
+            </field>
+        </record>
+
+        <!-- ============================== -->
+        <!-- ĐỢT TUYỂN DỤNG                 -->
+        <!-- ============================== -->
+
+        <!-- Tree View for Batch -->
+        <record id="view_recruitment_batch_tree" model="ir.ui.view">
+            <field name="name">recruitment.batch.tree</field>
+            <field name="model">recruitment.batch</field>
+            <field name="arch" type="xml">
+                <list string="Đợt Tuyển Dụng" default_order="create_date desc">
+                    <field name="name" string="Mã đợt" />
+                    <field name="batch_name" string="Tên đợt" />
+                    <field name="date_start" />
+                    <field name="date_end" />
+                    <field name="state" widget="badge"
+                        decoration-success="state == 'open'"
+                        decoration-danger="state == 'closed'" />
+                </list>
+            </field>
+        </record>
+
+        <!-- Form View for Batch -->
+        <record id="view_recruitment_batch_form" model="ir.ui.view">
+            <field name="name">recruitment.batch.form</field>
+            <field name="model">recruitment.batch</field>
+            <field name="arch" type="xml">
+                <form string="Đợt Tuyển Dụng">
+                    <header>
+                        <button name="action_open_batch" string="Bắt đầu đợt" type="object"
+                            class="oe_highlight" invisible="state != 'draft'" />
+                        <button name="action_pull_approved_lines" string="↓ Kéo vị trí đã duyệt"
+                            type="object" class="oe_highlight" invisible="state != 'open'" />
+                        <button name="action_send_ceo" string="Gửi CEO duyệt" type="object"
+                            class="oe_highlight" invisible="state != 'open'" />
+
+                        <button name="action_ceo_approve_batch" string="CEO Phê Duyệt" type="object"
+                            class="oe_highlight" invisible="state != 'waiting_ceo'" />
+                        <button name="action_ceo_reject_batch" string="CEO Từ Chối" type="object"
+                            invisible="state != 'waiting_ceo'" />
+
+                        <button name="action_close" string="Đóng đợt" type="object"
+                            class="oe_highlight" invisible="state != 'approved'" />
+                        <button name="action_reopen" string="Mở lại" type="object"
+                            invisible="state != 'closed'" />
+                        <field name="state" widget="statusbar"
+                            statusbar_visible="draft,open,waiting_ceo,approved,closed" />
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_applicants"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-users"
+                                invisible="state == 'draft'">
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_text">Xem Ứng Viên</span>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" string="Mã đợt" />
+                            <h1>
+                                <field name="name" readonly="1" />
+                            </h1>
+                            <label for="batch_name" string="Tên đợt tuyển dụng" />
+                            <h2>
+                                <field name="batch_name" placeholder="Nhập tên đợt..." />
+                            </h2>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="date_start" />
+                                <field name="date_end" />
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Vị trí tuyển dụng trong đợt">
+                                <field name="line_ids" readonly="1">
+                                    <list>
+                                        <field name="plan_id" />
+                                        <field name="department_id" />
+                                        <field name="job_id" />
+                                        <field name="quantity" />
+                                        <field name="planned_date" />
+                                        <field name="state" widget="badge" />
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter />
+                </form>
+            </field>
+        </record>
+
+        <!-- Action for Batch -->
+        <record id="action_recruitment_batch" model="ir.actions.act_window">
+            <field name="name">Đợt Tuyển Dụng</field>
+            <field name="res_model">recruitment.batch</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Tạo đợt tuyển dụng mới
+                </p>
+                <p>
+                    Tạo đợt tuyển dụng thuộc kế hoạch để các Yêu Cầu Tuyển Dụng có thể chọn vào.
+                </p>
+            </field>
+        </record>
+
+        <!-- Root Menu (defined here because this file loads first) -->
+        <menuitem id="menu_office_recruitment_root"
+            name="Tuyển Dụng VP"
+            web_icon="hr_recruitment,static/description/icon.png"
+            sequence="10" />
+
+        <!-- Menu -->
+        <menuitem id="menu_recruitment_plan"
+            name="Kế Hoạch Tuyển Dụng"
+            parent="menu_office_recruitment_root"
+            action="action_recruitment_plan"
+            sequence="2" />
+
+        <menuitem id="menu_recruitment_plan_sub"
+            name="Kế Hoạch Con"
+            parent="menu_office_recruitment_root"
+            action="action_recruitment_plan_sub"
+            sequence="3" />
+
+        <menuitem id="menu_recruitment_batch"
+            name="Đợt Tuyển Dụng"
+            parent="menu_office_recruitment_root"
+            action="action_recruitment_batch"
+            sequence="0" />
+        <menuitem id="menu_recruitment_plan_hr"
+            name="Kế hoạch tuyển dụng"
+            parent="hr_recruitment.menu_hr_recruitment_root"
+            action="action_recruitment_plan"
+            sequence="20" />
+
+        <menuitem id="menu_recruitment_plan_sub_hr"
+            name="Kế hoạch con"
+            parent="hr_recruitment.menu_hr_recruitment_root"
+            action="action_recruitment_plan_sub"
+            sequence="21" />
+    </data>
+</odoo>

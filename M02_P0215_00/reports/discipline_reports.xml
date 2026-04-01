@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Report Action: Disciplinary Decision -->
+    <record id="action_report_disciplinary_decision_final" model="ir.actions.report">
+        <field name="name">Quyết định Xử lý kỷ luật</field>
+        <field name="model">hr.discipline.record</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">M02_P0215_00.report_disciplinary_decision_template</field>
+        <field name="report_file">M02_P0215_00.report_disciplinary_decision_template</field>
+        <field name="print_report_name">'Quyet_dinh_ky_luat_%s' % object.name</field>
+    </record>
+
+    <!-- Report Action: Compensation Decision -->
+    <record id="action_report_compensation_decision_final" model="ir.actions.report">
+        <field name="name">Quyết định Bồi thường thiệt hại</field>
+        <field name="model">hr.discipline.record</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">M02_P0215_00.report_compensation_decision_template</field>
+        <field name="report_file">M02_P0215_00.report_compensation_decision_template</field>
+        <field name="print_report_name">'Quyet_dinh_boi_thuong_%s' % object.name</field>
+    </record>
+
+    <!-- Template: Disciplinary Decision -->
+    <template id="report_disciplinary_decision_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="row text-center mt-5 mb-5">
+                            <h4>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</h4>
+                            <h5>Độc lập - Tự do - Hạnh phúc</h5>
+                            <hr style="width: 50%; border-top: 1px solid black;"/>
+                            <br/>
+                            <h3>QUYẾT ĐỊNH</h3>
+                            <h4>V/v Xử lý kỷ luật lao động</h4>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <p><strong>Căn cứ:</strong></p>
+                            <ul>
+                                <li>Bộ luật Lao động nước Cộng hòa Xã hội Chủ nghĩa Việt Nam;</li>
+                                <li>Nội quy lao động của Công ty <span t-field="o.employee_id.company_id.name"/>;</li>
+                                <li>Biên bản cuộc họp xử lý kỷ luật ngày <span t-field="o.meeting_date"/>;</li>
+                            </ul>
+                        </div>
+
+                        <div class="row text-center mt-3">
+                            <h4>GIÁM ĐỐC CÔNG TY QUYẾT ĐỊNH</h4>
+                        </div>
+
+                        <div class="row mt-3">
+                            <p><strong>Điều 1:</strong> Thi hành kỷ luật lao động đối với Ông/Bà:</p>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <td>Họ và tên:</td>
+                                    <td><span t-field="o.employee_id.name"/></td>
+                                </tr>
+                                <tr>
+                                    <td>Bộ phận:</td>
+                                    <td><span t-field="o.employee_id.department_id.name"/></td>
+                                </tr>
+                                <tr>
+                                    <td>Mã nhân viên:</td>
+                                    <td><span t-field="o.employee_id.barcode"/></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="row mt-2">
+                            <p><strong>Điều 2:</strong> Hình thức xử lý kỷ luật:</p>
+                            <p class="ms-5">- Hình thức: <strong t-field="o.action_id.name"/></p>
+                            <p class="ms-5">- Lý do vi phạm: <span t-field="o.violation_type_id.name"/></p>
+                            <p class="ms-5">- Chi tiết: <span t-field="o.description"/></p>
+                        </div>
+                        
+                         <div class="row mt-2">
+                            <p><strong>Điều 3:</strong> Quyết định này có hiệu lực kể từ ngày ký.</p>
+                            <p>Các phòng ban liên quan và Ông/Bà <span t-field="o.employee_id.name"/> chịu trách nhiệm thi hành quyết định này.</p>
+                        </div>
+
+                        <div class="row mt-5">
+                            <div class="col-6 text-center">
+                                <p><strong>NGƯỜI VI PHẠM</strong></p>
+                                <p>(Ký, ghi rõ họ tên)</p>
+                                <br/><br/><br/>
+                                <span t-field="o.employee_id.name"/>
+                            </div>
+                            <div class="col-6 text-center">
+                                <p><strong>TỔNG GIÁM ĐỐC</strong></p>
+                                <p>(Ký, đóng dấu)</p>
+                                <br/><br/><br/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- Template: Compensation Decision -->
+    <template id="report_compensation_decision_template">
+        <t t-call="web.html_container">
+             <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="row text-center mt-5 mb-5">
+                            <h4>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</h4>
+                            <h5>Độc lập - Tự do - Hạnh phúc</h5>
+                            <hr style="width: 50%; border-top: 1px solid black;"/>
+                            <br/>
+                            <h3>QUYẾT ĐỊNH</h3>
+                            <h4>V/v Bồi thường thiệt hại</h4>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <p><strong>Căn cứ:</strong></p>
+                            <ul>
+                                <li>Bộ luật Lao động hiện hành;</li>
+                                <li>Quy định tài chính của Công ty <span t-field="o.employee_id.company_id.name"/>;</li>
+                                <li>Biên bản cuộc họp ngày <span t-field="o.meeting_date"/> về việc xác định mức độ thiệt hại;</li>
+                            </ul>
+                        </div>
+
+                        <div class="row text-center mt-3">
+                            <h4>GIÁM ĐỐC CÔNG TY QUYẾT ĐỊNH</h4>
+                        </div>
+
+                        <div class="row mt-3">
+                            <p><strong>Điều 1:</strong> Yêu cầu bồi thường thiệt hại đối với Ông/Bà:</p>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <td>Họ và tên:</td>
+                                    <td><span t-field="o.employee_id.name"/></td>
+                                </tr>
+                                 <tr>
+                                    <td>Chức vụ:</td>
+                                    <td><span t-field="o.employee_id.job_id.name"/></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="row mt-2">
+                            <p><strong>Điều 2:</strong> Nội dung bồi thường:</p>
+                             <table class="table table-bordered">
+                                <tr>
+                                    <th>Nội dung</th>
+                                    <th>Số tiền</th>
+                                </tr>
+                                <tr>
+                                    <td>Bồi thường thiệt hại do vi phạm: <span t-field="o.violation_type_id.name"/></td>
+                                    <td>
+                                        <span t-field="o.compensation_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                         <div class="row mt-2">
+                            <p><strong>Điều 3:</strong> Phương thức và thời gian thực hiện:</p>
+                            <p>- Số tiền bồi thường sẽ được khấu trừ vào lương tháng gần nhất của nhân viên.</p>
+                        </div>
+
+                        <div class="row mt-5">
+                            <div class="col-6 text-center">
+                                <p><strong>NGƯỜI NHẬN QUYẾT ĐỊNH</strong></p>
+                                <p>(Ký, ghi rõ họ tên)</p>
+                                <br/><br/><br/>
+                                <span t-field="o.employee_id.name"/>
+                            </div>
+                            <div class="col-6 text-center">
+                                <p><strong>TỔNG GIÁM ĐỐC</strong></p>
+                                <p>(Ký, đóng dấu)</p>
+                                <br/><br/><br/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

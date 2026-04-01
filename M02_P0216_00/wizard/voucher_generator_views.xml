@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_voucher_generator_form" model="ir.ui.view">
+        <field name="name">voucher.generator.form</field>
+        <field name="model">voucher.generator</field>
+        <field name="arch" type="xml">
+            <form string="Tạo Voucher Hàng Loạt">
+                <group>
+                    <group>
+                        <field name="denomination"/>
+                        <field name="quantity"/>
+                    </group>
+                    <group>
+                        <field name="point_required"/>
+                        <field name="state"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_generate" string="Tạo Voucher" type="object" class="btn-primary"/>
+                    <button string="Hủy" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_voucher_generator" model="ir.actions.act_window">
+        <field name="name">Tạo Voucher Hàng Loạt</field>
+        <field name="res_model">voucher.generator</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_voucher_generator"
+              name="Tạo Voucher"
+              parent="menu_voucher_root"
+              action="action_voucher_generator"
+              sequence="15"/>
+</odoo>

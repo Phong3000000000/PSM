@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_soc_import_wizard_form" model="ir.ui.view">
+        <field name="name">soc.import.wizard.form</field>
+        <field name="model">soc.import.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import SOC từ Excel">
+                <sheet>
+                    <div class="alert alert-info" role="alert">
+                        <strong>📂 Hướng dẫn:</strong> Tải lên file <code>.xlsx</code> theo định dạng eSOC
+                        (eBSOC / eASOC). Hệ thống sẽ tự động phân tích tên, phiên bản, các mục kiểm tra và
+                        tạo SOC mới trong Odoo.
+                    </div>
+
+                    <group string="📁 File Excel">
+                        <field name="excel_file" widget="binary" filename="excel_filename"/>
+                        <field name="excel_filename" invisible="1"/>
+                    </group>
+
+                    <group string="📋 Phân loại SOC">
+                        <group>
+                            <field name="soc_name" placeholder="Tự động từ file hoặc nhập thủ công"/>
+                            <field name="soc_version"/>
+                            <field name="soc_type_id"/>
+                        </group>
+                        <group>
+                            <field name="soc_area_id"/>
+                            <field name="soc_station_id"/>
+                            <field name="document_type"/>
+                        </group>
+                    </group>
+
+                    <group string="⚙️ Tùy chọn">
+                        <field name="force_update"/>
+                    </group>
+
+                    <group string="👁️ Xem trước nội dung" invisible="not preview_html">
+                        <field name="preview_html" widget="html" nolabel="1"
+                               style="max-height:400px;overflow-y:auto;border:1px solid #ddd;padding:8px;border-radius:4px"/>
+                    </group>
+                </sheet>
+
+                <footer>
+                    <button string="✅ Import SOC" name="action_import_soc"
+                            type="object" class="btn-primary"/>
+                    <button string="Hủy" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_soc_import_wizard" model="ir.actions.act_window">
+        <field name="name">Import SOC từ Excel</field>
+        <field name="res_model">soc.import.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

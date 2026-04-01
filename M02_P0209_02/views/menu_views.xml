@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root Menu -->
+    <menuitem id="menu_lnd_root" name="L&amp;D Development" web_icon="M02_P0209_01,static/description/icon.png" sequence="50" />
+    
+    <!-- SOC Management -->
+    <menuitem id="menu_soc_management" name="SOC Management" 
+              parent="menu_lnd_root"
+              sequence="10" />
+    
+    <menuitem id="menu_soc_templates" name="SOC" parent="menu_soc_management" action="action_lnd_soc_template_slide" sequence="10"/>
+    <menuitem id="menu_lnd_courses" name="Station" parent="menu_soc_management" action="website_slides.slide_channel_action_overview" sequence="10"/>
+
+
+    <!-- Human Resource Management (Inside Store Management) -->
+    <menuitem id="menu_human_resource" name="Human Resource" 
+              parent="M04_P0400_00.menu_store_management" sequence="10"/>
+
+    <menuitem id="menu_lnd_store_employees" name="Employees" parent="menu_human_resource" action="hr.open_view_employee_list_my" sequence="5"/>
+    <menuitem id="menu_lnd_potential_list" name="Potential List" parent="menu_human_resource" action="action_lnd_potential_list" sequence="10"/>
+    
+    <!-- Training Library (Consolidated from eLearning) -->
+    <menuitem id="menu_lnd_library" name="Training Library" parent="menu_lnd_root" sequence="20" />
+    
+    <!-- Reporting -->
+    <menuitem id="menu_lnd_reporting" name="Reporting" parent="menu_lnd_root" sequence="30"/>
+    <menuitem id="menu_lnd_report_course" name="Courses" parent="menu_lnd_reporting" action="website_slides.rating_rating_action_slide_channel" sequence="10"/>
+
+    <!-- Configuration -->
+    <menuitem id="menu_lnd_configuration" name="Configuration" parent="menu_lnd_root" sequence="99"/>
+    
+    <menuitem id="menu_lnd_config_course_tags" name="Course Tags" parent="menu_lnd_configuration" action="website_slides.slide_channel_tag_action" sequence="10"/>
+    <menuitem id="menu_lnd_config_content_tags" name="Content Tags" parent="menu_lnd_configuration" action="website_slides.action_slide_tag" sequence="20"/>
+    
+    <menuitem id="menu_lnd_config_soc" name="SOC Configuration" parent="menu_lnd_configuration" sequence="30"/>
+    <menuitem id="menu_lnd_config_soc_type" name="SOC Types" parent="menu_lnd_config_soc" action="action_mcd_soc_type" sequence="10"/>
+    <menuitem id="menu_lnd_config_soc_area" name="Areas" parent="menu_lnd_config_soc" action="action_mcd_soc_area" sequence="20"/>
+    <menuitem id="menu_lnd_config_soc_station" name="Stations" parent="menu_lnd_config_soc" action="action_mcd_soc_station" sequence="30"/>
+    <menuitem id="menu_lnd_config_soc_import" name="📥 Import SOC từ Excel"
+              parent="menu_lnd_config_soc"
+              action="action_soc_import_wizard"
+              sequence="40"/>
+
+</odoo>

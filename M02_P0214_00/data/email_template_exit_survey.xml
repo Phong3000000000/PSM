@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Email Template for Exit Interview Survey -->
+        <record id="email_template_exit_survey" model="mail.template">
+            <field name="name">Khảo sát nghỉ việc - Exit Interview</field>
+            <field name="model_id" ref="approvals.model_approval_request"/>
+            <field name="subject">Khảo sát nghỉ việc - Exit Interview Survey</field>
+            <field name="email_from">{{ (object.company_id.email or user.email) }}</field>
+            <field name="email_to">{{ object.request_owner_id.partner_id.email }}</field>
+            <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px; font-family: Arial, sans-serif;">
+    <table border="0" cellpadding="0" cellspacing="0" style="padding-top: 16px; background-color: #F7F7F7; width: 100%;">
+        <tr>
+            <td align="center">
+                <table border="0" cellpadding="0" cellspacing="0" width="590" style="padding: 16px; background-color: #FFFFFF; border: 1px solid #E1E1E1; border-radius: 3px;">
+                    <tr>
+                        <td style="padding: 20px 24px;">
+                            <h2 style="color: #DA291C; margin-bottom: 20px;">Khảo sát nghỉ việc</h2>
+                            
+                            <p style="margin-bottom: 16px;">Kính gửi <strong>{{ object.request_owner_id.name }}</strong>,</p>
+                            
+                            <p style="margin-bottom: 16px;">Cảm ơn bạn đã làm việc cùng <strong>McDonald's Việt Nam</strong>.</p>
+                            
+                            <p style="margin-bottom: 16px;">Để giúp chúng tôi cải thiện môi trường làm việc và phát triển tốt hơn, vui lòng dành vài phút để hoàn thành khảo sát nghỉ việc sau:</p>
+                            
+                            <p style="text-align: center; margin: 30px 0;">
+                                <a t-att-href="ctx.get('survey_url')" 
+                                   style="background-color: #DA291C; color: #FFFFFF; padding: 14px 32px; 
+                                          text-decoration: none; border-radius: 5px; font-weight: bold;
+                                          display: inline-block;">
+                                    Bắt đầu khảo sát
+                                </a>
+                            </p>
+                            
+                            <p style="margin-bottom: 16px; color: #666666; font-size: 14px;">
+                                <em>Thông tin của bạn sẽ được bảo mật và chỉ sử dụng để cải thiện chất lượng công việc.</em>
+                            </p>
+                            
+                            <hr style="border: none; border-top: 1px solid #E1E1E1; margin: 20px 0;"/>
+                            
+                            <p style="margin-bottom: 0; color: #333333;">
+                                Trân trọng,<br/>
+                                <strong>Phòng Nhân sự</strong><br/>
+                                McDonald's Việt Nam
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+</field>
+            <field name="lang">{{ object.request_owner_id.lang }}</field>
+            <field name="auto_delete">True</field>
+        </record>
+    </data>
+</odoo>

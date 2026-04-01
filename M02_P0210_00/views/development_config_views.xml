@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Development Config Form View -->
+    <record id="view_development_config_form" model="ir.ui.view">
+        <field name="name">mcd.development.config.form</field>
+        <field name="model">mcd.development.config</field>
+        <field name="arch" type="xml">
+            <form string="Development Configuration">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="development_type" widget="radio" options="{'horizontal': true}"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="active" widget="boolean_toggle"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Courses &amp; Exams List" name="courses">
+                            <field name="course_line_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="course_name"/>
+                                    <field name="exam_name"/>
+                                    <field name="evaluator_role"/>
+                                    <field name="slide_channel_id" optional="hide"/>
+                                    <field name="notes" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Development Config Tree View -->
+    <record id="view_development_config_tree" model="ir.ui.view">
+        <field name="name">mcd.development.config.tree</field>
+        <field name="model">mcd.development.config</field>
+        <field name="arch" type="xml">
+            <list string="Development Configurations" create="false">
+                <field name="development_type"/>
+                <field name="course_line_ids" widget="many2many_tags"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Development Config Action -->
+    <record id="action_development_config" model="ir.actions.act_window">
+        <field name="name">Development Type Configuration</field>
+        <field name="res_model">mcd.development.config</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create new configuration for Manager development type
+            </p>
+            <p>
+                Configure courses, exams, and evaluators for each development type (SM, DM1, DM2, RGM).
+            </p>
+        </field>
+    </record>
+
+    <!-- Development Config Search View -->
+    <record id="view_development_config_search" model="ir.ui.view">
+        <field name="name">mcd.development.config.search</field>
+        <field name="model">mcd.development.config</field>
+        <field name="arch" type="xml">
+            <search string="Search Configuration">
+                <field name="development_type"/>
+                <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="filter_inactive" string="Archived" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter name="filter_all" string="All" domain="['|', ('active', '=', True), ('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Menu under L&D Development -->
+    <menuitem id="menu_development_config"
+              name="Development Type Configuration"
+              parent="M02_P0209_00.menu_lnd_root"
+              action="action_development_config"
+              sequence="60"/>
+</odoo>

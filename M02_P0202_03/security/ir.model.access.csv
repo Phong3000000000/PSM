@@ -1,0 +1,23 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_referral_request_line_all,employee.referral.request.line all,model_employee_referral_request_line,M02_P0202_03.group_referral_hr,1,1,1,1
+access_referral_submission_hr,employee.referral.submission hr,model_employee_referral_submission,M02_P0202_03.group_referral_hr,1,1,1,1
+access_referral_submission_admin,employee.referral.submission admin,model_employee_referral_submission,hr_referral.group_hr_referral_manager,1,1,1,1
+access_referral_submission_user,employee.referral.submission user,model_employee_referral_submission,base.group_user,1,0,0,0
+access_referral_submission_rgm,employee.referral.submission rgm,model_employee_referral_submission,M02_P0202_03.group_referral_rgm,1,1,1,0
+access_reject_wizard_all,referral.request.reject.wizard all,model_referral_request_reject_wizard,M02_P0202_03.group_referral_hr,1,1,1,1
+access_publish_wizard_all,referral.publish.wizard all,model_referral_publish_wizard,M02_P0202_03.group_referral_hr,1,1,1,1
+access_approval_position_hr,approval.request.position hr,model_approval_request_position,M02_P0202_03.group_referral_hr,1,0,0,0
+access_approval_position_rgm,approval.request.position rgm,model_approval_request_position,M02_P0202_03.group_referral_rgm,1,1,1,1
+access_approval_position_oc,approval.request.position oc,model_approval_request_position,M02_P0202_03.group_referral_oc,1,1,0,0
+access_referral_program_line_hr,employee.referral.program.line hr,M02_P0204_01.model_employee_referral_program_line,M02_P0202_03.group_referral_hr,1,1,1,1
+access_referral_program_line_rgm,employee.referral.program.line rgm,M02_P0204_01.model_employee_referral_program_line,M02_P0202_03.group_referral_rgm,1,0,0,0
+access_referral_program_line_oc,employee.referral.program.line oc,M02_P0204_01.model_employee_referral_program_line,M02_P0202_03.group_referral_oc,1,0,0,0
+access_referral_program_line_user,employee.referral.program.line user,M02_P0204_01.model_employee_referral_program_line,base.group_user,1,0,0,0
+access_referral_config_hr,employee.referral.config hr,M02_P0204_01.model_employee_referral_config,M02_P0202_03.group_referral_hr,1,1,1,1
+access_referral_config_manager,employee.referral.config manager,M02_P0204_01.model_employee_referral_config,hr_referral.group_hr_referral_manager,1,1,1,1
+access_referral_config_bonus_tier_hr,employee.referral.config.bonus.tier hr,M02_P0204_01.model_employee_referral_config_bonus_tier,M02_P0202_03.group_referral_hr,1,1,1,1
+access_referral_config_bonus_tier_manager,employee.referral.config.bonus.tier manager,M02_P0204_01.model_employee_referral_config_bonus_tier,hr_referral.group_hr_referral_manager,1,1,1,1
+access_referral_program_hr2,employee.referral.program hr2,M02_P0204_01.model_employee_referral_program,M02_P0202_03.group_referral_hr,1,1,1,1
+access_referral_program_admin,employee.referral.program admin,M02_P0204_01.model_employee_referral_program,hr_referral.group_hr_referral_manager,1,1,1,1
+access_referral_program_rgm,employee.referral.program rgm,M02_P0204_01.model_employee_referral_program,M02_P0202_03.group_referral_rgm,1,1,1,1
+access_referral_program_oc,employee.referral.program oc,M02_P0204_01.model_employee_referral_program,M02_P0202_03.group_referral_oc,1,1,0,0

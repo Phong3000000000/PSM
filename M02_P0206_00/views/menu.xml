@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ========================================== -->
+    <!-- RGM WORKFORCE MENU                         -->
+    <!-- ========================================== -->
+    <!-- Main Menu -->
+    <menuitem id="menu_M02_P0206_00_root" name="Workforce" sequence="45" groups="planning.group_planning_user" />
+    <!-- Sub Menu: Planning -->
+    <menuitem id="menu_workforce_planning" name="Xếp lịch" parent="menu_M02_P0206_00_root" sequence="10" />
+
+    <menuitem id="menu_planning_period" name="Kỳ đăng ký" parent="menu_workforce_planning" action="action_planning_period" sequence="10" />
+
+    <menuitem id="menu_smart_scheduler" name="Sinh lịch tự động" parent="menu_workforce_planning" action="action_smart_scheduler_wizard" sequence="20" />
+
+    <menuitem id="menu_slot_approval" name="Duyệt đăng ký ca" parent="menu_workforce_planning" action="action_planning_slot_approval" sequence="30" />
+    <!-- Sub Menu: Data -->
+    <menuitem id="menu_workforce_data" name="Dữ liệu" parent="menu_M02_P0206_00_root" sequence="20" />
+
+    <menuitem id="menu_workforce_forecast" name="Forecast (VLH)" parent="menu_workforce_data" action="action_workforce_forecast" sequence="10" />
+    <!-- Sub Menu: Attendance -->
+    <menuitem id="menu_workforce_attendance" name="Chấm công" parent="menu_M02_P0206_00_root" sequence="30" />
+
+    <menuitem id="menu_attendance_correction" name="Yêu cầu sửa công" parent="menu_workforce_attendance" action="action_attendance_correction" sequence="10" />
+
+    <!-- Sub Menu: Configuration -->
+    <menuitem id="menu_workforce_configuration" name="Cấu hình" parent="menu_M02_P0206_00_root" sequence="100" />
+    
+    <menuitem id="menu_shift_template" name="Mẫu ca làm việc" parent="menu_workforce_configuration" action="action_workforce_shift_template" sequence="10" />
+</odoo>

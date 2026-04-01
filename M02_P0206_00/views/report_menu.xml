@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menu cho Report -->
+    <menuitem id="menu_workforce_report" name="Báo cáo" parent="M02_P0206_00.menu_M02_P0206_00_root" sequence="40" />
+
+    <menuitem id="menu_adecco_report" name="Xuất báo cáo Adecco" parent="menu_workforce_report" action="action_adecco_report_wizard" sequence="10" />
+</odoo>

@@ -1,0 +1,25 @@
+<odoo>
+  <record id="cron_psm_ai_process_new_docs" model="ir.cron">
+    <field name="name">AI Invoice: Process New Documents</field>
+    <field name="model_id" ref="base.model_ir_attachment"/>
+    <field name="state">code</field>
+    <field name="code"><![CDATA[
+# Auto process attachments tagged 'Invoice' not linked yet
+attachments = env['ir.attachment'].sudo().search([
+    ('res_model','=',False),
+    ('type','=','binary'),
+    ('mimetype','!=',False),
+], limit=10)
+for a in attachments:
+    try:
+        env['psm.ai.invoice.service'].process_attachment(a)
+    except Exception as e:
+        # Log error to server logs / mail.message to keep trace
+        _logger = logging.getLogger('psm_ai_invoice.cron')
+        _logger.exception('AI invoice cron error for attachment %s: %s', a.id, e)
+]]></field>
+    <field name="interval_number">10</field>
+    <field name="interval_type">minutes</field>
+    <field name="active">False</field>
+  </record>
+</odoo>

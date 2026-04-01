@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Supplier Certificate Tree View -->
+    <record id="supplier_certificate_view_tree" model="ir.ui.view">
+        <field name="name">supplier.certificate.tree</field>
+        <field name="model">supplier.certificate</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name" />
+                <field name="partner_id" />
+                <field name="certificate_type" />
+                <field name="certificate_number" />
+                <field name="issue_date" />
+                <field name="expiry_date" />
+            </list>
+        </field>
+    </record>
+    <!-- Supplier Certificate Form View -->
+    <record id="supplier_certificate_view_form" model="ir.ui.view">
+        <field name="name">supplier.certificate.form</field>
+        <field name="model">supplier.certificate</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" />
+                            <field name="partner_id" />
+                            <field name="evaluation_id" />
+                            <field name="certificate_type" />
+                        </group>
+                        <group>
+                            <field name="certificate_number" />
+                            <field name="issue_date" />
+                            <field name="expiry_date" />
+                            <field name="issuing_authority" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Notes">
+                            <field name="note" placeholder="Additional notes..." />
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- Action Window -->
+    <record id="action_supplier_certificate" model="ir.actions.act_window">
+        <field name="name">Certificates</field>
+        <field name="res_model">supplier.certificate</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a new Certificate</p>
+        </field>
+    </record>
+</odoo>

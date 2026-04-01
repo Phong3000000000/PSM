@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extend hr.job form to add recruitment_type fields -->
+    <record id="view_hr_job_form_inherit" model="ir.ui.view">
+        <field name="name">hr.job.form.inherit</field>
+        <field name="model">hr.job</field>
+        <field name="inherit_id" ref="hr.view_hr_job_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@class='oe_title']" position="after">
+                <group>
+                    <field name="recruitment_type" widget="radio" options="{'horizontal': true}"/>
+                    <field name="position_level" widget="radio" options="{'horizontal': true}"/>
+                </group>
+                <group string="Cài Đặt Tuyển Dụng (Legacy - Đã thay bằng luật Câu Hỏi Bắt Buộc)" invisible="1">
+                    <field name="auto_evaluate_survey"/>
+                    <field name="survey_eval_mode" widget="radio" options="{'horizontal': true}"/>
+                    <field name="min_correct_answers"/>
+                </group>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Cấu Hình Từ Chối" name="refuse_reasons">
+                    <group>
+                        <button name="action_load_default_refuse_reasons" 
+                                type="object" 
+                                string="Tải lý do mặc định" 
+                                class="btn-secondary" 
+                                icon="fa-refresh"
+                                confirm="Hệ thống sẽ tải danh sách lý do từ chối mặc định. Bạn có chắc chắn?"/>
+                    </group>
+                    <field name="job_refuse_reason_ids">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="name" string="Tiêu đề (Lý do)"/>
+                            <field name="reason_type"/>
+                            <field name="template_id"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </list>
+                    </field>
+                </page>
+                <page string="Cấu Hình Email" name="email_rules">
+                    <div class="alert alert-info" role="alert">
+                        <strong>Hướng dẫn cấu hình Email Template:</strong><br/>
+                        Bạn có thể sử dụng các đoạn mã token sau trong Thân Email để hệ thống tự động điền thông tin tương ứng:<br/>
+                        - <code>{{ object.partner_name or object.name }}</code> : Tên Ứng viên<br/>
+                        - <code>{{ object.job_id.name }}</code> : Tên Vị trí ứng tuyển<br/>
+                        - <code>{{ object.department_id.name or object.job_id.department_id.name }}</code> : Tên Phòng ban<br/>
+                        - <code>{{ object.company_id.name }}</code> : Tên Công ty<br/>
+                        - <code>{{ object.reject_reason }}</code> : Nội dung Lý do từ chối<br/>
+                        - <code>{{ object.survey_url }}</code> : Link làm bài khảo sát (chỉ dùng cho thư Khảo sát)
+                    </div>
+                    <group>
+                        <button name="action_load_default_email_rules" 
+                                type="object" 
+                                string="Tải cấu hình mặc định" 
+                                class="btn-secondary" 
+                                icon="fa-refresh"
+                                confirm="Hệ thống sẽ tải danh sách email sự kiện mặc định. Bạn có chắc chắn?"/>
+                    </group>
+                    
+                    <separator string="Cấu hình theo Vòng (Stage)"/>
+                    <field name="email_rule_stage_ids" context="{'default_rule_type': 'stage'}">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="stage_id" required="1"/>
+                            <field name="template_id" required="1"/>
+                            <field name="active" widget="boolean_toggle"/>
+                            <button name="action_clone_default_template" type="object" string="Clone mặc định" class="btn-primary" icon="fa-copy"/>
+                            <button name="action_open_template" type="object" string="Mở template" class="btn-secondary" icon="fa-external-link"/>
+                        </list>
+                    </field>
+                    
+                    <separator string="Cấu hình theo Sự kiện (Event)"/>
+                    <field name="email_rule_event_ids" context="{'default_rule_type': 'event'}">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="event_code" required="1"/>
+                            <field name="template_id" required="1"/>
+                            <field name="active" widget="boolean_toggle"/>
+                            <button name="action_clone_default_template" type="object" string="Clone mặc định" class="btn-primary" icon="fa-copy"/>
+                            <button name="action_open_template" type="object" string="Mở template" class="btn-secondary" icon="fa-external-link"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Override the Applications smart button to call action_open_applicants (object method)
+         so the kanban view receives default_stage_filter_type, default_position_level in context.
+         
+         Parent: hr_recruitment.hr_job_survey (the view that owns button_box + all_application_count button) -->
+    <record id="view_hr_job_form_inherit_applications_button" model="ir.ui.view">
+        <field name="name">hr.job.form.inherit.applications.button.custom</field>
+        <field name="model">hr.job</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_job_survey"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']/button[@name='%(hr_recruitment.action_hr_job_applications)d']" position="replace">
+                <button class="oe_stat_button"
+                    groups="hr_recruitment.group_hr_recruitment_interviewer"
+                    icon="fa-pencil"
+                    name="action_open_applicants"
+                    type="object">
+                    <field name="all_application_count" widget="statinfo" string="Applications"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Thêm search filter "Ẩn OdooBot" vào danh sách Job Positions -->
+    <record id="view_hr_job_search_inherit" model="ir.ui.view">
+        <field name="name">hr.job.search.inherit.no.bot</field>
+        <field name="model">hr.job</field>
+        <field name="inherit_id" ref="hr.view_job_filter"/>
+        <field name="arch" type="xml">
+            <search position="inside">
+                <separator/>
+                <filter name="hide_odoobot"
+                        string="Ẩn OdooBot"
+                        domain="[('create_uid', '!=', 1)]"/>
+                <filter name="my_jobs"
+                        string="Do tôi tạo"
+                        domain="[('create_uid', '=', uid)]"/>
+            </search>
+        </field>
+    </record>
+
+</odoo>

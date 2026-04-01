@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Smart button: Yêu cầu giới thiệu (P0202) on Recruitment Session form -->
+    <record id="view_mcd_recruitment_session_form_p0202_inherit" model="ir.ui.view">
+        <field name="name">mcd.recruitment.session.form.p0202.inherit</field>
+        <field name="model">mcd.recruitment.session</field>
+        <field name="inherit_id" ref="M02_P0204_01.view_mcd_recruitment_session_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <div class="oe_button_box" name="button_box">
+                    <button name="action_view_referral_requests"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-users"
+                            invisible="referral_request_count == 0">
+                        <field name="referral_request_count" widget="statinfo" string="Yêu cầu GT"/>
+                    </button>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

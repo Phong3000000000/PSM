@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================ -->
+    <!-- BLOG POST MANAGEMENT                         -->
+    <!-- ============================================ -->
+    <record id="view_blog_post_custom_tree" model="ir.ui.view">
+        <field name="name">blog.post.custom.tree</field>
+        <field name="model">blog.post</field>
+        <field name="arch" type="xml">
+            <list string="Blog Posts" sample="1" decoration-info="is_published" decoration-muted="not is_published">
+                <field name="name" string="Tiêu đề"/>
+                <field name="subtitle" string="Mô tả ngắn"/>
+                <field name="author_id" string="Tác giả" widget="many2one_avatar_user"/>
+                <field name="post_date" string="Ngày đăng"/>
+                <field name="is_published" string="Đã xuất bản" widget="boolean_toggle"/>
+                <field name="visits" string="Lượt xem" optional="show"/>
+                <field name="write_date" string="Cập nhật lần cuối" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_blog_post_management" model="ir.actions.act_window">
+        <field name="name">Quản lý Tin tức</field>
+        <field name="res_model">blog.post</field>
+        <field name="view_mode">list,form,kanban</field>
+        <field name="view_id" ref="view_blog_post_custom_tree"/>
+        <field name="context">{'search_default_filter_published': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tạo bài viết mới
+            </p>
+            <p>Quản lý các bài viết trên trang tin tức nội bộ tại đây.</p>
+        </field>
+    </record>
+
+    <!-- ============================================ -->
+    <!-- PORTAL EVENT MANAGEMENT                      -->
+    <!-- ============================================ -->
+    <record id="view_portal_event_tree" model="ir.ui.view">
+        <field name="name">portal.event.tree</field>
+        <field name="model">portal.event</field>
+        <field name="arch" type="xml">
+            <list string="Upcoming Events" sample="1" editable="bottom">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="location"/>
+                <field name="color" widget="badge" decoration-primary="color == 'primary'" decoration-danger="color == 'danger'" decoration-warning="color == 'warning'" decoration-success="color == 'success'" decoration-info="color == 'info'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_portal_event_form" model="ir.ui.view">
+        <field name="name">portal.event.form</field>
+        <field name="model">portal.event</field>
+        <field name="arch" type="xml">
+            <form string="Event">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="date"/>
+                            <field name="location"/>
+                        </group>
+                        <group>
+                            <field name="color"/>
+                            <field name="image" widget="image" class="oe_avatar"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_portal_event_management" model="ir.actions.act_window">
+        <field name="name">Quản lý Sự kiện</field>
+        <field name="res_model">portal.event</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tạo sự kiện mới
+            </p>
+            <p>Quản lý các sự kiện sắp tới hiển thị trên trang chủ.</p>
+        </field>
+    </record>
+
+
+    <!-- ============================================ -->
+    <!-- MENUS                                        -->
+    <!-- ============================================ -->
+    <menuitem id="menu_portal_management_root" 
+              name="Portal Management" 
+              web_icon="portal_custom,static/description/icon.png"
+              sequence="20" 
+              groups="base.group_system,hr.group_hr_user"/>
+
+    <menuitem id="menu_blog_post_management" 
+              name="Quản lý Tin tức" 
+              parent="menu_portal_management_root" 
+              action="action_blog_post_management" 
+              sequence="1"/>
+
+    <menuitem id="menu_portal_event_management" 
+              name="Quản lý Sự kiện" 
+              parent="menu_portal_management_root" 
+              action="action_portal_event_management" 
+              sequence="2"/>
+
+</odoo>

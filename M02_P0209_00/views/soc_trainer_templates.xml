@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- 1. TRAINER DASHBOARD -->
+    <template id="soc_trainer_dashboard" name="Trainer Dashboard">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4 mb-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3><i class="fa fa-graduation-cap me-2 text-primary"/>Trainer Dashboard</h3>
+                    <span class="badge bg-info text-dark">
+                        <t t-esc="user.employee_id.name"/>
+                    </span>
+                </div>
+                
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white py-3">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="fa fa-search text-muted"/></span>
+                            <input type="text" id="employeeSearch" class="form-control border-start-0" placeholder="Search Employee..."/>
+                        </div>
+                    </div>
+                    <div class="list-group list-group-flush" id="employeeList">
+                        <t t-foreach="employees" t-as="emp">
+                            <a t-attf-href="/soc/trainer/evaluate/#{emp.id}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3 employee-item">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm me-3 bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                        <span t-esc="emp.name[0]"/>
+                                    </div>
+                                    <div>
+                                        <h5 class="mb-0 text-dark"><t t-esc="emp.name"/></h5>
+                                        <small class="text-muted"><t t-esc="emp.job_id.name or 'No Job Title'"/></small>
+                                    </div>
+                                </div>
+                                <i class="fa fa-chevron-right text-muted"/>
+                            </a>
+                        </t>
+                    </div>
+                </div>
+            </div>
+            
+            <script>
+                document.getElementById('employeeSearch').addEventListener('keyup', function() {
+                    let filter = this.value.toUpperCase();
+                    let items = document.querySelectorAll('.employee-item');
+                    items.forEach(item => {
+                        let text = item.innerText.toUpperCase();
+                        if (text.indexOf(filter) > -1) {
+                            item.style.display = "";
+                        } else {
+                            item.style.display = "none";
+                        }
+                    });
+                });
+            </script>
+        </t>
+    </template>
+
+    <!-- 2. HIERARCHY SELECTION (Area -> Station -> SOC) -->
+    <template id="soc_trainer_evaluation_select" name="Select SOC">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4 mb-5">
+                <div class="mb-4">
+                    <t t-if="is_self_view">
+                        <a href="/" class="text-decoration-none text-muted mb-2 d-inline-block">
+                            <i class="fa fa-home me-1"/> Back to Home
+                        </a>
+                    </t>
+                    <t t-else="">
+                        <a href="/soc/trainer/dashboard" class="text-decoration-none text-muted mb-2 d-inline-block">
+                            <i class="fa fa-arrow-left me-1"/> Back to Dashboard
+                        </a>
+                    </t>
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 t-if="is_self_view">Company Profile</h3>
+                        <h3 t-else="">Evaluate: <span class="text-primary"><t t-esc="employee.name"/></span></h3>
+                        
+                         <span class="badge bg-white text-dark border p-2 shadow-sm">
+                            <i class="fa fa-battery-half text-primary me-1"/> 
+                            Completed: <strong class="fs-6 text-primary"><t t-esc="completed_socs"/> / <t t-esc="total_socs"/></strong>
+                        </span>
+                    </div>
+                </div>
+                <div class="accordion" id="accordionArea">
+                    <t t-foreach="hierarchy.values()" t-as="area">
+                        <!-- AREA -->
+                        <div class="accordion-item mb-2 border rounded overflow-hidden shadow-sm">
+                            <h2 class="accordion-header" t-attf-id="heading#{area['key']}">
+                                <button class="accordion-button collapsed fw-bold text-uppercase bg-light" type="button" data-bs-toggle="collapse" t-attf-data-bs-target="#collapse#{area['key']}">
+                                    <t t-esc="area['name']"/>
+                                    <t t-if="area['status']">
+                                        <span class="badge bg-success ms-2">PASS</span>
+                                    </t>
+                                </button>
+                            </h2>
+                            <div t-attf-id="collapse#{area['key']}" class="accordion-collapse collapse" data-bs-parent="#accordionArea">
+                                <div class="accordion-body p-0">
+                                    <!-- STATIONS -->
+                                    <div class="list-group list-group-flush">
+                                        <t t-foreach="area['stations']" t-as="station">
+                                            <div class="list-group-item bg-white p-3">
+                                                <h6 class="text-primary fw-bold mb-3">
+                                                    <i class="fa fa-map-marker me-2"/> <t t-esc="station['name']"/>
+                                                    <t t-if="station['status']">
+                                                        <span class="badge bg-success ms-2">PASS</span>
+                                                    </t>
+                                                </h6>
+                                                
+                                                <div class="row g-2">
+                                                    <t t-foreach="station['socs']" t-as="soc_wrap">
+                                                        <t t-set="soc" t-value="soc_wrap['slide']"/>
+                                                        <div class="col-md-6 col-lg-4">
+                                                            <t t-set="card_href" t-value="'/soc/my/view/' + str(soc.id) if is_self_view else '/soc/trainer/perform/' + str(soc.id) + '/' + str(employee.id)"/>
+                                                            
+                                                            <a t-att-href="card_href" class="card h-100 text-decoration-none slide-card hover-shadow transition-all">
+                                                                <div class="card-body">
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <h6 class="card-title text-dark mb-1 text-truncate" t-att-title="soc.name"><t t-esc="soc.name"/></h6>
+                                                                        <span class="badge bg-secondary align-self-start"><t t-esc="soc.soc_code"/></span>
+                                                                    </div>
+                                                                    
+                                                                    <div class="d-flex justify-content-between mt-2 align-items-center">
+                                                                        <div class="d-flex align-items-center flex-wrap gap-1">
+                                                                             <small class="text-muted fw-bold me-1"><t t-esc="(soc.soc_type or '').upper()"/></small>
+                                                                             <t t-if="soc.soc_skill_id">
+                                                                                <span class="badge bg-light text-dark border" style="font-size: 0.7rem;" t-att-title="'Grants Skill: ' + soc.soc_skill_id.name">
+                                                                                    <i class="fa fa-certificate text-warning me-1"/> <t t-esc="soc.soc_skill_id.name"/>
+                                                                                </span>
+                                                                             </t>
+                                                                        </div>
+                                                                        
+                                                                        <t t-if="soc_wrap['status']">
+                                                                            <span class="badge bg-success">PASS</span>
+                                                                        </t>
+                                                                    </div>
+                                                                </div>
+                                                            </a>
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+            <style>
+                .hover-shadow:hover { box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15) !important; border-color: #0d6efd; }
+                .transition-all { transition: all 0.2s; }
+            </style>
+        </t>
+    </template>
+
+    <!-- 3. PERFORM EVALUATION FORM -->
+    <template id="soc_trainer_perform_form" name="Perform SOC">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4 mb-5 o_soc_trainer_form">
+                 <div class="mb-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <t t-if="readonly_mode">
+                             <a href="/soc/my/dashboard" class="text-decoration-none text-muted mb-2 d-inline-block">
+                                <i class="fa fa-arrow-left me-1"/> Back to Dashboard
+                            </a>
+                        </t>
+                        <t t-else="">
+                            <a t-attf-href="/soc/trainer/evaluate/#{employee.id}" class="text-decoration-none text-muted mb-2 d-inline-block">
+                                <i class="fa fa-arrow-left me-1"/> Back to Selection
+                            </a>
+                        </t>
+                        <h3><t t-esc="slide.soc_code"/>: <t t-esc="slide.name"/></h3>
+                        <p class="text-muted mb-0">Trainee: <strong><t t-esc="employee.name"/></strong></p>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge bg-primary fs-6 mb-2">Pass Score: <t t-esc="slide.pass_score"/>%</span>
+                        <br/>
+                        <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#historyModal">
+                            <i class="fa fa-history me-1"/> History (<t t-esc="len(history_evals)"/>)
+                        </button>
+                    </div>
+                </div>
+                
+                <t t-if="readonly_mode and not completed_eval">
+                    <div class="alert alert-info shadow-sm border-info" role="alert">
+                        <i class="fa fa-eye me-2"/> 
+                        You are viewing this SOC checklist in <strong>Read-Only</strong> mode.
+                    </div>
+                </t>
+                
+                <t t-if="completed_eval">
+                    <div class="alert alert-success d-flex align-items-center mb-4 shadow-sm border-success">
+                        <i class="fa fa-check-circle fa-2x me-3 text-success"></i>
+                        <div>
+                            <h5 class="alert-heading mb-1 fw-bold">SOC Completed!</h5>
+                            <p class="mb-0">
+                                Evaluated on <strong t-esc="completed_eval.date_evaluation"/> 
+                                by <strong><t t-esc="completed_eval.trainer_id.name"/></strong>. 
+                                Score: <strong t-esc="completed_eval.score_achieved"/>%.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-0">
+                             <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th style="width: 5%">#</th>
+                                            <th style="width: 15%">Section</th>
+                                            <th style="width: 35%">Checklist Item</th>
+                                            <th style="width: 10%" class="text-center">K.O</th>
+                                            <th style="width: 35%;">Result</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="completed_eval.line_ids" t-as="item">
+                                            <tr>
+                                                <td class="text-muted text-center"><t t-esc="item.sequence"/></td>
+                                                <td class="fw-bold text-muted text-uppercase small">
+                                                    <t t-esc="item.section_id.name"/>
+                                                </td>
+                                                <td>
+                                                    <span class="fw-medium text-dark"><t t-esc="item.name"/></span>
+                                                </td>
+                                                <td class="text-center">
+                                                    <t t-if="item.is_critical">
+                                                        <span class="badge bg-danger">CRITICAL</span>
+                                                    </t>
+                                                </td>
+                                                <td>
+                                                    <t t-if="item.is_checked">
+                                                        <span class="badge bg-success w-100 py-2">PASS</span>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span class="badge bg-danger w-100 py-2">FAIL</span>
+                                                    </t>
+                                                    <div t-if="item.comment" class="mt-2 text-muted small fst-italic border-start border-3 border-warning ps-2">
+                                                        Note: <t t-esc="item.comment"/>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+                <t t-else="">
+                    <form id="socForm">
+                        <input type="hidden" name="slide_id" t-att-value="slide.id"/>
+                        <input type="hidden" name="employee_id" t-att-value="employee.id"/>
+                        
+                        <div class="card shadow-sm border-0">
+                            <div class="card-body p-0">
+                                 <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0">
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th style="width: 5%">#</th>
+                                                <th style="width: 15%">Section</th>
+                                                <th style="width: 35%">Checklist Item</th>
+                                                <th style="width: 10%" class="text-center">K.O</th>
+                                                <th style="width: 35%;">Result</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="slide.soc_item_ids" t-as="item">
+                                                <tr>
+                                                    <td class="text-muted text-center"><t t-esc="item.sequence"/></td>
+                                                    <td class="fw-bold text-muted text-uppercase small">
+                                                        <t t-esc="item.section_id.name"/>
+                                                    </td>
+                                                    <td>
+                                                        <span class="fw-medium text-dark"><t t-esc="item.name"/></span>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <t t-if="item.is_critical">
+                                                            <span class="badge bg-danger">CRITICAL</span>
+                                                        </t>
+                                                    </td>
+                                                    <td>
+                                                        <div class="btn-group w-100" role="group">
+                                                            <input type="radio" class="btn-check" t-attf-name="#{item.id}" t-attf-id="pass_#{item.id}" value="pass" autocomplete="off" t-att-disabled="readonly_mode"/>
+                                                            <label class="btn btn-outline-success btn-sm" t-attf-for="pass_#{item.id}">Pass</label>
+
+                                                            <input type="radio" class="btn-check" t-attf-name="#{item.id}" t-attf-id="fail_#{item.id}" value="fail" autocomplete="off" checked="checked" t-att-disabled="readonly_mode"/>
+                                                            <label class="btn btn-outline-danger btn-sm" t-attf-for="fail_#{item.id}">Fail</label>
+                                                        </div>
+                                                        <input type="text" class="form-control form-control-sm mt-2" t-attf-name="comment_#{item.id}" placeholder="Note (optional)" t-att-disabled="readonly_mode"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white p-3 sticky-bottom border-top" t-if="not readonly_mode">
+                                <button type="button" class="btn btn-primary w-100 py-2 fs-5 fw-bold btn-submit-soc">
+                                    <i class="fa fa-save me-2"/> SUBMIT EVALUATION
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </t>
+                
+                <!-- History Modal -->
+                <div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Evaluation History</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-0">
+                                <t t-if="not history_evals">
+                                    <div class="p-3 text-center text-muted">No evaluation history found.</div>
+                                </t>
+                                <div t-else="" class="list-group list-group-flush">
+                                    <t t-foreach="history_evals" t-as="hist">
+                                        <a t-attf-href="/soc/trainer/history/#{hist.id}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <div class="fw-bold"><t t-esc="hist.trainer_id.name"/></div>
+                                                <small class="text-muted"><t t-esc="hist.date_evaluation"/></small>
+                                            </div>
+                                            <div class="text-end">
+                                                <t t-if="hist.result == 'pass'">
+                                                    <span class="badge bg-success">PASS (<t t-esc="hist.score_achieved"/>%)</span>
+                                                </t>
+                                                <t t-else="">
+                                                    <span class="badge bg-danger">FAIL (<t t-esc="hist.score_achieved"/>%)</span>
+                                                </t>
+                                                <br/>
+                                                <small class="text-muted">View Details <i class="fa fa-chevron-right ms-1"/></small>
+                                            </div>
+                                        </a>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result Modal -->
+                <div class="modal fade" id="resultModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-0 shadow-lg">
+                            <div class="modal-header text-white" id="resultModalHeader">
+                                <h5 class="modal-title fw-bold" id="resultModalTitle">Result</h5>
+                            </div>
+                            <div class="modal-body p-4 text-center">
+                                <i id="resultIcon" class="fa fa-4x mb-3"></i>
+                                <h4 id="resultScore" class="mb-3 fw-bold"></h4>
+                                <p id="resultMessage" class="fs-5"></p>
+                                <p id="skillMessage" class="text-muted small border-top pt-3 mt-3"></p>
+                                
+                                <!-- Review: Recommendation Section -->
+                                <div id="recommendationContainer" class="mt-3 p-3 bg-light rounded border border-info d-none" style="background-color: #f0f9ff !important;">
+                                    <h6 class="fw-bold text-info mb-1"><i class="fa fa-lightbulb-o me-2"/> Next Step Suggestion</h6>
+                                    <p id="recommendationMessage" class="mb-0 text-dark" style="font-size: 0.95rem;"></p>
+                                </div>
+                            </div>
+                            <div class="modal-footer justify-content-center bg-light border-0 pb-4 flex-column">
+                                <button type="button" class="btn btn-warning w-75 fw-bold shadow-sm mb-2 d-none text-dark" id="btnNominate">
+                                    <i class="fa fa-star me-2"/> Nominate for Potential List
+                                </button>
+                                <button type="button" class="btn btn-lg w-50 fw-bold shadow-sm" id="btnResultOk">OK</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </t>
+    </template>
+
+    <!-- 4. HISTORY DETAIL VIEW -->
+    <template id="soc_trainer_history_detail" name="SOC Evaluation Detail">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4 mb-5">
+                 <div class="mb-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <a t-attf-href="/soc/trainer/perform/#{slide.id}/#{employee.id}" class="text-decoration-none text-muted mb-2 d-inline-block">
+                            <i class="fa fa-arrow-left me-1"/> Back to Evaluation Form
+                        </a>
+                        <h3>History: <t t-esc="slide.soc_code"/></h3>
+                        <p class="text-muted mb-0">
+                            Trainee: <strong><t t-esc="employee.name"/></strong> | 
+                            Trainer: <strong><t t-esc="evaluation.trainer_id.name"/></strong> |
+                            Date: <strong><t t-esc="evaluation.date_evaluation"/></strong>
+                        </p>
+                    </div>
+                    <div class="text-end">
+                        <t t-if="evaluation.result == 'pass'">
+                            <span class="badge bg-success fs-5">RESULT: PASS (<t t-esc="evaluation.score_achieved"/>%)</span>
+                        </t>
+                        <t t-else="">
+                            <span class="badge bg-danger fs-5">RESULT: FAIL (<t t-esc="evaluation.score_achieved"/>%)</span>
+                        </t>
+                    </div>
+                </div>
+                
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-0">
+                         <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th style="width: 5%">#</th>
+                                        <th style="width: 15%">Section</th>
+                                        <th style="width: 35%">Checklist Item</th>
+                                        <th style="width: 10%" class="text-center">K.O</th>
+                                        <th style="width: 35%;">Result</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="evaluation.line_ids" t-as="line">
+                                        <tr>
+                                            <td class="text-muted text-center"><t t-esc="line.sequence"/></td>
+                                            <td class="fw-bold text-muted text-uppercase small">
+                                                <t t-esc="line.section_id.name"/>
+                                            </td>
+                                            <td>
+                                                <span class="fw-medium text-dark"><t t-esc="line.name"/></span>
+                                            </td>
+                                            <td class="text-center">
+                                                <t t-if="line.is_critical">
+                                                    <span class="badge bg-danger">CRITICAL</span>
+                                                </t>
+                                            </td>
+                                            <td>
+                                                <t t-if="line.is_checked">
+                                                    <span class="badge bg-success w-100 py-2">PASS</span>
+                                                </t>
+                                                <t t-else="">
+                                                    <span class="badge bg-danger w-100 py-2">FAIL</span>
+                                                </t>
+                                                <div t-if="line.comment" class="mt-2 text-muted small fst-italic border-start border-3 border-warning ps-2">
+                                                    Note: <t t-esc="line.comment"/>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

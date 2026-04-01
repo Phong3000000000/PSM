@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?> <odoo> <record id="view_approval_workflow_tree" model="ir.ui.view"> <field name="name">approval.workflow.tree</field> <field name="model">approval.workflow</field> <field name="arch" type="xml"> <list> <field name="name"/> <field name="company_id"/> <field name="model_id"/> <field name="active"/> <field name="sequence"/> <field name="trigger_actions"/> <field name="amount_field_name"/> <field name="min_amount"/> <field name="max_amount"/> </list> </field> </record>
+<record id="view_approval_workflow_form" model="ir.ui.view">
+    <field name="name">approval.workflow.form</field>
+    <field name="model">approval.workflow</field>
+    <field name="arch" type="xml">
+        <form>
+            <sheet>
+                <group>
+                    <field name="name"/>
+                    <field name="active"/>
+                    <field name="sequence"/>
+                </group>
+                <group>
+                    <field name="company_id"/>
+                    <field name="model_id"/>
+                    <field name="trigger_actions" placeholder="button_confirm,action_post"/>
+                </group>
+                <group string="Conditions">
+                    <field name="amount_field_name"/>
+                    <field name="min_amount"/>
+                    <field name="max_amount"/>
+                    <field name="domain_condition" placeholder="[('partner_id','!=',False)]"/>
+                </group>
+
+                <notebook>
+                    <page string="Steps">
+                        <field name="step_ids">
+                            <list editable="bottom">
+                                <field name="sequence"/>
+                                <field name="name"/>
+                                <field name="step_type"/>
+                                <field name="parallel"/>
+                                <field name="min_amount"/>
+                                <field name="max_amount"/>
+                            </list>
+                            <form>
+                                <sheet>
+                                    <group>
+                                        <field name="sequence"/>
+                                        <field name="name"/>
+                                        <field name="step_type"/>
+                                        <field name="parallel"/>
+                                    </group>
+                                    <group string="Approver Selection" col="2">
+                                        <field name="user_ids" widget="many2many_tags" modifiers="{'invisible':[('step_type','!=','user')]}"/>
+                                        <field name="group_id" modifiers="{'invisible':[('step_type','!=','group')]}"/>
+                                        <field name="manager_from_user_field_name" modifiers="{'invisible':[('step_type','!=','manager_chain')]}"/>
+                                        <field name="manager_levels" modifiers="{'invisible':[('step_type','!=','manager_chain')]}"/>
+                                        <field name="user_field_id" modifiers="{'invisible':[('step_type','!=','field_based')]}"/>
+                                    </group>
+                                    <group string="Conditions">
+                                        <field name="min_amount"/>
+                                        <field name="max_amount"/>
+                                        <field name="domain_condition" placeholder="[('amount_total','&gt;',1000)]"/>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+                    </page>
+                </notebook>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<record id="action_approval_workflow" model="ir.actions.act_window">
+    <field name="name">Approval Workflows</field>
+    <field name="res_model">approval.workflow</field>
+    <field name="view_mode">tree,form</field>
+</record>
+
+<menuitem id="menu_approval_root" name="Approval Engine" sequence="20" groups="approval_engine.group_approval_admin,approval_engine.group_approval_approver"/>
+<menuitem id="menu_approval_config" name="Configuration" parent="menu_approval_root" sequence="10" groups="approval_engine.group_approval_admin"/>
+<menuitem id="menu_approval_workflows" name="Workflows" parent="menu_approval_config" action="action_approval_workflow" sequence="10" groups="approval_engine.group_approval_admin"/>
+</odoo>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Sync Log Tree View -->
+        <record id="view_psm_db_sync_log_tree" model="ir.ui.view">
+            <field name="name">psm.db.sync.log.tree</field>
+            <field name="model">psm.db.sync.log</field>
+            <field name="arch" type="xml">
+                <list string="Nhật ký đồng bộ" decoration-info="status == 'running'"
+                      decoration-success="status == 'completed'" decoration-danger="status == 'failed'"
+                      decoration-warning="status == 'cancelled'">
+                    <field name="sync_id"/>
+                    <field name="mapping_model_id"/>
+                    <field name="start_time"/>
+                    <field name="duration"/>
+                    <field name="status" widget="badge"/>
+                    <field name="records_found"/>
+                    <field name="records_created"/>
+                    <field name="records_updated"/>
+                    <field name="records_failed"/>
+                    <field name="user_id" widget="many2one_avatar_user"/>
+                    <field name="mapped_record_count" invisible="1"/>
+                    <button name="action_view_mapped_records" type="object"
+                            string="Xem bản ghi" icon="fa-list"
+                            invisible="mapped_record_count == 0"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Sync Log Form View -->
+        <record id="view_psm_db_sync_log_form" model="ir.ui.view">
+            <field name="name">psm.db.sync.log.form</field>
+            <field name="model">psm.db.sync.log</field>
+            <field name="arch" type="xml">
+                <form string="Nhật ký đồng bộ">
+                    <header>
+                        <button name="action_view_mapped_records" type="object"
+                                string="Xem bản ghi" class="btn-primary"
+                                invisible="mapped_record_count == 0"/>
+                        <button name="action_rerun" type="object"
+                                string="Chạy lại" class="btn-secondary"
+                                invisible="sync_id == False"/>
+                        <field name="status" widget="statusbar"
+                               statusbar_visible="running,completed,failed,cancelled"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_mapped_records" type="object"
+                                    class="oe_stat_button" icon="fa-database">
+                                <field name="mapped_record_count" widget="statinfo" string="Bản ghi"/>
+                            </button>
+                        </div>
+
+                        <div class="oe_title">
+                            <h1>
+                                <field name="display_name"/>
+                            </h1>
+                        </div>
+
+                        <group>
+                            <group string="Thông tin nhiệm vụ">
+                                <field name="sync_id"/>
+                                <field name="mapping_model_id"/>
+                                <field name="user_id"/>
+                            </group>
+                            <group string="Thời gian">
+                                <field name="start_time"/>
+                                <field name="end_time"/>
+                                <field name="duration"/>
+                            </group>
+                        </group>
+
+                        <group string="Kết quả">
+                            <group>
+                                <field name="records_found"/>
+                                <field name="records_created"/>
+                                <field name="records_updated"/>
+                            </group>
+                            <group>
+                                <field name="records_failed"/>
+                                <field name="records_skipped"/>
+                            </group>
+                        </group>
+
+                        <group string="Thông báo" invisible="message == False"/>
+                        <field name="message" nolabel="1" invisible="message == False"/>
+
+                        <group string="Chi tiết lỗi" invisible="error_details == False"/>
+                        <field name="error_details" nolabel="1" invisible="error_details == False"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Sync Log Search View -->
+        <record id="view_psm_db_sync_log_search" model="ir.ui.view">
+            <field name="name">psm.db.sync.log.search</field>
+            <field name="model">psm.db.sync.log</field>
+            <field name="arch" type="xml">
+                <search string="Tìm kiếm nhật ký đồng bộ">
+                    <field name="sync_id"/>
+                    <field name="mapping_model_id"/>
+                    <field name="user_id"/>
+                    <separator/>
+                    <filter string="Đang chạy" name="running" domain="[('status', '=', 'running')]"/>
+                    <filter string="Hoàn thành" name="completed" domain="[('status', '=', 'completed')]"/>
+                    <filter string="Thất bại" name="failed" domain="[('status', '=', 'failed')]"/>
+                    <filter string="Đã hủy" name="cancelled" domain="[('status', '=', 'cancelled')]"/>
+                    <separator/>
+                    <filter string="Hôm nay" name="today"
+                            domain="[('start_time', '>=', datetime.datetime.combine(datetime.date.today(), datetime.time.min))]"/>
+                    <filter string="7 ngày qua" name="last_week"
+                            domain="[('start_time', '>=', (datetime.datetime.now() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                    <filter string="30 ngày qua" name="last_month"
+                            domain="[('start_time', '>=', (datetime.datetime.now() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <group>
+                        <filter string="Trạng thái" name="group_status" context="{'group_by': 'status'}"/>
+                        <filter string="Nhiệm vụ đồng bộ" name="group_sync" context="{'group_by': 'sync_id'}"/>
+                        <filter string="Ánh xạ mô hình" name="group_mapping"
+                                context="{'group_by': 'mapping_model_id'}"/>
+                        <filter string="Người dùng" name="group_user" context="{'group_by': 'user_id'}"/>
+                        <filter string="Ngày" name="group_date" context="{'group_by': 'start_time:day'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+    </data>
+</odoo>

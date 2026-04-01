@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="email_template_explanation_rejected" model="mail.template">
+        <field name="name">Discipline - Explanation Rejected</field>
+        <field name="model_id" ref="model_hr_discipline_record"/>
+        <field name="email_from">{{ user.email_formatted }}</field>
+        <field name="email_to">{{ object.employee_id.work_email }}</field>
+        <field name="subject">Yêu cầu viết lại bảng tường trình - {{ object.name }}</field>
+        <field name="body_html"><![CDATA[
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background-color: #dc3545; color: white; padding: 20px; text-align: center;">
+                    <h2 style="margin: 0;">Tường trình bị từ chối</h2>
+                </div>
+                <div style="padding: 20px; background-color: #f8f9fa;">
+                    <p>Kính gửi <strong>{{ object.employee_id.name }}</strong>,</p>
+                    
+                    <p>Bảng tường trình của bạn cho vụ việc <strong>{{ object.name }}</strong> đã bị từ chối.</p>
+                    
+                    <div style="background-color: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 5px; margin: 15px 0;">
+                        <strong>Lý do từ chối:</strong><br/>
+                        {{ ctx.get('rejection_reason', 'Thông tin chưa đầy đủ hoặc chưa chính xác') }}
+                    </div>
+                    
+                    <p>Vui lòng truy cập Portal để viết lại bảng tường trình với đầy đủ thông tin.</p>
+                    
+                    <div style="text-align: center; margin: 25px 0;">
+                        <a href="/my/disciplines" 
+                           style="background-color: #875a7b; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                            Viết lại tường trình
+                        </a>
+                    </div>
+                    
+                    <p>Trân trọng,<br/>Phòng Nhân sự</p>
+                </div>
+            </div>
+        ]]></field>
+    </record>
+</odoo>

@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Tree View -->
+        <record id="view_psm_db_sync_tree" model="ir.ui.view">
+            <field name="name">psm.db.sync.tree</field>
+            <field name="model">psm.db.sync</field>
+            <field name="arch" type="xml">
+                <list string="Nhiệm vụ đồng bộ" sample="1" decoration-info="state == 'ready'"
+                      decoration-warning="state == 'paused'" decoration-danger="state == 'error'"
+                      decoration-primary="state == 'running'">
+                    <field name="sequence" widget="handle" column_invisible="1"/>
+                    <field name="name" optional="hide"/>
+                    <field name="connection_id" optional="show"/>
+                    <field name="sync_type"/>
+                    <field name="execution_type"/>
+                    <field name="mapping_model_id" optional="hide"/>
+                    <field name="target_model_id"/>
+                    <field name="last_sync_date" optional="show"/>
+                    <field name="nextcall" optional="hide"/>
+                    <field name="state" widget="badge"
+                           decoration-info="state == 'ready'"
+                           decoration-warning="state == 'paused'"
+                           decoration-danger="state == 'error'"
+                           decoration-primary="state == 'running'"/>
+                    <field name="success_count"/>
+                    <field name="error_count"/>
+                    <field name="active" widget="boolean_toggle"/>
+                    <field name="user_id" widget="many2one_avatar_user"/>
+                    <button name="action_sync_now" type="object" string="Chạy ngay"
+                            icon="fa-play" class="btn-primary" invisible="state == 'running'"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Form View -->
+        <record id="view_psm_db_sync_form" model="ir.ui.view">
+            <field name="name">psm.db.sync.form</field>
+            <field name="model">psm.db.sync</field>
+            <field name="arch" type="xml">
+                <form string="Nhiệm vụ đồng bộ">
+                    <header>
+                        <button name="action_sync_now" type="object" string="Chạy ngay"
+                                class="btn-primary" icon="fa-play" invisible="state == 'running'"/>
+                        <button name="action_reset_sync" type="object" string="Đặt lại"
+                                class="btn-secondary" icon="fa-refresh" invisible="state == 'running'"/>
+                        <field name="state" widget="statusbar" statusbar_visible="ready,running,paused,error"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_logs" type="object" class="oe_stat_button" icon="fa-history">
+                                <field name="log_count" widget="statinfo" string="Nhật ký"/>
+                            </button>
+                            <button name="action_view_mapped_records" type="object" class="oe_stat_button"
+                                    icon="fa-database">
+                                <field name="mapped_record_count" widget="statinfo" string="Bản ghi"/>
+                            </button>
+                        </div>
+
+                        <widget name="web_ribbon" title="Ngừng hoạt động" bg_color="bg-danger" invisible="active"/>
+
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Tên nhiệm vụ..."/>
+                            </h1>
+                        </div>
+
+                        <group>
+                            <group name="basic_config" string="Cấu hình cơ bản">
+                                <field name="user_id" widget="many2one_avatar_user"/>
+                                <field name="mapping_model_id" required="1"/>
+                                <field name="connection_id" readonly="1"/>
+                                <field name="target_model_id" readonly="1"/>
+                            </group>
+                            <group name="assignment" string="Phân công">
+                                <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="sync_type"/>
+                                <field name="sync_action"/>
+                                <field name="execution_type"/>
+                                <field name="sequence"/>
+                                <field name="active" invisible="1"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="Cấu hình lọc" name="filter_config">
+                                <group string="Điều kiện đồng bộ">
+                                    <group>
+                                        <field name="filter_domain" placeholder='[("field", "operator", "value")]'/>
+                                        <field name="filter_where_clause"
+                                               placeholder="field = 'value' AND status = 'active'"/>
+                                    </group>
+                                    <group>
+                                        <field name="incremental_field" invisible="sync_type != 'incremental'"/>
+                                        <field name="last_sync_value" readonly="1" force_save="1"
+                                               invisible="sync_type != 'incremental'"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                            <page string="Hiệu suất" name="performance">
+                                <group string="Cấu hình xử lý">
+                                    <group>
+                                        <field name="batch_size"/>
+                                        <field name="timeout"/>
+                                        <field name="retries"/>
+                                    </group>
+                                    <group>
+                                        <field name="use_queue"/>
+                                        <field name="use_checksum"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                            <page string="Lập lịch" name="scheduling" invisible="execution_type != 'scheduled'">
+                                <group string="Cấu hình lịch trình">
+                                    <group>
+                                        <field name="interval_number" readonly="cron_id"/>
+                                        <field name="interval_type" readonly="cron_id"/>
+                                    </group>
+                                    <group>
+                                        <field name="nextcall" readonly="1"/>
+                                        <field name="cron_id" readonly="1"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                            <page string="Hooks" name="hooks">
+                                <group>
+                                    <field name="pre_sync_hook" placeholder="# Mã Python thực thi trước khi đồng bộ"/>
+                                    <field name="post_sync_hook" placeholder="# Mã Python thực thi sau khi đồng bộ"/>
+                                </group>
+                            </page>
+
+                            <page string="Thống kê" name="statistics" invisible="not id">
+                                <group>
+                                    <group string="Thời gian">
+                                        <field name="last_sync_date" readonly="1"/>
+                                        <field name="last_duration" readonly="1"/>
+                                        <field name="avg_duration" readonly="1"/>
+                                    </group>
+                                    <group string="Kết quả">
+                                        <field name="success_count" readonly="1"/>
+                                        <field name="error_count" readonly="1"/>
+                                        <field name="total_records_synced" readonly="1"/>
+                                        <field name="total_records_failed" readonly="1"/>
+                                    </group>
+                                </group>
+
+                                <group string="Nhật ký gần nhất" invisible="not last_log_id">
+                                    <field name="last_log_id" readonly="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Kanban View -->
+        <record id="view_psm_db_sync_kanban" model="ir.ui.view">
+            <field name="name">psm.db.sync.kanban</field>
+            <field name="model">psm.db.sync</field>
+            <field name="arch" type="xml">
+                <kanban string="Nhiệm vụ đồng bộ" default_group_by="state">
+                    <field name="name"/>
+                    <field name="mapping_model_id"/>
+                    <field name="sync_type"/>
+                    <field name="execution_type"/>
+                    <field name="state"/>
+                    <field name="last_sync_date"/>
+                    <field name="success_count"/>
+                    <field name="error_count"/>
+                    <field name="user_id"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_card oe_kanban_global_click">
+                                <div class="o_kanban_content">
+                                    <div class="o_kanban_record_top">
+                                        <div class="o_kanban_record_headings">
+                                            <strong class="o_kanban_record_title">
+                                                <field name="name"/>
+                                            </strong>
+                                            <br/>
+                                            <small class="o_kanban_record_subtitle text-muted">
+                                                <field name="mapping_model_id"/>
+                                            </small>
+                                        </div>
+                                        <div class="o_kanban_manage_button_section">
+                                            <a class="o_kanban_manage_toggle_button" href="#">
+                                                <i class="fa fa-ellipsis-v" role="img" aria-label="Manage"
+                                                   title="Manage"/>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="o_kanban_record_body">
+                                        <div class="o_kanban_tags_section">
+                                            <span class="badge"
+                                                  t-att-class="'badge-' + (record.sync_type.raw_value == 'full' ? 'primary' : 'info')">
+                                                <field name="sync_type"/>
+                                            </span>
+                                            <span class="badge"
+                                                  t-att-class="'badge-' + (record.execution_type.raw_value == 'scheduled' ? 'success' : 'secondary')">
+                                                <field name="execution_type"/>
+                                            </span>
+                                        </div>
+
+                                        <ul class="mt-2">
+                                            <li>
+                                                <strong>Thành công:</strong>
+                                                <field name="success_count"/>
+                                            </li>
+                                            <li>
+                                                <strong>Lỗi:</strong>
+                                                <field name="error_count"/>
+                                            </li>
+                                            <li>
+                                                <strong>Lần cuối:</strong>
+                                                <field name="last_sync_date"/>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="o_kanban_record_bottom">
+                                        <div class="oe_kanban_bottom_left">
+                                            <field name="user_id" widget="many2one_avatar_user"/>
+                                        </div>
+                                        <div class="oe_kanban_bottom_right">
+                                            <button name="action_sync_now" type="object"
+                                                    class="btn btn-primary btn-sm"
+                                                    t-if="record.state.raw_value != 'running'">
+                                                <i class="fa fa-play"/>
+                                                Chạy
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="o_kanban_manage_button_section">
+                                    <div class="dropdown-menu" role="menu">
+                                        <a role="menuitem" type="edit" class="dropdown-item">Chỉnh sửa</a>
+                                        <a role="menuitem" type="delete" class="dropdown-item">Xóa</a>
+                                        <div class="dropdown-divider"/>
+                                        <a name="action_view_logs" type="object" class="dropdown-item">Xem nhật ký</a>
+                                        <a name="action_reset_sync" type="object" class="dropdown-item">Đặt lại</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_psm_db_sync_search" model="ir.ui.view">
+            <field name="name">psm.db.sync.search</field>
+            <field name="model">psm.db.sync</field>
+            <field name="arch" type="xml">
+                <search string="Tìm kiếm nhiệm vụ đồng bộ">
+                    <field name="name" string="Tên nhiệm vụ"/>
+                    <field name="mapping_model_id"/>
+                    <field name="user_id"/>
+                    <separator/>
+                    <filter string="Đang hoạt động" name="active" domain="[('active', '=', True)]"/>
+                    <filter string="Ngừng hoạt động" name="inactive" domain="[('active', '=', False)]"/>
+                    <separator/>
+                    <filter string="Sẵn sàng" name="ready" domain="[('state', '=', 'ready')]"/>
+                    <filter string="Đang chạy" name="running" domain="[('state', '=', 'running')]"/>
+                    <filter string="Lỗi" name="error" domain="[('state', '=', 'error')]"/>
+                    <filter string="Tạm dừng" name="paused" domain="[('state', '=', 'paused')]"/>
+                    <separator/>
+                    <filter string="Lên lịch" name="scheduled" domain="[('execution_type', '=', 'scheduled')]"/>
+                    <filter string="Thủ công" name="manual" domain="[('execution_type', '=', 'manual')]"/>
+                    <separator/>
+                    <filter string="Nhiệm vụ của tôi" name="my_tasks" domain="[('user_id', '=', uid)]"/>
+                    <separator/>
+                    <group>
+                        <filter string="Trạng thái" name="group_state" context="{'group_by': 'state'}"/>
+                        <filter string="Kiểu đồng bộ" name="group_sync_type" context="{'group_by': 'sync_type'}"/>
+                        <filter string="Kiểu thực thi" name="group_execution_type"
+                                context="{'group_by': 'execution_type'}"/>
+                        <filter string="Ánh xạ mô hình" name="group_mapping"
+                                context="{'group_by': 'mapping_model_id'}"/>
+                        <filter string="Người phụ trách" name="group_user" context="{'group_by': 'user_id'}"/>
+                        <filter string="Công ty" name="group_company" context="{'group_by': 'company_id'}"
+                                groups="base.group_multi_company"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+    </data>
+</odoo>

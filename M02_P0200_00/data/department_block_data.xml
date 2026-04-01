@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ===================== -->
+        <!-- KHỐI PHÒNG BAN        -->
+        <!-- ===================== -->
+
+        <record id="block_rst" model="department.block">
+            <field name="name">HEAD OFFICE</field>
+            <field name="code">RST</field>
+        </record>
+
+        <record id="block_ops" model="department.block">
+            <field name="name">OPERATION</field>
+            <field name="code">OPS</field>
+        </record>
+
+        <record id="block_sv" model="department.block">
+            <field name="name">SERVICE</field>
+            <field name="code">SV</field>
+        </record>
+
+        <!-- ===================== -->
+        <!-- KHU VỰC LỚN          -->
+        <!-- ===================== -->
+
+        <record id="area_kitchen" model="restaurant.area">
+            <field name="name">KITCHEN AREA</field>
+            <field name="code">KITCHEN</field>
+        </record>
+
+        <record id="area_service" model="restaurant.area">
+            <field name="name">Service</field>
+            <field name="code">SERVICE</field>
+        </record>
+
+        <record id="area_mdsd_3po" model="restaurant.area">
+            <field name="name">MDS/3PO</field>
+            <field name="code">MDSD</field>
+        </record>
+
+        <record id="area_mccafe" model="restaurant.area">
+            <field name="name">McCafe</field>
+            <field name="code">MCCAFE</field>
+        </record>
+
+        <!-- ===================== -->
+        <!-- KHU VỰC NHỎ           -->
+        <!-- ===================== -->
+
+        <!-- KITCHEN AREA → Kitchen -->
+        <record id="pos_area_kitchen" model="restaurant.positioning.area">
+            <field name="name">Kitchen</field>
+            <field name="area_id" ref="area_kitchen"/>
+        </record>
+
+        <!-- Service → Front Counter, Drive Thru, Togo -->
+        <record id="pos_area_frontcounter" model="restaurant.positioning.area">
+            <field name="name">Front Counter</field>
+            <field name="area_id" ref="area_service"/>
+        </record>
+
+        <record id="pos_area_drive_thru" model="restaurant.positioning.area">
+            <field name="name">Drive Thru</field>
+            <field name="area_id" ref="area_service"/>
+        </record>
+
+        <record id="pos_area_togo" model="restaurant.positioning.area">
+            <field name="name">Togo</field>
+            <field name="area_id" ref="area_service"/>
+        </record>
+
+        <!-- MDS/3PO → MDS/3PO -->
+        <record id="pos_area_mds3po" model="restaurant.positioning.area">
+            <field name="name">MDS/3PO</field>
+            <field name="area_id" ref="area_mdsd_3po"/>
+        </record>
+
+        <!-- McCafe → McCafe -->
+        <record id="pos_area_mccafe" model="restaurant.positioning.area">
+            <field name="name">McCafe</field>
+            <field name="area_id" ref="area_mccafe"/>
+        </record>
+
+        <!-- ===================== -->
+        <!-- CA LÀM VIỆC           -->
+        <!-- ===================== -->
+
+        <record id="shift_am" model="restaurant.shift">
+            <field name="name">AM</field>
+            <field name="code">AM</field>
+            <field name="hour_from" eval="6.0"/>
+            <field name="hour_to" eval="14.5"/>
+        </record>
+
+        <record id="shift_pm" model="restaurant.shift">
+            <field name="name">PM</field>
+            <field name="code">PM</field>
+            <field name="hour_from" eval="14.0"/>
+            <field name="hour_to" eval="22.5"/>
+        </record>
+
+        <record id="shift_on" model="restaurant.shift">
+            <field name="name">ON</field>
+            <field name="code">ON</field>
+            <field name="hour_from" eval="22.0"/>
+            <field name="hour_to" eval="6.75"/>
+        </record>
+
+        <!-- ================================ -->
+        <!-- STATION (VỊ TRÍ CHI TIẾT)       -->
+        <!-- ================================ -->
+
+        <!-- === KITCHEN AREA / Kitchen === -->
+
+        <record id="station_rini" model="restaurant.station">
+            <field name="name">Reg Menu - Initiator Station</field>
+            <field name="code">RINI</field>
+            <field name="positioning_area_id" ref="pos_area_kitchen"/>
+            <field name="menu_type">regular</field>
+        </record>
+
+        <record id="station_rass" model="restaurant.station">
+            <field name="name">Reg Menu - Assembler Station</field>
+            <field name="code">RASS</field>
+            <field name="positioning_area_id" ref="pos_area_kitchen"/>
+            <field name="menu_type">regular</field>
+        </record>
+
+        <record id="station_bini" model="restaurant.station">
+            <field name="name">Brk Menu - Initiator Station</field>
+            <field name="code">BINI</field>
+            <field name="positioning_area_id" ref="pos_area_kitchen"/>
+            <field name="menu_type">breakfast</field>
+        </record>
+
+        <record id="station_bass" model="restaurant.station">
+            <field name="name">Brk Menu - Assembler Station</field>
+            <field name="code">BASS</field>
+            <field name="positioning_area_id" ref="pos_area_kitchen"/>
+            <field name="menu_type">breakfast</field>
+        </record>
+
+        <record id="station_sweet_corn" model="restaurant.station">
+            <field name="name">Sweet Corn</field>
+            <field name="code">RASS</field>
+            <field name="positioning_area_id" ref="pos_area_kitchen"/>
+            <field name="menu_type">regular</field>
+        </record>
+
+        <record id="station_rice" model="restaurant.station">
+            <field name="name">Rice Station</field>
+            <field name="code">BICa</field>
+            <field name="positioning_area_id" ref="pos_area_kitchen"/>
+            <field name="menu_type">regular</field>
+        </record>
+
+        <record id="station_rgp" model="restaurant.station">
+            <field name="name">Reg Menu - Grill Station</field>
+            <field name="code">RGP</field>
+            <field name="positioning_area_id" ref="pos_area_kitchen"/>
+            <field name="menu_type">regular</field>
+        </record>
+
+        <record id="station_bgp" model="restaurant.station">
+            <field name="name">Brk Menu - Grill Station</field>
+            <field name="code">BGP</field>
+            <field name="positioning_area_id" ref="pos_area_kitchen"/>
+            <field name="menu_type">breakfast</field>
+        </record>
+
+        <record id="station_fried" model="restaurant.station">
+            <field name="name">Fried Station</field>
+            <field name="code">FP</field>
+            <field name="positioning_area_id" ref="pos_area_kitchen"/>
+            <field name="menu_type">all</field>
+        </record>
+
+        <record id="station_egg" model="restaurant.station">
+            <field name="name">Egg Station</field>
+            <field name="code">BGP</field>
+            <field name="positioning_area_id" ref="pos_area_kitchen"/>
+            <field name="menu_type">breakfast</field>
+        </record>
+
+        <record id="station_bic_prepping" model="restaurant.station">
+            <field name="name">BIC Prepping</field>
+            <field name="code">BICb</field>
+            <field name="positioning_area_id" ref="pos_area_kitchen"/>
+            <field name="menu_type">all</field>
+        </record>
+
+        <record id="station_bic_breading" model="restaurant.station">
+            <field name="name">BIC Breading</field>
+            <field name="code">BICb</field>
+            <field name="positioning_area_id" ref="pos_area_kitchen"/>
+            <field name="menu_type">all</field>
+        </record>
+
+        <record id="station_bic_cooking" model="restaurant.station">
+            <field name="name">BIC Cooking, Warming - Assembling</field>
+            <field name="code">BICa</field>
+            <field name="positioning_area_id" ref="pos_area_kitchen"/>
+            <field name="menu_type">all</field>
+        </record>
+
+        <record id="station_shake_salad" model="restaurant.station">
+            <field name="name">Shake Shake Salad</field>
+            <field name="code">RASS</field>
+            <field name="positioning_area_id" ref="pos_area_kitchen"/>
+            <field name="menu_type">regular</field>
+        </record>
+
+        <!-- === Service / Front Counter === -->
+
+        <record id="station_hash_browns" model="restaurant.station">
+            <field name="name">Hash Browns</field>
+            <field name="code">HB</field>
+            <field name="positioning_area_id" ref="pos_area_frontcounter"/>
+            <field name="menu_type">breakfast</field>
+        </record>
+
+        <record id="station_french_fries" model="restaurant.station">
+            <field name="name">French Fries</field>
+            <field name="code">FF</field>
+            <field name="positioning_area_id" ref="pos_area_frontcounter"/>
+            <field name="menu_type">regular</field>
+        </record>
+
+        <record id="station_lobby" model="restaurant.station">
+            <field name="name">Lobby</field>
+            <field name="code">LOB</field>
+            <field name="positioning_area_id" ref="pos_area_frontcounter"/>
+            <field name="menu_type">all</field>
+        </record>
+
+        <record id="station_beverage_dessert" model="restaurant.station">
+            <field name="name">Beverage &amp; Dessert</field>
+            <field name="code">CBC</field>
+            <field name="positioning_area_id" ref="pos_area_frontcounter"/>
+            <field name="menu_type">all</field>
+        </record>
+
+        <record id="station_fc_otc" model="restaurant.station">
+            <field name="name">FC OTC (Order Taker Cashier)</field>
+            <field name="code">FCOT</field>
+            <field name="positioning_area_id" ref="pos_area_frontcounter"/>
+            <field name="menu_type">all</field>
+        </record>
+
+        <record id="station_fc_erp" model="restaurant.station">
+            <field name="name">FC ERP (Expo/Runner/Presenter)</field>
+            <field name="code">FCEXP</field>
+            <field name="positioning_area_id" ref="pos_area_frontcounter"/>
+            <field name="menu_type">all</field>
+        </record>
+
+        <record id="station_table_server" model="restaurant.station">
+            <field name="name">Table Server</field>
+            <field name="code">TS</field>
+            <field name="positioning_area_id" ref="pos_area_frontcounter"/>
+            <field name="menu_type">all</field>
+        </record>
+
+        <record id="station_kiosk_host" model="restaurant.station">
+            <field name="name">Kiosk Host</field>
+            <field name="code">SOK H</field>
+            <field name="positioning_area_id" ref="pos_area_frontcounter"/>
+            <field name="menu_type">all</field>
+        </record>
+
+        <!-- === Service / Drive Thru === -->
+
+        <record id="station_dt_otc" model="restaurant.station">
+            <field name="name">DT OTC (Order Taker Cashier)</field>
+            <field name="code">DTOT</field>
+            <field name="positioning_area_id" ref="pos_area_drive_thru"/>
+            <field name="menu_type">all</field>
+        </record>
+
+        <record id="station_dt_erp" model="restaurant.station">
+            <field name="name">DT ERP (Expo/Runner/Presenter)</field>
+            <field name="code">DTEXP</field>
+            <field name="positioning_area_id" ref="pos_area_drive_thru"/>
+            <field name="menu_type">all</field>
+        </record>
+
+        <!-- === Service / Togo === -->
+
+        <record id="station_tg_otc" model="restaurant.station">
+            <field name="name">TG OTC (Order Taker Cashier)</field>
+            <field name="code">WT OT</field>
+            <field name="positioning_area_id" ref="pos_area_togo"/>
+            <field name="menu_type">all</field>
+        </record>
+
+        <record id="station_tg_erp" model="restaurant.station">
+            <field name="name">TG ERP (Expo/Runner/Presenter)</field>
+            <field name="code">WTR</field>
+            <field name="positioning_area_id" ref="pos_area_togo"/>
+            <field name="menu_type">all</field>
+        </record>
+
+        <!-- === MDS/3PO === -->
+
+        <record id="station_mds_rider" model="restaurant.station">
+            <field name="name">MDS - Rider</field>
+            <field name="code">MDS R</field>
+            <field name="positioning_area_id" ref="pos_area_mds3po"/>
+            <field name="menu_type">all</field>
+        </record>
+
+        <record id="station_mds_ge_erp" model="restaurant.station">
+            <field name="name">MDS, GE ERP</field>
+            <field name="code">MDSEXP</field>
+            <field name="positioning_area_id" ref="pos_area_mds3po"/>
+            <field name="menu_type">all</field>
+        </record>
+
+        <record id="station_mds_expo_ge" model="restaurant.station">
+            <field name="name">MDS - Expo (Grab Express)</field>
+            <field name="code">MDSEXP</field>
+            <field name="positioning_area_id" ref="pos_area_mds3po"/>
+            <field name="menu_type">all</field>
+        </record>
+
+        <record id="station_3po_udp_erp" model="restaurant.station">
+            <field name="name">3PO UDP ERP</field>
+            <field name="code">3POEXP</field>
+            <field name="positioning_area_id" ref="pos_area_mds3po"/>
+            <field name="menu_type">all</field>
+        </record>
+
+        <record id="station_mds_walker" model="restaurant.station">
+            <field name="name">MDS - Walker</field>
+            <field name="code">MDS R</field>
+            <field name="positioning_area_id" ref="pos_area_mds3po"/>
+            <field name="menu_type">all</field>
+        </record>
+
+        <!-- === McCafe === -->
+
+        <record id="station_cake" model="restaurant.station">
+            <field name="name">Cake</field>
+            <field name="code">MCFF</field>
+            <field name="positioning_area_id" ref="pos_area_mccafe"/>
+            <field name="menu_type">all</field>
+        </record>
+
+        <record id="station_mccafe_hot" model="restaurant.station">
+            <field name="name">McCafe hot drink</field>
+            <field name="code">MCFF</field>
+            <field name="positioning_area_id" ref="pos_area_mccafe"/>
+            <field name="menu_type">all</field>
+        </record>
+
+        <record id="station_mccafe_cold" model="restaurant.station">
+            <field name="name">McCafe cold drink</field>
+            <field name="code">MCFF</field>
+            <field name="positioning_area_id" ref="pos_area_mccafe"/>
+            <field name="menu_type">all</field>
+        </record>
+
+    </data>
+</odoo>

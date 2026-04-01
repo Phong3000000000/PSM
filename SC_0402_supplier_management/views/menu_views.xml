@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ROOT MENU -->
+    <menuitem id="menu_app_root" name="MENU" web_icon="SC_0402_supplier_management,static/description/icon.png" sequence="40" />
+    <!-- 1. PROJECTS (Product Templates) -->
+    <record id="action_projects" model="ir.actions.act_window">
+        <field name="name">Projects</field>
+        <field name="res_model">product.template</field>
+        <field name="domain">[('x_is_raw_material', '=', False)]</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{'default_detailed_type': 'product'}</field>
+    </record>
+
+    <menuitem id="menu_projects" name="Projects" parent="menu_app_root" action="action_projects" sequence="10" />
+    <!-- 1.1 Raw Materials (Product Templates) -->
+    <record id="action_raw_materials" model="ir.actions.act_window">
+        <field name="name">Raw Materials</field>
+        <field name="res_model">product.template</field>
+        <field name="domain">[('x_is_raw_material', '=', True)]</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{'default_detailed_type': 'product'}</field>
+    </record>
+
+    <menuitem id="menu_raw_materials" name="Raw Materials" parent="menu_app_root" action="action_raw_materials" sequence="11" />
+    <!-- 2. RAW MATERIALS (BOM/PIF) -->
+    <record id="action_pif_bom" model="ir.actions.act_window">
+        <field name="name">BoM (Bill of Materials)</field>
+        <field name="res_model">mrp.bom</field>
+        <field name="domain">[('is_pif', '=', True)]</field>
+        <field name="context">{'default_is_pif': True}</field>
+        <field name="view_mode">list,form,kanban</field>
+    </record>
+
+    <menuitem id="menu_pif_bom" name="BoM (Bill of Materials)" parent="menu_app_root" action="action_pif_bom" sequence="20" />
+    <!-- 3. VENDORS (ĐÃ BỎ - USER YÊU CẦU CHỈ GIỮ VENDOR DRAFTS) -->
+    <!--
+    <record id="action_vendors_management" model="ir.actions.act_window">
+        <field name="name">Vendors</field>
+        <field name="res_model">res.partner</field>
+        <field name="domain">[('supplier_rank', '>', 0)]</field>
+        <field name="context">{'default_x_supplier_status': 'draft', 'default_supplier_rank': 1, 'default_is_company': True}</field>
+        <field name="view_mode">list,form,kanban</field>
+    </record>
+
+    <menuitem id="menu_vendors" name="Vendors" parent="menu_app_root" action="action_vendors_management" sequence="30" />
+    -->
+    <!-- 5. SUPPLIER EVALUATIONS -->
+    <record id="action_supplier_evaluation" model="ir.actions.act_window">
+        <field name="name">Supplier Evaluations</field>
+        <field name="res_model">supplier.evaluation</field>
+        <field name="view_mode">list,form,kanban</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Start a new Supplier Evaluation</p>
+            <p>Evaluate suppliers through the 22-step process including QA review, audits, and tests.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_supplier_evaluation" name="Supplier Evaluations" parent="menu_app_root" action="action_supplier_evaluation" sequence="50" />
+    <!-- Configuration (Ẩn xuống dưới) -->
+    <menuitem id="menu_configuration" name="Configuration" parent="menu_app_root" sequence="100" groups="SC_0402_supplier_management.group_sourcing_user" />
+</odoo>

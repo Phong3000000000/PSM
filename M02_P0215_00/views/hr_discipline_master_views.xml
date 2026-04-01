@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Violation Category Views -->
+    <record id="view_hr_discipline_violation_category_tree" model="ir.ui.view">
+        <field name="name">hr.discipline.violation.category.tree</field>
+        <field name="model">hr.discipline.violation.category</field>
+        <field name="arch" type="xml">
+            <list string="Violation Categories">
+                <field name="code"/>
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_hr_discipline_violation_category_form" model="ir.ui.view">
+        <field name="name">hr.discipline.violation.category.form</field>
+        <field name="model">hr.discipline.violation.category</field>
+        <field name="arch" type="xml">
+            <form string="Violation Category">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="code"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_hr_discipline_violation_category" model="ir.actions.act_window">
+        <field name="name">Violation Categories</field>
+        <field name="res_model">hr.discipline.violation.category</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+    <!-- Violation Types Views -->
+    <record id="view_hr_discipline_violation_type_tree" model="ir.ui.view">
+        <field name="name">hr.discipline.violation.type.tree</field>
+        <field name="model">hr.discipline.violation.type</field>
+        <field name="arch" type="xml">
+            <list string="Violation Types">
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="severity" widget="badge" decoration-success="severity == 'minor'" decoration-danger="severity == 'major'"/>
+                <field name="improvement_period"/>
+                <field name="max_repeats"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_hr_discipline_violation_type_form" model="ir.ui.view">
+        <field name="name">hr.discipline.violation.type.form</field>
+        <field name="model">hr.discipline.violation.type</field>
+        <field name="arch" type="xml">
+            <form string="Violation Type">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="category_id"/>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                            <field name="severity"/>
+                            <field name="improvement_period"/>
+                            <field name="max_repeats"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_hr_discipline_violation_type" model="ir.actions.act_window">
+        <field name="name">Violation Types</field>
+        <field name="res_model">hr.discipline.violation.type</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Disciplinary Actions Views -->
+    <record id="view_hr_discipline_action_tree" model="ir.ui.view">
+        <field name="name">hr.discipline.action.tree</field>
+        <field name="model">hr.discipline.action</field>
+        <field name="arch" type="xml">
+            <list string="Disciplinary Actions">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="level"/>
+                <field name="form_code"/>
+                <field name="requires_finance_check"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_hr_discipline_action_form" model="ir.ui.view">
+        <field name="name">hr.discipline.action.form</field>
+        <field name="model">hr.discipline.action</field>
+        <field name="arch" type="xml">
+            <form string="Disciplinary Action">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="level"/>
+                            <field name="form_code"/>
+                            <field name="allowed_job_ids" widget="many2many_tags"/>
+                        </group>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="validity_months"/>
+                            <field name="next_action_id"/>
+                            <field name="has_penalty"/>
+                            <field name="requires_finance_check"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_hr_discipline_action" model="ir.actions.act_window">
+        <field name="name">Disciplinary Actions</field>
+        <field name="res_model">hr.discipline.action</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menus -->
+    <menuitem id="menu_discipline_root" name="Discipline" sequence="10" web_icon="hr,static/description/icon.png"/>
+    
+    <menuitem id="menu_discipline_configuration" name="Configuration" parent="menu_discipline_root" sequence="100"/>
+    
+    <menuitem id="menu_discipline_violation_category" name="Violation Categories" parent="menu_discipline_configuration" action="action_hr_discipline_violation_category" sequence="1"/>
+    <menuitem id="menu_discipline_violation_type" name="Violation Types" parent="menu_discipline_configuration" action="action_hr_discipline_violation_type" sequence="2"/>
+    <menuitem id="menu_discipline_action" name="Disciplinary Actions" parent="menu_discipline_configuration" action="action_hr_discipline_action" sequence="3"/>
+
+</odoo>

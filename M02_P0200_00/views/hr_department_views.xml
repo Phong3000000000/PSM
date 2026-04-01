@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Mở rộng form view hr.department: thêm khối + POS + nút Generate -->
+    <record id="view_hr_department_form_inherit_block" model="ir.ui.view">
+        <field name="name">hr.department.form.inherit.block</field>
+        <field name="model">hr.department</field>
+        <field name="inherit_id" ref="hr.view_department_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet" position="before">
+                <header>
+                    <button name="action_generate_positions"
+                            type="object"
+                            string="Generate Positions"
+                            class="btn-primary"
+                            invisible="not block_id"/>
+                </header>
+            </xpath>
+            <field name="parent_id" position="after">
+                <field name="block_id"/>
+                <field name="block_code" invisible="1"/>
+                <field name="pos_config_id"
+                       invisible="not block_id or block_code != 'OPS'"/>
+                <field name="user_id"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

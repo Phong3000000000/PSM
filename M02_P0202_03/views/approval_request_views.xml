@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="approval_request_view_form_inherit_referral" model="ir.ui.view">
+        <field name="name">approval.request.view.form.inherit.referral</field>
+        <field name="model">approval.request</field>
+        <field name="inherit_id" ref="approvals.approval_request_view_form" />
+        <field name="arch" type="xml">
+
+            <xpath expr="//button[@name='action_confirm'][1]" position="attributes">
+                <attribute name="string">Gửi</attribute>
+                <attribute name="class">btn-primary</attribute>
+                <attribute name="invisible">attachment_number &lt; 1 or request_status != 'new'</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_confirm'][2]" position="attributes">
+                <attribute name="string">Gửi</attribute>
+                <attribute name="class">btn-primary</attribute>
+                <attribute name="invisible">attachment_number &gt;= 1 or request_status != 'new'</attribute>
+            </xpath>
+
+            <!-- Ẩn Cancel, Withdraw -->
+            <xpath expr="//button[@name='action_cancel']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_withdraw']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <!-- Phục hồi Refuse cho OC approver (user_status = pending) -->
+            <xpath expr="//button[@name='action_refuse']" position="attributes">
+                <attribute name="invisible">request_status in ['approved', 'refused', 'cancel'] or user_status != 'pending'</attribute>
+            </xpath>
+            <!-- Ẩn cả 2 widget Attach Document -->
+            <xpath expr="//widget[@name='attach_document' and @highlight='1']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//widget[@name='attach_document' and not(@highlight)]"
+                position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_referral_submissions"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-users"
+                    invisible="request_status not in ['approved', 'done']">
+                    <field name="submission_count" widget="statinfo" string="Ứng viên" />
+                </button>
+            </xpath>
+
+            <!-- Ẩn Request Owner, Reference, Category khỏi vị trí gốc -->
+            <xpath expr="//field[@name='request_owner_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='reference']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='category_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='date_confirmed']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='company_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='reason']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <!-- Ẩn tab Description mặc định -->
+            <xpath expr="//page[@name='description']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <!-- THÔNG TIN YÊU CẦU – dữ liệu lấy từ employee của người yêu cầu -->
+            <xpath expr="//group" position="after">
+                <group name="referral_info">
+                    <separator string="THÔNG TIN YÊU CẦU" />
+                    <group>
+                        <field name="referral_request_id" invisible="1" />
+                        <field name="request_owner_id" readonly="1" />
+                        <field name="owner_job_id" readonly="1" />
+                        <field name="owner_store_id" readonly="1" />
+                        <field name="owner_session_id"
+                            domain="[('store_id', '=', owner_store_id)]" />
+                        <field name="referral_date_start" />
+                        <field name="referral_date_end" />
+                    </group>
+                </group>
+            </xpath>
+
+            <!-- Tab: Vị trí tuyển dụng (auto-filled from session, editable) -->
+            <xpath expr="//notebook/page[1]" position="before">
+                <page string="Vị trí tuyển dụng" name="referral_positions">
+                    <field name="approval_position_ids">
+                        <list editable="bottom">
+                            <field name="job_id" />
+                            <field name="job_type" string="Loại" />
+                            <field name="quantity" string="Cần GT" />
+                            <field name="wage" string="Lương/giờ" />
+                            <field name="note" string="Ghi chú" optional="show" />
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+
+            <!-- Tab: Mô tả -->
+            <xpath expr="//notebook/page[1]" position="before">
+                <page string="Mô tả" name="referral_description_tab">
+                    <field name="referral_description"
+                        placeholder="Nhập mô tả hoặc ghi chú..." />
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

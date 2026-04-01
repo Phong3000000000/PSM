@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_soc_import_server" model="ir.actions.server">
+        <field name="name">Sync/Reload SOC Data</field>
+        <field name="model_id" ref="website_slides.model_slide_slide"/>
+        <field name="binding_model_id" ref="website_slides.model_slide_slide"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+# Launch Wizard directly from action
+action = env.ref('M02_P0209_01.action_soc_import_wizard').read()[0]
+        </field>
+    </record>
+</odoo>

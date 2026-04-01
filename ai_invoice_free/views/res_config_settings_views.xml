@@ -1,0 +1,15 @@
+﻿<odoo>
+  <record id="res_config_settings_view_form_ai_invoice_free" model="ir.ui.view">
+    <field name="name">res.config.settings.view.form.ai.invoice.free</field>
+    <field name="model">res.config.settings</field>
+    <field name="inherit_id" ref="base.view_res_config_settings"/>
+    <field name="arch" type="xml">
+      <xpath expr="//div[@id='settings']" position="inside">
+        <div class="app_settings_block" string="AI Invoice OCR (Free)">
+          <h2>AI Invoice OCR (Free)</h2>
+          <div><label string="Engine/lang cấu hình qua System Parameters: ai_invoice_free.engine, ai_invoice_free.lang"/></div>
+        </div>
+      </xpath>
+    </field>
+  </record>
+</odoo>

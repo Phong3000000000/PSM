@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Re-define action if needed or just rely on the menuitem in recruitment_request_views.xml -->
+        <!-- Since we defined the menuitem in recruitment_request_views.xml, we might not need this file specifically for menu definition unless for other things. 
+             But for completeness as per manifest: -->
+    </data>
+</odoo>

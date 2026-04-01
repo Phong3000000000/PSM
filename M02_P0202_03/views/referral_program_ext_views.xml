@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extend Referral Program Form View -->
+    <record id="view_referral_program_form_inherit_p0202" model="ir.ui.view">
+        <field name="name">employee.referral.program.form.inherit.p0202</field>
+        <field name="model">employee.referral.program</field>
+        <field name="inherit_id" ref="M02_P0204_01.view_referral_program_form" />
+        <field name="arch" type="xml">
+            <!-- 'Tạo bài viết' button – hiện khi OC đã duyệt -->
+            <xpath expr="//button[@name='action_close']" position="before">
+                <button name="action_hr_publish" string="Tạo bài viết" type="object"
+                    class="btn-primary" invisible="state != 'approved'" />
+            </xpath>
+
+            <xpath expr="//div[hasclass('oe_title')]" position="before">
+                <div class="oe_button_box" name="button_box">
+                    <button name="action_open_portal" type="object"
+                        class="oe_stat_button" icon="fa-globe"
+                        invisible="state != 'active'">
+                        <div class="o_stat_info">
+                            <span class="o_stat_text">Xem trên Portal</span>
+                        </div>
+                    </button>
+                    <button name="action_view_submissions" type="object"
+                        class="oe_stat_button" icon="fa-users"
+                        invisible="state not in ['active', 'closed']">
+                        <field name="submission_count" widget="statinfo" string="Ứng viên" />
+                    </button>
+                </div>
+            </xpath>
+
+            <xpath expr="//page[@name='description']" position="after">
+                <page string="Danh sách giới thiệu" name="submissions">
+                    <field name="submission_ids" readonly="1">
+                        <list>
+                            <field name="referral_code" />
+                            <field name="candidate_name" />
+                            <field name="referrer_id" />
+                            <field name="state" />
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Portal sidebar: Cơ hội việc làm entry -->
+    <template id="portal_my_home_referral_jobs" name="Portal My Home: Jobs"
+        inherit_id="portal.portal_my_home" priority="31">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="icon" t-value="'fa fa-briefcase'" />
+                <t t-set="title">Cơ hội việc làm</t>
+                <t t-set="url" t-value="'/referral/jobs'" />
+                <t t-set="text">Xem các vị trí đang tuyển và giới thiệu ứng viên</t>
+            </t>
+        </xpath>
+    </template>
+</odoo>

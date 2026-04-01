@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- SC_0402: Supplier Management Category -->
+        <record id="module_category_sc_0402" model="ir.module.category">
+            <field name="name">SC_0402 Supplier Management</field>
+            <field name="description">Access rights for SC_0402 Supplier Management module</field>
+            <field name="sequence">50</field>
+        </record>
+        <!-- User: Sourcing User -->
+        <record id="group_sourcing_user" model="res.groups">
+            <field name="name">Sourcing User</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+        <!-- User: QA User -->
+        <record id="group_qa_user" model="res.groups">
+            <field name="name">QA User</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+        <!-- User: Menu User -->
+        <record id="group_menu_user" model="res.groups">
+            <field name="name">Menu Department User</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]" />
+        </record>
+        <!-- Manager: SC_0402 Manager -->
+        <record id="group_sc_0402_manager" model="res.groups">
+            <field name="name">SC_0402 Manager</field>
+            <field name="implied_ids" eval="[(4, ref('group_sourcing_user')), (4, ref('group_qa_user')), (4, ref('group_menu_user'))]" />
+        </record>
+    </data>
+</odoo>

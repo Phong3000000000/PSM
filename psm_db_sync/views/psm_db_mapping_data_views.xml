@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Mapping Data Tree View -->
+        <record id="view_psm_db_mapping_data_tree" model="ir.ui.view">
+            <field name="name">psm.db.mapping.data.tree</field>
+            <field name="model">psm.db.mapping.data</field>
+            <field name="arch" type="xml">
+                <list string="Dữ liệu ánh xạ">
+                    <field name="mapping_model_id"/>
+                    <field name="model"/>
+                    <field name="field" optional="hide"/>
+                    <field name="name"/>
+                    <field name="source_id"/>
+                    <field name="source_field" optional="hide"/>
+                    <field name="res_id"/>
+                    <field name="date_synced"/>
+                    <field name="last_update_date" optional="hide"/>
+                    <field name="sync_count"/>
+                    <button name="action_view_record" type="object"
+                            string="Xem bản ghi" icon="fa-external-link"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Mapping Data Form View -->
+        <record id="view_psm_db_mapping_data_form" model="ir.ui.view">
+            <field name="name">psm.db.mapping.data.form</field>
+            <field name="model">psm.db.mapping.data</field>
+            <field name="arch" type="xml">
+                <form string="Dữ liệu ánh xạ">
+                    <header>
+                        <button name="action_view_record" type="object"
+                                string="Xem bản ghi đích" class="btn-primary"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Identifier..."/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Thông tin ánh xạ">
+                                <field name="mapping_model_id"/>
+                                <field name="source_model"/>
+                                <field name="source_field"/>
+                                <field name="source_id"/>
+                            </group>
+                            <group string="Liên kết">
+                                <field name="model"/>
+                                <field name="res_id"/>
+                                <field name="checksum"/>
+                            </group>
+                        </group>
+
+                        <group string="Thông tin đồng bộ">
+                            <group>
+                                <field name="date_synced"/>
+                                <field name="last_update_date"/>
+                                <field name="sync_count"/>
+                            </group>
+                            <group>
+                                <field name="company_id"/>
+                                <field name="sync_id"/>
+                                <field name="log_id"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Mapping Data Search View -->
+        <record id="view_psm_db_mapping_data_search" model="ir.ui.view">
+            <field name="name">psm.db.mapping.data.search</field>
+            <field name="model">psm.db.mapping.data</field>
+            <field name="arch" type="xml">
+                <search string="Tìm kiếm dữ liệu ánh xạ">
+                    <field name="name"/>
+                    <field name="mapping_model_id"/>
+                    <field name="model"/>
+                    <field name="source_id"/>
+                    <separator/>
+                    <filter string="Có checksum" name="has_checksum" domain="[('checksum', '!=', False)]"/>
+                    <filter string="Không có checksum" name="no_checksum" domain="[('checksum', '=', False)]"/>
+                    <separator/>
+                    <group>
+                        <filter string="Ánh xạ mô hình" name="group_mapping"
+                                context="{'group_by': 'mapping_model_id'}"/>
+                        <filter string="Field nguồn" name="group_source_field" context="{'group_by': 'source_field'}"/>
+                        <separator/>
+                        <filter string="Model đích" name="group_model" context="{'group_by': 'model'}"/>
+                        <filter string="Field đích" name="group_field" context="{'group_by': 'field'}"/>
+                        <separator/>
+                        <filter string="Ngày đồng bộ" name="group_date" context="{'group_by': 'date_synced:month'}"/>
+                        <filter string="Nhiệm vụ đồng bộ" name="group_sync" context="{'group_by': 'sync_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+    </data>
+</odoo>

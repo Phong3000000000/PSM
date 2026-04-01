@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Override Referral Config form: thay badge bằng ribbon (nơ) và hiện nút Áp dụng -->
+    <record id="view_referral_config_form_inherit_p0202_03" model="ir.ui.view">
+        <field name="name">employee.referral.config.form.ribbon.p0202</field>
+        <field name="model">employee.referral.config</field>
+        <field name="inherit_id" ref="M02_P0204_01.view_referral_config_form" />
+        <field name="arch" type="xml">
+
+            <!-- Thay badge "✔ Đang áp dụng" bằng ribbon (nơ) -->
+            <xpath expr="//span[hasclass('badge')]" position="replace">
+                <!-- badge replaced by ribbon below -->
+            </xpath>
+
+            <!-- Ẩn field is_default (checkbox) khỏi form body vì đã có ribbon -->
+            <xpath expr="//field[@name='is_default']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <!-- Ẩn field active (checkbox) -->
+            <xpath expr="//field[@name='active']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <!-- Thêm ribbon (nơ) xanh vào góc sheet -->
+            <xpath expr="//sheet" position="inside" order="first">
+                <widget name="web_ribbon"
+                    title="Đang áp dụng"
+                    bg_color="text-bg-success"
+                    invisible="not is_default" />
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

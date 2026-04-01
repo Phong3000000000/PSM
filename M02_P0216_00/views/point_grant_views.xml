@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Sequence -->
+    <record id="seq_point_grant" model="ir.sequence">
+        <field name="name">Point Grant Sequence</field>
+        <field name="code">point.grant</field>
+        <field name="prefix">PG-</field>
+        <field name="padding">4</field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_point_grant_tree" model="ir.ui.view">
+        <field name="name">point.grant.tree</field>
+        <field name="model">point.grant</field>
+        <field name="arch" type="xml">
+            <list string="Cấp điểm">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="granter_id"/>
+                <field name="employee_id"/>
+                <field name="points"/>
+                <field name="fund_id"/>
+                <field name="fund_type"/>   
+                <field name="reason"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'confirmed'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_point_grant_form" model="ir.ui.view">
+        <field name="name">point.grant.form</field>
+        <field name="model">point.grant</field>
+        <field name="arch" type="xml">
+            <form string="Cấp điểm">
+                <header>
+                    <button name="action_confirm" string="Xác nhận" type="object" class="btn-success" invisible="state != 'draft'"/>
+                    <button name="action_draft" string="Đặt về nháp" type="object" invisible="state != 'confirmed'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="granter_id"/>
+                            <field name="fund_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="employee_id" readonly="1"/>
+                            <field name="points"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="reason" placeholder="Lý do cấp điểm..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <!-- <record id="view_point_grant_search" model="ir.ui.view">
+        <field name="name">point.grant.search</field>
+        <field name="model">point.grant</field>
+        <field name="arch" type="xml">
+            <search string="Tìm kiếm Cấp điểm">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="fund_id"/>
+                <field name="fund_type"/>
+                <group string="Group By">
+                    <filter string="Loại kho" name="group_by_fund_type" context="{'group_by': 'fund_type'}"/>
+                    <filter string="Kho điểm" name="group_by_fund" context="{'group_by': 'fund_id'}"/>
+                    <filter string="Người cấp" name="group_by_granter" context="{'group_by': 'granter_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record> -->
+    <!-- Action -->
+    <record id="action_point_grant" model="ir.actions.act_window">
+        <field name="name">Cấp điểm</field>
+        <field name="res_model">point.grant</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'group_by': 'fund_id'}</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_point_grant"
+              name="Lịch sử cấp điểm"
+              parent="M02_P0216_00.menu_shift_point_fund_root"
+              action="action_point_grant"
+              sequence="30"/>
+
+</odoo>

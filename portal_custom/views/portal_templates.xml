@@ -1,0 +1,1022 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ========================================== -->
+    <!-- CSS TÙY CHỈNH CHO GIỐNG FACEBOOK -->
+    <!-- ========================================== -->
+    <template id="portal_custom_css" inherit_id="portal.frontend_layout" priority="99">
+        <xpath expr="//head" position="inside">
+
+            <!-- JavaScript for Theme Toggle + Dynamic Button Injection -->
+            <script><![CDATA[
+                document.addEventListener('DOMContentLoaded', function() {
+                    // 1. Dynamically inject the toggle button into the navbar
+                    var navbar = document.querySelector('header nav ul, header .navbar-nav, header ul.nav');
+                    if (!navbar) {
+                        navbar = document.querySelector('header nav, header .navbar');
+                    }
+                    if (navbar) {
+                        var li = document.createElement('li');
+                        li.className = 'nav-item';
+                        li.innerHTML = '<div class="theme-switch-wrapper nav-link">' +
+                           '<label class="theme-switch" for="themeCheckbox">' +
+                                '<input type="checkbox" id="themeCheckbox" />' +
+                                '<div class="theme-switch-slider"></div>' +
+                           '</label>' +
+                        '</div>';
+                        navbar.appendChild(li);
+                    }
+
+                    // 2. Apply saved theme or detect system preference
+                    var toggleSwitch = document.getElementById('themeCheckbox');
+                    var currentTheme = localStorage.getItem('theme');
+                
+                    if (currentTheme) {
+                        document.documentElement.setAttribute('data-theme', currentTheme);
+                        if (currentTheme === 'dark' && toggleSwitch) {
+                            toggleSwitch.checked = true;
+                        }
+                    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                        if (toggleSwitch) toggleSwitch.checked = true;
+                    } else {
+                        document.documentElement.setAttribute('data-theme', 'light');
+                    }
+                
+                    // 3. Listen for toggle changes
+                    if (toggleSwitch) {
+                        toggleSwitch.addEventListener('change', function(e) {
+                            if (e.target.checked) {
+                                document.documentElement.setAttribute('data-theme', 'dark');
+                                localStorage.setItem('theme', 'dark');
+                            } else {
+                                document.documentElement.setAttribute('data-theme', 'light');
+                                localStorage.setItem('theme', 'light');
+                            }    
+                        }, false);
+                    }
+                });
+            ]]></script>
+        </xpath>
+
+    </template>
+
+    <!-- REPLACE HOME ICON WITH "QUAY LẠI BẢNG TIN" BUTTON -->
+    <template id="portal_breadcrumbs_inherit" inherit_id="portal.portal_breadcrumbs" priority="20">
+        <xpath expr="//li[a[@href='/my/home']]" position="replace">
+            <li class="breadcrumb-item ms-1" t-if="is_employee">
+                <a href="/my/home" class="btn btn-sm btn-outline-primary fw-bold px-3 py-1"
+                    style="border-radius: 20px;">
+                    <i class="fa fa-arrow-left me-1" /> Quay lại bảng tin </a>
+            </li>
+            <li class="breadcrumb-item ms-1" t-else="">
+                <a href="/my/home" aria-label="Home" title="Home">
+                    <i class="fa fa-home" />
+                </a>
+            </li>
+        </xpath>
+    </template>
+    <!-- ========================================== -->
+    <!-- PORTAL HOME - GIAO DIỆN SOCIAL MEDIA -->
+    <!-- ========================================== -->
+    <template id="portal_my_home_inherit" name="Portal Social Feed"
+        inherit_id="portal.portal_my_home" priority="99">
+        <!-- Ẩn các phần thừa thãi mặc định -->
+        <xpath expr="//div[@id='portal_common_category']" position="attributes">
+            <attribute name="style">display: none !important;</attribute>
+        </xpath>
+        <xpath expr="//t[@t-set='my_details']" position="attributes">
+            <attribute name="t-value">False</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('o_portal_my_home')]" position="attributes">
+            <attribute name="class" add="d-none" separator=" " />
+        </xpath>
+        <!-- LAYOUT MỚI -->
+        <xpath expr="//div[hasclass('o_portal_my_home')]" position="before">
+            <t t-if="is_employee">
+                <div class="container mb-5">
+                    <div class="row">
+                        <!-- CỘT TRÁI: APPS NAV (Giống Menu trái FB) -->
+                        <div class="col-lg-3 d-none d-lg-block">
+                            <div class="sticky-top"
+                                style="top: 80px; z-index: 1; max-height: calc(100vh - 100px); overflow-y: auto;">
+                                <div class="social-card p-2">
+                                    <!-- Profile Mini -->
+                                    <a href="/my/update_info" class="sidebar-link mb-2">
+                                        <img
+                                            t-att-src="image_data_uri(request.env.user.partner_id.avatar_128)"
+                                            class="rounded-circle me-3"
+                                            style="width: 36px; height: 36px; object-fit: cover;" />
+                                        <span t-esc="request.env.user.name" />
+                                    </a>
+                                    <hr class="my-2 text-muted" />
+                                    <!-- App Shortcuts -->
+                                    <div class="text-muted fw-bold px-2 mb-2"
+                                        style="font-size: 13px;">ỨNG DỤNG</div>
+                                    <a href="/my/update_info" class="sidebar-link">
+                                        <div class="app-icon-wrapper me-3">
+                                            <i class="fa fa-user" />
+                                        </div>
+                                        <span>Thông tin cá nhân</span>
+                                    </a>
+                                    <a href="/my/payslips" class="sidebar-link">
+                                        <div class="app-icon-wrapper me-3">
+                                            <i class="fa fa-money" />
+                                        </div>
+                                        <span>Phiếu lương</span>
+                                    </a>
+                                    <a href="/slides" class="sidebar-link">
+                                        <div class="app-icon-wrapper me-3">
+                                            <i class="fa fa-graduation-cap" />
+                                        </div>
+                                        <span>Khóa học (E-Learning)</span>
+                                    </a>
+                                    <a href="/my/availability" class="sidebar-link">
+                                        <div class="app-icon-wrapper me-3">
+                                            <i class="fa fa-calendar-plus-o" />
+                                        </div>
+                                        <span>Đăng ký lịch làm</span>
+                                    </a>
+                                    <a href="/my/shifts" class="sidebar-link">
+                                        <div class="app-icon-wrapper me-3">
+                                            <i class="fa fa-calendar" />
+                                        </div>
+                                        <span>Xem lịch làm việc</span>
+                                    </a>
+                                    <!-- Approval App - Chỉ hiện cho Manager có nhân viên cấp dưới -->
+                                    <t t-if="is_manager">
+                                        <a href="/my/approvals" class="sidebar-link">
+                                            <div class="app-icon-wrapper me-3">
+                                                <i class="fa fa-check-square-o" />
+                                            </div>
+                                            <span
+                                                class="d-flex align-items-center justify-content-between flex-grow-1">
+                                                Duyệt yêu cầu <t t-if="approval_count">
+                                                    <span class="badge rounded-pill bg-danger ms-2"
+                                                        t-esc="approval_count" />
+                                                </t>
+                                            </span>
+                                        </a>
+                                    </t>
+                                    <!-- Team Shortcut (Always visible to managers) -->
+                                    <t t-if="is_manager">
+                                        <a href="/my/team-accountabilities" class="sidebar-link">
+                                            <div class="app-icon-wrapper me-3">
+                                                <i class="fa fa-users" />
+                                            </div>
+                                            <span>Team và Đội nhóm</span>
+                                        </a>
+                                    </t>
+                                    <!-- More Apps Level 1 -->
+                                    <div id="moreApps1" class="collapse">
+                                        <!--
+                                    <a href="/my/rocks" class="sidebar-link">
+                                        <div class="app-icon-wrapper me-3">
+                                            <i class="fa fa-bullseye" />
+                                        </div>
+                                        <span>Mục tiêu (Rocks)</span>
+                                    </a>
+                                  
+                                    <a href="/my/expenses" class="sidebar-link">
+                                        <div class="app-icon-wrapper me-3">
+                                            <i class="fa fa-credit-card" />
+                                        </div>
+                                        <span>Chi phí (Expenses)</span>
+                                    </a>
+                                    -->
+
+                                        <a href="/my/rewards" class="sidebar-link">
+                                            <div class="app-icon-wrapper me-3">
+                                                <i class="fa fa-gift" />
+                                            </div>
+                                            <span>App thưởng</span>
+                                        </a>
+                                        <a href="/my/settings" class="sidebar-link">
+                                            <div class="app-icon-wrapper me-3">
+                                                <i class="fa fa-cog" />
+                                            </div>
+                                            <span>Cài đặt</span>
+                                        </a>
+                                    </div>
+                                    <!-- More Apps Level 2 -->
+                                    <div id="moreApps2" class="collapse">
+                                        <a href="/my/resignation" class="sidebar-link"
+                                            onclick="return confirm('Bạn có chắc chắn muốn xin thôi việc không?');">
+                                            <div class="app-icon-wrapper me-3">
+                                                <i class="fa fa-sign-out" />
+                                            </div>
+                                            <span>Xin nghỉ</span>
+                                        </a>
+                                    </div>
+                                    <!-- Control Buttons -->
+                                    <!-- Button 1: Xem thêm (Hiện Lv1, Ẩn chính nó, Hiện Btn2) -->
+                                    <div id="btnShowMore1" class="collapse show">
+                                        <a role="button" data-bs-toggle="collapse"
+                                            data-bs-target="#moreApps1, #btnShowMore1, #btnShowMore2"
+                                            class="sidebar-link text-primary justify-content-center mt-1">
+                                            <i class="fa fa-chevron-down me-2" /> Xem thêm </a>
+                                    </div>
+                                    <!-- Button 2: Xem thêm (Hiện Lv2, Ẩn chính nó, Hiện Collapse) -->
+                                    <div id="btnShowMore2" class="collapse">
+                                        <a role="button" data-bs-toggle="collapse"
+                                            data-bs-target="#moreApps2, #btnShowMore2, #btnCollapse"
+                                            class="sidebar-link text-primary justify-content-center mt-1">
+                                            <i class="fa fa-chevron-down me-2" /> Xem thêm </a>
+                                    </div>
+                                    <!-- Button 3: Thu gọn (Ẩn Lv1, Lv2, Ẩn chính nó, Hiện Btn1) -->
+                                    <div id="btnCollapse" class="collapse">
+                                        <a role="button" data-bs-toggle="collapse"
+                                            data-bs-target="#moreApps1, #moreApps2, #btnCollapse, #btnShowMore1"
+                                            class="sidebar-link text-primary justify-content-center mt-1">
+                                            <i class="fa fa-chevron-up me-2" /> Thu gọn </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- CỘT GIỮA: NEWS FEED (Trung tâm) -->
+                        <div class="col-lg-6">
+                            <t t-set="news_view" t-value="request.params.get('news_view') == 'full'" />
+
+                            <!-- MOBILE: Back Button (Chỉ hiện ở Full Mode) -->
+                            <div class="d-lg-none mb-3" t-if="news_view">
+                                <a href="/my/home" class="btn btn-light btn-sm mb-2">
+                                    <i class="fa fa-arrow-left me-1" /> Quay lại </a>
+                                <h4 class="mb-0">Tin tức doanh nghiệp</h4>
+                            </div>
+
+                            <!-- CREATE POST SECTION (Only for HR) -->
+                            <div t-if="can_post_news"
+                                t-attf-class="social-card p-3 mb-3 #{'d-none d-lg-block' if not news_view else ''}">
+                                <div class="d-flex">
+                                    <img
+                                        t-att-src="image_data_uri(request.env.user.partner_id.avatar_128)"
+                                        class="rounded-circle me-2"
+                                        style="width: 40px; height: 40px; object-fit: cover;" />
+                                    <div class="flex-grow-1">
+                                        <form action="/my/news/post" method="POST">
+                                            <input type="hidden" name="csrf_token"
+                                                t-att-value="request.csrf_token()" />
+                                            <div class="input-fake mb-2" data-bs-toggle="collapse"
+                                                data-bs-target="#postForm" aria-expanded="false">
+                                                Bạn đang nghĩ gì, <t t-esc="request.env.user.name" />
+                                                ?
+                                        </div>
+                                            <div class="collapse" id="postForm">
+                                                <textarea name="content" class="form-control mb-2"
+                                                    rows="3"
+                                                    placeholder="Chia sẻ tin tức, thông báo..."></textarea>
+                                                <div class="d-flex justify-content-end">
+                                                    <button type="submit"
+                                                        class="btn btn-primary btn-sm">
+                                                        <i class="fa fa-paper-plane me-1" /> Đăng
+                                                        bài </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <hr class="my-2" />
+                                <div class="d-flex justify-content-around">
+                                    <div class="social-btn w-100 text-center">
+                                        <i class="fa fa-video-camera text-danger me-2"></i>Live
+                                        Video </div>
+                                    <div class="social-btn w-100 text-center">
+                                        <i class="fa fa-file-image-o text-success me-2"></i>
+                                        Ảnh/Video
+                                </div>
+                                    <div class="social-btn w-100 text-center">
+                                        <i class="fa fa-smile-o text-warning me-2"></i>Cảm xúc </div>
+                                </div>
+                            </div>
+
+
+                            <!-- DANH SÁCH BÀI VIẾT (FEED) -->
+
+                            <!-- Xác định danh sách bài viết cần hiển thị -->
+                            <!-- Logic Rendering: 
+                             On Mobile Default: Show 1 post.
+                             On Mobile Full: Show All.
+                             On Desktop: Show All.
+                        -->
+
+                            <t t-foreach="blog_posts or []" t-as="post">
+                                <!-- Show post if:
+                                 1. It's the first post (post_index == 0)
+                                 2. OR we are in Full Mode (news_view)
+                                 3. OR we are on Desktop (d-none d-lg-block logic needed? No, we can't context switch easily)
+                                 
+                                 Alternative: Loop ALL, but wrap 2nd+ posts in 'd-none d-lg-block' class if in Widget Mode?
+                            -->
+                                <!-- Widget Mode Constraint: 33vh on mobile, flex layout to handle
+                                image -->
+                                <div
+                                    t-attf-class="social-card pb-1 #{'d-none d-lg-block' if (post_index > 0 and not news_view) else ''}">
+
+                                    <!-- MOBILE WIDGET HEADER (Only inside first post, Widget Mode) -->
+                                    <div
+                                        class="d-lg-none px-3 py-2 border-bottom d-flex align-items-center justify-content-between flex-shrink-0"
+                                        t-if="post_index == 0 and not news_view"
+                                        style="background: rgba(248, 249, 250, 0.5);">
+                                        <span class="fw-bold"
+                                            style="color: #4a4a4a; font-size: 15px;">McDonald's Blog</span>
+                                        <a href="/my/home?news_view=full"
+                                            class="text-decoration-none fw-bold"
+                                            style="font-size: 13px; color: #1877f2;"> Xem tất cả <i
+                                                class="fa fa-angle-right ms-1" />
+                                        </a>
+                                    </div>
+
+                                    <!-- Post Header -->
+                                    <div
+                                        class="p-3 d-flex align-items-start justify-content-between flex-shrink-0">
+                                        <div class="d-flex">
+                                            <img
+                                                t-att-src="image_data_uri(post.author_id.avatar_128) if post.author_id else '/web/static/img/placeholder.png'"
+                                                class="rounded-circle me-3 border"
+                                                style="width: 40px; height: 40px; object-fit: cover;" />
+                                            <div>
+                                                <h6 class="mb-0 fw-bold text-dark">
+                                                    <t
+                                                        t-esc="post.author_id.name if post.author_id else 'Công ty'" />
+                                                </h6>
+                                                <small class="text-muted" style="font-size: 12px;">
+                                                    <t t-esc="post.post_date"
+                                                        t-options="{'widget': 'date'}" />
+                                                    <span class="mx-1">•</span>
+                                                    <i class="fa fa-globe" />
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="dropdown">
+                                            <button
+                                                class="btn btn-link text-muted p-0 text-decoration-none"
+                                                type="button" data-bs-toggle="dropdown"
+                                                aria-expanded="false">
+                                                <i class="fa fa-ellipsis-h" />
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <t t-if="can_post_news">
+                                                    <li>
+                                                        <a class="dropdown-item text-danger"
+                                                            t-att-href="'/my/news/post/delete/%s' % post.id"
+                                                            onclick="return confirm('Bạn có chắc muốn xóa bài viết này không?');">
+                                                            <i class="fa fa-trash me-2" /> Xóa bài
+                                                            viết </a>
+                                                    </li>
+                                                </t>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <!-- Post Content -->
+                                    <div class="px-3 pb-2 flex-shrink-0">
+                                        <h5 class="mb-2 fw-normal"
+                                            style="font-size: 16px; line-height: 1.4; max-height: 2.8em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                                            <a
+                                                t-att-href="'/blog/%s/%s' % (slug(post.blog_id), slug(post))"
+                                                class="text-dark text-decoration-none">
+                                                <t t-esc="post.name" />
+                                            </a>
+                                        </h5>
+                                        <!-- Hide subtitle in widget mode to save space -->
+                                        <p t-if="post.subtitle and (news_view or post_index > 0)"
+                                            t-esc="post.subtitle" class="mb-2 text-muted" />
+                                    </div>
+                                    <!-- Post Cover Image -->
+                                    <t t-set="cover_url" t-value="get_cover_image_url(post)" />
+                                    <t t-if="cover_url">
+                                        <a
+                                            t-att-href="'/blog/%s/%s' % (slug(post.blog_id), slug(post))"
+                                            class="text-decoration-none d-block">
+                                            <img t-att-src="cover_url" class="w-100"
+                                                style="height: auto;" alt="Cover" />
+                                        </a>
+                                    </t>
+                                    <!-- Stats removed - directly show Comment button -->
+                                    <hr class="my-0 mx-3 flex-shrink-0" style="opacity: 0.1;" />
+                                    <!-- Action Button -->
+                                    <div
+                                        class="px-3 py-1 d-flex justify-content-center flex-shrink-0">
+                                        <a
+                                            t-att-href="'/blog/%s/%s#discussion' % (slug(post.blog_id), slug(post))"
+                                            class="btn btn-link social-btn text-decoration-none text-center text-muted">
+                                            <i class="fa fa-comment-o me-2" /> Bình luận </a>
+                                    </div>
+                                </div>
+                            </t>
+                            <!-- Empty State -->
+                            <t t-if="not blog_posts">
+                                <div class="social-card p-5 text-center">
+                                    <img src="/web/static/img/smiling_face.svg"
+                                        style="width: 80px; opacity: 0.5;" class="mb-3" />
+                                    <h5 class="text-muted">Bảng tin đang trống</h5>
+                                    <p class="text-muted small">Hãy quay lại sau nhé!</p>
+                                </div>
+                            </t>
+
+                            <!-- MOBILE APP GRID (Hiển thị dưới Blog ở mobile, chỉ khi KHÔNG ở Full
+                            News Mode) -->
+                            <div class="d-lg-none mt-4" t-if="not news_view">
+                                <div class="mobile-app-grid">
+                                    <!-- Profile -->
+                                    <a href="/my/update_info" class="mobile-app-item">
+                                        <div class="mobile-app-icon">
+                                            <i class="fa fa-user" />
+                                        </div>
+                                        <span class="mobile-app-label">Cá nhân</span>
+                                    </a>
+                                    <!-- Payslips -->
+                                    <a href="/my/payslips" class="mobile-app-item">
+                                        <div class="mobile-app-icon position-relative">
+                                            <i class="fa fa-money" />
+                                        </div>
+                                        <span class="mobile-app-label">Phiếu lương</span>
+                                    </a>
+                                    <!-- Discipline -->
+                                    <a href="/my/disciplines" class="mobile-app-item">
+                                        <div class="mobile-app-icon">
+                                            <i class="fa fa-exclamation-triangle" />
+                                        </div>
+                                        <span class="mobile-app-label">Viết Bảng Tường Trình</span>
+                                    </a>
+                                    <!-- Elearning - Education -->
+                                    <a href="/slides" class="mobile-app-item">
+                                        <div class="mobile-app-icon">
+                                            <i class="fa fa-graduation-cap" />
+                                        </div>
+                                        <span class="mobile-app-label">Học tập</span>
+                                    </a>
+                                    <!-- Company Profile -->
+                                    <a href="/my/skills" class="mobile-app-item">
+                                        <div class="mobile-app-icon">
+                                            <i class="fa fa-star" />
+                                        </div>
+                                        <span class="mobile-app-label">Company Profile</span>
+                                    </a>
+                                    <!-- Availability -->
+                                    <a href="/my/availability" class="mobile-app-item">
+                                        <div class="mobile-app-icon">
+                                            <i class="fa fa-calendar-plus-o" />
+                                        </div>
+                                        <span class="mobile-app-label">Đăng ký lịch làm</span>
+                                    </a>
+                                    <!-- Shifts -->
+                                    <a href="/my/shifts" class="mobile-app-item">
+                                        <div class="mobile-app-icon">
+                                            <i class="fa fa-calendar" />
+                                        </div>
+                                        <span class="mobile-app-label">Xem lịch làm việc</span>
+                                    </a>
+
+                                    <!-- Manager Approvals -->
+                                    <t t-if="is_manager">
+                                        <a href="/my/approvals" class="mobile-app-item">
+                                            <div class="mobile-app-icon position-relative">
+                                                <i class="fa fa-check-square-o" />
+                                                <t t-if="approval_count">
+                                                    <span
+                                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light p-1"
+                                                        style="font-size: 8px;">
+                                                        <t t-esc="approval_count" />
+                                                    </span>
+                                                </t>
+                                            </div>
+                                            <span class="mobile-app-label">Duyệt yêu cầu</span>
+                                        </a>
+                                    </t>
+
+                                    <!-- Team -->
+                                    <a href="/my/team-accountabilities" class="mobile-app-item">
+                                        <div class="mobile-app-icon">
+                                            <i class="fa fa-users" />
+                                        </div>
+                                        <span class="mobile-app-label">Team</span>
+                                    </a>
+                                    <!-- Rewards (Toggle Submenu) -->
+                                    <a role="button" data-bs-toggle="collapse"
+                                        data-bs-target="#rewardsMenu" class="mobile-app-item">
+                                        <div class="mobile-app-icon">
+                                            <i class="fa fa-gift" />
+                                        </div>
+                                        <span class="mobile-app-label">App thưởng</span>
+                                    </a>
+                                    <!-- Resignation -->
+                                    <a href="/my/resignation" class="mobile-app-item"
+                                        onclick="return confirm('Bạn có chắc chắn muốn xin thôi việc không?');">
+                                        <div class="mobile-app-icon">
+                                            <i class="fa fa-sign-out" />
+                                        </div>
+                                        <span class="mobile-app-label">Xin nghỉ</span>
+                                    </a>
+                                    <!-- Settings -->
+                                    <a href="/my/settings" class="mobile-app-item">
+                                        <div class="mobile-app-icon">
+                                            <i class="fa fa-cog" />
+                                        </div>
+                                        <span class="mobile-app-label">Cài đặt</span>
+                                    </a>
+                                </div>
+
+                                <!-- REWARDS SUB-MENU -->
+                                <div id="rewardsMenu" class="collapse mt-2">
+                                    <div class="bg-white rounded p-3 shadow-sm border">
+                                        <h6 class="text-muted fw-bold mb-2 small text-uppercase">Menu
+                                            Đổi thưởng</h6>
+                                        <div class="row g-2">
+                                            <!-- Vouchers -->
+                                            <div class="col-6">
+                                                <a href="/my/vouchers"
+                                                    class="d-flex align-items-center p-2 rounded bg-light text-decoration-none text-dark border">
+                                                    <i class="fa fa-ticket text-danger me-2" />
+                                                    <span>Đổi quà</span>
+                                                </a>
+                                            </div>
+                                            <!-- History -->
+                                            <div class="col-6">
+                                                <a href="/my/vouchers/history"
+                                                    class="d-flex align-items-center p-2 rounded bg-light text-decoration-none text-dark border">
+                                                    <i class="fa fa-history text-secondary me-2" />
+                                                    <span>Lịch sử</span>
+                                                </a>
+                                            </div>
+                                            <!-- EOTQ -->
+                                            <div class="col-6">
+                                                <a href="/my/eotq"
+                                                    class="d-flex align-items-center p-2 rounded bg-light text-decoration-none text-dark border">
+                                                    <i class="fa fa-trophy text-warning me-2" />
+                                                    <span>EOTQ</span>
+                                                </a>
+                                            </div>
+                                            <!-- Evaluations -->
+                                            <div class="col-6">
+                                                <a href="/my/shift_evaluations"
+                                                    class="d-flex align-items-center p-2 rounded bg-light text-decoration-none text-dark border">
+                                                    <i class="fa fa-star-half-o text-primary me-2" />
+                                                    <span>Đánh giá</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- CỘT PHẢI: WIDGETS (Sự kiện, Thông báo) -->
+                        <div class="col-lg-3 d-none d-lg-block">
+                            <!-- Widget: Sinh nhật / Sự kiện -->
+                            <div class="social-card p-3">
+                                <h6 class="text-muted fw-bold mb-3" style="font-size: 13px;">SỰ KIỆN
+                                    SẮP TỚI</h6>
+                                <t t-if="upcoming_events">
+                                    <t t-foreach="upcoming_events" t-as="event">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div
+                                                t-attf-class="rounded bg-#{event.color} text-white d-flex flex-column align-items-center justify-content-center me-3"
+                                                style="width: 50px; height: 50px;">
+                                                <span style="font-size: 10px; font-weight: bold;">
+                                                    THG <t t-esc="event.date.strftime('%m')" /></span>
+                                                <span style="font-size: 18px; font-weight: bold;">
+                                                    <t t-esc="event.date.strftime('%d')" />
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark"
+                                                    style="font-size: 14px;">
+                                                    <t t-esc="event.name" />
+                                                </div>
+                                                <small class="text-muted">
+                                                    <t t-if="event.location"><t
+                                                            t-esc="event.location" /> • </t>
+                                                    <t t-esc="event.date.strftime('%H:%M')" />
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </t>
+                                <t t-else="">
+                                    <div class="text-center text-muted small py-3">
+                                        Chưa có sự kiện nào sắp tới
+                                    </div>
+                                </t>
+                            </div>
+                            <!-- Widget: Footer -->
+                            <div class="text-muted small px-2">
+                                <a href="#" class="text-muted text-decoration-none">Quyền riêng tư</a>
+                                • <a href="#" class="text-muted text-decoration-none">Điều khoản</a>
+                                • <a href="#" class="text-muted text-decoration-none">Odoo Portal ©
+                                2026</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+    </template>
+    <!-- Các template con cho từng App giữ nguyên như cũ, chỉ thừa hưởng layout mới -->
+    <template id="portal_app_base" name="Portal App Base">
+        <t t-call="portal.portal_layout">
+            <div class="container py-4">
+                <div class="row">
+                    <!-- Giữ lại menu bên trái để điều hướng dễ hơn khi vào trong App -->
+                    <div class="col-lg-3 d-none d-lg-block">
+                        <div class="social-card p-3">
+                            <a href="/my/home" class="btn btn-outline-primary w-100 mb-2">
+                                <i class="fa fa-arrow-left me-2" /> Quay lại Bảng tin </a>
+                            <hr />
+                            <h6 class="text-muted mb-3">MENU APP</h6>
+                            <!-- List lại menu app ở đây nếu cần -->
+                        </div>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="social-card p-5 text-center" style="min-height: 400px;">
+                            <h1 class="display-4 mb-4 text-primary">
+                                <i t-if="app_name == 'Leaves'" class="fa fa-calendar-check-o" />
+                                <i t-elif="app_name == 'Payslips'" class="fa fa-money" />
+                                <i t-else="" class="fa fa-cube" />
+                            </h1>
+                            <h2 class="mb-3">
+                                <t t-esc="app_name" />
+                            </h2>
+                            <p class="text-muted lead"> Xin chào <t t-esc="request.env.user.name" />
+                                , chức năng này đang được phát triển. </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    <!-- Giữ nguyên các định nghĩa template con -->
+    <template id="portal_app_leaves" name="Portal App Leaves">
+        <t t-call="portal_custom.portal_app_base" />
+    </template>
+
+    <template id="portal_app_personal_information" name="Portal App Personal Information">
+        <t t-call="portal_custom.portal_app_base" />
+    </template>
+
+    <template id="portal_app_performance" name="Portal App Performance">
+        <t t-call="portal_custom.portal_app_base" />
+    </template>
+
+    <template id="portal_app_employee_engagement" name="Portal App Employee Engagement">
+        <t t-call="portal_custom.portal_app_base" />
+    </template>
+
+    <template id="portal_app_expenses" name="Portal App Expenses">
+        <t t-call="portal_custom.portal_app_base" />
+    </template>
+
+    <template id="portal_app_cond" name="Portal App COND">
+        <t t-call="portal_custom.portal_app_base" />
+    </template>
+
+    <template id="portal_app_payslips" name="Portal App Payslips">
+        <t t-call="portal_custom.portal_app_base" />
+    </template>
+
+    <template id="portal_app_knowledge_hub" name="Portal App Knowledge Hub">
+        <t t-call="portal_custom.portal_app_base" />
+    </template>
+
+    <!-- ========== TEAM ACCOUNTABILITIES ========== -->
+    <template id="portal_app_team_accountabilities" name="Portal App Team Accountabilities">
+        <t t-call="portal.portal_layout">
+            <div class="container py-4">
+                <div class="row">
+                    <!-- Left Sidebar for Navigation back to Home -->
+                    <div class="col-lg-2 d-none d-lg-block">
+                        <div class="social-card p-3">
+                            <a href="/my/home" class="btn btn-outline-primary w-100 mb-2">
+                                <i class="fa fa-arrow-left me-2" /> Quay lại </a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-10">
+                        <!-- Main Content Card -->
+                        <div class="social-card p-4" style="min-height: 600px;">
+                            <h3 class="mb-4 text-primary"><i class="fa fa-users me-2" />Team và Đội
+                                nhóm</h3>
+
+                            <!-- Only show content if user is a manager -->
+                            <t t-if="not is_manager">
+                                <div class="alert alert-info text-center py-5">
+                                    <i class="fa fa-info-circle fa-2x mb-3 d-block" /> Tính năng này
+                                    dành riêng cho Quản lý nhà hàng (RGM) hoặc Trưởng ca. </div>
+                            </t>
+
+                            <t t-if="is_manager">
+                                <!-- Navigation Tabs -->
+                                <ul class="nav nav-tabs mb-4" id="teamTabs" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active fw-bold text-dark"
+                                            id="shift-tab" data-bs-toggle="tab"
+                                            data-bs-target="#shift-pane" type="button" role="tab"
+                                            aria-controls="shift-pane" aria-selected="true">
+                                            <i class="fa fa-calendar-check-o me-2" /> Quản lý Ca </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link fw-bold text-dark"
+                                            id="timesheet-tab" data-bs-toggle="tab"
+                                            data-bs-target="#timesheet-pane" type="button"
+                                            role="tab" aria-controls="timesheet-pane"
+                                            aria-selected="false">
+                                            <i class="fa fa-table me-2" /> Bảng chấm công </button>
+                                    </li>
+                                </ul>
+
+                                <!-- Tab Contents -->
+                                <div class="tab-content" id="teamTabContent">
+
+                                    <!-- TAB 1: SHIFT MANAGEMENT -->
+                                    <div class="tab-pane fade show active" id="shift-pane"
+                                        role="tabpanel" aria-labelledby="shift-tab">
+                                        <!-- Shift Sub-Tabs: Pre-shift, During-shift, Post-shift -->
+                                        <ul class="nav nav-pills nav-fill mb-3 rounded bg-light p-1"
+                                            id="shiftPhaseTabs" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link active" id="preshift-tab"
+                                                    data-bs-toggle="pill" data-bs-target="#preshift"
+                                                    type="button" role="tab">Pre Shift</button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="duringshift-tab"
+                                                    data-bs-toggle="pill"
+                                                    data-bs-target="#duringshift" type="button"
+                                                    role="tab">During Shift</button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="postshift-tab"
+                                                    data-bs-toggle="pill"
+                                                    data-bs-target="#postshift" type="button"
+                                                    role="tab">Post Shift</button>
+                                            </li>
+                                        </ul>
+
+                                        <!-- Shift List by Employee -->
+                                        <div class="table-responsive">
+                                            <table class="table table-hover align-middle border">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th style="width: 5%">STT</th>
+                                                        <th style="width: 25%">Nhân viên</th>
+                                                        <th style="width: 20%">Vị trí</th>
+                                                        <th style="width: 30%">Thời gian ca</th>
+                                                        <th style="width: 20%">Đánh giá</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <t t-if="not shift_data">
+                                                        <tr>
+                                                            <td colspan="5"
+                                                                class="text-center py-4 text-muted">Không
+                                                                có ca làm việc sắp tới nào.</td>
+                                                        </tr>
+                                                    </t>
+                                                    <t t-foreach="shift_data" t-as="shift">
+                                                        <tr>
+                                                            <td>
+                                                                <t t-esc="shift_index + 1" />
+                                                            </td>
+                                                            <td class="fw-bold">
+                                                                <img
+                                                                    t-att-src="image_data_uri(shift.resource_id.employee_id.avatar_128) if shift.resource_id.employee_id.avatar_128 else '/web/static/img/placeholder.png'"
+                                                                    class="rounded-circle me-2 border"
+                                                                    style="width: 30px; height: 30px; object-fit: cover;" />
+                                                                <t t-esc="shift.resource_id.name" />
+                                                            </td>
+                                                            <td>
+                                                                <span
+                                                                    class="badge bg-info text-dark">
+                                                                    <t
+                                                                        t-esc="shift.role_id.name if shift.role_id else 'Chưa phân công' " />
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <i
+                                                                    class="fa fa-clock-o me-1 text-muted" />
+                                                                <t
+                                                                    t-esc="shift.start_datetime.strftime('%d/%m/%Y %H:%M')" />
+                                                                - <t
+                                                                    t-esc="shift.end_datetime.strftime('%H:%M')" />
+                                                            </td>
+                                                            <td>
+                                                                <a
+                                                                    t-attf-href="/my/shift_evaluations"
+                                                                    class="btn btn-sm btn-outline-primary w-100">
+                                                                    Đánh giá cuối ca
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <!-- TAB 2: TIMESHEET (Bảng chấm công) -->
+                                    <div class="tab-pane fade" id="timesheet-pane" role="tabpanel"
+                                        aria-labelledby="timesheet-tab">
+                                        <div
+                                            class="d-flex justify-content-between align-items-center mb-3">
+                                            <h5 class="mb-0 text-success">Bảng chấm công tháng này</h5>
+                                            <div class="text-muted small"><i
+                                                    class="fa fa-info-circle me-1" /> Giờ làm việc =
+                                                Check-out trừ Check-in (giờ thập phân)</div>
+                                        </div>
+
+                                        <!-- Excel-like Table Wrapper -->
+                                        <div class="table-responsive border"
+                                            style="max-height: 500px; overflow-y: auto; overflow-x: auto; white-space: nowrap;">
+                                            <table
+                                                class="table table-bordered table-sm table-hover text-center mb-0"
+                                                style="font-size: 13px;">
+                                                <thead class="table-warning sticky-top text-dark"
+                                                    style="z-index: 2;">
+                                                    <tr class="align-middle">
+                                                        <th rowspan="2"
+                                                            class="sticky-start bg-warning align-middle"
+                                                            style="left: 0; z-index: 3; min-width: 50px;">
+                                                            STT</th>
+                                                        <th rowspan="2"
+                                                            class="sticky-start bg-warning align-middle text-start"
+                                                            style="left: 50px; z-index: 3; min-width: 200px;">Họ
+                                                            và tên</th>
+                                                        <th rowspan="2"
+                                                            class="sticky-start bg-warning align-middle text-start"
+                                                            style="left: 250px; z-index: 3; min-width: 150px;">Chức
+                                                            vụ</th>
+                                                        <th t-att-colspan="len(days_in_month)"
+                                                            class="bg-warning">Ngày trong tháng</th>
+                                                        <th rowspan="2"
+                                                            class="bg-warning align-middle"
+                                                            style="min-width: 80px;">Tổng LV<br />
+                                                            trong<br />tháng</th>
+                                                        <th rowspan="2"
+                                                            class="bg-warning align-middle"
+                                                            style="min-width: 100px;">Ghi chú</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <t t-foreach="days_in_month" t-as="day">
+                                                            <th class="bg-warning text-dark">
+                                                                <t t-esc="day" />
+                                                            </th>
+                                                        </t>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <t t-set="total_hrs_month" t-value="0.0" />
+                                                    <t t-foreach="subordinates" t-as="sub">
+                                                        <t t-set="sub_hrs" t-value="0.0" />
+                                                        <tr>
+                                                            <td class="sticky-start bg-white"
+                                                                style="left: 0; z-index: 1;">
+                                                                <t t-esc="sub_index + 1" />
+                                                            </td>
+                                                            <td
+                                                                class="sticky-start bg-white text-start fw-bold text-dark"
+                                                                style="left: 50px; z-index: 1;">
+                                                                <img
+                                                                    t-att-src="image_data_uri(sub.avatar_128) if sub.avatar_128 else '/web/static/img/placeholder.png'"
+                                                                    class="rounded-circle me-2 border"
+                                                                    style="width: 24px; height: 24px; object-fit: cover;" />
+                                                                <t t-esc="sub.name" />
+                                                            </td>
+                                                            <td
+                                                                class="sticky-start bg-white text-start text-muted"
+                                                                style="left: 250px; z-index: 1;">
+                                                                <t
+                                                                    t-esc="sub.job_id.name if sub.job_id else ''" />
+                                                            </td>
+                                                            <t t-foreach="days_in_month" t-as="day">
+                                                                <t t-set="hrs"
+                                                                    t-value="attendance_by_employee.get(sub, {}).get(day, 0.0)" />
+                                                                <t t-set="sub_hrs"
+                                                                    t-value="sub_hrs + hrs" />
+
+                                                                <td
+                                                                    t-attf-class="{'bg-light text-muted': hrs == 0, 'bg-info text-white fw-bold': hrs > 0}">
+                                                                    <t
+                                                                        t-esc="'%.2f' % hrs if hrs > 0 else ''" />
+                                                                </td>
+                                                            </t>
+                                                            <td class="fw-bold bg-light">
+                                                                <t t-esc="'%.2f' % sub_hrs" />
+                                                            </td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <t t-set="total_hrs_month"
+                                                            t-value="total_hrs_month + sub_hrs" />
+                                                    </t>
+
+                                                    <!-- Total Row -->
+                                                    <tr class="table-secondary fw-bold">
+                                                        <td colspan="3" class="text-end pe-3">Tổng
+                                                            Cộng</td>
+                                                        <td t-att-colspan="len(days_in_month)"></td>
+                                                        <td class="text-danger">
+                                                            <t t-esc="'%.2f' % total_hrs_month" />
+                                                        </td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <!-- Footer Actions for RGM -->
+                                        <div
+                                            class="mt-4 p-3 bg-light rounded border d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="mb-1 text-dark">Chốt Chấm Công Hàng Ngày</h6>
+                                                <small class="text-muted">RGM kiểm tra và duyệt ngày
+                                                    làm việc đã qua</small>
+                                            </div>
+                                            <form action="/my/team-accountabilities/approve_day"
+                                                method="POST"
+                                                class="d-flex align-items-center gap-2">
+                                                <input type="hidden" name="csrf_token"
+                                                    t-att-value="request.csrf_token()" />
+                                                <select name="day"
+                                                    class="form-select form-select-sm" required="1"
+                                                    style="width: 120px;">
+                                                    <option value="">Chọn ngày...</option>
+                                                    <t t-foreach="days_in_month" t-as="d">
+                                                        <option t-att-value="d">Ngày <t t-esc="d" /></option>
+                                                    </t>
+                                                </select>
+                                                <button type="submit" class="btn btn-success btn-sm"
+                                                    onclick="return confirm('Bạn xác nhận Duyệt ngày công này?');">
+                                                    <i class="fa fa-check-circle me-1" /> Duyệt </button>
+                                            </form>
+                                        </div>
+
+                                        <div class="mt-4 text-end text-muted small px-3 pb-2 pt-5">
+                                            <em>Hà Nội, ngày ..... tháng ..... năm 20.....</em>
+                                            <br />
+                                            <strong class="text-dark d-block mt-1">NGƯỜI LẬP / RGM</strong>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Handle default tab selection via location hash -->
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                if(window.location.hash) {
+                var targetPane = window.location.hash;
+                var triggerEl = document.querySelector('button[data-bs-target="' + targetPane +
+                '-pane"]');
+                if(triggerEl) {
+                var tab = new bootstrap.Tab(triggerEl);
+                tab.show();
+                }
+                }
+                });
+            </script>
+        </t>
+    </template>
+
+    <!-- ========== SETTINGS PAGE ========== -->
+    <template id="portal_settings_page" name="Portal Settings Page">
+        <t t-call="portal.portal_layout">
+            <div class="container py-4">
+                <div class="social-card p-4 mb-3">
+                    <h3 class="mb-4">Cài đặt</h3>
+                    <!-- Default Portal Content: Addresses & Security -->
+                    <div class="row g-3">
+                        <!-- Addresses Card -->
+                        <div class="col-md-6">
+                            <a href="/my/addresses"
+                                class="d-flex gap-3 p-3 rounded text-decoration-none bg-100 h-100">
+                                <div class="o_portal_icon">
+                                    <img src="/portal/static/src/img/portal-addresses.svg"
+                                        alt="Addresses" />
+                                </div>
+                                <div>
+                                    <div class="fs-5 fw-normal lh-1 mb-1">Địa chỉ</div>
+                                    <div class="opacity-75">Thêm, xóa hoặc sửa địa chỉ của bạn</div>
+                                </div>
+                            </a>
+                        </div>
+                        <!-- Connection & Security Card -->
+                        <div class="col-md-6">
+                            <a href="/my/security"
+                                class="d-flex gap-3 p-3 rounded text-decoration-none bg-100 h-100">
+                                <div class="o_portal_icon">
+                                    <img src="/portal/static/src/img/portal-connection.svg"
+                                        alt="Security" />
+                                </div>
+                                <div>
+                                    <div class="fs-5 fw-normal lh-1 mb-1">Kết nối và Bảo mật</div>
+                                    <div class="opacity-75">Cấu hình mật khẩu và các tùy chọn bảo
+                                        mật</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

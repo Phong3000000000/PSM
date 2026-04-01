@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+               <record id="email_template_gov_update_done" model="mail.template">
+            <field name="name">TB Cập nhật Dịch vụ công hoàn tất</field>
+            <field name="model_id" ref="approvals.model_approval_request"/>
+            <field name="subject">Xác nhận: Thông tin Dịch vụ công cho yêu cầu {{ object.name }} đã hoàn tất</field>
+            <field name="email_to">{{ object.request_owner_id.email_formatted }}</field>
+            <field name="body_html" type="html">
+                <div style="font-family: Arial, sans-serif; font-size: 13px;">
+                    <p>Xin chào <t t-out="object.request_owner_id.name"/>,</p>
+                    <p>Bộ phận HR xác nhận đã cập nhật xong thông tin của bạn trên Cổng Dịch vụ công Quốc gia.</p>
+                    <br/>
+                    <p>Trân trọng,<br/>Phòng Nhân sự</p>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

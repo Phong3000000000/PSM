@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ===== WORKFORCE STATION VIEWS ===== -->
+    
+    <!-- Station Form View -->
+    <record id="view_workforce_station_form" model="ir.ui.view">
+        <field name="name">workforce.station.form</field>
+        <field name="model">workforce.station</field>
+        <field name="arch" type="xml">
+            <form string="Trạm Làm Việc">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object" 
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="code"/>
+                        <h1>
+                            <field name="code" placeholder="VD: FCOT"/>
+                        </h1>
+                        <label for="name"/>
+                        <h2>
+                            <field name="name" placeholder="VD: FC Out"/>
+                        </h2>
+                    </div>
+                    <group>
+                        <group string="Cấu hình">
+                            <field name="sequence"/>
+                            <field name="planning_role_id"/>
+                        </group>
+                        <group string="Năng suất">
+                            <field name="productivity_standard"/>
+                            <field name="current_upt_ratio"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Bảng Định Biên" name="positioning_guide">
+                            <field name="positioning_guide_ids">
+                                <list editable="bottom">
+                                    <field name="min_gc"/>
+                                    <field name="max_gc"/>
+                                    <field name="required_headcount"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Ghi chú" name="notes">
+                            <field name="description" placeholder="Mô tả chi tiết..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Station List View -->
+    <record id="view_workforce_station_list" model="ir.ui.view">
+        <field name="name">workforce.station.list</field>
+        <field name="model">workforce.station</field>
+        <field name="arch" type="xml">
+            <list string="Trạm Làm Việc" editable="top">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="planning_role_id"/>
+                <field name="productivity_standard"/>
+                <field name="current_upt_ratio"/>
+            </list>
+        </field>
+    </record>
+    
+    <!-- Station Search View -->
+    <record id="view_workforce_station_search" model="ir.ui.view">
+        <field name="name">workforce.station.search</field>
+        <field name="model">workforce.station</field>
+        <field name="arch" type="xml">
+            <search string="Tìm trạm">
+                <field name="code"/>
+                <field name="name"/>
+                <filter string="Đang hoạt động" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Không hoạt động" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+    
+    <!-- Station Action -->
+    <record id="action_workforce_station" model="ir.actions.act_window">
+        <field name="name">Trạm Làm Việc</field>
+        <field name="res_model">workforce.station</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tạo trạm làm việc đầu tiên
+            </p>
+            <p>
+                Trạm làm việc định nghĩa các vị trí trong nhà hàng như RINI (Runner In), FCOT (FC Out), v.v.
+                Mỗi trạm có bảng định biên riêng để xác định số nhân sự cần thiết theo lượng khách.
+            </p>
+        </field>
+    </record>
+    
+    <!-- ===== POSITIONING GUIDE VIEWS ===== -->
+    
+    <!-- Positioning Guide List View -->
+    <record id="view_positioning_guide_list" model="ir.ui.view">
+        <field name="name">workforce.positioning.guide.list</field>
+        <field name="model">workforce.positioning.guide</field>
+        <field name="arch" type="xml">
+            <list string="Bảng Định Biên" editable="top">
+                <field name="station_id"/>
+                <field name="min_gc"/>
+                <field name="max_gc"/>
+                <field name="required_headcount"/>
+            </list>
+        </field>
+    </record>
+    
+    <!-- Positioning Guide Action -->
+    <record id="action_positioning_guide" model="ir.actions.act_window">
+        <field name="name">Bảng Định Biên</field>
+        <field name="res_model">workforce.positioning.guide</field>
+        <field name="view_mode">list</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tạo quy tắc định biên đầu tiên
+            </p>
+            <p>
+                Bảng định biên xác định số nhân sự cần thiết cho mỗi trạm dựa trên lượng khách.
+                VD: GC từ 0-30 cần 1 người, 31-60 cần 2 người, v.v.
+            </p>
+        </field>
+    </record>
+</odoo>

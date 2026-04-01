@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Module Category -->
+        <record id="module_mcdonald_payroll_ops" model="ir.module.category">
+            <field name="name">McDonald's Payroll OPS 0207</field>
+            <field name="sequence">100</field>
+        </record>
+
+        <!-- C-Level Approver Group -->
+        <record id="group_c_level_approver" model="res.groups">
+            <field name="name">C-Level Approver</field>
+            <!-- category_id field removed as it is invalid in this environment/version -->
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/> 
+            <field name="comment">Users in this group can approve Payment Orders</field>
+        </record>
+    </data>
+</odoo>
+

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Offboarding Activity Plan for Employees -->
+    <record id="offboarding_activity_plan" model="mail.activity.plan">
+        <field name="name">Quy trình nghỉ việc RST (22 Bước)</field>
+        <field name="res_model">hr.employee</field>
+        <field name="active" eval="True"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+
+    <!-- Step 8: Exit Interview (Employee) -->
+    <record id="plan_step_8_exit_interview" model="mail.activity.plan.template">
+        <field name="plan_id" ref="offboarding_activity_plan"/>
+        <field name="sequence">8</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">Bước 8: Thực hiện Exit Interview</field>
+        <field name="note">Nhân viên thực hiện làm exit interview theo mẫu.</field>
+        <field name="responsible_type">employee</field>
+    </record>
+
+    <!-- Step 9: Handover Work (Employee) -->
+    <record id="plan_step_9_handover_work" model="mail.activity.plan.template">
+        <field name="plan_id" ref="offboarding_activity_plan"/>
+        <field name="sequence">9</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">Bước 9: Bàn giao công việc, tài liệu</field>
+        <field name="note">Tiến hành bàn giao công việc, tài liệu, giấy tờ liên quan.</field>
+        <field name="responsible_type">employee</field>
+    </record>
+
+    <!-- Step 10: Evaluate Handover (Manager) -->
+    <record id="plan_step_10_evaluate" model="mail.activity.plan.template">
+        <field name="plan_id" ref="offboarding_activity_plan"/>
+        <field name="sequence">10</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">Bước 10: Đánh giá công việc bàn giao</field>
+        <field name="note">Quản lý trực tiếp đánh giá chất lượng bàn giao.</field>
+        <field name="responsible_type">manager</field>
+    </record>
+
+    <!-- Step 11: Confirm Recovery (Manager) -->
+    <record id="plan_step_11_confirm_recovery" model="mail.activity.plan.template">
+        <field name="plan_id" ref="offboarding_activity_plan"/>
+        <field name="sequence">11</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">Bước 11: Xác nhận hoàn tất thu hồi</field>
+        <field name="note">Xác nhận đã thu hồi đầy đủ các checklist bàn giao.</field>
+        <field name="responsible_type">manager</field>
+    </record>
+
+    <!-- Step 12: Check Pending Payments (Manager/Accountant) -->
+    <record id="plan_step_12_check_payments" model="mail.activity.plan.template">
+        <field name="plan_id" ref="offboarding_activity_plan"/>
+        <field name="sequence">12</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">Bước 12: Kiểm tra các khoản thanh toán chưa hoàn tất</field>
+        <field name="note"><![CDATA[Hệ thống kiểm tra/Kế toán rà soát các khoản thanh toán chưa hoàn tất:
+- Tạm ứng chưa hoàn
+- Công tác phí chưa thanh toán
+- Các khoản vay/mượn công ty
+Thông báo đến nhân viên nếu có tồn đọng.
+]]></field>
+        <field name="responsible_type">manager</field>
+    </record>
+
+    <!-- Step 13: IT Confirm (IT - assigned to Manager/Admin acting) -->
+    <record id="plan_step_13_it_confirm" model="mail.activity.plan.template">
+        <field name="plan_id" ref="offboarding_activity_plan"/>
+        <field name="sequence">13</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">Bước 13: IT xác nhận hoàn thành checklist</field>
+        <field name="note"><![CDATA[IT xác nhận:
+- Deactivate email
+- Deactivate tài khoản nội bộ
+- Thu hồi thiết bị máy móc liên quan
+]]></field>
+        <field name="responsible_type">manager</field>
+    </record>
+
+    <!-- Step 14: Admin Confirm (Admin - assigned to Manager acting) -->
+    <record id="plan_step_14_admin_confirm" model="mail.activity.plan.template">
+        <field name="plan_id" ref="offboarding_activity_plan"/>
+        <field name="sequence">14</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">Bước 14: Admin xác nhận checklist bàn giao</field>
+        <field name="note"><![CDATA[Admin xác nhận thu hồi:
+- Office keyboard
+- Biometric Staff ID Deletion
+- Desk / cabinet keys
+- Mobile phone & accessories
+- ...
+]]></field>
+        <field name="responsible_type">manager</field>
+    </record>
+
+    <!-- Step 15: HR Confirm PVI (HR - assigned to Manager acting) -->
+    <record id="plan_step_15_hr_pvi" model="mail.activity.plan.template">
+        <field name="plan_id" ref="offboarding_activity_plan"/>
+        <field name="sequence">15</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">Bước 15: HR xác nhận thẻ PVI</field>
+        <field name="note">HR xác nhận hoàn thành checklist bàn giao PVI Health Insurance Card (included dependents).</field>
+        <field name="responsible_type">manager</field>
+    </record>
+
+    <!-- Step 17: Sign Settlement (Manager) -->
+    <record id="plan_step_17_sign_settlement" model="mail.activity.plan.template">
+        <field name="plan_id" ref="offboarding_activity_plan"/>
+        <field name="sequence">17</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">Bước 17: Ký quyết toán lương</field>
+        <field name="note">Ký biên bản quyết toán lương cuối cùng.</field>
+        <field name="responsible_type">manager</field>
+    </record>
+
+    <!-- Step 19: Pay Period Payment (Manager) -->
+    <record id="plan_step_19_pay_period" model="mail.activity.plan.template">
+        <field name="plan_id" ref="offboarding_activity_plan"/>
+        <field name="sequence">19</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">Bước 19: Thanh toán theo kỳ lương</field>
+        <field name="note">Thực hiện thanh toán theo kỳ lương.</field>
+        <field name="responsible_type">manager</field>
+    </record>
+
+    <!-- Step 20: Final Handover (Manager/HR) -->
+    <record id="plan_step_20_final_handover" model="mail.activity.plan.template">
+        <field name="plan_id" ref="offboarding_activity_plan"/>
+        <field name="sequence">20</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">Bước 20: Bàn giao Quyết định &amp; Giấy tờ</field>
+        <field name="note">Nhân viên nhận quyết định nghỉ việc, lương và các giấy tờ liên quan.</field>
+        <field name="responsible_type">manager</field>
+    </record>
+</odoo>

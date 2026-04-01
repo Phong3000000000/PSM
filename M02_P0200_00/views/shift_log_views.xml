@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ======================================= -->
+    <!-- SHIFT LOG - Form View                   -->
+    <!-- ======================================= -->
+
+    <record id="view_shift_log_form" model="ir.ui.view">
+        <field name="name">shift.log.form</field>
+        <field name="model">shift.log</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_prepare" string="Chuẩn Bị"
+                            type="object" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_start" string="Bắt Đầu Ca"
+                            type="object" class="btn-primary"
+                            invisible="state != 'preparing'"/>
+                    <button name="action_evaluate" string="Kết Thúc Ca"
+                            type="object" class="btn-primary"
+                            invisible="state != 'running'"/>
+                    <button name="action_done" string="Hoàn Thành Đánh Giá"
+                            type="object" class="btn-success"
+                            invisible="state != 'evaluating'"/>
+                    <button name="action_reset_draft" string="Đặt Lại Nháp"
+                            type="object"
+                            invisible="state in ('draft', 'done')"
+                            confirm="Bạn có chắc chắn muốn đặt lại trạng thái Nháp?"/>
+                    <button name="action_pull_employees" string="⟳ Lấy NV Từ Planning"
+                            type="object" class="btn-secondary"
+                            invisible="state in ('done',)"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,preparing,running,evaluating,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Thông Tin Ca">
+                            <field name="pos_config_id" readonly="state != 'draft'"/>
+                            <field name="date" readonly="state != 'draft'"/>
+                            <field name="shift_id" readonly="state != 'draft'"/>
+                            <field name="mic_id"/>
+                        </group>
+                        <group string="Chỉ Số KPI">
+                            <field name="gc_projected"/>
+                            <field name="gc_actual"/>
+                            <field name="sales_projected"/>
+                            <field name="sales_actual"/>
+                            <field name="labor_hours" widget="float_time"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <!-- Tab Nhân Viên -->
+                        <page string="Nhân Viên Trong Ca" name="employees">
+                            <field name="employee_line_ids">
+                                <list editable="bottom">
+                                    <field name="employee_id"/>
+                                    <field name="working_hours" widget="float_time"/>
+                                    <field name="attendance_status"/>
+                                    <field name="notes"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- Tab Pre-shift -->
+                        <page string="Pre-shift" name="preshift">
+                            <field name="checklist_line_ids"
+                                   domain="[('shift_phase', '=', 'preshift')]"
+                                   context="{'default_shift_phase': 'preshift'}">
+                                <list editable="bottom">
+                                    <field name="shift_phase" column_invisible="True"/>
+                                    <field name="checklist_id" domain="[('shift_phase', '=', 'preshift')]"/>
+                                    <field name="is_done" widget="boolean_toggle"/>
+                                    <field name="responsible_id"/>
+                                    <field name="result"/>
+                                    <field name="notes"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- Tab During Shift -->
+                        <page string="During Shift" name="during">
+                            <field name="checklist_line_ids"
+                                   domain="[('shift_phase', '=', 'during')]"
+                                   context="{'default_shift_phase': 'during'}">
+                                <list editable="bottom">
+                                    <field name="shift_phase" column_invisible="True"/>
+                                    <field name="checklist_id" domain="[('shift_phase', '=', 'during')]"/>
+                                    <field name="is_done" widget="boolean_toggle"/>
+                                    <field name="responsible_id"/>
+                                    <field name="result"/>
+                                    <field name="notes"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- Tab Post-shift -->
+                        <page string="Post-shift" name="postshift">
+                            <field name="checklist_line_ids"
+                                   domain="[('shift_phase', '=', 'postshift')]"
+                                   context="{'default_shift_phase': 'postshift'}">
+                                <list editable="bottom">
+                                    <field name="shift_phase" column_invisible="True"/>
+                                    <field name="checklist_id" domain="[('shift_phase', '=', 'postshift')]"/>
+                                    <field name="is_done" widget="boolean_toggle"/>
+                                    <field name="responsible_id"/>
+                                    <field name="result"/>
+                                    <field name="notes"/>
+                                </list>
+                            </field>
+                            <group string="Nhân Viên Xuất Sắc" col="2">
+                                <field name="best_employee_id"/>
+                                <field name="best_employee_reason"/>
+                            </group>
+                        </page>
+
+                        <!-- Tab Bàn Giao -->
+                        <page string="Bàn Giao" name="handover">
+                            <group>
+                                <field name="handover_notes" placeholder="Ghi chú bàn giao cho ca tiếp theo..."/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ======================================= -->
+    <!-- SHIFT LOG - Tree View                   -->
+    <!-- ======================================= -->
+
+    <record id="view_shift_log_tree" model="ir.ui.view">
+        <field name="name">shift.log.tree</field>
+        <field name="model">shift.log</field>
+        <field name="arch" type="xml">
+            <list decoration-info="state == 'draft'"
+                  decoration-warning="state == 'preparing'"
+                  decoration-success="state == 'running'"
+                  decoration-primary="state == 'evaluating'"
+                  decoration-muted="state == 'done'"
+                  multi_edit="1">
+                <field name="date"/>
+                <field name="pos_config_id"/>
+                <field name="shift_id"/>
+                <field name="mic_id" widget="many2one_avatar_employee"/>
+                <field name="gc_projected"/>
+                <field name="gc_actual"/>
+                <field name="sales_projected"/>
+                <field name="sales_actual"/>
+                <field name="labor_hours" widget="float_time"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'preparing'"
+                       decoration-success="state == 'running'"
+                       decoration-primary="state == 'evaluating'"
+                       decoration-muted="state == 'done'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ======================================= -->
+    <!-- SHIFT LOG - Search View                 -->
+    <!-- ======================================= -->
+
+    <record id="view_shift_log_search" model="ir.ui.view">
+        <field name="name">shift.log.search</field>
+        <field name="model">shift.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="pos_config_id"/>
+                <field name="shift_id"/>
+                <field name="mic_id"/>
+                <field name="department_id"/>
+                <filter string="Nháp" name="filter_draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Chuẩn Bị" name="filter_preparing" domain="[('state', '=', 'preparing')]"/>
+                <filter string="Đang Chạy" name="filter_running" domain="[('state', '=', 'running')]"/>
+                <filter string="Đánh Giá" name="filter_evaluating" domain="[('state', '=', 'evaluating')]"/>
+                <filter string="Hoàn Thành" name="filter_done" domain="[('state', '=', 'done')]"/>
+                <separator/>
+                <filter string="Ngày" name="filter_date" date="date"/>
+                <separator/>
+                <filter string="Phòng Ban" name="groupby_department"
+                    context="{'group_by': 'department_id'}"/>
+                <filter string="Cửa Hàng" name="groupby_pos"
+                    context="{'group_by': 'pos_config_id'}"/>
+                <filter string="Ca" name="groupby_shift"
+                    context="{'group_by': 'shift_id'}"/>
+                <filter string="Tháng" name="groupby_month"
+                    context="{'group_by': 'date:month'}"/>
+                <filter string="Trạng Thái" name="groupby_state"
+                    context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ======================================= -->
+    <!-- SHIFT LOG - Gantt View                  -->
+    <!-- ======================================= -->
+    <record id="view_shift_log_gantt" model="ir.ui.view">
+        <field name="name">shift.log.gantt</field>
+        <field name="model">shift.log</field>
+        <field name="arch" type="xml">
+            <gantt string="Phân Bổ MIC"
+                   date_start="start_datetime"
+                   date_stop="end_datetime"
+                   default_group_by="department_id,pos_config_id"
+                   pill_label="True"
+                   color="pos_config_id"
+                   scales="day,week,month"
+                   precision="{'day': 'hour:full', 'week': 'day:full', 'month': 'day:full'}"
+                   sample="1">
+                <field name="mic_id"/>
+                <field name="pos_config_id"/>
+                <field name="department_id"/>
+            </gantt>
+        </field>
+    </record>
+
+    <!-- ======================================= -->
+    <!-- SHIFT LOG - Calendar View               -->
+    <!-- ======================================= -->
+    <record id="view_shift_log_calendar" model="ir.ui.view">
+        <field name="name">shift.log.calendar</field>
+        <field name="model">shift.log</field>
+        <field name="arch" type="xml">
+            <calendar string="Lịch MIC"
+                      date_start="start_datetime"
+                      date_stop="end_datetime"
+                      color="pos_config_id"
+                      event_open_popup="true"
+                      mode="month">
+                <field name="pos_config_id"/>
+                <field name="shift_id"/>
+                <field name="mic_id" widget="many2one_avatar_employee"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- ======================================= -->
+    <!-- SHIFT LOG - Action & Menu               -->
+    <!-- ======================================= -->
+
+    <!-- ======================================= -->
+    <!-- SHIFT LOG - MIC Matrix Client Action    -->
+    <!-- ======================================= -->
+    <record id="action_mic_matrix" model="ir.actions.client">
+        <field name="name">Bảng Gán MIC</field>
+        <field name="tag">mic_assignment_matrix</field>
+        <field name="target">main</field>
+    </record>
+
+    <record id="action_shift_log" model="ir.actions.act_window">
+        <field name="name">Nhật Ký Ca Làm</field>
+        <field name="res_model">shift.log</field>
+        <field name="view_mode">gantt,calendar,list,form</field>
+        <field name="search_view_id" ref="view_shift_log_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tạo nhật ký ca làm mới
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_mic_matrix"
+              name="Bảng Gán MIC"
+              parent="point_of_sale.menu_point_of_sale"
+              action="action_mic_matrix"
+              sequence="49"/>
+
+    <menuitem id="menu_shift_log"
+              name="Nhật Ký Ca Làm"
+              parent="point_of_sale.menu_point_of_sale"
+              action="action_shift_log"
+              sequence="50"/>
+
+    <menuitem id="menu_shift_log_generate"
+              name="Generate Shift Log Tháng"
+              parent="point_of_sale.menu_point_of_sale"
+              action="action_shift_log_generate_wizard"
+              sequence="51"/>
+
+</odoo>

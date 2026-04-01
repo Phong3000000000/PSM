@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Tree View -->
+        <record id="view_psm_db_mapping_model_tree" model="ir.ui.view">
+            <field name="name">psm.db.mapping.model.tree</field>
+            <field name="model">psm.db.mapping.model</field>
+            <field name="arch" type="xml">
+                <list string="Ánh xạ mô hình" sample="1">
+                    <field name="name"/>
+                    <field name="connection_id"/>
+                    <field name="target_model_id"/>
+                    <field name="source_type"/>
+                    <field name="source_table"/>
+                    <field name="field_mapping_count"/>
+                    <field name="last_sync_date"/>
+                    <field name="active" widget="boolean_toggle"/>
+                    <field name="user_id" widget="many2one_avatar_user"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Form View -->
+        <record id="view_psm_db_mapping_model_form" model="ir.ui.view">
+            <field name="name">psm.db.mapping.model.form</field>
+            <field name="model">psm.db.mapping.model</field>
+            <field name="arch" type="xml">
+                <form string="Ánh xạ mô hình">
+                    <header>
+                        <button name="action_get_source_fields" type="object" string="Tạo ánh xạ trường"
+                                class="btn-primary" icon="fa-magic" invisible="not connection_id"/>
+                        <button name="action_sync_now" type="object" string="Đồng bộ ngay"
+                                class="btn-success" icon="fa-refresh" invisible="not config_ok"/>
+                        <button name="action_check_mapping_ready_for_sync" type="object"
+                                string="Kiểm tra mapping" class="btn-secondary" icon="fa-check"/>
+                        <field name="active" widget="boolean_button"
+                               options="{'terminology': {'string_true': 'Đang hoạt động', 'string_false': 'Ngừng hoạt động'}}"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_field_mappings" type="object" class="oe_stat_button"
+                                    icon="fa-list-alt">
+                                <field name="field_mapping_count" widget="statinfo" string="Trường"/>
+                            </button>
+                            <button name="action_view_sync_history" type="object" class="oe_stat_button"
+                                    icon="fa-history">
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_text">Lịch sử</span>
+                                </div>
+                            </button>
+                        </div>
+
+                        <widget name="web_ribbon" title="Ngừng hoạt động" bg_color="bg-danger" invisible="active"/>
+
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Tên ánh xạ..."/>
+                            </h1>
+                        </div>
+
+                        <group>
+                            <group name="source_config" string="Cấu hình nguồn">
+                                <field name="connection_id" required="1" options="{'no_create': True}"/>
+                                <field name="source_type"/>
+                                <field name="source_table" invisible="source_type != 'table'"/>
+                                <field name="source_key_field" required="1"/>
+                            </group>
+                            <group name="target_config" string="Cấu hình đích">
+                                <field name="target_model_id" required="1" options="{'no_create': True}"/>
+                                <field name="target_model" readonly="1"/>
+                                <field name="target_key_field" required="1"/>
+                            </group>
+                        </group>
+                        <group invisible="source_type != 'query'">
+                            <group string="Truy vấn SQL">
+                                <field name="source_query" invisible="source_type != 'query'" nolabel="1"
+                                       placeholder="SELECT * FROM table_name WHERE condition" colspan="2"/>
+                            </group>
+                            <group string="Truy vấn đệ quy">
+                                 <field name="source_query_with_recursive" invisible="source_type != 'query'" nolabel="1"
+                                       placeholder="with recursive ..." colspan="2"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="Ánh xạ trường" name="field_mappings">
+                                <field name="field_mapping_ids">
+                                    <list decoration-info="is_key_field">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="source_field"/>
+                                        <field name="source_field_type" optional="hide"/>
+                                        <field name="transformation_type"/>
+                                        <field name="target_field" decoration-bf="is_required"/>
+                                        <field name="target_field_type" optional="show"/>
+                                        <field name="is_key_field" column_invisible="1"/>
+                                        <field name="is_required" column_invisible="1"/>
+                                        <field name="include_in_sync" widget="boolean_toggle"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Thông tin khác">
+                                <group>
+                                    <group name="performance" string="Hiệu suất">
+                                        <field name="batch_size"/>
+                                        <field name="use_checksum"/>
+                                    </group>
+                                    <group name="assignment" string="Phân công">
+                                        <field name="company_id" groups="base.group_multi_company"/>
+                                        <field name="user_id" widget="many2one_avatar_user"/>
+                                        <field name="config_ok"/>
+                                    </group>
+                                    <group string="Thống kê">
+                                        <field name="last_sync_date"/>
+                                        <field name="last_record_count"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Cấu hình đồng bộ" name="sync_configs">
+                                <field name="sync_config_ids" readonly="1">
+                                    <list>
+                                        <field name="name"/>
+                                        <field name="sync_type"/>
+                                        <field name="execution_type"/>
+                                        <field name="last_sync_date"/>
+                                        <field name="state"/>
+                                        <field name="active" widget="boolean_toggle"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Nhật ký đồng bộ" name="sync_logs">
+                                <field name="sync_log_ids" readonly="1">
+                                    <list>
+                                        <field name="start_time"/>
+                                        <field name="status"/>
+                                        <field name="records_created"/>
+                                        <field name="records_updated"/>
+                                        <field name="records_failed"/>
+                                        <field name="duration"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_psm_db_mapping_model_search" model="ir.ui.view">
+            <field name="name">psm.db.mapping.model.search</field>
+            <field name="model">psm.db.mapping.model</field>
+            <field name="arch" type="xml">
+                <search string="Tìm kiếm ánh xạ mô hình">
+                    <field name="name" string="Tên ánh xạ"/>
+                    <field name="connection_id"/>
+                    <field name="source_table"/>
+                    <field name="target_model_id"/>
+                    <field name="user_id"/>
+                    <separator/>
+                    <filter string="Đang hoạt động" name="active" domain="[('active', '=', True)]"/>
+                    <filter string="Ngừng hoạt động" name="inactive" domain="[('active', '=', False)]"/>
+                    <separator/>
+                    <filter string="Bảng" name="table_source" domain="[('source_type', '=', 'table')]"/>
+                    <filter string="Truy vấn SQL" name="query_source" domain="[('source_type', '=', 'query')]"/>
+                    <separator/>
+                    <filter string="Ánh xạ của tôi" name="my_mappings" domain="[('user_id', '=', uid)]"/>
+                    <separator/>
+                    <group>
+                        <filter string="Kết nối" name="group_connection" context="{'group_by': 'connection_id'}"/>
+                        <filter string="Kiểu nguồn" name="group_source_type" context="{'group_by': 'source_type'}"/>
+                        <filter string="Model đích" name="group_target_model"
+                                context="{'group_by': 'target_model_id'}"/>
+                        <filter string="Người phụ trách" name="group_user" context="{'group_by': 'user_id'}"/>
+                        <filter string="Công ty" name="group_company" context="{'group_by': 'company_id'}"
+                                groups="base.group_multi_company"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+    </data>
+</odoo>

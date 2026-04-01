@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!--
+            15 Time Off Types tương ứng với 15 Work Entry Types
+        -->
+        <record id="leave_type_AL" model="hr.leave.type">
+            <field name="name">Annual Leave 12</field>
+            <field name="work_entry_type_id" ref="work_entry_type_AL"/>
+            <field name="requires_allocation">True</field>
+            <field name="leave_validation_type">hr</field>
+            <field name="color">10</field>
+            <field name="time_type">leave</field>
+        </record>
+
+        <record id="leave_type_AL14" model="hr.leave.type">
+            <field name="name">Annual Leave 14</field>
+            <field name="work_entry_type_id" ref="work_entry_type_AL14"/>
+            <field name="requires_allocation">True</field>
+            <field name="leave_validation_type">hr</field>
+            <field name="color">10</field>
+            <field name="time_type">leave</field>
+        </record>
+
+        <record id="leave_type_AL18" model="hr.leave.type">
+            <field name="name">Annual Leave 18</field>
+            <field name="work_entry_type_id" ref="work_entry_type_AL18"/>
+            <field name="requires_allocation">True</field>
+            <field name="leave_validation_type">hr</field>
+            <field name="color">10</field>
+            <field name="time_type">leave</field>
+        </record>
+
+        <record id="leave_type_BT" model="hr.leave.type">
+            <field name="name">Business Trip</field>
+            <field name="work_entry_type_id" ref="work_entry_type_BT"/>
+            <field name="requires_allocation">False</field>
+            <field name="leave_validation_type">hr</field>
+            <field name="color">4</field>
+            <field name="time_type">leave</field>
+        </record>
+
+        <record id="leave_type_C" model="hr.leave.type">
+            <field name="name">Compensation — Nghỉ bù</field>
+            <field name="work_entry_type_id" ref="work_entry_type_C"/>
+            <field name="requires_allocation">True</field>
+            <field name="leave_validation_type">hr</field>
+            <field name="color">11</field>
+            <field name="time_type">leave</field>
+        </record>
+
+        <record id="leave_type_MA" model="hr.leave.type">
+            <field name="name">Maternity Leave — Thai sản</field>
+            <field name="work_entry_type_id" ref="work_entry_type_MA"/>
+            <field name="requires_allocation">False</field>
+            <field name="leave_validation_type">hr</field>
+            <field name="color">6</field>
+            <field name="time_type">leave</field>
+        </record>
+
+        <record id="leave_type_NS" model="hr.leave.type">
+            <field name="name">No Show — Vắng mặt không phép</field>
+            <field name="work_entry_type_id" ref="work_entry_type_NS"/>
+            <field name="requires_allocation">False</field>
+            <field name="leave_validation_type">hr</field>
+            <field name="color">1</field>
+            <field name="time_type">leave</field>
+        </record>
+
+        <record id="leave_type_PL" model="hr.leave.type">
+            <field name="name">Paid Leave — Hiếu hỉ, ma chay</field>
+            <field name="work_entry_type_id" ref="work_entry_type_PL"/>
+            <field name="requires_allocation">False</field>
+            <field name="leave_validation_type">hr</field>
+            <field name="color">3</field>
+            <field name="time_type">leave</field>
+        </record>
+
+        <record id="leave_type_SAL" model="hr.leave.type">
+            <field name="name">Sabbatical — Nghỉ phép thâm niên</field>
+            <field name="work_entry_type_id" ref="work_entry_type_SAL"/>
+            <field name="requires_allocation">True</field>
+            <field name="leave_validation_type">hr</field>
+            <field name="color">10</field>
+            <field name="time_type">leave</field>
+        </record>
+
+        <record id="leave_type_SD" model="hr.leave.type">
+            <field name="name">Sick Leave — Bệnh có giấy bác sĩ</field>
+            <field name="work_entry_type_id" ref="work_entry_type_SD"/>
+            <field name="requires_allocation">False</field>
+            <field name="leave_validation_type">hr</field>
+            <field name="color">2</field>
+            <field name="time_type">leave</field>
+        </record>
+
+        <record id="leave_type_SI" model="hr.leave.type">
+            <field name="name">Sick Leave — Bệnh hưởng BHXH</field>
+            <field name="work_entry_type_id" ref="work_entry_type_SI"/>
+            <field name="requires_allocation">False</field>
+            <field name="leave_validation_type">hr</field>
+            <field name="color">2</field>
+            <field name="time_type">leave</field>
+        </record>
+
+        <record id="leave_type_SN" model="hr.leave.type">
+            <field name="name">Sick Leave — Bệnh không xin phép</field>
+            <field name="work_entry_type_id" ref="work_entry_type_SN"/>
+            <field name="requires_allocation">False</field>
+            <field name="leave_validation_type">hr</field>
+            <field name="color">1</field>
+            <field name="time_type">leave</field>
+        </record>
+
+        <record id="leave_type_TR" model="hr.leave.type">
+            <field name="name">Training — Đào tạo</field>
+            <field name="work_entry_type_id" ref="work_entry_type_TR"/>
+            <field name="requires_allocation">False</field>
+            <field name="leave_validation_type">hr</field>
+            <field name="color">4</field>
+            <field name="time_type">leave</field>
+        </record>
+
+        <record id="leave_type_UEL" model="hr.leave.type">
+            <field name="name">Unexpected Leave — Ngừng việc</field>
+            <field name="work_entry_type_id" ref="work_entry_type_UEL"/>
+            <field name="requires_allocation">False</field>
+            <field name="leave_validation_type">hr</field>
+            <field name="color">5</field>
+            <field name="time_type">leave</field>
+        </record>
+
+        <record id="leave_type_UL" model="hr.leave.type">
+            <field name="name">Unpaid Leave — Nghỉ không lương</field>
+            <field name="work_entry_type_id" ref="work_entry_type_UL"/>
+            <field name="requires_allocation">False</field>
+            <field name="leave_validation_type">hr</field>
+            <field name="color">1</field>
+            <field name="time_type">leave</field>
+        </record>
+    </data>
+</odoo>

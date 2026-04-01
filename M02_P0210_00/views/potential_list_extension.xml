@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_employee_potential_list_tree_inherit" model="ir.ui.view">
+        <field name="name">hr.employee.potential.list.tree.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="M02_P0209_00.view_employee_potential_list_tree"/>
+        <field name="arch" type="xml">
+            <button name="action_open_manager_proposal" position="before">
+                <field name="is_part_time" column_invisible="1"/>
+                <field name="has_active_manager_proposal" column_invisible="1"/>
+                <!-- Badge for active status -->
+                <button string="Processing" 
+                        class="btn-warning disabled"
+                        invisible="not has_active_manager_proposal"
+                        title="Employee has an incomplete development program"/>
+            </button>
+            <button name="action_open_manager_proposal" position="attributes">
+                <attribute name="invisible">not can_propose_manager or is_part_time or has_active_manager_proposal</attribute>
+            </button>
+        </field>
+    </record>
+</odoo>

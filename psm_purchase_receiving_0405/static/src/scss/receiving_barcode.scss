@@ -1,0 +1,56 @@
+// Desktop button
+.o_button_scan_receipt {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    color: white;
+
+    &:hover {
+        background-color: #138496;
+        border-color: #117a8b;
+        color: white;
+    }
+
+    .fa-barcode {
+        font-size: 1.1em;
+    }
+}
+
+// Mobile Floating Action Button
+.o_mobile_fab {
+    display: none; // Hidden by default
+
+    // Only show on mobile/tablet
+    @media (max-width: 767px) {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background-color: #17a2b8;
+        color: white;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        i {
+            font-size: 24px;
+        }
+
+        &:hover,
+        &:active {
+            background-color: #138496;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+            transform: scale(1.05);
+        }
+
+        &:active {
+            transform: scale(0.95);
+        }
+    }
+}

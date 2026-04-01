@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Enable Blog Comments Feature -->
+    <!-- This activates the built-in comment system on blog posts -->
+    <record id="website_blog.opt_blog_post_comment" model="ir.ui.view">
+        <field name="active">True</field>
+    </record>
+    <!-- Create default company blog with comments enabled -->
+    <record id="portal_custom_blog" model="blog.blog" forcecreate="True">
+        <field name="name">Bảng tin Công ty</field>
+        <field name="subtitle">Tin tức và thông báo nội bộ</field>
+    </record>
+</odoo>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Action -->
+    <record id="travel_hotel_action" model="ir.actions.act_window">
+        <field name="name">Hotels</field>
+        <field name="res_model">travel.hotel</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Tree -->
+    <record id="travel_hotel_view_tree" model="ir.ui.view">
+        <field name="name">travel.hotel.view.list</field>
+        <field name="model">travel.hotel</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="province_id"/>
+                <field name="price_per_night"/>
+                <field name="currency_id"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form -->
+    <record id="travel_hotel_view_form" model="ir.ui.view">
+        <field name="name">travel.hotel.view.form</field>
+        <field name="model">travel.hotel</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="province_id"/>
+                        <field name="price_per_night"/>
+                        <field name="currency_id"/>
+                    </group>
+                    <group>
+                        <field name="address"/>
+                        <field name="note"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem
+        id="menu_travel_hotel"
+        name="Hotels"
+        parent="approvals.approvals_menu_config"
+        action="travel_hotel_action"
+        sequence="40"/>
+</odoo>

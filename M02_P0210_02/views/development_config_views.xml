@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Development Config Form View -->
+    <record id="view_development_config_form" model="ir.ui.view">
+        <field name="name">mcd.development.config.form</field>
+        <field name="model">mcd.development.config</field>
+        <field name="arch" type="xml">
+            <form string="Development Configuration">
+                <header>
+                    <button name="action_save_as_version" type="object" 
+                            string="Save as Version" class="btn-secondary" icon="fa-save"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="development_type" widget="radio" options="{'horizontal': true}"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="job_id" placeholder="Select target job position..."/>
+                            <field name="active_version_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="active" widget="boolean_toggle"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Courses &amp; Exams List" name="courses">
+                            <field name="course_line_ids" limit="4">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="course_name"/>
+                                    <field name="exam_name"/>
+                                    <field name="evaluator_role"/>
+                                    <field name="slide_channel_id" optional="hide"/>
+                                    <field name="notes" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Versions" name="versions">
+                            <field name="version_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="create_date"/>
+                                    <field name="job_id"/>
+                                    <field name="is_active" widget="boolean"/>
+                                    <button name="action_apply_version" type="object" 
+                                            string="Apply" icon="fa-check" class="btn-link"
+                                            invisible="is_active"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Development Config Tree View -->
+    <record id="view_development_config_tree" model="ir.ui.view">
+        <field name="name">mcd.development.config.tree</field>
+        <field name="model">mcd.development.config</field>
+        <field name="arch" type="xml">
+            <list string="Development Configurations">
+                <field name="development_type"/>
+                <field name="course_line_ids" widget="many2many_tags" string="Courses"/>
+                <field name="job_id"/>
+                <field name="active_version_id"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Development Config Action -->
+    <record id="action_development_config" model="ir.actions.act_window">
+        <field name="name">Development Type Configuration</field>
+        <field name="res_model">mcd.development.config</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create new configuration for Manager development type
+            </p>
+            <p>
+                Configure courses, exams, and evaluators for each development type (SM, DM1, DM2, RGM).
+            </p>
+        </field>
+    </record>
+
+    <!-- Development Config Search View -->
+    <record id="view_development_config_search" model="ir.ui.view">
+        <field name="name">mcd.development.config.search</field>
+        <field name="model">mcd.development.config</field>
+        <field name="arch" type="xml">
+            <search string="Search Configuration">
+                <field name="development_type"/>
+                <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="filter_inactive" string="Archived" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter name="filter_all" string="All" domain="['|', ('active', '=', True), ('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Menu under L&D Development -> Configuration -->
+    <menuitem id="menu_development_config"
+              name="Development Type"
+              parent="M02_P0209_02.menu_lnd_configuration"
+              action="action_development_config"
+              sequence="40"/>
+
+    <!-- Development Config Version Form View -->
+    <record id="view_development_config_version_form" model="ir.ui.view">
+        <field name="name">mcd.development.config.version.form</field>
+        <field name="model">mcd.development.config.version</field>
+        <field name="arch" type="xml">
+            <form string="Version Details">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="config_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="job_id" readonly="1"/>
+                            <field name="is_active" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Courses &amp; Exams List" name="courses">
+                            <field name="line_ids" readonly="1">
+                                <list>
+                                    <field name="course_name"/>
+                                    <field name="exam_name"/>
+                                    <field name="evaluator_role"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <footer>
+                    <button name="action_apply_version" type="object" 
+                            string="Apply This Version" class="btn-primary" 
+                            invisible="is_active"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
+

@@ -1,0 +1,4 @@
+﻿<odoo><data noupdate="1">
+  <ir.config_parameter name="ai_invoice_free.engine" value="tesseract"/>
+  <ir.config_parameter name="ai_invoice_free.lang" value="vie+eng"/>
+</data></odoo>

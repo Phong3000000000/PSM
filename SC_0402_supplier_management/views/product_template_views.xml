@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Product Template View Extension for GRI & Raw Material & PIF Implementation -->
+    <record id="view_product_template_form_gri" model="ir.ui.view">
+        <field name="name">product.template.form.gri</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view" />
+        <field name="arch" type="xml">
+            <!-- REMOVED: PIF workflow is now managed on mrp.bom, not product.template -->
+            <!-- Add Raw Material checkbox in General Information tab -->
+            <xpath expr="//page[@name='general_information']//group[@name='group_general']" position="inside">
+                <group name="raw_material_group" string="McDonald's Raw Material">
+                    <field name="x_is_raw_material" />
+                    <!-- GRI Code: Editable, auto-generate if empty -->
+                    <field name="x_gri_code" invisible="not x_is_raw_material" />
+                    <!-- Short Description, e.g., BIC TRAY LINER -->
+                    <field name="x_raw_item_desc" invisible="not x_is_raw_material" placeholder="e.g., BIC TRAY LINER (PE BBQ Liner)" />
+                    <!-- Combined: GRI-Description (readonly computed) -->
+                    <field name="x_gri_full" readonly="1" invisible="not x_is_raw_material" />
+                </group>
+                <!-- Finished Good WRIN (for non-raw materials) -->
+                <group name="finished_good_wrin" string="Finished Good WRIN" invisible="x_is_raw_material">
+                    <field name="default_code" string="WRIN Thành phẩm" readonly="1" />
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

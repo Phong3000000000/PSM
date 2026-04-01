@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?> <odoo> <!-- Approval Request: Admin sees all --> <record id="rule_approval_request_admin_all" model="ir.rule"> <field name="name">Approval Requests - Admin all</field> <field name="model_id" ref="model_approval_engine_request"/> <field name="groups" eval="[(4, ref('approval_engine.group_approval_admin'))]"/> <field name="domain_force">[(1,'=',1)]</field> </record>
+
+<!-- Approval Request: Users see requests they created OR where they are next approvers OR assigned in approver runs -->
+<record id="rule_approval_request_user_relevant" model="ir.rule">
+    <field name="name">Approval Requests - Relevant users</field>
+    <field name="model_id" ref="model_approval_engine_request"/>
+    <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    <field name="domain_force">
+        [
+            ('company_id', 'in', company_ids),
+            '|', ('requester_id', '=', user.id),
+                '|', ('next_approver_ids', 'in', [user.id]),
+                    ('step_run_ids.approver_run_ids.user_id', '=', user.id)
+        ]
+    </field>
+</record>
+
+<!-- Approval Step Run: follow request visibility -->
+<record id="rule_approval_step_run_user_relevant" model="ir.rule">
+    <field name="name">Approval Step Runs - Relevant users</field>
+    <field name="model_id" ref="model_approval_engine_request_step_run"/>
+    <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    <field name="domain_force">
+        [
+            ('request_id.company_id', 'in', company_ids),
+            '|', ('request_id.requester_id', '=', user.id),
+                '|', ('request_id.next_approver_ids', 'in', [user.id]),
+                    ('approver_run_ids.user_id', '=', user.id)
+        ]
+    </field>
+</record>
+
+<!-- Approval Approver Run: follow request visibility -->
+<record id="rule_approval_approver_run_user_relevant" model="ir.rule">
+    <field name="name">Approval Approver Runs - Relevant users</field>
+    <field name="model_id" ref="model_approval_engine_request_approver_run"/>
+    <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    <field name="domain_force">
+        [
+            ('step_run_id.request_id.company_id', 'in', company_ids),
+            '|', ('step_run_id.request_id.requester_id', '=', user.id),
+                '|', ('step_run_id.request_id.next_approver_ids', 'in', [user.id]),
+                    ('user_id', '=', user.id)
+        ]
+    </field>
+</record>
+
+<!-- Approval Log: Admin sees all -->
+<record id="rule_approval_log_admin_all" model="ir.rule">
+    <field name="name">Approval Logs - Admin all</field>
+    <field name="model_id" ref="model_approval_log"/>
+    <field name="groups" eval="[(4, ref('approval_engine.group_approval_admin'))]"/>
+    <field name="domain_force">[(1,'=',1)]</field>
+</record>
+
+<!-- Approval Log: Users see logs for requests they created or where they are approvers -->
+<record id="rule_approval_log_user_relevant" model="ir.rule">
+    <field name="name">Approval Logs - Relevant users</field>
+    <field name="model_id" ref="model_approval_log"/>
+    <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    <field name="domain_force">
+        [
+            ('company_id', 'in', company_ids),
+            '|', ('user_id', '=', user.id),
+                '|', ('request_id.requester_id', '=', user.id),
+                    ('request_id.step_run_ids.approver_run_ids.user_id', '=', user.id)
+        ]
+    </field>
+</record>
+</odoo>

@@ -1,0 +1,27 @@
+{
+    "name": "Approval Engine (Reusable Multi-level Approvals)",
+    "version": "19.0.1.0.0",
+    "category": "Operations/Approvals",
+    "summary": "PSM ERP (Odoo 19 EE)",
+    "depends": [
+        "base",
+        "mail",
+        "purchase",
+        "account",
+    ],
+    "data": [
+        "security/security.xml",
+        "security/ir.model.access.csv",
+        "security/record_rules.xml",
+        "data/sequence.xml",
+        "data/mail_template.xml",
+        "views/approval_workflow_views.xml",
+        "views/approval_request_views.xml",
+        "views/approval_log_views.xml",
+        "views/purchase_order_views.xml",
+        "views/account_move_views.xml",
+    ],
+    "license": "LGPL-3",
+    "application": False,
+    "installable": True,
+}

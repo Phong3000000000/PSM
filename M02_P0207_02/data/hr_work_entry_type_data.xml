@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- ============================================================
+             15 LOẠI CÔNG (WORK ENTRY TYPES)
+             Nguồn: 6. Cấu hình Loại công.docx
+             Payroll → Configuration → Work Entry Types
+        ============================================================ -->
+
+        <!-- 1. AL - Annual Leave 12 (Nghỉ phép năm, 12 ngày) -->
+        <record id="work_entry_type_AL" model="hr.work.entry.type">
+            <field name="name">Annual Leave 12</field>
+            <field name="code">AL</field>
+            <field name="is_leave">True</field>
+            <field name="color">10</field>
+        </record>
+
+        <!-- 2. AL14 - Annual Leave 14 (Nghỉ phép năm, 14 ngày) -->
+        <record id="work_entry_type_AL14" model="hr.work.entry.type">
+            <field name="name">Annual Leave 14</field>
+            <field name="code">AL14</field>
+            <field name="is_leave">True</field>
+            <field name="color">10</field>
+        </record>
+
+        <!-- 3. AL18 - Annual Leave 18 (Nghỉ phép năm, 18 ngày) -->
+        <record id="work_entry_type_AL18" model="hr.work.entry.type">
+            <field name="name">Annual Leave 18</field>
+            <field name="code">AL18</field>
+            <field name="is_leave">True</field>
+            <field name="color">10</field>
+        </record>
+
+        <!-- 4. BT - Business Trip (Công tác) -->
+        <record id="work_entry_type_BT" model="hr.work.entry.type">
+            <field name="name">Business Trip</field>
+            <field name="code">BT</field>
+            <field name="is_leave">False</field>
+            <field name="color">4</field>
+        </record>
+
+        <!-- 5. C - Compensation (Nghỉ bù) -->
+        <record id="work_entry_type_C" model="hr.work.entry.type">
+            <field name="name">Compensation</field>
+            <field name="code">C</field>
+            <field name="is_leave">True</field>
+            <field name="color">11</field>
+        </record>
+
+        <!-- 6. MA - Maternity Leave (Thai sản) -->
+        <record id="work_entry_type_MA" model="hr.work.entry.type">
+            <field name="name">Maternity Leave</field>
+            <field name="code">MA</field>
+            <field name="is_leave">True</field>
+            <field name="color">6</field>
+        </record>
+
+        <!-- 7. NS - No Show (Vắng mặt không phép) -->
+        <record id="work_entry_type_NS" model="hr.work.entry.type">
+            <field name="name">No Show</field>
+            <field name="code">NS</field>
+            <field name="is_leave">True</field>
+            <field name="color">1</field>
+        </record>
+
+        <!-- 8. PL - Paid Leave (Hiếu hỉ, ma chay) -->
+        <record id="work_entry_type_PL" model="hr.work.entry.type">
+            <field name="name">Paid Leave</field>
+            <field name="code">PL</field>
+            <field name="is_leave">True</field>
+            <field name="color">3</field>
+        </record>
+
+        <!-- 9. SAL - Sabbatical (Nghỉ phép thâm niên) -->
+        <record id="work_entry_type_SAL" model="hr.work.entry.type">
+            <field name="name">Sabbatical Leave</field>
+            <field name="code">SAL</field>
+            <field name="is_leave">True</field>
+            <field name="color">10</field>
+        </record>
+
+        <!-- 10. SD - Sick-Doc (Bệnh có giấy bác sĩ) -->
+        <record id="work_entry_type_SD" model="hr.work.entry.type">
+            <field name="name">Sick Leave - Doctor Certificate</field>
+            <field name="code">SD</field>
+            <field name="is_leave">True</field>
+            <field name="color">2</field>
+        </record>
+
+        <!-- 11. SI - Sick-SI (Bệnh hưởng BHXH) -->
+        <record id="work_entry_type_SI" model="hr.work.entry.type">
+            <field name="name">Sick Leave - Social Insurance</field>
+            <field name="code">SI</field>
+            <field name="is_leave">True</field>
+            <field name="color">2</field>
+        </record>
+
+        <!-- 12. SN - Sick-NO (Bệnh không xin phép) -->
+        <record id="work_entry_type_SN" model="hr.work.entry.type">
+            <field name="name">Sick Leave - No Certificate</field>
+            <field name="code">SN</field>
+            <field name="is_leave">True</field>
+            <field name="color">1</field>
+        </record>
+
+        <!-- 13. TR - Training (Đào tạo) -->
+        <record id="work_entry_type_TR" model="hr.work.entry.type">
+            <field name="name">Training</field>
+            <field name="code">TR</field>
+            <field name="is_leave">False</field>
+            <field name="color">4</field>
+        </record>
+
+        <!-- 14. UEL - Unexpected Leave (Ngừng việc) -->
+        <record id="work_entry_type_UEL" model="hr.work.entry.type">
+            <field name="name">Unexpected Leave</field>
+            <field name="code">UEL</field>
+            <field name="is_leave">False</field>
+            <field name="color">5</field>
+        </record>
+
+        <!-- 15. UL - Unpaid Leave (Nghỉ không lương) -->
+        <record id="work_entry_type_UL" model="hr.work.entry.type">
+            <field name="name">Unpaid Leave</field>
+            <field name="code">UL</field>
+            <field name="is_leave">True</field>
+            <field name="color">1</field>
+        </record>
+
+        <!-- OPS-specific work entry types -->
+        <record id="work_entry_type_OPS_LEAVE_AL" model="hr.work.entry.type">
+            <field name="name">Annual Leave (OPS)</field>
+            <field name="code">OPS_LEAVE_AL</field>
+            <field name="is_leave">True</field>
+            <field name="color">10</field>
+        </record>
+
+        <record id="work_entry_type_OPS_NS_NO_SHOW" model="hr.work.entry.type">
+            <field name="name">No Show (Unjustified)</field>
+            <field name="code">OPS_NS_NO_SHOW</field>
+            <field name="is_leave">True</field>
+            <field name="color">1</field>
+        </record>
+
+        <record id="work_entry_type_OTH" model="hr.work.entry.type">
+            <field name="name">Hours OTH - Holiday Overtime</field>
+            <field name="code">OTH</field>
+            <field name="is_leave">False</field>
+            <field name="color">4</field>
+        </record>
+
+        <record id="work_entry_type_OTN" model="hr.work.entry.type">
+            <field name="name">Hours OTN - Weekday Night OT</field>
+            <field name="code">OTN</field>
+            <field name="is_leave">False</field>
+            <field name="color">4</field>
+        </record>
+
+        <record id="work_entry_type_OTTET" model="hr.work.entry.type">
+            <field name="name">Hours OTTET</field>
+            <field name="code">OTTET</field>
+            <field name="is_leave">False</field>
+            <field name="color">4</field>
+        </record>
+
+        <record id="work_entry_type_OTW" model="hr.work.entry.type">
+            <field name="name">Hours OTW - Weekend Overtime</field>
+            <field name="code">OTW</field>
+            <field name="is_leave">False</field>
+            <field name="color">4</field>
+        </record>
+
+        <record id="work_entry_type_NORMAL" model="hr.work.entry.type">
+            <field name="name">Normal Working</field>
+            <field name="code">NORMAL</field>
+            <field name="is_leave">False</field>
+            <field name="color">0</field>
+        </record>
+
+        <!-- OPS payroll-specific types (from M02_P0207_02) -->
+        <record id="work_entry_type_work100" model="hr.work.entry.type">
+            <field name="name">Work 100%</field>
+            <field name="code">OPS_WORK100</field>
+            <field name="is_leave">False</field>
+            <field name="round_days">HALF</field>
+            <field name="round_days_type">HALF-UP</field>
+            <field name="color">0</field>
+        </record>
+
+        <record id="work_entry_type_ot_normal" model="hr.work.entry.type">
+            <field name="name">OT Normal (150%)</field>
+            <field name="code">OPS_OT_NORMAL</field>
+            <field name="is_leave">False</field>
+            <field name="color">1</field>
+        </record>
+
+        <record id="work_entry_type_ot_weekend" model="hr.work.entry.type">
+            <field name="name">OT Weekend (200%)</field>
+            <field name="code">OPS_OT_WEEKEND</field>
+            <field name="is_leave">False</field>
+            <field name="color">2</field>
+        </record>
+
+        <record id="work_entry_type_ot_holiday" model="hr.work.entry.type">
+            <field name="name">OT Holiday (300%)</field>
+            <field name="code">OPS_OT_HOLIDAY</field>
+            <field name="is_leave">False</field>
+            <field name="color">3</field>
+        </record>
+
+        <record id="work_entry_type_ot_night" model="hr.work.entry.type">
+            <field name="name">OT Night (80%)</field>
+            <field name="code">OPS_OT_NIGHT</field>
+            <field name="is_leave">False</field>
+            <field name="color">4</field>
+        </record>
+
+        <record id="work_entry_type_ot_night_cont" model="hr.work.entry.type">
+            <field name="name">OT Night Continuous (90%)</field>
+            <field name="code">OPS_OT_NIGHT_CONT</field>
+            <field name="is_leave">False</field>
+            <field name="color">5</field>
+        </record>
+    </data>
+</odoo>

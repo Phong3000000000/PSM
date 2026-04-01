@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="user_marketing_head" model="res.users">
+            <field name="name">Trưởng phòng Marketing</field>
+            <field name="login">marketing.manager</field>
+            <field name="email">marketing.manager@example.com</field>
+            <field name="company_id" ref="base.main_company" />
+            <field name="group_ids"
+                eval="[(6, 0, [ref('base.group_user'), ref('hr.group_hr_manager')])]" />
+        </record>
+
+        <record id="employee_marketing_head" model="hr.employee">
+            <field name="name">Trưởng phòng Marketing</field>
+            <field name="user_id" ref="user_marketing_head" />
+            <field name="job_title">Trưởng phòng Marketing</field>
+            <field name="company_id" ref="base.main_company" />
+        </record>
+
+        <record id="user_hr_head" model="res.users">
+            <field name="name">Trưởng phòng Nhân sự</field>
+            <field name="login">hr.manager</field>
+            <field name="email">hr.manager@example.com</field>
+            <field name="company_id" ref="base.main_company" />
+            <field name="group_ids"
+                eval="[(6, 0, [ref('base.group_user'), ref('hr.group_hr_manager')])]" />
+        </record>
+
+        <record id="employee_hr_head" model="hr.employee">
+            <field name="name">Trưởng phòng Nhân sự</field>
+            <field name="user_id" ref="user_hr_head" />
+            <field name="job_title">Trưởng phòng Human Resource</field>
+            <field name="company_id" ref="base.main_company" />
+        </record>
+
+        <record id="department_marketing_p0205" model="hr.department">
+            <field name="name">Marketing</field>
+            <field name="manager_id" ref="employee_marketing_head" />
+        </record>
+
+        <record id="department_hr_p0205" model="hr.department">
+            <field name="name">Human Resource</field>
+            <field name="manager_id" ref="employee_hr_head" />
+        </record>
+
+        <record id="user_ceo" model="res.users">
+            <field name="name">CEO MCD</field>
+            <field name="login">ceo@example.com</field>
+            <field name="email">ceo@example.com</field>
+            <field name="company_id" ref="base.main_company" />
+            <field name="group_ids"
+                eval="[(6, 0, [ref('base.group_user'), ref('base.group_system')])]" />
+        </record>
+
+        <record id="employee_ceo" model="hr.employee">
+            <field name="name">CEO MCD</field>
+            <field name="user_id" ref="user_ceo" />
+            <field name="job_title">Chief Executive Officer</field>
+            <field name="company_id" ref="base.main_company" />
+        </record>
+
+        <record id="base.main_company" model="res.company">
+            <field name="ceo_id" ref="employee_ceo" />
+        </record>
+
+    </data>
+</odoo>

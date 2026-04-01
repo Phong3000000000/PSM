@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_mcd_soc_version_form" model="ir.ui.view">
+        <field name="name">mcd.soc.version.form</field>
+        <field name="model">mcd.soc.version</field>
+        <field name="arch" type="xml">
+            <form string="SOC Version">
+                <field name="id" invisible="1"/>
+                <header>
+                    <button name="action_restore_version" type="object" string="Apply Version" class="btn-primary" invisible="is_active_version"/>
+                    <field name="is_active_version" invisible="1"/>
+                </header>
+                <sheet>
+    <div class="oe_title">
+         <label for="name" string="Version Number"/>
+         <h1><field name="name" placeholder="e.g. v1.0" readonly="1"/></h1>
+         <label for="soc_title" string="SOC Title"/>
+         <h2><field name="soc_title" placeholder="e.g. How to make a Big Mac" readonly="id"/></h2>
+         <field name="soc_tag_ids" widget="many2many_tags" readonly="id"/>
+    </div>
+    <field name="soc_image" widget="image" class="oe_avatar" options="{'size': [90, 90]}" readonly="id"/>
+                    <group>
+                        <group>
+                            <field name="user_id"/>
+                            <field name="create_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <field name="description" placeholder="Description..." widget="html" readonly="id"/>
+                        </page>
+                        <page string="Document">
+                            <field name="slide_category_code" invisible="1"/>
+                            
+                            <!-- Header Info -->
+                            <group>
+                                <group>
+                                     <field name="slide_category_code" string="Content Type" widget="selection" readonly="id"/>
+                                     
+                                     <!-- Document / File Upload -->
+                                     <field name="datas" filename="datas_filename" 
+                                            invisible="slide_category_code != 'document'" 
+                                            string="Content (File)"
+                                            readonly="id"/>
+                                     <field name="datas_filename" invisible="1"/>
+                                     
+                                     <!-- Google Drive (Placeholder if needed) -->
+                                     <!-- <field name="google_drive_workbook_id" invisible="slide_category_code != 'document'"/> -->
+                                </group>
+                                <group>
+                                     <!-- Info - Matching Slide View -->
+                                     <field name="user_id" string="Responsible" readonly="1"/>
+                                     <field name="time_allowed" string="Duration" widget="float_time" readonly="id"/>
+                                </group>
+                            </group>
+
+                            <!-- Content Editor for Article -->
+                            <group string="Content Editor" invisible="slide_category_code != 'article'">
+                                <field name="html_content" nolabel="1" widget="html" options="{'style-inline': true}" readonly="id"/>
+                            </group>
+                            
+                            <div class="text-muted" invisible="slide_category_code in ['document', 'article']">
+                                Content preview not available for this type (Video/Quiz/etc).
+                            </div>
+                        </page>
+                        <page string="SOC Definition">
+                            <group>
+                                <group string="Header">
+                                    <field name="soc_code" readonly="id"/>
+                                    <field name="soc_type" readonly="id"/>
+                                    <field name="document_type" readonly="id"/>
+                                </group>
+                                <group string="Classification">
+                                    <field name="soc_area" readonly="id"/>
+                                    <field name="soc_sub_area" readonly="id"/>
+                                </group>
+                                <group string="Scoring">
+                                    <field name="pass_score" readonly="id"/>
+                                    <field name="time_allowed" widget="float_time" readonly="id"/>
+                                </group>
+                            </group>
+                            <separator string="Checklist Content"/>
+                            <field name="item_ids" readonly="id">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="section_id" />
+                                    <field name="name"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ACTION for SOC Version Popup -->
+    <record id="mcd_soc_version_action" model="ir.actions.act_window">
+        <field name="name">SOC Version</field>
+        <field name="res_model">mcd.soc.version</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

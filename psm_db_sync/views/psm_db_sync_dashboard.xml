@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Dashboard Template -->
+        <template id="psm_db_sync_dashboard_template">
+            <div class="o_psm_db_sync_dashboard">
+                <div class="container-fluid">
+
+                    <!-- Header -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="page-header">
+                                <h1 class="page-title">
+                                    <i class="fa fa-sync-alt mr-2" title="Dashboard"></i>
+                                    Dashboard Đồng Bộ Cơ Sở Dữ Liệu
+                                </h1>
+                                <div class="page-subtitle text-muted">
+                                    Giám sát và quản lý các kết nối và nhiệm vụ đồng bộ
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="row mb-4" id="stats_cards">
+                        <div class="col-lg-2 col-6">
+                            <div class="card card-stats">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <div class="icon-big text-center icon-info">
+                                                <i class="fa fa-plug text-info" title="Kết nối"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-7">
+                                            <div class="numbers">
+                                                <p class="card-category">Kết nối</p>
+                                                <h4 class="card-title" id="connections_count">0</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-6">
+                            <div class="card card-stats">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <div class="icon-big text-center">
+                                                <i class="fa fa-sitemap text-success" title="Ánh xạ"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-7">
+                                            <div class="numbers">
+                                                <p class="card-category">Ánh xạ</p>
+                                                <h4 class="card-title" id="mappings_count">0</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-6">
+                            <div class="card card-stats">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <div class="icon-big text-center">
+                                                <i class="fa fa-tasks text-warning" title="Nhiệm vụ"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-7">
+                                            <div class="numbers">
+                                                <p class="card-category">Nhiệm vụ</p>
+                                                <h4 class="card-title" id="sync_tasks_count">0</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-6">
+                            <div class="card card-stats">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <div class="icon-big text-center">
+                                                <i class="fa fa-spinner text-primary" title="Đang chạy"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-7">
+                                            <div class="numbers">
+                                                <p class="card-category">Đang chạy</p>
+                                                <h4 class="card-title" id="running_tasks_count">0</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-6">
+                            <div class="card card-stats">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <div class="icon-big text-center">
+                                                <i class="fa fa-exclamation-triangle text-danger" title="Lỗi"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-7">
+                                            <div class="numbers">
+                                                <p class="card-category">Lỗi</p>
+                                                <h4 class="card-title" id="error_tasks_count">0</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-6">
+                            <div class="card card-stats">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <div class="icon-big text-center">
+                                                <i class="fa fa-chart-line text-success" title="Tỷ lệ"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-7">
+                                            <div class="numbers">
+                                                <p class="card-category">Tỷ lệ thành công</p>
+                                                <h4 class="card-title" id="success_rate">0%</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Content -->
+                    <div class="row">
+                        <!-- Connections Status -->
+                        <div class="col-lg-6 col-12 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">
+                                        <i class="fa fa-database mr-2" title="DB"></i>
+                                        Trạng thái kết nối
+                                    </h4>
+                                </div>
+                                <div class="card-body">
+                                    <div id="connections_status">
+                                        <div class="text-center text-muted">
+                                            <i class="fa fa-spinner fa-spin"></i>
+                                            Đang tải...
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Sync Logs -->
+                        <div class="col-lg-6 col-12 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">
+                                        <i class="fa fa-history mr-2" title="History"></i>
+                                        Nhật ký gần đây
+                                    </h4>
+                                </div>
+                                <div class="card-body">
+                                    <div id="recent_logs">
+                                        <div class="text-center text-muted">
+                                            <i class="fa fa-spinner fa-spin"></i>
+                                            Đang tải...
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">
+                                        <i class="fa fa-bolt mr-2" title="Actions"></i>
+                                        Thao tác nhanh
+                                    </h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-lg-3 col-6 mb-3">
+                                            <button class="btn btn-primary btn-block" onclick="window.location='/web#action=psm_db_sync.action_psm_db_connection&amp;model=psm.db.connection&amp;view_type=form'">
+                                                <i class="fa fa-plus mr-2" title="Add"></i>
+                                                Tạo kết nối mới
+                                            </button>
+                                        </div>
+                                        <div class="col-lg-3 col-6 mb-3">
+                                            <button class="btn btn-info btn-block" onclick="window.location='/web#action=psm_db_sync.action_psm_db_mapping_model&amp;model=psm.db.mapping.model&amp;view_type=form'">
+                                                <i class="fa fa-sitemap mr-2" title="Mapping"></i>
+                                                Tạo ánh xạ mới
+                                            </button>
+                                        </div>
+                                        <div class="col-lg-3 col-6 mb-3">
+                                            <button class="btn btn-success btn-block" onclick="window.location='/web#action=psm_db_sync.action_psm_db_wizard&amp;model=psm.db.wizard&amp;view_type=form'">
+                                                <i class="fa fa-sync mr-2" title="Sync"></i>
+                                                Đồng bộ thủ công
+                                            </button>
+                                        </div>
+                                        <div class="col-lg-3 col-6 mb-3">
+                                            <button class="btn btn-warning btn-block" onclick="window.location='/web#action=psm_db_sync.action_psm_db_sync_log&amp;model=psm.db.sync.log&amp;view_type=list'">
+                                                <i class="fa fa-list mr-2" title="Log"></i>
+                                                Xem nhật ký
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </template>
+
+    </data>
+</odoo>

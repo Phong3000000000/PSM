@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_travel_province_user,travel.province user,model_travel_province,base.group_user,1,1,1,0
+access_travel_hotel_user,travel.hotel user,model_travel_hotel,base.group_user,1,1,1,0
+access_approval_airline_user,approval.airline user,model_approval_airline,base.group_user,1,1,1,0
+access_approval_ticket_class_user,approval.ticket.class user,model_approval_ticket_class,base.group_user,1,1,1,0
+access_business_trip_report_user,business.trip.report user,model_business_trip_report,approvals.group_approval_user,1,0,0,0

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="structure_type_13th_month" model="hr.payroll.structure.type">
+            <field name="name">Loại: Thưởng Cuối Năm</field>
+            <field name="country_id" eval="False"/>
+        </record>
+
+        <record id="structure_13th_month" model="hr.payroll.structure">
+            <field name="name">Thưởng Tháng 13 (Tự động)</field>
+            <field name="type_id" ref="structure_type_13th_month"/>
+            <field name="country_id" eval="False"/>
+        </record>
+
+        <record id="rule_13th_month_allowance" model="hr.salary.rule">
+            <field name="name">Tiền Thưởng Tháng 13</field>
+            <field name="sequence" eval="100"/>
+            <field name="code">ALW_13TH</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="struct_id" ref="structure_13th_month"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+# Lấy năm của phiếu lương đang chạy (vd: 2026)
+current_year = payslip.date_to.year
+start_date = contract.date_start
+
+months = 0
+# TH1: Vào làm từ năm ngoái trở về trước -> Trọn 12 tháng
+if start_date.year &lt; current_year:
+    months = 12
+# TH2: Vào làm trong năm nay -> Tính số tháng
+elif start_date.year == current_year:
+    months = 13 - start_date.month
+    # Nếu vào làm từ ngày 16 trở đi thì trừ 1 tháng
+    if start_date.day &gt; 15:
+        months -= 1
+
+if months &lt; 0:
+    months = 0
+
+# Công thức: (Lương cơ bản / 12) * Số tháng hợp lệ
+result = (contract.wage / 12.0) * months
+            </field>
+        </record>
+
+        <record id="rule_13th_month_pit" model="hr.salary.rule">
+            <field name="name">Thuế TNCN (Thưởng cuối năm)</field>
+            <field name="sequence" eval="600"/>
+            <field name="code">PIT_13TH</field>
+            <field name="category_id" ref="hr_payroll.DED"/>
+            <field name="struct_id" ref="structure_13th_month"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+taxable_income = categories.ALW
+tax = 0
+
+if taxable_income &lt;= 10000000:
+    tax = taxable_income * 0.05
+elif taxable_income &lt;= 30000000:
+    tax = (taxable_income - 10000000) * 0.1 + 500000
+elif taxable_income &lt;= 60000000:
+    tax = (taxable_income - 30000000) * 0.2 + 2500000
+elif taxable_income &lt;= 100000000:
+    tax = (taxable_income - 60000000) * 0.3 + 8500000
+else:
+    tax = (taxable_income - 100000000) * 0.35 + 20500000
+
+result = -tax
+            </field>
+        </record>
+
+        <record id="rule_13th_month_net" model="hr.salary.rule">
+            <field name="name">Thực lãnh (NET) - Tháng 13</field>
+            <field name="sequence" eval="999"/>
+            <field name="code">NET</field>
+            <field name="category_id" ref="hr_payroll.NET"/>
+            <field name="struct_id" ref="structure_13th_month"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+result = categories.ALW + categories.DED
+            </field>
+        </record>
+    </data>
+</odoo>

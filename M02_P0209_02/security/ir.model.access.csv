@@ -1,0 +1,14 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mcd_soc_item_all,mcd.soc.item.all,model_mcd_soc_item,,1,1,1,1
+access_mcd_soc_section_all,mcd.soc.section.all,model_mcd_soc_section,,1,1,1,1
+access_mcd_soc_evaluation_all,mcd.soc.evaluation.all,model_mcd_soc_evaluation,,1,1,1,1
+access_mcd_soc_evaluation_line_all,mcd.soc.evaluation_line.all,model_mcd_soc_evaluation_line,,1,1,1,1
+access_mcd_soc_version_all,mcd.soc.version.all,model_mcd_soc_version,,1,1,1,1
+access_soc_import_wizard_all,soc.import.wizard.all,model_soc_import_wizard,,1,1,1,1
+access_soc_select_wizard_all,soc.select.wizard.all,model_soc_select_wizard,,1,1,1,1
+access_slide_slide_all,slide.slide.all,website_slides.model_slide_slide,,1,1,1,1
+access_slide_channel_all,slide.channel.all,website_slides.model_slide_channel,,1,1,1,1
+access_mcd_soc_type_all,mcd.soc.type.all,model_mcd_soc_type,,1,1,1,1
+access_mcd_soc_area_all,mcd.soc.area.all,model_mcd_soc_area,,1,1,1,1
+access_mcd_soc_station_all,mcd.soc.station.all,model_mcd_soc_station,,1,1,1,1
+access_ir_module_module_user,ir.module.module.user,base.model_ir_module_module,,1,1,1,1

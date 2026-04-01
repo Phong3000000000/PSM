@@ -1,0 +1,22 @@
+<odoo>
+  <record id="view_res_config_settings_psm_ai_invoice" model="ir.ui.view">
+    <field name="name">res.config.settings.psm.ai.invoice.form</field>
+    <field name="model">res.config.settings</field>
+    <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//div[@name='account_invoice_settings']" position="after">
+        <div class="app_settings_block" string="AI Invoice Settings">
+          <h2>AI Invoice Configuration</h2>
+          <group>
+            <field name="psm_ai_provider"/>
+            <field name="psm_ai_openai_api_key" password="True"/>
+            <field name="psm_ai_openai_model"/>
+            <field name="psm_ai_auto_create_vendor"/>
+            <field name="psm_ai_tax_map_mode"/>
+            <field name="psm_ai_auto_add_service"/>
+          </group>
+        </div>
+      </xpath>
+    </field>
+  </record>
+</odoo>

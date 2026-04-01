@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================== -->
+    <!-- Extend portal_custom sidebar to add Goals link -->
+    <!-- ============================================== -->
+    
+    <!-- Desktop Sidebar: Add Mục tiêu link in moreApps1 section -->
+    <template id="portal_add_goals_sidebar" inherit_id="portal_custom.portal_my_home_inherit" priority="20">
+        <!-- Add before Team và Đội nhóm link -->
+        <xpath expr="//div[@id='moreApps1']//a[@href='/my/team-accountabilities']" position="before">
+            <a href="/my/goals" class="sidebar-link">
+                <div class="app-icon-wrapper me-3" style="background: #ffebee; color: #d32f2f;">
+                    <i class="fa fa-bullseye" />
+                </div>
+                <span>Mục tiêu</span>
+            </a>
+        </xpath>
+    </template>
+    
+    <!-- Mobile Grid: Add Mục tiêu icon -->
+    <template id="portal_add_goals_mobile" inherit_id="portal_custom.portal_my_home_inherit" priority="21">
+        <!-- Add before Team mobile icon -->
+        <xpath expr="//a[@href='/my/team-accountabilities' and contains(@class, 'mobile-app-item')]" position="before">
+            <a href="/my/goals" class="mobile-app-item">
+                <div class="mobile-app-icon" style="background: linear-gradient(135deg, #ff6b6b 0%, #ffa502 100%);">
+                    <i class="fa fa-bullseye" />
+                </div>
+                <span class="mobile-app-label">Mục tiêu</span>
+            </a>
+        </xpath>
+    </template>
+    
+    <!-- ============================================== -->
+    <!-- Portal Goals Page Template -->
+    <!-- ============================================== -->
+    <template id="portal_goals_page" name="My Goals">
+        <t t-call="portal.portal_layout">
+            <div class="container py-4">
+                <!-- Back Button -->
+                <div class="mb-3">
+                    <a href="/my/home" class="btn btn-outline-primary btn-sm">
+                        <i class="fa fa-arrow-left me-2"/>Quay lại Bảng tin
+                    </a>
+                </div>
+                
+                <!-- Header -->
+                <div class="bg-white rounded shadow-sm p-4 mb-4">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-danger text-white d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                <i class="fa fa-bullseye fa-lg"/>
+                            </div>
+                            <div>
+                                <h3 class="mb-0">Mục tiêu của tôi</h3>
+                                <p class="text-muted mb-0">
+                                    <t t-if="employee">
+                                        <t t-esc="employee.name"/> - <t t-esc="len(goals)"/> mục tiêu
+                                    </t>
+                                </p>
+                            </div>
+                        </div>
+                        <a href="/my/goals/create" class="btn btn-primary">
+                            <i class="fa fa-plus me-2"/>Tạo mục tiêu
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Goals List -->
+                <t t-if="goals">
+                    <div class="row">
+                        <t t-foreach="goals" t-as="goal">
+                            <div class="col-md-6 mb-3">
+                                <div class="bg-white rounded shadow-sm p-3 h-100">
+                                    <!-- Goal Header -->
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="mb-0 text-dark" style="font-size: 16px;">
+                                            <a t-attf-href="/my/goals/#{goal.id}" class="text-decoration-none text-dark hover-primary">
+                                                <t t-esc="goal.name"/> <i class="fa fa-pencil text-muted ms-2 small"/>
+                                            </a>
+                                        </h5>
+                                        <span t-attf-class="badge #{goal.goal_type == 'store' and 'bg-info' or 'bg-secondary'}">
+                                            <t t-if="goal.goal_type == 'store'">Store</t>
+                                            <t t-else="">Individual</t>
+                                        </span>
+                                    </div>
+                                    
+                                    <!-- Description -->
+                                    <t t-if="goal.description">
+                                        <p class="text-muted small mb-2" style="max-height: 60px; overflow: hidden;">
+                                            <t t-esc="goal.description[:100]"/>
+                                            <t t-if="len(goal.description or '') > 100">...</t>
+                                        </p>
+                                    </t>
+                                    
+                                    <!-- Progress Bar -->
+                                    <div class="mb-2">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <small class="text-muted">Tiến độ</small>
+                                            <small class="fw-bold">
+                                                <t t-esc="progression_map.get(goal.progression, 0)"/>%
+                                            </small>
+                                        </div>
+                                        <div class="progress" style="height: 8px;">
+                                            <div class="progress-bar bg-success" role="progressbar" 
+                                                 t-attf-style="width: #{progression_map.get(goal.progression, 0)}%"
+                                                 t-att-aria-valuenow="progression_map.get(goal.progression, 0)"
+                                                 aria-valuemin="0" aria-valuemax="100">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Score -->
+                                    <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                                        <span class="text-muted small">Điểm đánh giá</span>
+                                        <span class="badge bg-primary" style="font-size: 14px;">
+                                            <t t-esc="'%.1f' % goal.score"/> / 4.0
+                                        </span>
+                                    </div>
+                                    
+                                    <!-- Deadline if exists -->
+                                    <t t-if="goal.deadline">
+                                        <div class="d-flex justify-content-between align-items-center mt-2">
+                                            <span class="text-muted small">
+                                                <i class="fa fa-calendar me-1"/>Deadline
+                                            </span>
+                                            <span class="small">
+                                                <t t-esc="goal.deadline" t-options="{'widget': 'date'}"/>
+                                            </span>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+                
+                <!-- Empty State -->
+                <t t-else="">
+                    <div class="bg-white rounded shadow-sm p-5 text-center">
+                        <img src="/web/static/img/smiling_face.svg" style="width: 80px; opacity: 0.5;" class="mb-3"/>
+                        <h5 class="text-muted">Chưa có mục tiêu nào</h5>
+                        <p class="text-muted small">Hãy liên hệ quản lý để được giao mục tiêu</p>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================== -->
+    <!-- Portal Goal Creation Page Template -->
+    <!-- ============================================== -->
+    <template id="portal_goals_create_page" name="Create Goal">
+        <t t-call="portal.portal_layout">
+            <div class="container py-4">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="bg-white rounded shadow-sm p-4">
+                            <h3 class="mb-4">Tạo Mục Tiêu Mới</h3>
+                            
+                            <form action="/my/goals/submit" method="post">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Tên mục tiêu <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name" required="required" placeholder="VD: Đạt doanh số tháng 10"/>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="goal_type" class="form-label">Loại mục tiêu</label>
+                                        <select class="form-select" id="goal_type" name="goal_type">
+                                            <option value="individual">Cá nhân (Individual)</option>
+                                            <option value="store">Cửa hàng (Store)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="deadline" class="form-label">Hạn chót</label>
+                                        <input type="date" class="form-control" id="deadline" name="deadline"/>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="progression" class="form-label">Tiến độ hiện tại</label>
+                                    <select class="form-select" id="progression" name="progression">
+                                        <option value="000">0%</option>
+                                        <option value="025">25%</option>
+                                        <option value="050">50%</option>
+                                        <option value="075">75%</option>
+                                        <option value="100">100%</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Mô tả chi tiết</label>
+                                    <textarea class="form-control" id="description" name="description" rows="4" placeholder="Mô tả chi tiết về mục tiêu..."></textarea>
+                                </div>
+
+                                <div class="d-flex justify-content-between mt-4">
+                                    <a href="/my/goals" class="btn btn-outline-secondary">Hủy bỏ</a>
+                                    <button type="submit" class="btn btn-primary px-4">Tạo mục tiêu</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================== -->
+    <!-- Portal Goal Edit Page Template -->
+    <!-- ============================================== -->
+    <template id="portal_goals_edit_page" name="Edit Goal">
+        <t t-call="portal.portal_layout">
+            <div class="container py-4">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="bg-white rounded shadow-sm p-4">
+                            <h3 class="mb-4">Chỉnh sửa Mục Tiêu</h3>
+                            
+                            <form t-attf-action="/my/goals/#{goal.id}/submit" method="post">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Tên mục tiêu <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name" required="required" t-att-value="goal.name"/>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="goal_type" class="form-label">Loại mục tiêu</label>
+                                        <select class="form-select" id="goal_type" name="goal_type">
+                                            <option value="individual" t-att-selected="goal.goal_type == 'individual'">Cá nhân (Individual)</option>
+                                            <option value="store" t-att-selected="goal.goal_type == 'store'">Cửa hàng (Store)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="deadline" class="form-label">Hạn chót</label>
+                                        <input type="date" class="form-control" id="deadline" name="deadline" t-att-value="goal.deadline"/>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="progression" class="form-label">Tiến độ hiện tại</label>
+                                    <select class="form-select" id="progression" name="progression">
+                                        <option value="000" t-att-selected="goal.progression == '000'">0%</option>
+                                        <option value="025" t-att-selected="goal.progression == '025'">25%</option>
+                                        <option value="050" t-att-selected="goal.progression == '050'">50%</option>
+                                        <option value="075" t-att-selected="goal.progression == '075'">75%</option>
+                                        <option value="100" t-att-selected="goal.progression == '100'">100%</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Mô tả chi tiết</label>
+                                    <textarea class="form-control" id="description" name="description" rows="4"><t t-esc="goal.description"/></textarea>
+                                </div>
+
+                                <div class="d-flex justify-content-between mt-4">
+                                    <a href="/my/goals" class="btn btn-outline-secondary">Hủy bỏ</a>
+                                    <button type="submit" class="btn btn-primary px-4">Lưu thay đổi</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

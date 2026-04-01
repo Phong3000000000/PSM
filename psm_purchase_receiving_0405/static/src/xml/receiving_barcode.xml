@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <!-- Button template for the Purchase Order list view (Desktop) -->
+    <t t-name="psm_purchase_receiving.ListButtons">
+        <button t-on-click="() => this.openBarcodeScanner()" class="btn btn-secondary o_button_scan_receipt ms-2" title="Scan Receipt Barcode">
+            <i class="fa fa-barcode me-1" />
+            Scan Receipt
+        </button>
+    </t>
+    <!-- Floating Action Button for Mobile -->
+    <t t-name="psm_purchase_receiving.PurchaseFAB">
+        <button t-on-click="() => this.openBarcodeScanner()" class="o_mobile_fab o_purchase_scan_fab" title="Scan Receipt">
+            <i class="fa fa-barcode" />
+        </button>
+    </t>
+</templates>

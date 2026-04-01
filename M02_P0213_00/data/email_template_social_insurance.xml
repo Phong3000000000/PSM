@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="email_template_social_insurance" model="mail.template">
+            <field name="name">Thông tin sổ bảo hiểm xã hội</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="subject">Thông tin sổ bảo hiểm xã hội - {{ object.name }}</field>
+            <field name="email_from">{{ (object.company_id.email or user.email_formatted) }}</field>
+            <field name="email_to">{{ object.work_email }}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Kính gửi <t t-out="object.name"/>,
+                        <br/><br/>
+                        Công ty xin gửi đến bạn thông tin về sổ Bảo hiểm xã hội sau khi hoàn tất thủ tục nghỉ việc.
+                        <br/><br/>
+                        Vui lòng kiểm tra file đính kèm (nếu có) hoặc liên hệ phòng nhân sự để nhận sổ.
+                        <br/><br/>
+                        Trân trọng,
+                        <br/>
+                        Phòng Nhân sự
+                    </p>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

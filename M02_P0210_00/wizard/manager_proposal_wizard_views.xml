@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Manager Proposal Wizard Form -->
+    <record id="view_manager_proposal_wizard_form" model="ir.ui.view">
+        <field name="name">mcd.manager.proposal.wizard.form</field>
+        <field name="model">mcd.manager.proposal.wizard</field>
+        <field name="arch" type="xml">
+    <form string="Propose Manager Development">
+        <sheet>
+            <group>
+                <group string="Employee Information">
+                    <field name="employee_id"/>
+                    <field name="employee_job"/>
+                    <field name="employee_soc_count"/>
+                </group>
+                <group string="Development Schedule">
+                            <field name="available_development_types" invisible="1"/>
+                            <field name="is_single_option" invisible="1"/>
+                            <field name="development_type" widget="selection" readonly="is_single_option"/>
+                            <field name="schedule_date"/>
+                            <field name="schedule_end_date"/>
+                        </group>
+                    </group>
+                    <group string="Program Content">
+                        <field name="content" nolabel="1" colspan="2"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_confirm_proposal" string="Confirm Proposal" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action to open wizard -->
+    <record id="action_manager_proposal_wizard" model="ir.actions.act_window">
+        <field name="name">Propose Manager Development</field>
+        <field name="res_model">mcd.manager.proposal.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

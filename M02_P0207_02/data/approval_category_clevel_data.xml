@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="approval_category_clevel" model="approval.category">
+            <field name="name">C-Level Approval / Duyệt Chi</field>
+            <field name="sequence">15</field>
+            <field name="approval_minimum">1</field>
+            <field name="manager_approval" eval="False"/>
+            <field name="has_location">no</field>
+            <field name="has_partner">no</field>
+            <field name="has_payment_method">no</field>
+            <field name="has_amount">no</field>
+            <field name="has_reference">no</field>
+            <field name="has_date">no</field>
+            <field name="has_period">no</field>
+            <field name="has_product">no</field>
+            <field name="has_quantity">no</field>
+            <field name="requirer_document">optional</field>
+        </record>
+
+        <!-- Alias dùng trong _create_clevel_approval_request() -->
+        <record id="approval_category_clevel_payment" model="approval.category">
+            <field name="name">C-Level Duyệt UNC / Payment Authorization</field>
+            <field name="sequence">16</field>
+            <field name="approval_minimum">1</field>
+            <field name="manager_approval" eval="False"/>
+            <field name="has_location">no</field>
+            <field name="has_partner">no</field>
+            <field name="has_payment_method">no</field>
+            <field name="has_amount">no</field>
+            <field name="has_reference">no</field>
+            <field name="has_date">no</field>
+            <field name="has_period">no</field>
+            <field name="has_product">no</field>
+            <field name="has_quantity">no</field>
+            <field name="requirer_document">optional</field>
+        </record>
+    </data>
+</odoo>
+

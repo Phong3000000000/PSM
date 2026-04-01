@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="thankyou_recruiter_name_wrap"
+              inherit_id="website_hr_recruitment.thankyou"
+              name="Thankyou: wrap recruiter name">
+        <!-- Shrink h2 → h5 and remove text-truncate so long names wrap by word -->
+        <xpath expr="//h2[contains(@class,'text-truncate')]" position="replace">
+            <h5 t-field="job_sudo.user_id.name"/>
+        </xpath>
+        <!-- Also remove text-truncate from job title -->
+        <xpath expr="//p[contains(@class,'fw-light') and contains(@class,'text-truncate')]" position="replace">
+            <p class="fw-light" t-field="job_sudo.user_id.job_title"/>
+        </xpath>
+    </template>
+</odoo>

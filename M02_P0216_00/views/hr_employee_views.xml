@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_employee_form_voucher_history" model="ir.ui.view">
+        <field name="name">hr.employee.form.voucher.history</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Lịch sử đổi quà" name="voucher_history">
+                    <field name="voucher_redeem_ids" readonly="1">
+                        <list>
+                            <field name="redeem_date"/>
+                            <field name="voucher_id"/>
+                            <field name="point_used"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

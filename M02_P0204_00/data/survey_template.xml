@@ -1,0 +1,764 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================
+             SURVEY 1: NHÂN VIÊN FULL-TIME CỬA HÀNG (13 câu)
+             ============================================================ -->
+        <record id="survey_fulltime" model="survey.survey">
+            <field name="title">SURVEY – NHÂN VIÊN FULL-TIME CỬA HÀNG</field>
+            <field name="is_pre_interview">True</field>
+            <field name="scoring_type">scoring_with_answers</field>
+            <field name="scoring_success_min">80.0</field>
+            <field name="access_mode">public</field>
+            <field name="users_login_required">False</field>
+            <field name="questions_layout">page_per_question</field>
+            <field name="is_attempts_limited">False</field>
+            <field name="description">Bài khảo sát dành cho ứng viên Full-time cửa hàng McDonald's</field>
+        </record>
+
+        <!-- FT-Q01 -->
+        <record id="ft_q01" model="survey.question">
+            <field name="survey_id" ref="survey_fulltime"/>
+            <field name="title">Bạn có thể làm việc xoay ca (bao gồm cuối tuần và ngày lễ)?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">10</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Có, tôi sẵn sàng làm xoay ca kể cả cuối tuần và lễ', 'sequence': 1, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Chỉ làm ngày thường, không làm cuối tuần', 'sequence': 2}),
+                (0, 0, {'value': 'Chỉ làm ca sáng', 'sequence': 3}),
+                (0, 0, {'value': 'Tùy thời điểm, không cam kết', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- FT-Q02 -->
+        <record id="ft_q02" model="survey.question">
+            <field name="survey_id" ref="survey_fulltime"/>
+            <field name="title">Bạn có thể làm tối thiểu 48 giờ/tuần?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">20</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Có, tôi có thể làm đủ 48 giờ/tuần', 'sequence': 1, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Chỉ làm được 30–40 giờ/tuần', 'sequence': 2}),
+                (0, 0, {'value': 'Chỉ làm được dưới 30 giờ/tuần', 'sequence': 3}),
+                (0, 0, {'value': 'Không chắc chắn', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- FT-Q03 -->
+        <record id="ft_q03" model="survey.question">
+            <field name="survey_id" ref="survey_fulltime"/>
+            <field name="title">Bạn có sẵn sàng tuân thủ nghiêm ngặt quy trình vệ sinh và an toàn thực phẩm?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">30</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Có, tôi cam kết tuân thủ đầy đủ', 'sequence': 1, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Tôi sẽ cố gắng tuân thủ', 'sequence': 2}),
+                (0, 0, {'value': 'Tùy tình huống', 'sequence': 3}),
+                (0, 0, {'value': 'Tôi chưa rõ quy trình', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- FT-Q04 -->
+        <record id="ft_q04" model="survey.question">
+            <field name="survey_id" ref="survey_fulltime"/>
+            <field name="title">Trong tiêu chuẩn QSCV của McDonald's, chữ "Q" đại diện cho?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">40</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Quantity (Số lượng)', 'sequence': 1}),
+                (0, 0, {'value': 'Quality (Chất lượng)', 'sequence': 2, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Quick (Nhanh chóng)', 'sequence': 3}),
+                (0, 0, {'value': 'Queue (Xếp hàng)', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- FT-Q05 -->
+        <record id="ft_q05" model="survey.question">
+            <field name="survey_id" ref="survey_fulltime"/>
+            <field name="title">Khi khách hàng chờ lâu giờ cao điểm bạn nên làm gì?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">50</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Bỏ qua vì ai cũng phải chờ', 'sequence': 1}),
+                (0, 0, {'value': 'Xin lỗi, thông báo thời gian chờ và phục vụ nhanh nhất có thể', 'sequence': 2, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Nói khách quay lại sau', 'sequence': 3}),
+                (0, 0, {'value': 'Để đồng nghiệp xử lý', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- FT-Q06 -->
+        <record id="ft_q06" model="survey.question">
+            <field name="survey_id" ref="survey_fulltime"/>
+            <field name="title">Khi phát hiện khu vực ăn uống chưa sạch bạn làm gì?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">60</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Chờ ca dọn vệ sinh xử lý', 'sequence': 1}),
+                (0, 0, {'value': 'Lập tức dọn dẹp sạch sẽ', 'sequence': 2, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Báo quản lý rồi chờ chỉ đạo', 'sequence': 3}),
+                (0, 0, {'value': 'Bỏ qua nếu không phải khu vực mình phụ trách', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- FT-Q07 -->
+        <record id="ft_q07" model="survey.question">
+            <field name="survey_id" ref="survey_fulltime"/>
+            <field name="title">Đồng phục tại cửa hàng cần đảm bảo điều gì?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">70</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Đẹp và thời trang', 'sequence': 1}),
+                (0, 0, {'value': 'Sạch sẽ, gọn gàng và đúng quy định', 'sequence': 2, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Thoải mái là được', 'sequence': 3}),
+                (0, 0, {'value': 'Giống nhau về màu sắc', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- FT-Q08 -->
+        <record id="ft_q08" model="survey.question">
+            <field name="survey_id" ref="survey_fulltime"/>
+            <field name="title">Khi nhận order sai bạn sẽ làm gì?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">80</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Đổ lỗi cho hệ thống', 'sequence': 1}),
+                (0, 0, {'value': 'Xin lỗi khách và nhanh chóng sửa lại đúng order', 'sequence': 2, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Nói khách chấp nhận món đã làm', 'sequence': 3}),
+                (0, 0, {'value': 'Gọi quản lý giải quyết', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- FT-Q09 -->
+        <record id="ft_q09" model="survey.question">
+            <field name="survey_id" ref="survey_fulltime"/>
+            <field name="title">Làm việc nhóm giúp điều gì?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">90</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Giảm trách nhiệm cá nhân', 'sequence': 1}),
+                (0, 0, {'value': 'Nâng cao hiệu quả công việc và hỗ trợ lẫn nhau', 'sequence': 2, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Chia đều công việc để làm ít hơn', 'sequence': 3}),
+                (0, 0, {'value': 'Có người chịu trách nhiệm thay mình', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- FT-Q10 -->
+        <record id="ft_q10" model="survey.question">
+            <field name="survey_id" ref="survey_fulltime"/>
+            <field name="title">An toàn thực phẩm yêu cầu điều gì?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">100</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Rửa tay thường xuyên, kiểm tra hạn sử dụng, bảo quản đúng cách', 'sequence': 1, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Chỉ cần giữ khu vực bếp sạch', 'sequence': 2}),
+                (0, 0, {'value': 'Đeo găng tay là đủ', 'sequence': 3}),
+                (0, 0, {'value': 'Kiểm tra thực phẩm khi có mùi lạ', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- FT-Q11 -->
+        <record id="ft_q11" model="survey.question">
+            <field name="survey_id" ref="survey_fulltime"/>
+            <field name="title">Khi khách có yêu cầu đặc biệt về món ăn bạn nên?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">110</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Từ chối vì không có trong menu', 'sequence': 1}),
+                (0, 0, {'value': 'Lắng nghe, kiểm tra khả năng đáp ứng và hỗ trợ khách', 'sequence': 2, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Nói khách chọn món khác', 'sequence': 3}),
+                (0, 0, {'value': 'Chuyển cho quản lý xử lý', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- FT-Q12 -->
+        <record id="ft_q12" model="survey.question">
+            <field name="survey_id" ref="survey_fulltime"/>
+            <field name="title">Giá trị cốt lõi dịch vụ khách hàng của McDonald's là?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">120</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Bán được nhiều sản phẩm', 'sequence': 1}),
+                (0, 0, {'value': 'Mang lại trải nghiệm tốt nhất cho khách hàng', 'sequence': 2, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Phục vụ nhanh nhất có thể', 'sequence': 3}),
+                (0, 0, {'value': 'Giữ chi phí thấp', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- FT-Q13 -->
+        <record id="ft_q13" model="survey.question">
+            <field name="survey_id" ref="survey_fulltime"/>
+            <field name="title">Mục tiêu khi làm full-time tại McDonald's là?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">130</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Chỉ kiếm thu nhập ổn định', 'sequence': 1}),
+                (0, 0, {'value': 'Phát triển bản thân, xây dựng sự nghiệp lâu dài', 'sequence': 2, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Làm tạm thời trong khi tìm việc khác', 'sequence': 3}),
+                (0, 0, {'value': 'Có môi trường vui vẻ', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- FT-Q14: Chọn Ngày Phỏng Vấn (Dynamic) -->
+        <record id="ft_q14" model="survey.question">
+            <field name="survey_id" ref="survey_fulltime"/>
+            <field name="title">Bạn muốn phỏng vấn vào ngày nào? (chọn 1 trong 3 ngày bên dưới)</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">140</field>
+            <field name="constr_mandatory">True</field>
+        </record>
+        <record id="ft_q14_ans1" model="survey.question.answer">
+            <field name="question_id" ref="ft_q14"/>
+            <field name="value">Ngày PV 1: (chưa cập nhật)</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="ft_q14_ans2" model="survey.question.answer">
+            <field name="question_id" ref="ft_q14"/>
+            <field name="value">Ngày PV 2: (chưa cập nhật)</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="ft_q14_ans3" model="survey.question.answer">
+            <field name="question_id" ref="ft_q14"/>
+            <field name="value">Ngày PV 3: (chưa cập nhật)</field>
+            <field name="sequence">3</field>
+        </record>
+
+        <!-- ============================================================
+             SURVEY 2: NHÂN VIÊN PART-TIME CỬA HÀNG (13 câu)
+             ============================================================ -->
+        <record id="survey_parttime" model="survey.survey">
+            <field name="title">SURVEY – NHÂN VIÊN PART-TIME CỬA HÀNG</field>
+            <field name="is_pre_interview">True</field>
+            <field name="scoring_type">scoring_with_answers</field>
+            <field name="scoring_success_min">80.0</field>
+            <field name="access_mode">public</field>
+            <field name="users_login_required">False</field>
+            <field name="questions_layout">page_per_question</field>
+            <field name="is_attempts_limited">False</field>
+            <field name="description">Bài khảo sát dành cho ứng viên Part-time cửa hàng McDonald's</field>
+        </record>
+
+        <!-- PT-Q01 -->
+        <record id="pt_q01" model="survey.question">
+            <field name="survey_id" ref="survey_parttime"/>
+            <field name="title">Bạn có thể làm tối thiểu 4 giờ/ca, 4 ngày/tuần?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">10</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Có, tôi có thể đảm bảo', 'sequence': 1, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Chỉ làm được 2–3 ngày/tuần', 'sequence': 2}),
+                (0, 0, {'value': 'Tùy tuần', 'sequence': 3}),
+                (0, 0, {'value': 'Không chắc chắn', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- PT-Q02 -->
+        <record id="pt_q02" model="survey.question">
+            <field name="survey_id" ref="survey_parttime"/>
+            <field name="title">Bạn có thể làm ca tối, cuối tuần hoặc lễ khi phân công?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">20</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Có, tôi sẵn sàng', 'sequence': 1, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Chỉ làm ca ngày', 'sequence': 2}),
+                (0, 0, {'value': 'Không làm cuối tuần', 'sequence': 3}),
+                (0, 0, {'value': 'Chỉ làm ngày lễ nếu có phụ cấp', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- PT-Q03 -->
+        <record id="pt_q03" model="survey.question">
+            <field name="survey_id" ref="survey_parttime"/>
+            <field name="title">Bạn có sẵn sàng tuân thủ nội quy &amp; an toàn thực phẩm?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">30</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Có, tôi cam kết tuân thủ', 'sequence': 1, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Tôi sẽ cố gắng', 'sequence': 2}),
+                (0, 0, {'value': 'Tùy tình huống', 'sequence': 3}),
+                (0, 0, {'value': 'Tôi cần tìm hiểu thêm', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- PT-Q04 -->
+        <record id="pt_q04" model="survey.question">
+            <field name="survey_id" ref="survey_parttime"/>
+            <field name="title">Hành động đúng khi khách bước vào cửa hàng?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">40</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Chờ khách tự đến quầy', 'sequence': 1}),
+                (0, 0, {'value': 'Nhìn khách rồi tiếp tục công việc', 'sequence': 2}),
+                (0, 0, {'value': 'Chào đón khách với nụ cười và sẵn sàng hỗ trợ', 'sequence': 3, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Gọi đồng nghiệp phục vụ', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- PT-Q05 -->
+        <record id="pt_q05" model="survey.question">
+            <field name="survey_id" ref="survey_parttime"/>
+            <field name="title">Điều quan trọng nhất trong giờ cao điểm?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">50</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Làm nhanh nhất có thể, bỏ qua chất lượng', 'sequence': 1}),
+                (0, 0, {'value': 'Giữ bình tĩnh, phối hợp nhóm và đảm bảo chất lượng', 'sequence': 2, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Tập trung phục vụ khách quen trước', 'sequence': 3}),
+                (0, 0, {'value': 'Chờ quản lý phân công', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- PT-Q06 -->
+        <record id="pt_q06" model="survey.question">
+            <field name="survey_id" ref="survey_parttime"/>
+            <field name="title">Khi thấy bàn ăn chưa sạch bạn làm gì?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">60</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Chờ nhân viên vệ sinh dọn', 'sequence': 1}),
+                (0, 0, {'value': 'Báo quản lý', 'sequence': 2}),
+                (0, 0, {'value': 'Bỏ qua nếu không phải việc của mình', 'sequence': 3}),
+                (0, 0, {'value': 'Chủ động dọn dẹp ngay lập tức', 'sequence': 4, 'is_correct': True, 'answer_score': 10.0}),
+            ]"/>
+        </record>
+
+        <!-- PT-Q07 -->
+        <record id="pt_q07" model="survey.question">
+            <field name="survey_id" ref="survey_parttime"/>
+            <field name="title">Khi lỡ nhận order sai bạn làm gì?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">70</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Xin lỗi khách, báo quản lý và sửa lại ngay', 'sequence': 1, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Nói khách chấp nhận', 'sequence': 2}),
+                (0, 0, {'value': 'Đổ lỗi cho hệ thống', 'sequence': 3}),
+                (0, 0, {'value': 'Giả vờ không biết', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- PT-Q08 -->
+        <record id="pt_q08" model="survey.question">
+            <field name="survey_id" ref="survey_parttime"/>
+            <field name="title">Làm part-time giúp bạn phát triển kỹ năng nào?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">80</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Giao tiếp', 'sequence': 1}),
+                (0, 0, {'value': 'Làm việc nhóm', 'sequence': 2}),
+                (0, 0, {'value': 'Quản lý thời gian', 'sequence': 3}),
+                (0, 0, {'value': 'Tất cả các kỹ năng trên', 'sequence': 4, 'is_correct': True, 'answer_score': 10.0}),
+            ]"/>
+        </record>
+
+        <!-- PT-Q09 -->
+        <record id="pt_q09" model="survey.question">
+            <field name="survey_id" ref="survey_parttime"/>
+            <field name="title">Khi được phân công ca đột xuất bạn nên?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">90</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Từ chối vì không đúng lịch', 'sequence': 1}),
+                (0, 0, {'value': 'Sắp xếp và hỗ trợ nếu có thể', 'sequence': 2, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Yêu cầu tăng lương', 'sequence': 3}),
+                (0, 0, {'value': 'Bỏ qua thông báo', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- PT-Q10 -->
+        <record id="pt_q10" model="survey.question">
+            <field name="survey_id" ref="survey_parttime"/>
+            <field name="title">Yếu tố quan trọng nhất trong QSCV?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">100</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Q – Quality (Chất lượng)', 'sequence': 1}),
+                (0, 0, {'value': 'S – Service (Dịch vụ)', 'sequence': 2}),
+                (0, 0, {'value': 'Tất cả đều quan trọng như nhau', 'sequence': 3, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'V – Value (Giá trị)', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- PT-Q11 -->
+        <record id="pt_q11" model="survey.question">
+            <field name="survey_id" ref="survey_parttime"/>
+            <field name="title">Khi khách phàn nàn thời gian chờ lâu?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">110</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Giải thích rằng đang giờ cao điểm', 'sequence': 1}),
+                (0, 0, {'value': 'Xin lỗi, cảm ơn khách đã chờ và phục vụ nhanh nhất', 'sequence': 2, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Nói khách quay lại lúc vắng', 'sequence': 3}),
+                (0, 0, {'value': 'Bỏ qua', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- PT-Q12 -->
+        <record id="pt_q12" model="survey.question">
+            <field name="survey_id" ref="survey_parttime"/>
+            <field name="title">Thái độ phù hợp của nhân viên part-time?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">120</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Làm cho xong việc, hết ca về', 'sequence': 1}),
+                (0, 0, {'value': 'Nhiệt tình, có trách nhiệm như nhân viên chính thức', 'sequence': 2, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Chỉ làm những gì được yêu cầu', 'sequence': 3}),
+                (0, 0, {'value': 'Thoải mái vì chỉ là part-time', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- PT-Q13 -->
+        <record id="pt_q13" model="survey.question">
+            <field name="survey_id" ref="survey_parttime"/>
+            <field name="title">Nếu đồng nghiệp không tuân thủ vệ sinh bạn làm gì?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">130</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Bỏ qua, không phải việc của mình', 'sequence': 1}),
+                (0, 0, {'value': 'Nhắc nhở và báo quản lý nếu cần', 'sequence': 2, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Chụp ảnh làm bằng chứng', 'sequence': 3}),
+                (0, 0, {'value': 'Chờ quản lý phát hiện', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- PT-Q14: Chọn Ngày Phỏng Vấn (Dynamic) -->
+        <record id="pt_q14" model="survey.question">
+            <field name="survey_id" ref="survey_parttime"/>
+            <field name="title">Bạn muốn phỏng vấn vào ngày nào? (chọn 1 trong 3 ngày bên dưới)</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">140</field>
+            <field name="constr_mandatory">True</field>
+        </record>
+        <record id="pt_q14_ans1" model="survey.question.answer">
+            <field name="question_id" ref="pt_q14"/>
+            <field name="value">Ngày PV 1: (chưa cập nhật)</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="pt_q14_ans2" model="survey.question.answer">
+            <field name="question_id" ref="pt_q14"/>
+            <field name="value">Ngày PV 2: (chưa cập nhật)</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="pt_q14_ans3" model="survey.question.answer">
+            <field name="question_id" ref="pt_q14"/>
+            <field name="value">Ngày PV 3: (chưa cập nhật)</field>
+            <field name="sequence">3</field>
+        </record>
+
+        <!-- ============================================================
+             SURVEY 3: QUẢN LÝ CỬA HÀNG (13 câu)
+             ============================================================ -->
+        <record id="survey_manager" model="survey.survey">
+            <field name="title">SURVEY TUYỂN DỤNG – QUẢN LÝ CỬA HÀNG</field>
+            <field name="is_pre_interview">True</field>
+            <field name="scoring_type">scoring_with_answers</field>
+            <field name="scoring_success_min">80.0</field>
+            <field name="access_mode">public</field>
+            <field name="users_login_required">False</field>
+            <field name="questions_layout">page_per_question</field>
+            <field name="is_attempts_limited">False</field>
+            <field name="description">Bài khảo sát dành cho ứng viên Quản lý cửa hàng McDonald's</field>
+        </record>
+
+        <!-- MG-Q01 -->
+        <record id="mg_q01" model="survey.question">
+            <field name="survey_id" ref="survey_manager"/>
+            <field name="title">Bạn có ít nhất 1 năm kinh nghiệm quản lý từ 5 người?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">10</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Có', 'sequence': 1, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Có kinh nghiệm nhưng dưới 5 người', 'sequence': 2}),
+                (0, 0, {'value': 'Chưa có kinh nghiệm quản lý', 'sequence': 3}),
+                (0, 0, {'value': 'Có kinh nghiệm nhưng dưới 1 năm', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- MG-Q02 -->
+        <record id="mg_q02" model="survey.question">
+            <field name="survey_id" ref="survey_manager"/>
+            <field name="title">Bạn đã từng chịu trách nhiệm KPI doanh thu/chi phí?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">20</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Có, tôi đã quản lý KPI doanh thu và chi phí', 'sequence': 1, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Chỉ theo dõi doanh thu, không quản lý chi phí', 'sequence': 2}),
+                (0, 0, {'value': 'Chưa từng', 'sequence': 3}),
+                (0, 0, {'value': 'Chỉ hỗ trợ cấp trên', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- MG-Q03 -->
+        <record id="mg_q03" model="survey.question">
+            <field name="survey_id" ref="survey_manager"/>
+            <field name="title">Bạn sẵn sàng làm việc theo ca &amp; xử lý sự cố ngoài giờ?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">30</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Có, tôi sẵn sàng', 'sequence': 1, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Chỉ làm giờ hành chính', 'sequence': 2}),
+                (0, 0, {'value': 'Tùy tình huống', 'sequence': 3}),
+                (0, 0, {'value': 'Cần thêm phụ cấp', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- MG-Q04 -->
+        <record id="mg_q04" model="survey.question">
+            <field name="survey_id" ref="survey_manager"/>
+            <field name="title">Tiêu chuẩn QSCV gồm những gì?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">40</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Quality, Speed, Cost, Value', 'sequence': 1}),
+                (0, 0, {'value': 'Quality, Service, Cleanliness, Value', 'sequence': 2, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Quality, Safety, Cleanliness, Vision', 'sequence': 3}),
+                (0, 0, {'value': 'Quantity, Service, Cost, Value', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- MG-Q05 -->
+        <record id="mg_q05" model="survey.question">
+            <field name="survey_id" ref="survey_manager"/>
+            <field name="title">Nếu doanh thu giảm liên tục 2 tuần bạn làm gì trước?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">50</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Báo cáo cấp trên và chờ chỉ đạo', 'sequence': 1}),
+                (0, 0, {'value': 'Phân tích nguyên nhân, đưa ra kế hoạch cải thiện', 'sequence': 2, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Tăng khuyến mãi ngay lập tức', 'sequence': 3}),
+                (0, 0, {'value': 'Cắt giảm nhân sự để giảm chi phí', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- MG-Q06 -->
+        <record id="mg_q06" model="survey.question">
+            <field name="survey_id" ref="survey_manager"/>
+            <field name="title">Khi nhân viên không tuân thủ an toàn thực phẩm bạn làm gì?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">60</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Phạt ngay lập tức', 'sequence': 1}),
+                (0, 0, {'value': 'Nhắc nhở, đào tạo lại và theo dõi', 'sequence': 2, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Bỏ qua nếu lần đầu', 'sequence': 3}),
+                (0, 0, {'value': 'Báo cáo HR để xử lý', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- MG-Q07 -->
+        <record id="mg_q07" model="survey.question">
+            <field name="survey_id" ref="survey_manager"/>
+            <field name="title">Quản lý hiệu quả cần tập trung vào điều gì?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">70</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Kiểm soát chặt chẽ mọi hoạt động', 'sequence': 1}),
+                (0, 0, {'value': 'Phát triển đội ngũ, tối ưu quy trình và đạt mục tiêu kinh doanh', 'sequence': 2, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Doanh thu là ưu tiên số một', 'sequence': 3}),
+                (0, 0, {'value': 'Giữ nhân viên vui vẻ', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- MG-Q08 -->
+        <record id="mg_q08" model="survey.question">
+            <field name="survey_id" ref="survey_manager"/>
+            <field name="title">Khi có phản ánh tiêu cực trên mạng xã hội bạn làm gì?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">80</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Xóa bình luận tiêu cực', 'sequence': 1}),
+                (0, 0, {'value': 'Xác minh, phản hồi chuyên nghiệp và cải thiện nội bộ', 'sequence': 2, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Bỏ qua vì không quan trọng', 'sequence': 3}),
+                (0, 0, {'value': 'Phản bác lại khách hàng', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- MG-Q09 -->
+        <record id="mg_q09" model="survey.question">
+            <field name="survey_id" ref="survey_manager"/>
+            <field name="title">KPI cửa hàng gồm những gì?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">90</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Doanh thu, chi phí, mức độ hài lòng khách hàng, chất lượng sản phẩm', 'sequence': 1, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Chỉ doanh thu và lợi nhuận', 'sequence': 2}),
+                (0, 0, {'value': 'Số lượng khách và doanh thu', 'sequence': 3}),
+                (0, 0, {'value': 'Doanh thu và số nhân viên', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- MG-Q10 -->
+        <record id="mg_q10" model="survey.question">
+            <field name="survey_id" ref="survey_manager"/>
+            <field name="title">Khi đông khách và nhân viên căng thẳng, vai trò của quản lý là?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">100</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Để nhân viên tự xử lý', 'sequence': 1}),
+                (0, 0, {'value': 'Hỗ trợ trực tiếp, điều phối và động viên đội ngũ', 'sequence': 2, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Gọi thêm nhân viên từ ca khác', 'sequence': 3}),
+                (0, 0, {'value': 'Giảm tốc độ phục vụ để tránh sai sót', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- MG-Q11 -->
+        <record id="mg_q11" model="survey.question">
+            <field name="survey_id" ref="survey_manager"/>
+            <field name="title">Kiểm soát tồn kho giúp điều gì?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">110</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Giảm lãng phí, đảm bảo nguyên liệu luôn đủ và tươi', 'sequence': 1, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Tiết kiệm chi phí nhập hàng', 'sequence': 2}),
+                (0, 0, {'value': 'Giảm công việc cho nhân viên kho', 'sequence': 3}),
+                (0, 0, {'value': 'Đáp ứng yêu cầu kiểm toán', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- MG-Q12 -->
+        <record id="mg_q12" model="survey.question">
+            <field name="survey_id" ref="survey_manager"/>
+            <field name="title">Đào tạo nhân viên mới nên như thế nào?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">120</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Để nhân viên cũ hướng dẫn', 'sequence': 1}),
+                (0, 0, {'value': 'Có kế hoạch bài bản, kèm cặp và đánh giá định kỳ', 'sequence': 2, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Cho xem video hướng dẫn là đủ', 'sequence': 3}),
+                (0, 0, {'value': 'Để nhân viên mới tự học qua thực tế', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- MG-Q13 -->
+        <record id="mg_q13" model="survey.question">
+            <field name="survey_id" ref="survey_manager"/>
+            <field name="title">Kỹ năng quan trọng nhất của quản lý chuyên nghiệp?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">130</field>
+            <field name="constr_mandatory">True</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Kỹ năng tài chính', 'sequence': 1}),
+                (0, 0, {'value': 'Kỹ năng lãnh đạo, giao tiếp và giải quyết vấn đề', 'sequence': 2, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Kỹ năng bán hàng', 'sequence': 3}),
+                (0, 0, {'value': 'Kỹ năng công nghệ', 'sequence': 4}),
+            ]"/>
+        </record>
+
+        <!-- MG-Q14: Chọn Ngày Phỏng Vấn (Dynamic) -->
+        <record id="mg_q14" model="survey.question">
+            <field name="survey_id" ref="survey_manager"/>
+            <field name="title">Bạn muốn phỏng vấn vào ngày nào? (chọn 1 trong 3 ngày bên dưới)</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">140</field>
+            <field name="constr_mandatory">True</field>
+        </record>
+        <record id="mg_q14_ans1" model="survey.question.answer">
+            <field name="question_id" ref="mg_q14"/>
+            <field name="value">Ngày PV 1: (chưa cập nhật)</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="mg_q14_ans2" model="survey.question.answer">
+            <field name="question_id" ref="mg_q14"/>
+            <field name="value">Ngày PV 2: (chưa cập nhật)</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="mg_q14_ans3" model="survey.question.answer">
+            <field name="question_id" ref="mg_q14"/>
+            <field name="value">Ngày PV 3: (chưa cập nhật)</field>
+            <field name="sequence">3</field>
+        </record>
+
+        <!-- ============================================================
+             SURVEY 4: PHIẾU ĐÁNH GIÁ OJE (Dành cho Quản lý)
+             ============================================================ -->
+        <record id="survey_oje_template" model="survey.survey">
+            <field name="title">PHIẾU ĐÁNH GIÁ OJE (MẪU CHUNG)</field>
+            <field name="is_oje_evaluation">True</field>
+            <field name="scoring_type">scoring_with_answers</field>
+            <field name="scoring_success_min">80.0</field>
+            <field name="access_mode">public</field>
+            <field name="users_login_required">False</field>
+            <field name="questions_layout">page_per_question</field>
+            <field name="is_attempts_limited">False</field>
+            <field name="description">Phiếu đánh giá dành cho Quản lý cửa hàng đánh giá ứng viên trong quá trình OJE (Thử việc thực tế).</field>
+        </record>
+
+        <!-- OJE-Q01 -->
+        <record id="oje_q01" model="survey.question">
+            <field name="survey_id" ref="survey_oje_template"/>
+            <field name="title">Thái độ phục vụ khách hàng của ứng viên như thế nào?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">10</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Rất tốt, luôn tươi cười và chủ động', 'sequence': 1, 'is_correct': True, 'answer_score': 30.0}),
+                (0, 0, {'value': 'Khá, đáp ứng yêu cầu cơ bản', 'sequence': 2, 'is_correct': True, 'answer_score': 20.0}),
+                (0, 0, {'value': 'Trung bình, cần nhắc nhở', 'sequence': 3, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Tệ, không phù hợp ngành dịch vụ', 'sequence': 4, 'is_correct': False, 'answer_score': 0.0}),
+            ]"/>
+        </record>
+
+        <!-- OJE-Q02 -->
+        <record id="oje_q02" model="survey.question">
+            <field name="survey_id" ref="survey_oje_template"/>
+            <field name="title">Khả năng tiếp thu công việc và học hỏi quy trình?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">20</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Tiếp thu nhanh, làm đúng quy trình', 'sequence': 1, 'is_correct': True, 'answer_score': 30.0}),
+                (0, 0, {'value': 'Có thể làm được sau vài lần hướng dẫn', 'sequence': 2, 'is_correct': True, 'answer_score': 20.0}),
+                (0, 0, {'value': 'Chậm tiếp thu, hay quên', 'sequence': 3, 'is_correct': True, 'answer_score': 10.0}),
+                (0, 0, {'value': 'Không làm được việc', 'sequence': 4, 'is_correct': False, 'answer_score': 0.0}),
+            ]"/>
+        </record>
+
+        <!-- OJE-Q03 -->
+        <record id="oje_q03" model="survey.question">
+            <field name="survey_id" ref="survey_oje_template"/>
+            <field name="title">Tác phong làm việc, giờ giấc và tuân thủ Nội quy/VSATTP?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">30</field>
+            <field name="suggested_answer_ids" eval="[
+                (0, 0, {'value': 'Nghiêm túc, đúng giờ, tuân thủ 100%', 'sequence': 1, 'is_correct': True, 'answer_score': 40.0}),
+                (0, 0, {'value': 'Có tuân thủ nhưng thỉnh thoảng sai sót nhỏ', 'sequence': 2, 'is_correct': True, 'answer_score': 20.0}),
+                (0, 0, {'value': 'Vi phạm nội quy nghiêm trọng', 'sequence': 3, 'is_correct': False, 'answer_score': 0.0}),
+            ]"/>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- OT Types -->
+        <record id="work_entry_type_ot_normal" model="hr.work.entry.type">
+            <field name="name">Overtime Normal</field>
+            <field name="code">OT_NORMAL</field>
+            <field name="color">4</field>
+            <field name="is_leave">False</field>
+        </record>
+
+        <record id="work_entry_type_ot_weekend" model="hr.work.entry.type">
+            <field name="name">Overtime Weekend</field>
+            <field name="code">OT_WEEKEND</field>
+            <field name="color">4</field>
+            <field name="is_leave">False</field>
+        </record>
+
+        <record id="work_entry_type_ot_holiday" model="hr.work.entry.type">
+            <field name="name">Overtime Holiday</field>
+            <field name="code">OT_HOLIDAY</field>
+            <field name="color">4</field>
+            <field name="is_leave">False</field>
+        </record>
+
+        <record id="work_entry_type_ot_night" model="hr.work.entry.type">
+            <field name="name">Overtime Night</field>
+            <field name="code">OT_NIGHT</field>
+            <field name="color">4</field>
+            <field name="is_leave">False</field>
+        </record>
+
+        <!-- Leave Types -->
+        <record id="work_entry_type_leave_al" model="hr.work.entry.type">
+            <field name="name">Annual Leave</field>
+            <field name="code">AL</field>
+            <field name="color">3</field>
+            <field name="is_leave">True</field>
+        </record>
+
+        <record id="work_entry_type_leave_sick" model="hr.work.entry.type">
+            <field name="name">Sick Leave</field>
+            <field name="code">SICK</field>
+            <field name="color">3</field>
+            <field name="is_leave">True</field>
+        </record>
+
+        <record id="work_entry_type_leave_maternity" model="hr.work.entry.type">
+            <field name="name">Maternity Leave</field>
+            <field name="code">MA</field>
+            <field name="color">3</field>
+            <field name="is_leave">True</field>
+        </record>
+
+        <record id="work_entry_type_leave_unpaid" model="hr.work.entry.type">
+            <field name="name">Unpaid Leave</field>
+            <field name="code">UL</field>
+            <field name="color">1</field>
+            <field name="is_leave">True</field>
+        </record>
+
+        <!-- Shift Types -->
+        <record id="work_entry_type_work_night" model="hr.work.entry.type">
+            <field name="name">Night Shift</field>
+            <field name="code">WORK_NIGHT</field>
+            <field name="color">5</field>
+            <field name="is_leave">False</field>
+        </record>
+    </data>
+</odoo>
+

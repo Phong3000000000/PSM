@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="email_template_ask_explanation" model="mail.template">
+            <field name="name">Discipline: Request Explanation</field>
+            <field name="model_id" ref="model_hr_discipline_record"/>
+            <field name="subject">Action Required: Explanation for Violation {{ object.name }}</field>
+            <field name="email_to">{{ object.employee_id.work_email }}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Dear <t t-out="object.employee_id.name"/>,
+                        <br/><br/>
+                        A disciplinary record has been created regarding a violation:
+                        <br/>
+                        <strong>Violation:</strong> <t t-out="object.violation_type_id.name"/>
+                        <br/>
+                        <strong>Date:</strong> <t t-out="object.date"/>
+                        <br/><br/>
+                        Please access the portal to provide your explanation regarding this incident.
+                        <br/><br/>
+                        <div style="text-align: center; margin-top: 16px;">
+                            <a t-att-href="object._get_portal_url()" 
+                               style="background-color: #875A7B; padding: 10px 20px; color: white; text-decoration: none; border-radius: 5px;">
+                                Provide Explanation
+                            </a>
+                        </div>
+                        <br/><br/>
+                        Best regards,
+                        <br/>
+                        HR Team
+                    </p>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

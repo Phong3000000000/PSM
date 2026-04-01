@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- QWeb Template cho báo cáo Adecco -->
+    <template id="report_adecco_template">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <!-- Header -->
+                    <div class="text-center mb-4">
+                        <h2>BÁO CÁO LƯƠNG PART-TIME</h2>
+                        <h4>ADECCO VIETNAM</h4>
+                        <p class="text-muted">
+                            Từ ngày:
+                            <span t-esc="date_from" />
+                            - Đến ngày:
+                            <span t-esc="date_to" />
+                        </p>
+                    </div>
+                    <!-- Table -->
+                    <table class="table table-bordered table-sm">
+                        <thead class="thead-light">
+                            <tr>
+                                <th class="text-center" style="width: 5%;">STT</th>
+                                <th style="width: 15%;">Mã NV</th>
+                                <th style="width: 30%;">Họ và Tên</th>
+                                <th class="text-right" style="width: 15%;">Tổng giờ</th>
+                                <th class="text-right" style="width: 15%;">Rate/giờ</th>
+                                <th class="text-right" style="width: 20%;">Thành tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="report_lines" t-as="line">
+                                <tr>
+                                    <td class="text-center">
+                                        <t t-esc="line_index + 1" />
+                                    </td>
+                                    <td>
+                                        <t t-esc="line['barcode']" />
+                                    </td>
+                                    <td>
+                                        <t t-esc="line['name']" />
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-esc="'%.2f' % line['worked_hours']" />
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-esc="'{:,.0f}'.format(line['hourly_rate'])" />
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-esc="'{:,.0f}'.format(line['amount'])" />
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                        <tfoot>
+                            <tr class="font-weight-bold">
+                                <td colspan="3" class="text-right">TỔNG CỘNG:</td>
+                                <td class="text-right">
+                                    <t t-esc="'%.2f' % total_hours" />
+                                </td>
+                                <td />
+                                <td class="text-right">
+                                    <t t-esc="'{:,.0f}'.format(total_amount)" />
+                                    VND
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <!-- Footer -->
+                    <div class="row mt-5">
+                        <div class="col-6">
+                            <p>
+                                <strong>Người lập báo cáo</strong>
+                            </p>
+                            <p class="text-muted">(Ký, ghi rõ họ tên)</p>
+                        </div>
+                        <div class="col-6 text-right">
+                            <p>
+                                <strong>Quản lý xác nhận</strong>
+                            </p>
+                            <p class="text-muted">(Ký, ghi rõ họ tên)</p>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

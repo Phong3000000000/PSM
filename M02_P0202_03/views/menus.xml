@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== MENUS ==================== -->
+
+    <!-- 1. Chương trình giới thiệu nhân sự -->
+    <menuitem id="menu_referral_request"
+        name="Chương trình giới thiệu nhân sự"
+        parent="hr_referral.menu_hr_referral_root"
+        action="M02_P0204_01.action_referral_program_all"
+        groups="M02_P0202_03.group_referral_hr"
+        sequence="10" />
+
+
+    <!-- 2. Quản lý Giới thiệu (nhóm) -->
+    <menuitem id="menu_referral_tracking_root"
+        name="Quản lý Giới thiệu"
+        parent="hr_referral.menu_hr_referral_root"
+        sequence="20" />
+
+    <menuitem id="menu_referral_all"
+        name="Tất cả ứng viên"
+        parent="menu_referral_tracking_root"
+        action="action_referral_submission_all"
+        groups="M02_P0202_03.group_referral_hr"
+        sequence="10" />
+
+
+    <menuitem id="menu_referral_my"
+        name="Giới thiệu của tôi"
+        parent="menu_referral_tracking_root"
+        action="action_referral_submission"
+        sequence="30" />
+
+    <!-- Cấu hình (Tích hợp vào menu Cấu hình gốc của Odoo) -->
+    <!-- Chỉ HR và Admin mới được xem menu Configuration -->
+    <menuitem id="hr_referral.menu_hr_referral_configuration"
+        groups="M02_P0202_03.group_referral_hr,hr_referral.group_hr_referral_manager" />
+
+    <menuitem id="menu_referral_config_bonus"
+        name="Cấu hình thưởng &amp; Đợt"
+        parent="hr_referral.menu_hr_referral_configuration"
+        sequence="100" />
+
+    <menuitem id="menu_referral_config_settings"
+        name="Tham số tiền thưởng"
+        parent="menu_referral_config_bonus"
+        action="M02_P0204_01.action_referral_config"
+        sequence="10" />
+
+    <!-- Chỉ HR và Admin mới thấy menu Reporting -->
+    <menuitem id="hr_referral.menu_hr_referral_reporting"
+        groups="M02_P0202_03.group_referral_hr,hr_referral.group_hr_referral_manager" />
+</odoo>

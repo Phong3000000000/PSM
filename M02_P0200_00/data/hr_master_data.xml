@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- ============================================ -->
+        <!-- RGM USERS & EMPLOYEES HIERARCHY             -->
+        <!-- Password for all users: 1                   -->
+        <!-- ============================================ -->
+        
+        <!-- Cleanup existing groups before update -->
+        <function model="res.users" name="_fix_portal_groups"/>
+
+        <!-- 1. RGM (Regression General Manager) - INTERNAL User -->
+        <record id="user_rgm_master" model="res.users">
+            <field name="name">Nguyen Van RGM</field>
+            <field name="login">rgm@master.com</field>
+            <field name="password">1</field>
+            <field name="email">rgm@master.com</field>
+        </record>
+        
+        <record id="emp_rgm_master" model="hr.employee">
+            <field name="name">Nguyen Van RGM</field>
+            <field name="user_id" ref="user_rgm_master"/>
+            <field name="work_email">rgm@master.com</field>
+            <field name="job_title">Regional General Manager</field>
+        </record>
+
+        <!-- 2. DM (District Manager) - PORTAL User + MANAGER -->
+        <record id="user_dm_master" model="res.users">
+            <field name="name">Tran Thi DM</field>
+            <field name="login">dm@master.com</field>
+            <field name="password">1</field>
+            <field name="email">dm@master.com</field>
+            <field name="x_is_portal_manager" eval="True"/>
+        </record>
+
+        <record id="emp_dm_master" model="hr.employee">
+            <field name="name">Tran Thi DM</field>
+            <field name="user_id" ref="user_dm_master"/>
+            <field name="parent_id" ref="emp_rgm_master"/> <!-- Reports to RGM -->
+            <field name="work_email">dm@master.com</field>
+            <field name="job_title">District Manager</field>
+        </record>
+
+        <!-- 3. SM (Store Manager) - PORTAL User + MANAGER -->
+        <record id="user_sm_master" model="res.users">
+            <field name="name">Le Van SM</field>
+            <field name="login">sm@master.com</field>
+            <field name="password">1</field>
+            <field name="email">sm@master.com</field>
+            <field name="x_is_portal_manager" eval="True"/>
+        </record>
+
+        <record id="emp_sm_master" model="hr.employee">
+            <field name="name">Le Van SM</field>
+            <field name="user_id" ref="user_sm_master"/>
+            <field name="parent_id" ref="emp_dm_master"/> <!-- Reports to DM -->
+            <field name="work_email">sm@master.com</field>
+            <field name="job_title">Store Manager</field>
+        </record>
+
+        <!-- 4. Crew - PORTAL User -->
+        <record id="user_crew_master" model="res.users">
+            <field name="name">Pham Van Crew</field>
+            <field name="login">crew@master.com</field>
+            <field name="password">1</field>
+            <field name="email">crew@master.com</field>
+            <field name="x_is_portal_manager" eval="False"/>
+        </record>
+
+        <record id="emp_crew_master" model="hr.employee">
+            <field name="name">Pham Van Crew</field>
+            <field name="user_id" ref="user_crew_master"/>
+            <field name="parent_id" ref="emp_sm_master"/> <!-- Reports to SM -->
+            <field name="work_email">crew@master.com</field>
+             <field name="job_title">Crew Member</field>
+        </record>
+
+    </data>
+
+    <data noupdate="0">
+        <!-- Assign Groups separately to avoid default group conflicts -->
+        <record id="user_dm_master" model="res.users">
+            <field name="group_ids" eval="[(6, 0, [ref('base.group_portal')])]"/>
+        </record>
+
+        <record id="user_sm_master" model="res.users">
+            <field name="group_ids" eval="[(6, 0, [ref('base.group_portal')])]"/>
+        </record>
+
+        <record id="user_crew_master" model="res.users">
+            <field name="group_ids" eval="[(6, 0, [ref('base.group_portal')])]"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- ================================ -->
+        <!-- EVALUATION WIZARD -->
+        <!-- ================================ -->
+        <record id="view_ops_evaluation_wizard_form" model="ir.ui.view">
+            <field name="name">mcd.ops.evaluation.wizard.form</field>
+            <field name="model">mcd.ops.evaluation.wizard</field>
+            <field name="arch" type="xml">
+                <form string="OPS Evaluation">
+                    <group>
+                        <field name="process_id" readonly="1"/>
+                        <field name="eval_type" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="result" widget="radio"/>
+                    </group>
+                    <group invisible="result != 'fail'">
+                        <field name="fail_reason" placeholder="Enter reason for failure..."/>
+                    </group>
+                    <group>
+                        <field name="notes" placeholder="Additional notes (optional)"/>
+                    </group>
+                    <footer>
+                        <button name="action_confirm" string="Confirm Evaluation" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_evaluation_wizard" model="ir.actions.act_window">
+            <field name="name">Evaluate Employee</field>
+            <field name="res_model">mcd.ops.evaluation.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <!-- ================================ -->
+        <!-- FEEDBACK WIZARD -->
+        <!-- ================================ -->
+        <record id="view_ops_feedback_wizard_form" model="ir.ui.view">
+            <field name="name">mcd.ops.feedback.wizard.form</field>
+            <field name="model">mcd.ops.feedback.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Profile Update Feedback">
+                    <group>
+                        <field name="process_id" readonly="1"/>
+                        <field name="feedback_type" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="feedback" placeholder="Enter feedback..."/>
+                    </group>
+                    <footer>
+                        <button name="action_confirm" string="Submit Feedback" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_feedback_wizard" model="ir.actions.act_window">
+            <field name="name">Submit Feedback</field>
+            <field name="res_model">mcd.ops.feedback.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

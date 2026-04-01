@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- ================================================ -->
+        <!-- KỲ ĐĂNG KÝ - TUẦN TEST                          -->
+        <!-- ================================================ -->
+        <record id="period_week_open" model="planning.period">
+            <field name="name">Tuần Test - Đang mở đăng ký</field>
+            <field name="date_from" eval="(datetime.today()).strftime('%Y-%m-%d')" />
+            <field name="date_to" eval="(datetime.today() + timedelta(days=7)).strftime('%Y-%m-%d')" />
+            <field name="state">open</field>
+        </record>
+        <!-- ================================================ -->
+        <!-- NGÀY 1 (Ngày mai) - 3 ca                        -->
+        <!-- ================================================ -->
+        <record id="slot_d1_morning" model="planning.slot">
+            <field name="start_datetime" eval="(datetime.today() + timedelta(days=1)).replace(hour=6, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="end_datetime" eval="(datetime.today() + timedelta(days=1)).replace(hour=14, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="role_id" ref="role_fcot" />
+            <field name="period_id" ref="period_week_open" />
+            <field name="state">published</field>
+            <field name="allocated_hours">8.0</field>
+            <field name="approval_state">open</field>
+        </record>
+
+        <record id="slot_d1_afternoon" model="planning.slot">
+            <field name="start_datetime" eval="(datetime.today() + timedelta(days=1)).replace(hour=14, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="end_datetime" eval="(datetime.today() + timedelta(days=1)).replace(hour=22, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="role_id" ref="role_dtot" />
+            <field name="period_id" ref="period_week_open" />
+            <field name="state">published</field>
+            <field name="allocated_hours">8.0</field>
+            <field name="approval_state">open</field>
+        </record>
+
+        <record id="slot_d1_night" model="planning.slot">
+            <field name="start_datetime" eval="(datetime.today() + timedelta(days=1)).replace(hour=22, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="end_datetime" eval="(datetime.today() + timedelta(days=2)).replace(hour=6, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="role_id" ref="role_kitchen" />
+            <field name="period_id" ref="period_week_open" />
+            <field name="state">published</field>
+            <field name="allocated_hours">8.0</field>
+            <field name="approval_state">open</field>
+        </record>
+        <!-- ================================================ -->
+        <!-- NGÀY 2 - 3 ca                                   -->
+        <!-- ================================================ -->
+        <record id="slot_d2_morning" model="planning.slot">
+            <field name="start_datetime" eval="(datetime.today() + timedelta(days=2)).replace(hour=6, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="end_datetime" eval="(datetime.today() + timedelta(days=2)).replace(hour=14, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="role_id" ref="role_barista" />
+            <field name="period_id" ref="period_week_open" />
+            <field name="state">published</field>
+            <field name="allocated_hours">8.0</field>
+            <field name="approval_state">open</field>
+        </record>
+
+        <record id="slot_d2_afternoon" model="planning.slot">
+            <field name="start_datetime" eval="(datetime.today() + timedelta(days=2)).replace(hour=14, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="end_datetime" eval="(datetime.today() + timedelta(days=2)).replace(hour=22, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="role_id" ref="role_lobby" />
+            <field name="period_id" ref="period_week_open" />
+            <field name="state">published</field>
+            <field name="allocated_hours">8.0</field>
+            <field name="approval_state">open</field>
+        </record>
+
+        <record id="slot_d2_night" model="planning.slot">
+            <field name="start_datetime" eval="(datetime.today() + timedelta(days=2)).replace(hour=22, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="end_datetime" eval="(datetime.today() + timedelta(days=3)).replace(hour=6, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="role_id" ref="role_cashier" />
+            <field name="period_id" ref="period_week_open" />
+            <field name="state">published</field>
+            <field name="allocated_hours">8.0</field>
+            <field name="approval_state">open</field>
+        </record>
+        <!-- ================================================ -->
+        <!-- NGÀY 3 - 3 ca                                   -->
+        <!-- ================================================ -->
+        <record id="slot_d3_morning" model="planning.slot">
+            <field name="start_datetime" eval="(datetime.today() + timedelta(days=3)).replace(hour=6, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="end_datetime" eval="(datetime.today() + timedelta(days=3)).replace(hour=14, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="role_id" ref="role_mod" />
+            <field name="period_id" ref="period_week_open" />
+            <field name="state">published</field>
+            <field name="allocated_hours">8.0</field>
+            <field name="approval_state">open</field>
+        </record>
+
+        <record id="slot_d3_afternoon" model="planning.slot">
+            <field name="start_datetime" eval="(datetime.today() + timedelta(days=3)).replace(hour=14, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="end_datetime" eval="(datetime.today() + timedelta(days=3)).replace(hour=22, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="role_id" ref="role_trainee" />
+            <field name="period_id" ref="period_week_open" />
+            <field name="state">published</field>
+            <field name="allocated_hours">8.0</field>
+            <field name="approval_state">open</field>
+        </record>
+
+        <record id="slot_d3_night" model="planning.slot">
+            <field name="start_datetime" eval="(datetime.today() + timedelta(days=3)).replace(hour=22, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="end_datetime" eval="(datetime.today() + timedelta(days=4)).replace(hour=6, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="role_id" ref="role_fcot" />
+            <field name="period_id" ref="period_week_open" />
+            <field name="state">published</field>
+            <field name="allocated_hours">8.0</field>
+            <field name="approval_state">open</field>
+        </record>
+        <!-- ================================================ -->
+        <!-- NGÀY 4 - 3 ca                                   -->
+        <!-- ================================================ -->
+        <record id="slot_d4_morning" model="planning.slot">
+            <field name="start_datetime" eval="(datetime.today() + timedelta(days=4)).replace(hour=6, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="end_datetime" eval="(datetime.today() + timedelta(days=4)).replace(hour=14, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="role_id" ref="role_dtot" />
+            <field name="period_id" ref="period_week_open" />
+            <field name="state">published</field>
+            <field name="allocated_hours">8.0</field>
+            <field name="approval_state">open</field>
+        </record>
+
+        <record id="slot_d4_afternoon" model="planning.slot">
+            <field name="start_datetime" eval="(datetime.today() + timedelta(days=4)).replace(hour=14, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="end_datetime" eval="(datetime.today() + timedelta(days=4)).replace(hour=22, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="role_id" ref="role_kitchen" />
+            <field name="period_id" ref="period_week_open" />
+            <field name="state">published</field>
+            <field name="allocated_hours">8.0</field>
+            <field name="approval_state">open</field>
+        </record>
+
+        <record id="slot_d4_night" model="planning.slot">
+            <field name="start_datetime" eval="(datetime.today() + timedelta(days=4)).replace(hour=22, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="end_datetime" eval="(datetime.today() + timedelta(days=5)).replace(hour=6, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="role_id" ref="role_barista" />
+            <field name="period_id" ref="period_week_open" />
+            <field name="state">published</field>
+            <field name="allocated_hours">8.0</field>
+            <field name="approval_state">open</field>
+        </record>
+        <!-- ================================================ -->
+        <!-- NGÀY 5 - 3 ca                                   -->
+        <!-- ================================================ -->
+        <record id="slot_d5_morning" model="planning.slot">
+            <field name="start_datetime" eval="(datetime.today() + timedelta(days=5)).replace(hour=6, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="end_datetime" eval="(datetime.today() + timedelta(days=5)).replace(hour=14, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="role_id" ref="role_lobby" />
+            <field name="period_id" ref="period_week_open" />
+            <field name="state">published</field>
+            <field name="allocated_hours">8.0</field>
+            <field name="approval_state">open</field>
+        </record>
+
+        <record id="slot_d5_afternoon" model="planning.slot">
+            <field name="start_datetime" eval="(datetime.today() + timedelta(days=5)).replace(hour=14, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="end_datetime" eval="(datetime.today() + timedelta(days=5)).replace(hour=22, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="role_id" ref="role_cashier" />
+            <field name="period_id" ref="period_week_open" />
+            <field name="state">published</field>
+            <field name="allocated_hours">8.0</field>
+            <field name="approval_state">open</field>
+        </record>
+
+        <record id="slot_d5_night" model="planning.slot">
+            <field name="start_datetime" eval="(datetime.today() + timedelta(days=5)).replace(hour=22, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="end_datetime" eval="(datetime.today() + timedelta(days=6)).replace(hour=6, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="role_id" ref="role_mod" />
+            <field name="period_id" ref="period_week_open" />
+            <field name="state">published</field>
+            <field name="allocated_hours">8.0</field>
+            <field name="approval_state">open</field>
+        </record>
+        <!-- ================================================ -->
+        <!-- NGÀY 6 - 3 ca                                   -->
+        <!-- ================================================ -->
+        <record id="slot_d6_morning" model="planning.slot">
+            <field name="start_datetime" eval="(datetime.today() + timedelta(days=6)).replace(hour=6, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="end_datetime" eval="(datetime.today() + timedelta(days=6)).replace(hour=14, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="role_id" ref="role_trainee" />
+            <field name="period_id" ref="period_week_open" />
+            <field name="state">published</field>
+            <field name="allocated_hours">8.0</field>
+            <field name="approval_state">open</field>
+        </record>
+
+        <record id="slot_d6_afternoon" model="planning.slot">
+            <field name="start_datetime" eval="(datetime.today() + timedelta(days=6)).replace(hour=14, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="end_datetime" eval="(datetime.today() + timedelta(days=6)).replace(hour=22, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="role_id" ref="role_fcot" />
+            <field name="period_id" ref="period_week_open" />
+            <field name="state">published</field>
+            <field name="allocated_hours">8.0</field>
+            <field name="approval_state">open</field>
+        </record>
+
+        <record id="slot_d6_night" model="planning.slot">
+            <field name="start_datetime" eval="(datetime.today() + timedelta(days=6)).replace(hour=22, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="end_datetime" eval="(datetime.today() + timedelta(days=7)).replace(hour=6, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="role_id" ref="role_dtot" />
+            <field name="period_id" ref="period_week_open" />
+            <field name="state">published</field>
+            <field name="allocated_hours">8.0</field>
+            <field name="approval_state">open</field>
+        </record>
+        <!-- ================================================ -->
+        <!-- NGÀY 7 - 3 ca                                   -->
+        <!-- ================================================ -->
+        <record id="slot_d7_morning" model="planning.slot">
+            <field name="start_datetime" eval="(datetime.today() + timedelta(days=7)).replace(hour=6, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="end_datetime" eval="(datetime.today() + timedelta(days=7)).replace(hour=14, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="role_id" ref="role_kitchen" />
+            <field name="period_id" ref="period_week_open" />
+            <field name="state">published</field>
+            <field name="allocated_hours">8.0</field>
+            <field name="approval_state">open</field>
+        </record>
+
+        <record id="slot_d7_afternoon" model="planning.slot">
+            <field name="start_datetime" eval="(datetime.today() + timedelta(days=7)).replace(hour=14, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="end_datetime" eval="(datetime.today() + timedelta(days=7)).replace(hour=22, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="role_id" ref="role_barista" />
+            <field name="period_id" ref="period_week_open" />
+            <field name="state">published</field>
+            <field name="allocated_hours">8.0</field>
+            <field name="approval_state">open</field>
+        </record>
+
+        <record id="slot_d7_night" model="planning.slot">
+            <field name="start_datetime" eval="(datetime.today() + timedelta(days=7)).replace(hour=22, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="end_datetime" eval="(datetime.today() + timedelta(days=8)).replace(hour=6, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field name="role_id" ref="role_lobby" />
+            <field name="period_id" ref="period_week_open" />
+            <field name="state">published</field>
+            <field name="allocated_hours">8.0</field>
+            <field name="approval_state">open</field>
+        </record>
+    </data>
+</odoo>

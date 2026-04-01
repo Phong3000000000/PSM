@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_mcd_soc_evaluation_form" model="ir.ui.view">
+        <field name="name">mcd.soc.evaluation.form</field>
+        <field name="model">mcd.soc.evaluation</field>
+        <field name="arch" type="xml">
+            <form string="SOC Evaluation">
+                <header>
+                    <button name="action_confirm_start" string="Start Evaluation" type="object" invisible="state != 'draft'" class="oe_highlight"/>
+                    <button name="action_submit_evaluation" string="Submit Result" type="object" invisible="state != 'in_progress'" class="oe_highlight"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Session Info">
+                            <field name="employee_id" readonly="state in ['done', 'cancel']"/>
+                            <field name="soc_id" readonly="state in ['done', 'cancel']"/>
+                            <field name="channel_id"/>
+                        </group>
+                        <group string="Result">
+                            <field name="score_achieved" widget="progressbar"/>
+                            <field name="result" decoration-success="result == 'pass'" decoration-danger="result == 'fail'" widget="badge"/>
+                            <field name="trainer_id" readonly="state in ['done', 'cancel']"/>
+                            <field name="date_evaluation" readonly="state in ['done', 'cancel']"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Checklist">
+                            <field name="line_ids" readonly="state in ['done', 'cancel']">
+                                <list editable="bottom" create="0" delete="0">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="section_id" readonly="1"/>
+                                    <field name="name" readonly="1" force_save="1"/> 
+                                    <field name="is_checked" widget="boolean_toggle"/>
+                                    <field name="comment"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Evaluation List -->
+    <record id="view_mcd_soc_evaluation_tree" model="ir.ui.view">
+        <field name="name">mcd.soc.evaluation.list</field>
+        <field name="model">mcd.soc.evaluation</field>
+        <field name="arch" type="xml">
+            <list string="SOC Evaluations" decoration-success="result == 'pass'" decoration-danger="result == 'fail'">
+                <field name="name"/>
+                <field name="date_evaluation"/>
+                <field name="employee_id"/>
+                <field name="soc_id"/>
+                <field name="score_achieved" widget="progressbar"/>
+                <field name="result" widget="badge" decoration-success="result == 'pass'" decoration-danger="result == 'fail'"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Read-only Hierarchical View -->
+    <record id="view_mcd_soc_evaluation_hierarchy" model="ir.ui.view">
+        <field name="name">mcd.soc.evaluation.hierarchy</field>
+        <field name="model">mcd.soc.evaluation</field>
+        <field name="arch" type="xml">
+            <form string="SOC Evaluations Status" create="0" delete="0">
+                <header>
+                    <button name="action_open_check_soc" string="Kiểm tra SOC" type="object" class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="employee_id" readonly="1" options="{'no_create': True, 'no_open': True}"/>
+                    </group>
+                    <notebook>
+                        <page string="SOC Status by Area">
+                            <field name="hierarchy_html" widget="html" class="oe_read_only" readonly="1" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_mcd_soc_evaluation" model="ir.actions.act_window">
+        <field name="name">SOC Evaluations</field>
+        <field name="res_model">mcd.soc.evaluation</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_mcd_soc_evaluation_hierarchy"/>
+        <field name="target">current</field>
+        <field name="context">{
+            'default_employee_id': user.employee_id.id if user.employee_id else False,
+            'form_view_initial_mode': 'readonly'
+        }</field>
+        <field name="domain">[('id', '=', False)]</field>
+    </record>
+</odoo>

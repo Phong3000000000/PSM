@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Main Menu -->
+        <menuitem id="menu_food_safety_root"
+                  name="Food Safety"
+                  sequence="50"
+                  web_icon="food_safety_complaint,static/description/icon.png"/>
+
+        <!-- Complaints Menu -->
+        <menuitem id="menu_food_safety_complaints"
+                  name="Complaints"
+                  parent="menu_food_safety_root"
+                  sequence="10"/>
+
+        <menuitem id="menu_food_safety_complaint_all"
+                  name="All Complaints"
+                  parent="menu_food_safety_complaints"
+                  action="action_food_safety_complaint"
+                  sequence="10"/>
+
+        <!-- Quick Filters -->
+        <record id="action_complaint_my_tasks" model="ir.actions.act_window">
+            <field name="name">My Complaints</field>
+            <field name="res_model">food.safety.complaint</field>
+            <field name="view_mode">list,kanban,form</field>
+            <field name="context">{'search_default_my_complaints': 1}</field>
+            <field name="search_view_id" ref="view_food_safety_complaint_search"/>
+        </record>
+
+        <menuitem id="menu_my_complaints"
+                  name="My Complaints"
+                  parent="menu_food_safety_complaints"
+                  action="action_complaint_my_tasks"
+                  sequence="5"/>
+
+        <record id="action_complaint_from_store" model="ir.actions.act_window">
+            <field name="name">Store Complaints</field>
+            <field name="res_model">food.safety.complaint</field>
+            <field name="view_mode">list,kanban,form</field>
+            <field name="context">{'search_default_from_store': 1, 'default_source_type': 'store'}</field>
+            <field name="search_view_id" ref="view_food_safety_complaint_search"/>
+        </record>
+
+        <menuitem id="menu_store_complaints"
+                  name="From Store"
+                  parent="menu_food_safety_complaints"
+                  action="action_complaint_from_store"
+                  sequence="20"/>
+
+        <record id="action_complaint_from_customer" model="ir.actions.act_window">
+            <field name="name">Customer Complaints</field>
+            <field name="res_model">food.safety.complaint</field>
+            <field name="view_mode">list,kanban,form</field>
+            <field name="context">{'search_default_from_customer': 1, 'default_source_type': 'customer'}</field>
+            <field name="search_view_id" ref="view_food_safety_complaint_search"/>
+        </record>
+
+        <menuitem id="menu_customer_complaints"
+                  name="From Customer"
+                  parent="menu_food_safety_complaints"
+                  action="action_complaint_from_customer"
+                  sequence="30"/>
+
+        <!-- Configuration Menu -->
+        <menuitem id="menu_food_safety_config"
+                  name="Configuration"
+                  parent="menu_food_safety_root"
+                  sequence="100"
+                  groups="base.group_system"/>
+    </data>
+</odoo>

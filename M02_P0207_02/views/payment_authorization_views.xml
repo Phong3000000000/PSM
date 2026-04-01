@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_payment_authorization_form" model="ir.ui.view">
+        <field name="name">payment.authorization.form</field>
+        <field name="model">payment.authorization</field>
+        <field name="arch" type="xml">
+            <form string="Ủy Nhiệm Chi (UNC)">
+                <header>
+                    <button name="action_submit" string="Gửi Duyệt" type="object"
+                            invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_approve" string="C-Level Duyệt" type="object"
+                            invisible="state != 'pending'" class="btn-success"
+                            confirm="Xác nhận duyệt thanh toán này?"/>
+                    <button name="action_reject" string="Từ chối" type="object"
+                            invisible="state != 'pending'" class="btn-danger"/>
+                    <button name="action_complete" string="Hoàn tất thanh toán" type="object"
+                            invisible="state != 'approved'" class="btn-primary"
+                            groups="account.group_account_manager"/>
+                    <button name="action_draft" string="Đặt lại Draft" type="object"
+                            invisible="state not in ['rejected', 'completed']"
+                            groups="base.group_no_one"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,pending,approved,completed"/>
+                </header>
+
+                <sheet>
+                    <!-- Smart buttons -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_approval_request" type="object"
+                                class="oe_stat_button" icon="fa-check-circle-o"
+                                invisible="not approval_request_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">C-Level Approval</span>
+                            </div>
+                        </button>
+                        <!-- Smart button: tải file UNC .docx -->
+                        <button name="action_download_unc" type="object"
+                                class="oe_stat_button" icon="fa-file-word-o"
+                                invisible="not unc_attachment_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">📄 File UNC</span>
+                                <span class="o_stat_text" style="font-size:10px;color:#017E84">Tải .docx</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Title -->
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                        <h4 style="color:#017E84;letter-spacing:1px">ỦY NHIỆM CHI</h4>
+                    </div>
+
+                    <!-- Quick summary row -->
+                    <group>
+                        <group>
+                            <field name="date" string="Ngày lập"/>
+                            <field name="period" string="Kỳ lương"/>
+                        </group>
+                        <group>
+                            <field name="total_amount" string="Tổng số tiền" widget="monetary"/>
+                            <field name="amount_text" string="Bằng chữ" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+
+                        <!-- ══════════════════════════════════════════════════════
+                             PAGE 1: FORM UNC ĐẦY ĐỦ
+                             ═════════════════════════════════════════════════════ -->
+                        <page string="📄 Biểu mẫu UNC">
+
+                            <!-- I. PHẦN ĐẦU BIỂU MẪU -->
+                            <separator string="I. Phần đầu biểu mẫu"/>
+                            <group>
+                                <group>
+                                    <field name="x_ref_number"    string="Mã số hồ sơ"/>
+                                    <field name="x_form_number"   string="Mẫu số"/>
+                                    <field name="x_form_symbol"   string="Ký hiệu"/>
+                                </group>
+                                <group>
+                                    <field name="x_voucher_number" string="Số chứng từ"/>
+                                    <field name="x_qr_code"        string="Mã QR code"/>
+                                    <field name="x_payment_method" string="Phương thức"/>
+                                </group>
+                            </group>
+
+                            <!-- II. ĐƠN VỊ TRẢ TIỀN -->
+                            <separator string="II. Thông tin đơn vị trả tiền"/>
+                            <group>
+                                <group>
+                                    <field name="x_payer_name"         string="Đơn vị trả tiền"/>
+                                    <field name="x_payer_sponsor_code" string="Mã nhà tài trợ"/>
+                                    <field name="x_payer_address"      string="Địa chỉ"/>
+                                </group>
+                                <group>
+                                    <field name="x_payer_account" string="Tài khoản KBNN"/>
+                                    <field name="x_payer_kbnn"    string="Tại KBNN"/>
+                                    <field name="bank_id"         string="TK ngân hàng công ty"/>
+                                </group>
+                            </group>
+
+                            <!-- III. PHÁP LÝ -->
+                            <separator string="III. Thông tin pháp lý liên quan"/>
+                            <group string="Quyết định phê duyệt kết quả lựa chọn nhà thầu">
+                                <group>
+                                    <field name="x_legal_decision_no" string="Số"/>
+                                </group>
+                                <group>
+                                    <label for="x_legal_decision_day" string="Ngày/Tháng/Năm"/>
+                                    <div class="o_row">
+                                        <field name="x_legal_decision_day"   class="o_field_char" style="width:40px" placeholder="ngày"/>
+                                        <span>/</span>
+                                        <field name="x_legal_decision_month" class="o_field_char" style="width:40px" placeholder="tháng"/>
+                                        <span>/</span>
+                                        <field name="x_legal_decision_year"  class="o_field_char" style="width:60px" placeholder="năm"/>
+                                    </div>
+                                </group>
+                            </group>
+                            <group string="Hợp đồng / Quyết định hỗ trợ">
+                                <group>
+                                    <field name="x_legal_contract_no"     string="Số HĐ/QĐ"/>
+                                    <field name="x_legal_contract_amount" string="Tổng số tiền"/>
+                                    <field name="x_legal_contract_party"  string="Ký với đơn vị"/>
+                                    <field name="x_legal_advance_rule"    string="Mức tạm ứng"/>
+                                </group>
+                                <group>
+                                    <label for="x_legal_contract_day" string="Ngày/Tháng/Năm"/>
+                                    <div class="o_row">
+                                        <field name="x_legal_contract_day"   class="o_field_char" style="width:40px" placeholder="ngày"/>
+                                        <span>/</span>
+                                        <field name="x_legal_contract_month" class="o_field_char" style="width:40px" placeholder="tháng"/>
+                                        <span>/</span>
+                                        <field name="x_legal_contract_year"  class="o_field_char" style="width:60px" placeholder="năm"/>
+                                    </div>
+                                </group>
+                            </group>
+                            <group string="Văn bản / Biên bản nghiệm thu">
+                                <group>
+                                    <field name="x_legal_accept_no"     string="Số BB"/>
+                                    <field name="x_legal_accept_amount" string="Tổng số tiền"/>
+                                    <field name="x_legal_accept_party"  string="Ký với đơn vị"/>
+                                </group>
+                                <group>
+                                    <label for="x_legal_accept_day" string="Ngày/Tháng/Năm"/>
+                                    <div class="o_row">
+                                        <field name="x_legal_accept_day"   class="o_field_char" style="width:40px" placeholder="ngày"/>
+                                        <span>/</span>
+                                        <field name="x_legal_accept_month" class="o_field_char" style="width:40px" placeholder="tháng"/>
+                                        <span>/</span>
+                                        <field name="x_legal_accept_year"  class="o_field_char" style="width:60px" placeholder="năm"/>
+                                    </div>
+                                </group>
+                            </group>
+
+                            <!-- IV. NỘI DUNG THANH TOÁN -->
+                            <separator string="IV. Nội dung thanh toán"/>
+                            <group>
+                                <field name="reason" string="Nội dung" nolabel="0"/>
+                            </group>
+
+                            <!-- V. BẢNG CHI TIẾT THANH TOÁN -->
+                            <separator string="V. Bảng chi tiết thanh toán"/>
+                            <field name="payslip_ids" readonly="state != 'draft'">
+                                <list string="Danh sách phiếu lương" editable="bottom">
+                                    <field name="employee_id"              string="Nhân viên"/>
+                                    <field name="x_receiver_name"         string="Người nhận (Đơn vị/cá nhân)"/>
+                                    <field name="x_receiver_bank_account" string="Tài khoản"/>
+                                    <field name="x_receiver_bank_name"    string="Tại ngân hàng"/>
+                                    <field name="x_hoa_don_so"            string="Hóa đơn Số"/>
+                                    <field name="x_hoa_don_ngay"          string="Hóa đơn Ngày"/>
+                                    <field name="x_chung_tu_so"           string="Chứng từ Số"/>
+                                    <field name="x_chung_tu_ngay"         string="Chứng từ Ngày"/>
+                                    <field name="x_ma_nguon_ns"           string="Mã nguồn NS"/>
+                                    <field name="x_nien_do_ns"            string="Niên độ NS"/>
+                                    <field name="net_wage"                string="Net Lương" sum="Tổng cộng"/>
+                                </list>
+                            </field>
+
+                            <!-- VI. TỔNG TIỀN -->
+                            <separator string="VI. Phần tổng tiền"/>
+                            <group>
+                                <group>
+                                    <field name="total_amount" string="Tổng số tiền" widget="monetary" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="amount_text"  string="Bằng chữ" readonly="1"/>
+                                </group>
+                            </group>
+
+                        </page>
+
+                        <!-- ══════════════════════════════════════════════════════
+                             PAGE 2: NHẬN TIỀN + KBNN
+                             ═════════════════════════════════════════════════════ -->
+                        <page string="VII–VIII. Nhận tiền &amp; KBNN">
+
+                            <!-- VII. NHẬN TIỀN -->
+                            <separator string="VII. Thông tin đơn vị/cá nhân nhận tiền"/>
+                            <group>
+                                <group>
+                                    <field name="x_recv_name"     string="Đơn vị/cá nhân nhận tiền"/>
+                                    <field name="x_recv_tax_code" string="Mã số thuế"/>
+                                    <field name="x_recv_account"  string="Tài khoản"/>
+                                    <field name="x_recv_kbnn"    string="Tại KBNN/ngân hàng"/>
+                                </group>
+                                <group>
+                                    <separator string="Hoặc nhận tiền mặt"/>
+                                    <field name="x_recv_cash_name"  string="Người nhận tiền mặt"/>
+                                    <field name="x_recv_cccd"       string="Số CCCD/Căn cước"/>
+                                    <field name="x_recv_cccd_date"  string="Ngày cấp"/>
+                                    <field name="x_recv_cccd_place" string="Nơi cấp"/>
+                                </group>
+                            </group>
+
+                            <!-- VIII. KBNN GHI -->
+                            <separator string="VIII. Phần Kho bạc Nhà nước ghi"/>
+                            <group>
+                                <group string="Bút toán 1">
+                                    <field name="x_kbnn_debit1"  string="Nợ tài khoản"/>
+                                    <field name="x_kbnn_credit1" string="Có tài khoản"/>
+                                </group>
+                                <group string="Bút toán 2">
+                                    <field name="x_kbnn_debit2"  string="Nợ tài khoản"/>
+                                    <field name="x_kbnn_credit2" string="Có tài khoản"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="x_kbnn_area_code" string="Mã địa bàn hành chính"/>
+                                    <field name="x_kbnn_cash_bank" string="NH/KBNN nơi nhận tiền mặt"/>
+                                </group>
+                            </group>
+
+                            <!-- IX–X. CHỮ KÝ -->
+                            <separator string="IX – X. Ngày xác nhận &amp; Chữ ký"/>
+                            <div class="o_wrap_field">
+                                <table style="width:100%;border-collapse:collapse;font-size:12px">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="4" style="background:#e8f4f5;color:#017E84;font-weight:700;text-align:center;padding:7px;border:1px solid #dee2e6;letter-spacing:.5px">KHO BẠC NHÀ NƯỚC</th>
+                                            <th style="background:#f2fff5;color:#27ae60;font-weight:700;text-align:center;padding:7px;border:1px solid #dee2e6;">NGƯỜI NHẬN</th>
+                                            <th colspan="2" style="background:#fffbf2;color:#e67e22;font-weight:700;text-align:center;padding:7px;border:1px solid #dee2e6;letter-spacing:.5px">ĐƠN VỊ TRẢ TIỀN</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="border:1px solid #dee2e6;padding:10px 8px;text-align:center;background:#e8f4f5;width:14.3%">
+                                                <div style="height:48px;border-bottom:1px dashed #aaa;margin-bottom:6px"></div>
+                                                <b style="font-size:11px">Thủ quỹ</b>
+                                                <div style="font-size:10px;color:#6c757d">(Ký tên)</div>
+                                            </td>
+                                            <td style="border:1px solid #dee2e6;padding:10px 8px;text-align:center;background:#e8f4f5;width:14.3%">
+                                                <div style="height:48px;border-bottom:1px dashed #aaa;margin-bottom:6px"></div>
+                                                <b style="font-size:11px">Kế toán</b>
+                                                <div style="font-size:10px;color:#6c757d">(Ký tên)</div>
+                                            </td>
+                                            <td style="border:1px solid #dee2e6;padding:10px 8px;text-align:center;background:#e8f4f5;width:14.3%">
+                                                <div style="height:48px;border-bottom:1px dashed #aaa;margin-bottom:6px"></div>
+                                                <b style="font-size:11px">Kiểm soát</b>
+                                                <div style="font-size:10px;color:#6c757d">(Ký tên)</div>
+                                            </td>
+                                            <td style="border:1px solid #dee2e6;padding:10px 8px;text-align:center;background:#e8f4f5;width:14.3%">
+                                                <div style="height:48px;border-bottom:1px dashed #aaa;margin-bottom:6px"></div>
+                                                <b style="font-size:11px">Lãnh đạo KBNN</b>
+                                                <div style="font-size:10px;color:#6c757d">(Ký, đóng dấu)</div>
+                                            </td>
+                                            <td style="border:1px solid #dee2e6;padding:10px 8px;text-align:center;background:#f2fff5;width:14.3%">
+                                                <div style="height:48px;border-bottom:1px dashed #aaa;margin-bottom:6px"></div>
+                                                <b style="font-size:11px">Người nhận tiền</b>
+                                                <div style="font-size:10px;color:#6c757d">(Ký, ghi họ tên)</div>
+                                            </td>
+                                            <td style="border:1px solid #dee2e6;padding:10px 8px;text-align:center;background:#fffbf2;width:14.3%">
+                                                <div style="height:48px;border-bottom:1px dashed #aaa;margin-bottom:6px"></div>
+                                                <b style="font-size:11px">Kế toán trưởng</b>
+                                                <div style="font-size:10px;color:#6c757d">(Ký, ghi họ tên)</div>
+                                            </td>
+                                            <td style="border:1px solid #dee2e6;padding:10px 8px;text-align:center;background:#fffbf2;width:14.3%">
+                                                <div style="height:48px;border-bottom:1px dashed #aaa;margin-bottom:6px"></div>
+                                                <b style="font-size:11px">Chủ tài khoản</b>
+                                                <div style="font-size:10px;color:#6c757d">(Ký, đóng dấu)</div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div style="margin-top:12px;font-size:11px;color:#6c757d;font-style:italic;line-height:1.8">
+                                ¹ Thực hiện theo quy định tại Điều 28 Nghị định số 118/2025/NĐ-CP.<br/>
+                                ² Bỏ trống trong trường hợp khoản chi không có Quyết định phê duyệt.
+                            </div>
+
+                        </page>
+
+                        <!-- ══════════════════════════════════════════════════════
+                             PAGE 3: APPROVAL STATUS
+                             ═════════════════════════════════════════════════════ -->
+                        <page string="✅ Trạng thái duyệt" invisible="state not in ['pending','approved','completed']">
+                            <group string="Thông tin duyệt">
+                                <group>
+                                    <field name="approver_ids"             widget="many2many_tags" readonly="1" string="Đã duyệt"/>
+                                    <field name="approval_count"           string="Số lượt duyệt"/>
+                                    <field name="required_approval_count"  string="Cần tối thiểu"/>
+                                </group>
+                                <group>
+                                    <field name="payslip_run_id" readonly="1" string="Pay Run liên kết"/>
+                                </group>
+                            </group>
+                        </page>
+
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_payment_authorization_tree" model="ir.ui.view">
+        <field name="name">payment.authorization.list</field>
+        <field name="model">payment.authorization</field>
+        <field name="arch" type="xml">
+            <list string="Payment Authorizations"
+                  decoration-info="state == 'draft'"
+                  decoration-warning="state == 'pending'"
+                  decoration-success="state == 'completed'"
+                  decoration-muted="state == 'rejected'">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="period"/>
+                <field name="x_payment_method" string="Phương thức"/>
+                <field name="total_amount" sum="Tổng" widget="monetary"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'completed'"
+                       decoration-warning="state == 'pending'"
+                       decoration-info="state == 'draft'"
+                       decoration-danger="state == 'rejected'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_payment_authorization" model="ir.actions.act_window">
+        <field name="name">Ủy Nhiệm Chi (Payment Authorizations)</field>
+        <field name="res_model">payment.authorization</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

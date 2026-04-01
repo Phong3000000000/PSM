@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ========================================== -->
+    <!-- HR EMPLOYEE EXTENSION VIEWS                -->
+    <!-- ========================================== -->
+    <!-- Inherit Employee Form - Add Skills Tab -->
+    <record id="hr_employee_view_form_inherit_workforce" model="ir.ui.view">
+        <field name="name">hr.employee.form.workforce</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page name="workforce_config" string="Workforce Config">
+                    <group>
+                        <group string="Loại hình làm việc">
+                            <field name="employment_type" widget="radio" />
+                            <field name="hourly_rate" invisible="employment_type != 'part_time'" />
+                        </group>
+                        <group string="Giới hạn giờ làm">
+                            <field name="min_hours_week" />
+                            <field name="max_hours_week" />
+                        </group>
+                    </group>
+                    <group string="Kỹ năng / Vai trò">
+                        <field name="skill_role_ids" widget="many2many_tags" options="{'color_field': 'color'}" />
+                    </group>
+                    <separator string="Khả năng làm việc theo tuần" />
+                    <field name="availability_ids">
+                        <list editable="bottom">
+                            <field name="day_of_week" />
+                            <field name="start_time" widget="float_time" />
+                            <field name="end_time" widget="float_time" />
+                            <field name="is_available" />
+                            <field name="note" />
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    <!-- Attendance Correction Tree -->
+    <record id="attendance_correction_tree" model="ir.ui.view">
+        <field name="name">attendance.correction.tree</field>
+        <field name="model">attendance.correction</field>
+        <field name="arch" type="xml">
+            <list decoration-warning="state=='draft'" decoration-success="state=='approved'" decoration-danger="state=='rejected'">
+                <field name="employee_id" />
+                <field name="date" />
+                <field name="original_check_in" />
+                <field name="original_check_out" />
+                <field name="requested_check_in" />
+                <field name="requested_check_out" />
+                <field name="reason" />
+                <field name="state" widget="badge" />
+                <field name="approved_by" />
+            </list>
+        </field>
+    </record>
+    <!-- Attendance Correction Form -->
+    <record id="attendance_correction_form" model="ir.ui.view">
+        <field name="name">attendance.correction.form</field>
+        <field name="model">attendance.correction</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_approve" string="Duyệt" type="object" class="btn-primary" invisible="state != 'draft'" groups="hr.group_hr_manager" />
+                    <button name="action_reject" string="Từ chối" type="object" class="btn-danger" invisible="state != 'draft'" groups="hr.group_hr_manager" />
+                    <field name="state" widget="statusbar" />
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Thông tin yêu cầu">
+                            <field name="employee_id" readonly="state != 'draft'" />
+                            <field name="date" readonly="state != 'draft'" />
+                            <field name="attendance_id" />
+                        </group>
+                        <group string="Duyệt">
+                            <field name="approved_by" readonly="1" />
+                            <field name="approved_date" readonly="1" />
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Giờ gốc">
+                            <field name="original_check_in" />
+                            <field name="original_check_out" />
+                        </group>
+                        <group string="Giờ yêu cầu sửa">
+                            <field name="requested_check_in" readonly="state != 'draft'" />
+                            <field name="requested_check_out" readonly="state != 'draft'" />
+                        </group>
+                    </group>
+                    <group string="Chi tiết">
+                        <field name="reason" readonly="state != 'draft'" />
+                        <field name="reject_reason" invisible="state != 'rejected'" />
+                    </group>
+                </sheet>
+                <chatter />
+            </form>
+        </field>
+    </record>
+    <!-- Attendance Correction Action -->
+    <record id="action_attendance_correction" model="ir.actions.act_window">
+        <field name="name">Yêu cầu sửa công</field>
+        <field name="res_model">attendance.correction</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_to_approve': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Chưa có yêu cầu sửa công</p>
+        </field>
+    </record>
+</odoo>

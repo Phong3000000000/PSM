@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="view_mcd_recruitment_session_tree" model="ir.ui.view">
+        <field name="name">mcd.recruitment.session.tree</field>
+        <field name="model">mcd.recruitment.session</field>
+        <field name="arch" type="xml">
+            <list string="Đợt tuyển dụng">
+                <field name="name"/>
+                <field name="store_id"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="target" string="Target" sum="Tổng"/>
+                <field name="state" widget="badge" decoration-success="state == 'ongoing'" decoration-warning="state == 'expired'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_mcd_recruitment_session_form" model="ir.ui.view">
+        <field name="name">mcd.recruitment.session.form</field>
+        <field name="model">mcd.recruitment.session</field>
+        <field name="arch" type="xml">
+            <form string="Đợt tuyển dụng">
+                <header>
+                    <button name="action_start" string="Bắt đầu" type="object"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_set_ongoing" string="Đang diễn ra" type="object"
+                            class="btn-success" invisible="state != 'expired'"/>
+                    <button name="action_close" string="Đóng" type="object"
+                            invisible="state in ('draft', 'closed')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,ongoing,expired,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Tên đợt tuyển dụng..."/></h1>
+                    </div>
+                    <group>
+                        <group string="Thông tin cơ bản">
+                            <field name="store_id"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                        </group>
+                        <group string="Mục tiêu">
+                            <field name="target" string="Target" readonly="1"
+                                   decoration-success="target > 0"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Danh sách tuyển dụng" name="positions">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="job_id" string="Vị trí"/>
+                                    <field name="job_type" string="Loại"/>
+                                    <field name="target_qty" string="Số lượng" sum="Tổng"/>
+                                    <field name="salary" string="Lương (VND)"/>
+                                    <field name="note" string="Ghi chú"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_mcd_recruitment_session" model="ir.actions.act_window">
+        <field name="name">Đợt tuyển dụng</field>
+        <field name="res_model">mcd.recruitment.session</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Server action: Tạo dữ liệu mẫu – hiện trong Action menu của list view -->
+    <record id="action_load_demo_recruitment_session" model="ir.actions.server">
+        <field name="name">🔧 Tạo dữ liệu mẫu đợt tuyển dụng</field>
+        <field name="model_id" ref="M02_P0204_01.model_mcd_recruitment_session"/>
+        <field name="binding_model_id" ref="M02_P0204_01.model_mcd_recruitment_session"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">action = env['mcd.recruitment.session'].action_load_demo_data()</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_mcd_recruitment_session" 
+              name="Đợt tuyển dụng"
+              parent="hr_recruitment.menu_hr_recruitment_root"
+              action="action_mcd_recruitment_session"
+              sequence="100"/>
+</odoo>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_my_home_soc_00" name="Show Training" inherit_id="portal_custom.portal_my_home_inherit" priority="30">
+        <!-- Inject Badge into existing E-Learning Sidebar Link -->
+        <xpath expr="//a[@href='/slides']" position="inside">
+            <t t-if="soc_training_count">
+                <span class="badge bg-danger rounded-pill ms-auto" style="font-size: 0.7rem;" t-esc="soc_training_count"/>
+            </t>
+        </xpath>
+        
+        <!-- Inject Trainer Evaluation Link into Sidebar (After E-Learning) -->
+        <xpath expr="//a[@href='/slides']" position="after">
+            <t t-set="is_trainer" t-value="user.has_group('M02_P0209_01.group_trainer')"/>
+            <t t-if="is_trainer"> 
+                <a href="/soc/trainer/dashboard" class="sidebar-link">
+                    <div class="app-icon-wrapper me-3" style="background: #f3e5f5; color: #7b1fa2;">
+                        <i class="fa fa-check-square-o" />
+                    </div>
+                    <span>Đánh giá (SOC Evaluation)</span>
+                </a>
+            </t>
+            
+            <!-- My SOC Progress (For All Employees) -->
+            <a href="/soc/my/dashboard" class="sidebar-link">
+                <div class="app-icon-wrapper me-3" style="background: #e3f2fd; color: #1565c0;">
+                    <i class="fa fa-battery-full" />
+                </div>
+                <span>My Skills</span>
+            </a>
+        </xpath>
+    </template>
+
+    <template id="portal_e_schedule_grid" name="Register Schedule">
+        <t t-call="portal.portal_layout">
+            <div class="container mb-4">
+                <h3 class="my-3">Register Work Schedule <small class="text-muted">(Next Week)</small></h3>
+                
+                <t t-if="request.params.get('success')">
+                    <div class="alert alert-success" role="alert">
+                        Schedule submitted successfully!
+                    </div>
+                </t>
+
+                <form action="/my/e_schedule/submit" method="post">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <input type="hidden" name="week_start" t-att-value="week_start"/>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-center align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 150px;">Shift / Day</th>
+                                    <t t-foreach="week_days" t-as="day">
+                                        <th>
+                                            <div t-esc="day['name']"/>
+                                            <small class="text-muted" t-esc="day['date_str']"/>
+                                        </th>
+                                    </t>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="shifts" t-as="shift">
+                                    <tr>
+                                        <td class="fw-bold bg-light">
+                                            <span t-esc="shift['label']"/>
+                                        </td>
+                                        <t t-foreach="week_days" t-as="day">
+                                            <td>
+                                                <select t-att-name="'slot_%s_%s' % (day['index'], shift['index'])" class="form-select form-select-sm">
+                                                    <option value="">-</option>
+                                                    <t t-foreach="roles" t-as="role">
+                                                        <option t-att-value="role[0]" t-esc="role[1]"/>
+                                                    </t>
+                                                </select>
+                                            </td>
+                                        </t>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-3">
+                        <a href="/my/home" class="btn btn-secondary me-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4">Submit Schedule</button>
+                    </div>
+                </form>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_no_employee" name="No Employee Linked">
+        <t t-call="portal.portal_layout">
+            <div class="alert alert-danger my-4" role="alert">
+                It seems your user is not linked to an Employee profile. Please contact HR.
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_my_certifications" name="My Certifications">
+        <t t-call="portal.portal_layout">
+            
+            <div class="row mt-3 mb-4">
+                <div class="col-12">
+                    <h3>Skills &amp; Certifications</h3>
+                    <hr/>
+                </div>
+            </div>
+            
+            <div class="o_portal_my_home_content">
+                 <t t-if="not skills_by_type">
+                    <div class="alert alert-warning" role="alert">
+                        No skills or certifications found for your account.
+                    </div>
+                </t>
+
+                <div class="row">
+                    <t t-foreach="skills_by_type" t-as="skill_type">
+                        <div class="col-12 col-lg-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5 class="mb-0" t-esc="skill_type.name"/>
+                                </div>
+                                <div class="list-group list-group-flush">
+                                    <t t-foreach="skills_by_type[skill_type]" t-as="skill">
+                                        <div class="list-group-item">
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <strong t-esc="skill.skill_id.name"/>
+                                                <span class="badge bg-primary" t-esc="skill.skill_level_id.name or 'N/A'"/>
+                                            </div>
+                                            <div class="progress" style="height: 6px;">
+                                                <div class="progress-bar bg-success" role="progressbar" 
+                                                     t-att-style="'width: %s%%' % skill.level_progress" 
+                                                     t-att-aria-valuenow="skill.level_progress" 
+                                                     aria-valuemin="0" aria-valuemax="100">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

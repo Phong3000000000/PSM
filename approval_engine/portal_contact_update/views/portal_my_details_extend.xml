@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_my_details_documents" name="Portal Edit Profile - Documents" inherit_id="portal.portal_my_details">
+        
+        <!-- 1. Enable file upload -->
+        <xpath expr="//form" position="attributes">
+            <attribute name="enctype">multipart/form-data</attribute>
+        </xpath>
+
+        <!-- 2. Add document upload section BEFORE footer (before Confirm button) -->
+        <xpath expr="//t[@t-call='portal.address_footer']" position="before">
+            
+            <div class="row mt-5">
+                <div class="col-lg-12">
+                    <hr/>
+                    <h4 class="mb-3 text-primary">
+                        <i class="fa fa-file-text me-2"></i>
+                        Tài liệu cá nhân
+                    </h4>
+                    <p class="text-muted small">Vui lòng upload các tài liệu sau (định dạng: JPG, PNG, PDF - Max 10MB)</p>
+                </div>
+                
+                <!-- Row 1: Passport Photo -->
+                <div class="col-lg-6 mb-3">
+                    <label class="form-label">Ảnh thẻ <span class="text-danger">*</span></label>
+                    <input type="file" name="passport_photo" class="form-control" accept="image/*,application/pdf"/>
+                    <div t-if="request.env.user.partner_id.passport_photo" class="mt-2 text-success small">
+                        <i class="fa fa-check-circle"></i> Đã có file: 
+                        <strong t-if="request.env.user.partner_id.passport_photo_filename">
+                            <t t-esc="request.env.user.partner_id.passport_photo_filename"/>
+                        </strong>
+                        <span t-else="">(không xác định)</span>
+                    </div>
+                </div>
+
+                <!-- Row 1: ID Card Front -->
+                <div class="col-lg-6 mb-3">
+                    <label class="form-label">CCCD/CMND (Mặt trước) <span class="text-danger">*</span></label>
+                    <input type="file" name="id_card_front" class="form-control" accept="image/*,application/pdf"/>
+                    <div t-if="request.env.user.partner_id.id_card_front" class="mt-2 text-success small">
+                        <i class="fa fa-check-circle"></i> Đã có file: 
+                        <strong t-if="request.env.user.partner_id.id_card_front_filename">
+                            <t t-esc="request.env.user.partner_id.id_card_front_filename"/>
+                        </strong>
+                        <span t-else="">(không xác định)</span>
+                    </div>
+                </div>
+
+                <!-- Row 2: ID Card Back -->
+                <div class="col-lg-6 mb-3">
+                    <label class="form-label">CCCD/CMND (Mặt sau) <span class="text-danger">*</span></label>
+                    <input type="file" name="id_card_back" class="form-control" accept="image/*,application/pdf"/>
+                    <div t-if="request.env.user.partner_id.id_card_back" class="mt-2 text-success small">
+                        <i class="fa fa-check-circle"></i> Đã có file: 
+                        <strong t-if="request.env.user.partner_id.id_card_back_filename">
+                            <t t-esc="request.env.user.partner_id.id_card_back_filename"/>
+                        </strong>
+                        <span t-else="">(không xác định)</span>
+                    </div>
+                </div>
+
+                <!-- Row 2: Household Registration -->
+                <div class="col-lg-6 mb-3">
+                    <label class="form-label">Hộ khẩu bản sao</label>
+                    <input type="file" name="household_registration" class="form-control" accept="image/*,application/pdf"/>
+                    <div t-if="request.env.user.partner_id.household_registration" class="mt-2 text-success small">
+                        <i class="fa fa-check-circle"></i> Đã có file: 
+                        <strong t-if="request.env.user.partner_id.household_registration_filename">
+                            <t t-esc="request.env.user.partner_id.household_registration_filename"/>
+                        </strong>
+                        <span t-else="">(không xác định)</span>
+                    </div>
+                </div>
+
+                <!-- Row 3: Judicial Record -->
+                <div class="col-lg-6 mb-3">
+                    <label class="form-label">Lý lịch tư pháp</label>
+                    <input type="file" name="judicial_record" class="form-control" accept="image/*,application/pdf"/>
+                    <div t-if="request.env.user.partner_id.judicial_record" class="mt-2 text-success small">
+                        <i class="fa fa-check-circle"></i> Đã có file: 
+                        <strong t-if="request.env.user.partner_id.judicial_record_filename">
+                            <t t-esc="request.env.user.partner_id.judicial_record_filename"/>
+                        </strong>
+                        <span t-else="">(không xác định)</span>
+                    </div>
+                </div>
+
+                <!-- Row 3: Professional Certificate -->
+                <div class="col-lg-6 mb-3">
+                    <label class="form-label">Bằng cấp chuyên môn</label>
+                    <input type="file" name="professional_certificate" class="form-control" accept="image/*,application/pdf"/>
+                    <div t-if="request.env.user.partner_id.professional_certificate" class="mt-2 text-success small">
+                        <i class="fa fa-check-circle"></i> Đã có file: 
+                        <strong t-if="request.env.user.partner_id.professional_certificate_filename">
+                            <t t-esc="request.env.user.partner_id.professional_certificate_filename"/>
+                        </strong>
+                        <span t-else="">(không xác định)</span>
+                    </div>
+                </div>
+
+                <!-- Row 4: Additional Certificates (full width) -->
+                <div class="col-lg-12 mb-3">
+                    <label class="form-label">Bằng cấp khác (nếu có)</label>
+                    <input type="file" name="additional_certificates" class="form-control" accept="image/*,application/pdf"/>
+                    <div t-if="request.env.user.partner_id.additional_certificates" class="mt-2 text-success small">
+                        <i class="fa fa-check-circle"></i> Đã có file: 
+                        <strong t-if="request.env.user.partner_id.additional_certificates_filename">
+                            <t t-esc="request.env.user.partner_id.additional_certificates_filename"/>
+                        </strong>
+                        <span t-else="">(không xác định)</span>
+                    </div>
+                </div>
+
+            </div>
+        </xpath>
+    </template>
+</odoo>

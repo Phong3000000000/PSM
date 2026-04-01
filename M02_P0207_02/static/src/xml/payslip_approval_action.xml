@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+  <!-- ── Refuse Modal ─────────────────────────────────────────────────────── -->
+  <t t-name="M02_P0207_02.RefuseModal">
+    <div class="o_payslip_modal_overlay" t-on-click.self="props.onCancel">
+      <div class="o_payslip_modal">
+        <div class="o_payslip_modal_header">
+          <h5 class="mb-0">
+            <i class="fa fa-ban text-danger me-2"/>
+            Từ chối Payslip
+          </h5>
+          <button class="btn-close" t-on-click="props.onCancel"/>
+        </div>
+        <div class="o_payslip_modal_body">
+          <p class="text-muted mb-3">
+            Nhân viên: <strong t-esc="props.payslip.employee_id[1]"/>
+          </p>
+          <label class="form-label fw-semibold">Lý do từ chối <span class="text-danger">*</span></label>
+          <textarea
+            class="form-control"
+            rows="4"
+            placeholder="Nhập lý do từ chối..."
+            t-model="state.reason"
+          />
+        </div>
+        <div class="o_payslip_modal_footer">
+          <button class="btn btn-secondary" t-on-click="props.onCancel">Hủy</button>
+          <button
+            class="btn btn-danger"
+            t-att-disabled="!state.reason.trim()"
+            t-on-click="confirm"
+          >
+            <i class="fa fa-ban me-1"/> Xác nhận từ chối
+          </button>
+        </div>
+      </div>
+    </div>
+  </t>
+
+  <!-- ── Main Payslip Approval Action ─────────────────────────────────────── -->
+  <t t-name="M02_P0207_02.PayslipApprovalAction">
+    <div class="o_payslip_approval_view">
+
+      <!-- Loading spinner -->
+      <t t-if="state.loading">
+        <div class="o_payslip_loading">
+          <i class="fa fa-spinner fa-spin fa-2x text-primary"/>
+          <p class="mt-2 text-muted">Đang tải...</p>
+        </div>
+      </t>
+
+      <!-- No runs -->
+      <t t-elif="state.runs.length === 0 and !state.loading">
+        <div class="o_payslip_empty">
+          <i class="fa fa-check-circle fa-3x text-success mb-3"/>
+          <h5>Không có Pay Run nào đang chờ duyệt</h5>
+          <p class="text-muted">Tất cả Pay Runs đã được xử lý.</p>
+        </div>
+      </t>
+
+      <t t-else="">
+        <!-- Header Card -->
+        <div class="o_payslip_header_card">
+          <div class="o_payslip_header_top">
+            <div>
+              <h4 class="mb-1">
+                <i class="fa fa-money me-2 text-primary"/>
+                Phê duyệt Bảng lương
+              </h4>
+              <p class="text-muted mb-0 small">Duyệt từng phiếu lương theo nhân viên</p>
+            </div>
+            <!-- Pay Run Selector -->
+            <div class="d-flex align-items-center gap-2">
+              <label class="fw-semibold text-muted small me-1">Pay Run:</label>
+              <select
+                class="form-select form-select-sm"
+                style="min-width:220px"
+                t-on-change="onRunChange"
+              >
+                <t t-foreach="state.runs" t-as="run" t-key="run.id">
+                  <option
+                    t-att-value="run.id"
+                    t-att-selected="run.id === state.selectedRunId"
+                    t-esc="run.name"
+                  />
+                </t>
+              </select>
+            </div>
+          </div>
+
+          <!-- Progress bar + stats -->
+          <t t-if="state.payslips.length > 0">
+            <div class="o_payslip_stats_row">
+              <div class="o_payslip_stat">
+                <span class="badge bg-warning text-dark" t-esc="stats.pending"/>
+                <span class="text-muted small ms-1">Chờ duyệt</span>
+              </div>
+              <div class="o_payslip_stat">
+                <span class="badge bg-success" t-esc="stats.approved"/>
+                <span class="text-muted small ms-1">Đã duyệt</span>
+              </div>
+              <div class="o_payslip_stat">
+                <span class="badge bg-danger" t-esc="stats.refused"/>
+                <span class="text-muted small ms-1">Từ chối</span>
+              </div>
+              <div class="o_payslip_stat ms-3 flex-grow-1">
+                <div class="d-flex justify-content-between mb-1">
+                  <small class="text-muted">Tiến độ duyệt</small>
+                  <small class="fw-semibold" t-esc="progressPct + '%'"/>
+                </div>
+                <div class="progress" style="height:8px;">
+                  <div
+                    class="progress-bar bg-success"
+                    t-attf-style="width:{{progressPct}}%"
+                  />
+                </div>
+              </div>
+            </div>
+          </t>
+        </div>
+
+        <!-- Payslip Table -->
+        <div class="o_payslip_table_card">
+          <t t-if="state.payslips.length === 0">
+            <div class="o_payslip_empty">
+              <i class="fa fa-inbox fa-2x text-muted mb-2"/>
+              <p class="text-muted">Không có phiếu lương nào trong Pay Run này.</p>
+            </div>
+          </t>
+          <t t-else="">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Nhân viên</th>
+                  <th class="text-end">Chi phí NSD</th>
+                  <th class="text-end">Lương gộp</th>
+                  <th class="text-end">Lương thực nhận</th>
+                  <th class="text-center">Trạng thái</th>
+                  <th class="text-center">Phê duyệt</th>
+                  <th class="text-center">Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                <t t-foreach="state.payslips" t-as="slip" t-key="slip.id">
+                  <tr t-attf-class="o_payslip_row {{slip.x_approval_state === 'refused' ? 'table-danger' : slip.x_approval_state === 'approved' ? 'table-success' : ''}}">
+                    <!-- Employee — click to open payslip form (H2) -->
+                    <td style="cursor:pointer;" t-on-click="() => this.openPayslip(slip.id)">
+                      <div class="d-flex align-items-center gap-2">
+                        <div class="o_payslip_avatar">
+                          <t t-esc="slip.employee_id[1] ? slip.employee_id[1][0] : '?'"/>
+                        </div>
+                        <span class="fw-medium text-primary text-decoration-underline" t-esc="slip.employee_id[1]"/>
+                      </div>
+                    </td>
+                    <!-- Wages -->
+                    <td class="text-end text-muted small" t-esc="formatMoney(slip.employer_cost)"/>
+                    <td class="text-end text-muted small" t-esc="formatMoney(slip.gross_wage)"/>
+                    <td class="text-end fw-semibold" t-esc="formatMoney(slip.net_wage)"/>
+                    <!-- Payslip state -->
+                    <td class="text-center">
+                      <span class="badge bg-secondary" t-esc="stateLabel(slip.state)"/>
+                    </td>
+                    <!-- Approval state (H3: shows refuse reason) -->
+                    <td class="text-center">
+                      <span
+                        t-attf-class="badge {{approvalClass(slip.x_approval_state)}}"
+                        t-esc="approvalLabel(slip.x_approval_state)"
+                      />
+                      <t t-if="slip.x_refusal_reason">
+                        <br/>
+                        <small class="text-danger fst-italic" t-esc="'Lý do: ' + slip.x_refusal_reason"/>
+                      </t>
+                    </td>
+                    <!-- Actions -->
+                    <td class="text-center">
+                      <!-- Refused: show "waiting" text, no buttons (HR must recalculate then Gửi cho HR) -->
+                      <t t-if="slip.x_approval_state === 'refused'">
+                        <span class="text-warning fw-semibold">
+                          <i class="fa fa-clock-o me-1"/>Đang chờ xử lý
+                        </span>
+                      </t>
+                      <!-- Pending: show both Approve and Refuse buttons -->
+                      <t t-elif="slip.x_approval_state === 'pending'">
+                        <button
+                          class="btn btn-sm btn-success me-1"
+                          t-on-click="() => this.approvePayslip(slip.id)"
+                          title="Phê duyệt"
+                        >
+                          <i class="fa fa-check me-1"/> Phê duyệt
+                        </button>
+                        <button
+                          class="btn btn-sm btn-outline-danger"
+                          t-on-click="() => this.openRefuseModal(slip.id)"
+                          title="Từ chối"
+                        >
+                          <i class="fa fa-times me-1"/> Từ chối
+                        </button>
+                      </t>
+                      <!-- Approved: show Đã duyệt only (no Từ chối) -->
+                      <t t-else="">
+                        <span class="text-success">
+                          <i class="fa fa-check-circle me-1"/>Đã duyệt
+                        </span>
+                      </t>
+                    </td>
+                  </tr>
+                </t>
+              </tbody>
+            </table>
+          </t>
+        </div>
+      </t>
+
+      <!-- Refuse Modal -->
+      <t t-if="state.refusingPayslip">
+        <RefuseModal
+          payslip="state.refusingPayslip"
+          onConfirm.bind="onRefuseConfirm"
+          onCancel.bind="closeRefuseModal"
+        />
+      </t>
+
+    </div>
+  </t>
+
+</templates>
+

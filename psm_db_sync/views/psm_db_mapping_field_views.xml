@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Mapping Field Tree View -->
+        <record id="view_psm_db_mapping_field_tree" model="ir.ui.view">
+            <field name="name">psm.db.mapping.field.tree</field>
+            <field name="model">psm.db.mapping.field</field>
+            <field name="arch" type="xml">
+                <list string="Ánh xạ trường">
+                    <field name="sequence" widget="handle"/>
+                    <field name="mapping_model_id"/>
+                    <field name="source_field"/>
+                    <field name="target_field"/>
+                    <field name="transformation_type"/>
+                    <field name="relation_create_auto" invisible="transformation_type != 'relation'"/>
+                    <field name="is_key_field"/>
+                    <field name="include_in_sync" widget="boolean_toggle"/>
+                    <field name="active" widget="boolean_toggle"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Mapping Field Form View -->
+        <record id="view_psm_db_mapping_field_form" model="ir.ui.view">
+            <field name="name">psm.db.mapping.field.form</field>
+            <field name="model">psm.db.mapping.field</field>
+            <field name="arch" type="xml">
+                <form string="Ánh xạ trường">
+                    <header>
+                        <button name="action_generate_python_function" type="object"
+                                string="Tạo hàm mẫu" class="btn-primary"
+                                invisible="transformation_type != 'function'"/>
+                        <button name="action_test_transformation" type="object"
+                                string="Kiểm tra chuyển đổi" class="btn-secondary"/>
+                        <field name="active" widget="boolean_button"/>
+                    </header>
+                    <sheet>
+                        <div class="alert alert-info" role="alert" invisible="not source_field_type">
+                            <i class="fa fa-lightbulb-o" title="Gợi ý"></i>
+                            <strong>Gợi ý thông minh:</strong>
+                            Transformation type được đề xuất dựa trên các field mapping tương tự đã tạo trước đó.
+                        </div>
+
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+
+                        <group>
+                            <group name="basic_info" string="Thông tin cơ bản">
+                                <field name="mapping_model_id" options="{'no_create': True}"/>
+                                <field name="sequence"/>
+                                <field name="source_field"/>
+                                <field name="target_field"/>
+                                <field name="source_field_type"/>
+                                <field name="target_field_type"/>
+                            </group>
+                            <group name="config" string="Cấu hình">
+                                <field name="transformation_type"/>
+                                <field name="is_key_field"/>
+                                <field name="is_required"/>
+                                <field name="include_in_sync"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="Chuyển đổi ngày" name="date_transformation"
+                                  invisible="transformation_type != 'date_format'">
+                                <group>
+                                    <field name="source_date_format" placeholder="%Y-%m-%d %H:%M:%S"/>
+                                    <field name="target_date_format" placeholder="%Y-%m-%d"/>
+                                </group>
+                            </page>
+
+                            <page string="Chuyển đổi số" name="number_transformation"
+                                  invisible="transformation_type != 'number_format'">
+                                <group>
+                                    <field name="decimal_separator"/>
+                                    <field name="thousands_separator"/>
+                                    <field name="round_precision"/>
+                                </group>
+                            </page>
+
+                            <page string="Ánh xạ giá trị" name="value_mapping"
+                                  invisible="transformation_type != 'mapping'">
+                                <group>
+                                    <field name="value_mapping" placeholder='{"source_value": "target_value"}'/>
+                                </group>
+                            </page>
+
+                            <page string="Hàm Python" name="python_function"
+                                  invisible="transformation_type != 'function'">
+                                <group>
+                                    <field name="python_function" widget="ace"
+                                           options="{'mode': 'python'}" nolabel="1"/>
+                                </group>
+                            </page>
+
+                            <page string="Giá trị tĩnh" name="static_value"
+                                  invisible="transformation_type != 'static'">
+                                <group>
+                                    <field name="static_value"/>
+                                </group>
+                            </page>
+
+                            <page string="Quan hệ" name="relation_mapping"
+                                  invisible="transformation_type != 'relation'">
+                                <group>
+                                    <field name="relation_model_id" options="{'no_create': True}"/>
+                                    <field name="relation_field"/>
+                                    <field name="relation_create_auto"/>
+                                </group>
+
+                                <div class="alert alert-warning" role="alert" invisible="relation_create_auto == False">
+                                    <i class="fa fa-exclamation-triangle" title="Cảnh báo"></i>
+                                    <strong>Tự động đồng bộ relation:</strong>
+                                    Khi không tìm thấy bản ghi relation, hệ thống sẽ tự động đồng bộ từ cơ sở dữ liệu
+                                    nguồn.
+                                    <br/>
+                                    <small>
+                                        • Chỉ đồng bộ bản ghi cần thiết (filtered by key)
+                                        <br/>
+                                        • Có thể làm chậm quá trình sync ban đầu
+                                        <br/>
+                                        • Đảm bảo data integrity cho required fields
+                                    </small>
+                                </div>
+
+                                <div class="alert alert-info" role="alert" invisible="relation_model_id == False">
+                                    <i class="fa fa-info-circle" title="Thông tin"></i>
+                                    <strong>Relation mapping:</strong>
+                                    <span invisible="relation_model_id == False">
+                                        Mapping relation:
+                                        <field name="relation_model_id" readonly="1" nolabel="1"/>
+                                    </span>
+                                </div>
+                            </page>
+
+                            <page string="Tùy chọn nâng cao" name="advanced">
+                                <group>
+                                    <group string="Xử lý dữ liệu">
+                                        <field name="default_value"/>
+                                        <field name="skip_if_empty"/>
+                                        <field name="convert_empty_to_false"/>
+                                        <field name="trim_whitespace"/>
+                                    </group>
+                                    <group string="Định dạng">
+                                        <field name="force_uppercase"/>
+                                        <field name="force_lowercase"/>
+                                        <field name="validation_regex"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Mapping Field Search View -->
+        <record id="view_psm_db_mapping_field_search" model="ir.ui.view">
+            <field name="name">psm.db.mapping.field.search</field>
+            <field name="model">psm.db.mapping.field</field>
+            <field name="arch" type="xml">
+                <search string="Tìm kiếm ánh xạ trường">
+                    <field name="source_field"/>
+                    <field name="target_field"/>
+                    <field name="mapping_model_id"/>
+                    <separator/>
+                    <filter string="Đang hoạt động" name="active" domain="[('active', '=', True)]"/>
+                    <filter string="Ngừng hoạt động" name="inactive" domain="[('active', '=', False)]"/>
+                    <separator/>
+                    <filter string="Trường khóa" name="key_fields" domain="[('is_key_field', '=', True)]"/>
+                    <filter string="Bắt buộc" name="required_fields" domain="[('is_required', '=', True)]"/>
+                    <filter string="Bao gồm trong đồng bộ" name="sync_fields"
+                            domain="[('include_in_sync', '=', True)]"/>
+                    <separator/>
+                    <filter string="Chuyển đổi trực tiếp" name="direct"
+                            domain="[('transformation_type', '=', 'direct')]"/>
+                    <filter string="Chuyển đổi ngày" name="date_format"
+                            domain="[('transformation_type', '=', 'date_format')]"/>
+                    <filter string="Chuyển đổi số" name="number_format"
+                            domain="[('transformation_type', '=', 'number_format')]"/>
+                    <filter string="Hàm Python" name="function" domain="[('transformation_type', '=', 'function')]"/>
+                    <separator/>
+                    <group>
+                        <filter string="Ánh xạ mô hình" name="group_mapping"
+                                context="{'group_by': 'mapping_model_id'}"/>
+                        <filter string="Kiểu chuyển đổi" name="group_transformation"
+                                context="{'group_by': 'transformation_type'}"/>
+                        <filter string="Trạng thái" name="group_active" context="{'group_by': 'active'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+    </data>
+</odoo>

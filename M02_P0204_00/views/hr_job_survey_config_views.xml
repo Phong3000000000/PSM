@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_job_survey_config_view_form_inherit" model="ir.ui.view">
+        <field name="name">hr.job.survey.config.view.form.inherit</field>
+        <field name="model">hr.job</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_job_survey"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Cấu Hình Khảo Sát" name="survey_config" invisible="1">
+                    <group>
+                        <group string="Ngân hàng câu hỏi">
+                            <field name="master_survey_id" options="{'no_create': True}"/>
+                            <button name="action_load_master_questions" 
+                                    string="Tải Câu Hỏi Từ Ngân Hàng" 
+                                    type="object" 
+                                    class="oe_highlight"
+                                    confirm="Hệ thống sẽ xóa cấu hình câu hỏi cũ và tải lại toàn bộ câu hỏi từ ngân hàng này. Bạn có chắc chắn?"/>
+                        </group>
+                        <group string="Template Phân Phối">
+                            <field name="generated_survey_template_id" readonly="1"/>
+                            <button name="action_generate_survey_template" 
+                                    string="Tạo Survey Template" 
+                                    type="object" 
+                                    class="oe_highlight"
+                                    help="Nhấn để tạo bài khảo sát thực tế (Template) dựa trên các câu hỏi đã chọn bên dưới."/>
+                        </group>
+                    </group>
+                    <separator string="Danh sách câu hỏi tuyển chọn"/>
+                    <p class="text-muted">
+                        Tích chọn các câu hỏi bạn muốn đưa vào bài khảo sát cho vị trí này. 
+                        Bạn có thể đánh dấu <b>Bắt Buộc</b> để hệ thống tự động lọc ứng viên nếu họ trả lời sai.
+                    </p>
+                    <field name="job_survey_question_ids" nolabel="1">
+                        <list editable="bottom" create="0" delete="1">
+                            <field name="sequence" widget="handle"/>
+                            <field name="is_selected" widget="boolean_toggle"/>
+                            <field name="question_title"/>
+                            <field name="question_type"/>
+                            <field name="is_required" widget="boolean_toggle"/>
+                            <!-- <field name="min_score"/> -->
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

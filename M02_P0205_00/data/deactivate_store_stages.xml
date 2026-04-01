@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Fold/mark tập stage cũ của store để status bar office chỉ thấy chuỗi office -->
+        <record id="hr_recruitment.stage_job1" model="hr.recruitment.stage">
+            <field name="fold">True</field>
+        </record>
+        <record id="hr_recruitment.stage_job2" model="hr.recruitment.stage">
+            <field name="fold">True</field>
+        </record>
+        <record id="hr_recruitment.stage_job3" model="hr.recruitment.stage">
+            <field name="fold">True</field>
+        </record>
+        <record id="hr_recruitment.stage_job4" model="hr.recruitment.stage">
+            <field name="fold">True</field>
+        </record>
+        <record id="hr_recruitment.stage_job5" model="hr.recruitment.stage">
+            <field name="fold">True</field>
+        </record>
+    </data>
+</odoo>

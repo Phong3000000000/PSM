@@ -1,0 +1,690 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================== PORTAL TEMPLATES ==================== -->
+
+    <!-- Candidate Registration Form (Public) -->
+    <template id="referral_register_template" name="Đăng ký ứng tuyển qua giới thiệu">
+        <t t-call="website.layout">
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="card shadow">
+                            <div class="card-header text-white text-center py-4"
+                                style="background: linear-gradient(135deg, #DA291C, #FFC72C);">
+                                <h2 class="mb-0">Đăng Ký Ứng Tuyển</h2>
+                                <p class="mb-0 mt-2">Bạn được giới thiệu bởi <strong
+                                        t-esc="submission.referrer_id.name" /></p>
+                            </div>
+
+                            <div class="card-body p-4">
+                                <t t-if="error">
+                                    <div class="alert alert-danger">
+                                        <strong>Lỗi:</strong>
+                                        <t t-esc="msg or 'Có lỗi xảy ra, vui lòng thử lại.'" />
+                                    </div>
+                                </t>
+                                <div class="alert alert-info">
+                                    <strong>Vị trí:</strong>
+                                    <t t-esc="submission.job_id.name" />
+                                    <br />
+                                    <strong>Cửa hàng:</strong>
+                                    <t t-esc="submission.store_id.name" />
+                                </div>
+
+                                <form
+                                    t-attf-action="/referral/register/{{ submission.referral_code }}/submit"
+                                    method="POST" enctype="multipart/form-data">
+                                    <input type="hidden" name="csrf_token"
+                                        t-att-value="request.csrf_token()" />
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Họ và tên <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" name="name" class="form-control"
+                                            required="required"
+                                            t-att-value="submission.candidate_name" />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Email <span class="text-danger">*</span></label>
+                                        <input type="email" name="email" class="form-control"
+                                            required="required"
+                                            t-att-value="submission.candidate_email" />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Số điện thoại <span
+                                                class="text-danger">*</span></label>
+                                        <input type="tel" name="phone" class="form-control"
+                                            required="required"
+                                            t-att-value="submission.candidate_phone" />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Ngày sinh <span
+                                                class="text-danger">*</span></label>
+                                        <input type="date" name="birthdate" class="form-control"
+                                            required="required" />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Địa chỉ <span class="text-danger">
+                                            *</span></label>
+                                        <textarea name="address" class="form-control" rows="2"
+                                            required="required"></textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Kinh nghiệm làm việc <span
+                                                class="text-danger">*</span></label>
+                                        <textarea name="experience" class="form-control" rows="3"
+                                            placeholder="Mô tả ngắn gọn kinh nghiệm làm việc của bạn..."
+                                            required="required"></textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">CV/Hồ sơ <span class="text-danger">
+                                            *</span></label>
+                                        <input type="file" name="cv_file" class="form-control"
+                                            accept=".pdf,.doc,.docx" required="required" />
+                                    </div>
+
+                                    <div class="d-grid gap-2 mt-4">
+                                        <button type="submit" class="btn btn-lg"
+                                            style="background-color: #DA291C; color: white;">
+                                            Gửi Đăng Ký
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="card-footer text-center text-muted py-3">
+                                <small>Mã giới thiệu: <t t-esc="submission.referral_code" /></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Thank You Page -->
+    <template id="referral_thankyou_template" name="Cảm ơn đăng ký">
+        <t t-call="website.layout">
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 text-center">
+                        <div class="card shadow">
+                            <div class="card-body p-5">
+                                <div class="mb-4">
+                                    <i class="fa fa-check-circle text-success"
+                                        style="font-size: 80px;"></i>
+                                </div>
+                                <h2 class="text-success">Đăng Ký Thành Công!</h2>
+                                <p class="lead mt-3">
+                                    Cảm ơn bạn đã đăng ký ứng tuyển. Chúng tôi sẽ liên hệ với bạn
+                                    sớm nhất.
+                                </p>
+                                <a href="/" class="btn btn-primary mt-3">Về trang chủ</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Portal: My Referrals -->
+    <template id="portal_my_referrals" name="Giới thiệu của tôi">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False" />
+
+            <div class="o_portal_wrap">
+                <div class="container py-4">
+                    <h3 class="mb-4">
+                        <i class="fa fa-users me-2"></i>Giới thiệu của tôi </h3>
+
+                    <t t-if="error == 'no_employee'">
+                        <div class="alert alert-danger" role="alert">
+                            <i class="fa fa-exclamation-triangle me-2"></i> Tài khoản của bạn chưa
+                            được liên kết với hồ sơ nhân viên (Employee). Vui lòng liên hệ HR để
+                            thiết lập. </div>
+                    </t>
+                    <t t-if="error == 'invalid_program'">
+                        <div class="alert alert-warning" role="alert">
+                            <i class="fa fa-exclamation-triangle me-2"></i> Chương trình không hợp
+                            lệ hoặc đã đóng. </div>
+                    </t>
+                    <t t-if="error == '1'">
+                        <div class="alert alert-danger" role="alert">
+                            <i class="fa fa-times-circle me-2"></i> Có lỗi xảy ra: <t
+                                t-esc="msg or 'Vui lòng thử lại sau'" />
+                        </div>
+                    </t>
+                    <t t-if="success">
+                        <div class="alert alert-success" role="alert">
+                            <i class="fa fa-check-circle me-2"></i> Gửi giới thiệu thành công! Hệ
+                            thống đã gửi email đến ứng viên. </div>
+                    </t>
+
+                    <t t-if="submissions">
+                        <!-- Summary -->
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-md-3">
+                                        <h4 class="text-primary">
+                                            <t t-esc="len(submissions)" />
+                                        </h4>
+                                        <p class="text-muted mb-0">Tổng giới thiệu</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h4 class="text-success">
+                                            <t
+                                                t-esc="len(submissions.filtered(lambda s: s.state == 'completed'))" />
+                                        </h4>
+                                        <p class="text-muted mb-0">Hoàn thành</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h4 class="text-info">
+                                            <t
+                                                t-esc="len(submissions.filtered(lambda s: s.bonus_eligible))" />
+                                        </h4>
+                                        <p class="text-muted mb-0">Đủ điều kiện thưởng</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h4 class="text-success">
+                                            <t
+                                                t-esc="'{:,.0f}'.format(sum(submissions.filtered(lambda s: s.bonus_paid).mapped('bonus_amount')))" />
+                                            VND </h4>
+                                        <p class="text-muted mb-0">Đã nhận thưởng</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Mã</th>
+                                        <th>Ứng viên</th>
+                                        <th>Vị trí</th>
+                                        <th>Đợt tuyển</th>
+                                        <th>Trạng thái</th>
+                                        <th>Thưởng</th>
+                                        <th>Đã chi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="submissions" t-as="sub">
+                                        <tr>
+                                            <td>
+                                                <t t-esc="sub.referral_code" />
+                                            </td>
+                                            <td>
+                                                <t t-esc="sub.candidate_name" />
+                                            </td>
+                                            <td>
+                                                <t t-esc="sub.job_id.name" />
+                                            </td>
+                                            <td>
+                                                <t t-esc="sub.recruitment_session_id.name or '-'" />
+                                            </td>
+                                            <td>
+                                                <span
+                                                    t-attf-class="badge #{sub.state == 'completed' and 'bg-success' or sub.state == 'failed' and 'bg-danger' or 'bg-info'}">
+                                                    <t
+                                                        t-esc="dict(sub._fields['state'].selection).get(sub.state)" />
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <t t-if="sub.bonus_eligible">
+                                                    <span class="text-success fw-bold">
+                                                        <t
+                                                            t-esc="'{:,.0f}'.format(sub.bonus_amount)" />
+                                                        VND </span>
+                                                </t>
+                                                <t t-else="">-</t>
+                                            </td>
+                                            <td>
+                                                <t t-if="sub.bonus_paid">
+                                                    <span class="badge bg-success">✓ Đã chi</span>
+                                                </t>
+                                                <t t-elif="sub.bonus_eligible">
+                                                    <span class="badge bg-warning">Chờ chi</span>
+                                                </t>
+                                                <t t-else="">-</t>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+
+                    <t t-else="">
+                        <div class="alert alert-info text-center">
+                            <i class="fa fa-info-circle fa-2x mb-3"></i>
+                            <h5>Bạn chưa giới thiệu ứng viên nào</h5>
+                            <p>Hãy tham gia chương trình giới thiệu nhân sự để nhận thưởng!</p>
+                            <a href="/referral/jobs" class="btn btn-primary mt-3">
+                                <i class="fa fa-briefcase me-2"></i>Xem các vị trí đang tuyển </a>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Add to Portal My Account -->
+    <template id="portal_my_home_referral" name="Portal My Home: Referral"
+        inherit_id="portal.portal_my_home" priority="30">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="icon" t-value="'fa fa-users'" />
+                <t t-set="title">Giới thiệu nhân sự</t>
+                <t t-set="url" t-value="'/my/referrals'" />
+                <t t-set="text">Xem các ứng viên bạn đã giới thiệu và theo dõi thưởng</t>
+                <t t-set="placeholder_count" t-value="'referral_count'" />
+            </t>
+        </xpath>
+    </template>
+
+    <!-- Job Board: List -->
+    <template id="portal_referral_jobs_list" name="Bảng tin tuyển dụng nội bộ">
+        <t t-call="portal.portal_layout">
+            <div class="o_portal_wrap">
+                <div class="container py-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="mb-0">
+                            <i class="fa fa-briefcase me-2"></i>Cơ hội việc làm nội bộ </h3>
+                        <a href="/my/referrals" class="btn btn-outline-primary rounded-pill px-4">
+                            <i class="fa fa-list-alt me-2"></i>Giới thiệu của tôi </a>
+                    </div>
+
+                    <t t-if="programs">
+                        <div class="row">
+                            <t t-foreach="programs" t-as="program">
+                                <div class="col-md-6 mb-4">
+                                    <div
+                                        class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden transition-all hover-lift">
+                                        <div class="card-header border-0 pb-0 bg-white pt-4 px-4">
+                                            <div
+                                                class="d-flex justify-content-between align-items-start">
+                                                <span
+                                                    class="badge bg-primary-soft text-primary rounded-pill px-3 py-2 mb-2">
+                                                    <i class="fa fa-tag me-1"></i>
+                                                    <t t-if="program.line_ids">
+                                                        <t
+                                                            t-esc="', '.join(program.line_ids.mapped('job_id.name'))" />
+                                                    </t>
+                                                    <t t-else="">Chưa có vị trí</t>
+                                                </span>
+                                                <span t-if="program.state == 'active'"
+                                                    class="badge bg-success-soft text-success rounded-pill px-3 py-2 border border-success">
+                                                    Đang tuyển
+                                                </span>
+                                            </div>
+                                            <h4 class="card-title fw-bold mb-1">
+                                                <a t-attf-href="/referral/jobs/#{program.id}"
+                                                    class="text-dark text-decoration-none">
+                                                    <t t-esc="program.name" />
+                                                </a>
+                                            </h4>
+                                            <p class="text-muted small mb-0">
+                                                <i class="fa fa-store me-1"></i>
+                                                <t t-esc="program.store_id.name" />
+                                            </p>
+                                        </div>
+                                        <div class="card-body px-4">
+                                            <div class="mb-3 d-flex gap-3 small text-muted">
+                                                <span t-if="program.start_date">
+                                                    <i class="fa fa-calendar-check-o me-1"></i>
+                                                    <t t-esc="program.start_date" />
+                                                </span>
+                                                <span t-if="program.end_date">
+                                                    <i class="fa fa-calendar-times-o me-1"></i> Đến: <t
+                                                        t-esc="program.end_date" />
+                                                </span>
+                                            </div>
+                                            <div class="card-text text-muted small"
+                                                style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; height: 4.5em;">
+                                                <t t-if="program.description">
+                                                    <t t-raw="program.description" />
+                                                </t>
+                                                <t t-else=""> Tham gia giới thiệu nhân sự cho cửa
+                                                    hàng <t t-esc="program.store_id.name" /> để nhận
+                                                    phần thưởng hấp dẫn. </t>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer bg-white border-0 px-4 pb-4">
+                                            <div
+                                                class="d-flex justify-content-between align-items-center pt-3 border-top">
+                                                <div>
+                                                    <p class="text-muted small mb-0">Thưởng cao nhất</p>
+                                                    <h5 class="text-success fw-bold mb-0">
+                                                        <t t-if="program.line_ids">
+                                                            <t
+                                                                t-esc="'{:,.0f}'.format(max(program.line_ids.mapped('bonus_amount')))" />
+                                                            VND </t>
+                                                        <t t-else="">Lên tới 0 VND</t>
+                                                    </h5>
+                                                </div>
+                                                <a t-attf-href="/referral/jobs/#{program.id}"
+                                                    class="btn btn-primary rounded-pill px-4 btn-sm">
+                                                    Xem chi tiết
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+
+                        <!-- Pager -->
+                        <div class="d-flex justify-content-center mt-4">
+                            <t t-call="website.pager" />
+                        </div>
+                    </t>
+
+                    <t t-else="">
+                        <div class="alert alert-info text-center py-5">
+                            <i class="fa fa-search fa-3x mb-3 text-muted"></i>
+                            <h4>Hiện chưa có vị trí nào cần tuyển</h4>
+                            <p class="text-muted">Vui lòng quay lại sau!</p>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Job Board: Detail — Per-position cards -->
+    <template id="portal_referral_program_detail" name="Chi tiết tuyển dụng">
+        <t t-call="portal.portal_layout">
+            <div class="o_portal_wrap">
+                <div class="container py-4">
+
+                    <!-- Program header -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <div
+                                class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
+                                <h2 class="card-title text-primary mb-0">
+                                    <t t-esc="program.name" />
+                                </h2>
+                                <span class="badge bg-success rounded-pill px-3 py-2">Đang tuyển</span>
+                            </div>
+                            <div class="d-flex flex-wrap gap-4 text-muted small mb-3">
+                                <span>
+                                    <i class="fa fa-map-marker text-primary me-1" />
+                                    <t t-esc="program.store_id.name" />
+                                </span>
+                                <t t-if="program.start_date">
+                                    <span><i class="fa fa-calendar-check-o text-success me-1" /> Bắt
+                                        đầu: <t t-esc="program.start_date" /></span>
+                                    <span t-if="program.end_date"><i
+                                            class="fa fa-calendar-times-o text-danger me-1" /> Hạn: <t
+                                            t-esc="program.end_date" /></span>
+                                </t>
+                            </div>
+                            <div t-if="program.description" t-field="program.description"
+                                class="small text-muted" />
+                        </div>
+                    </div>
+
+                    <!-- Per-position cards -->
+                    <h5 class="mb-3"><i class="fa fa-briefcase me-2 text-primary" />Các vị trí đang
+                        tuyển</h5>
+                    <div class="row g-4">
+                        <t t-foreach="program.line_ids" t-as="line">
+                            <div class="col-md-6">
+                                <div class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
+                                    <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                                        <div
+                                            class="d-flex justify-content-between align-items-start">
+                                            <h5 class="fw-bold mb-1">
+                                                <t t-esc="line.job_id.name" />
+                                            </h5>
+                                            <span
+                                                t-attf-class="badge rounded-pill px-3 py-2 #{line.job_type == 'fulltime' and 'bg-primary' or 'bg-warning text-dark'}">
+                                                <t
+                                                    t-esc="dict(line._fields['job_type'].selection).get(line.job_type, line.job_type)" />
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="card-body px-4 py-3">
+                                        <div class="row text-muted small g-2">
+                                            <div class="col-6">
+                                                <i class="fa fa-users me-1 text-primary" /> Cần
+                                                tuyển: <strong>
+                                                    <t t-esc="line.positions_needed" />
+                                                </strong>
+                                            </div>
+                                            <div class="col-6">
+                                                <i class="fa fa-money me-1 text-success" /> Lương: <strong><t
+                                                        t-esc="'{:,.0f}'.format(line.salary or 0)" />
+                                                VND</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-white border-0 px-4 pb-4">
+                                        <div
+                                            class="d-flex justify-content-between align-items-center border-top pt-3">
+                                            <div>
+                                                <small class="text-muted d-block">Thưởng giới thiệu</small>
+                                                <h5 class="text-success fw-bold mb-0">
+                                                    <t
+                                                        t-esc="'{:,.0f}'.format(line.bonus_amount or 0)" />
+                                                    VND </h5>
+                                            </div>
+                                            <a
+                                                t-attf-href="/my/referrals/submit?program_id=#{program.id}&amp;line_id=#{line.id}"
+                                                class="btn btn-primary rounded-pill px-4">
+                                                <i class="fa fa-paper-plane me-1" /> Giới thiệu ngay </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+
+                    <!-- Back -->
+                    <div class="mt-4">
+                        <a href="/referral/jobs" class="btn btn-outline-secondary">
+                            <i class="fa fa-arrow-left me-2" />Quay lại </a>
+                    </div>
+
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Submission Form -->
+    <template id="portal_referral_submit" name="Giới thiệu bạn bè">
+        <t t-call="portal.portal_layout">
+            <div class="o_portal_wrap">
+                <div class="container py-4">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8">
+                            <div class="card shadow">
+                                <div class="card-header bg-primary text-white">
+                                    <h4 class="mb-0"><i class="fa fa-user-plus me-2" />Giới thiệu
+                                        ứng viên</h4>
+                                </div>
+                                <div class="card-body p-4">
+                                    <form action="/my/referrals/submit" method="POST"
+                                        enctype="multipart/form-data">
+                                        <input type="hidden" name="csrf_token"
+                                            t-att-value="request.csrf_token()" />
+
+                                        <!-- Case 1: Pre-selected position from card button -->
+                                        <t t-if="selected_line">
+                                            <input type="hidden" name="program_id"
+                                                t-att-value="selected_program.id" />
+                                            <input type="hidden" name="job_id"
+                                                t-att-value="selected_line.job_id.id" />
+                                            <div class="alert alert-primary mb-4 rounded-3">
+                                                <div class="d-flex align-items-center gap-3">
+                                                    <i class="fa fa-briefcase fa-2x text-primary" />
+                                                    <div>
+                                                        <h6 class="mb-0 fw-bold">
+                                                            <t t-esc="selected_line.job_id.name" />
+                                                        </h6>
+                                                        <small class="text-muted">
+                                                            <t t-esc="selected_program.name" /> — <t
+                                                                t-esc="selected_program.store_id.name" />
+                                                        </small>
+                                                    </div>
+                                                    <div class="ms-auto text-end">
+                                                        <small class="text-muted d-block">Thưởng</small>
+                                                        <strong class="text-success">
+                                                            <t
+                                                                t-esc="'{:,.0f}'.format(selected_line.bonus_amount or 0)" />
+                                                            VND </strong>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+
+                                        <!-- Case 2: Manual selection dropdowns -->
+                                        <t t-else="">
+                                            <div class="mb-4">
+                                                <label class="form-label fw-bold">Chọn chương trình <span
+                                                        class="text-danger">*</span></label>
+                                                <select name="program_id" class="form-select mb-3"
+                                                    required="required" id="program_select"
+                                                    onchange="this.form.submit()">
+                                                    <option value="">-- Chọn bài viết --</option>
+                                                    <t t-foreach="programs" t-as="prog">
+                                                        <option t-att-value="prog.id"
+                                                            t-att-selected="prog.id == selected_program_id">
+                                                            <t t-esc="prog.name" />
+                                                        </option>
+                                                    </t>
+                                                </select>
+
+                                                <t t-if="selected_program_id">
+                                                    <t t-set="sel_prog"
+                                                        t-value="programs.filtered(lambda p: p.id == selected_program_id)" />
+                                                    <label class="form-label fw-bold mt-2">Chọn vị
+                                                        trí ứng tuyển <span class="text-danger">*</span></label>
+                                                    <select name="job_id"
+                                                        class="form-select p-3 shadow-sm border-primary"
+                                                        style="background-color: #f8fbff; font-size: 1.1em;"
+                                                        required="required">
+                                                        <option value="">-- Chọn vị trí --</option>
+                                                        <t t-foreach="sel_prog.line_ids" t-as="line">
+                                                            <option t-att-value="line.job_id.id">
+                                                                <t t-esc="line.job_id.name" />
+                                                            </option>
+                                                        </t>
+                                                    </select>
+                                                </t>
+                                            </div>
+                                        </t>
+
+                                        <h5 class="mb-3 border-bottom pb-2">Thông tin ứng viên</h5>
+
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Họ và tên <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="text" name="candidate_name"
+                                                    class="form-control" required="required" />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Email <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="email" name="candidate_email"
+                                                    class="form-control" required="required" />
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Số điện thoại</label>
+                                            <input type="tel" name="candidate_phone"
+                                                class="form-control" />
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">CV/Hồ sơ (File)</label>
+                                            <input type="file" name="cv_file" class="form-control"
+                                                accept=".pdf,.doc,.docx,.jpg,.png" />
+                                            <div class="form-text">Upload CV hoặc hồ sơ của ứng viên
+                                                (nếu có)</div>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label class="form-label">Ghi chú thêm</label>
+                                            <textarea name="notes" class="form-control" rows="3"
+                                                placeholder="Ghi chú về ứng viên này..."></textarea>
+                                        </div>
+
+                                        <div class="d-flex justify-content-between">
+                                            <a href="/referral/jobs" class="btn btn-secondary">Hủy</a>
+                                            <button type="submit" class="btn btn-primary px-5">Gửi
+                                                giới thiệu</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Inject active recruitment programs into SỰ KIỆN SẮP TỚI sidebar widget -->
+    <template id="portal_upcoming_referral_programs"
+        name="Portal Sidebar: Bài tuyển dụng đang mở"
+        inherit_id="portal_custom.portal_my_home_inherit">
+        <!-- Insert new "Đang tuyển" card before the sidebar footer -->
+        <xpath expr="//div[@class='text-muted small px-2']" position="before">
+            <div class="social-card p-3 mt-2">
+                <h6 class="text-muted fw-bold mb-3" style="font-size: 13px;">
+                    ĐANG TUYỂN DỤNG
+                </h6>
+                <t t-if="upcoming_referral_programs">
+                    <t t-foreach="upcoming_referral_programs" t-as="prog">
+                        <div class="d-flex align-items-center mb-3">
+                            <div
+                                class="rounded bg-success text-white d-flex flex-column align-items-center justify-content-center me-3 flex-shrink-0"
+                                style="width: 48px; height: 48px;">
+                                <i class="fa fa-users" style="font-size: 18px;" />
+                            </div>
+                            <div style="overflow: hidden;">
+                                <div class="fw-bold text-dark"
+                                    style="font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    <a t-attf-href="/referral/jobs/#{prog.id}"
+                                        class="text-decoration-none text-dark">
+                                        <t t-esc="prog.name" />
+                                    </a>
+                                </div>
+                                <small class="text-muted">
+                                    <t t-esc="prog.store_id.name" />
+                                    <t t-if="prog.end_date"> • HH: <t
+                                            t-esc="prog.end_date.strftime('%d/%m/%Y')" />
+                                    </t>
+                                </small>
+                            </div>
+                        </div>
+                    </t>
+                    <a href="/referral/jobs" class="btn btn-sm btn-outline-success w-100 mt-1">
+                        <i class="fa fa-arrow-right me-1" />Xem tất cả </a>
+                </t>
+                <t t-else="">
+                    <div class="text-center text-muted small py-3">
+                        <p class="mb-2">Hiện chưa có chương trình nào đang tuyển</p>
+                        <a href="/my/referrals" class="btn btn-sm btn-outline-success w-100 mt-1">
+                            <i class="fa fa-list me-1" />Xem Giới thiệu của tôi </a>
+                    </div>
+                </t>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>

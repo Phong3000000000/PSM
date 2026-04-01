@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extend Purchase Order Report to add Receipt Barcode and Product QR codes -->
+    <template id="report_purchaseorder_barcode" inherit_id="purchase.report_purchaseorder_document">
+        
+        <!-- 1. Add Receipt Barcode in the header area -->
+        <xpath expr="//t[@t-call='web.external_layout']/div[1]/div[2]" position="inside">
+            <t t-if="o.picking_ids">
+                <div style="margin-top:10px; text-align:right;">
+                    <strong>Receipt Barcode</strong>
+                    <br/>
+                    <!-- URL encode the picking name to handle special characters like / -->
+                    <t t-set="encoded_name" t-value="o.picking_ids[0].name.replace('/', '%2F')"/>
+                    <img t-att-src="'/report/barcode/Code128/%s' % encoded_name" 
+                         style="width:220px; height:60px;"
+                         alt="Receipt Barcode"/>
+                    <div style="font-size:10px;">
+                        <t t-out="o.picking_ids[0].name"/>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+        
+        <!-- 2. Add QR Code column header to the product table -->
+        <xpath expr="//th[@name='th_subtotal']" position="after">
+            <th name="th_qrcode" class="text-center" style="width:80px;">
+                <strong>QR Code</strong>
+            </th>
+        </xpath>
+        
+        <!-- 3. Add QR Code cell for each product line -->
+        <xpath expr="//td[@class='text-end'][last()]" position="after">
+            <td class="text-center" style="width:80px;">
+                <t t-if="line.product_id.barcode">
+                    <img t-att-src="'/report/barcode/QR/%s?width=60&amp;height=60' % line.product_id.barcode" 
+                         style="width:60px; height:60px;"
+                         t-att-alt="line.product_id.barcode"/>
+                    <div style="font-size:8px;">
+                        <t t-out="line.product_id.barcode"/>
+                    </div>
+                </t>
+                <t t-else="">
+                    <span style="color:#999; font-size:10px;">N/A</span>
+                </t>
+            </td>
+        </xpath>
+        
+    </template>
+</odoo>

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <!-- NOTE: Thank-you page overwrite has been removed.
+             The unified thank-you is now handled by M02_P0204_00.
+             Kept: detail_custom_fields template and interview slot templates. -->
+
+    <!-- Override job detail page: render từ fields thay vì website_description khi đã có data -->
+    <template id="detail_custom_fields" inherit_id="website_hr_recruitment.detail">
+        <xpath expr="//div[@t-field='job.website_description']" position="replace">
+            <t t-if="job.job_intro or job.responsibilities or job.must_have or job.nice_to_have or job.whats_great">
+                <!-- Mô tả công việc + ratings (giữ ratings phần bên phải) -->
+                <section class="pt32">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-8 pb32" itemprop="description">
+                                <t t-if="job.job_intro">
+                                    <t t-foreach="job.job_intro.splitlines()" t-as="line">
+                                        <p t-if="line.strip()" class="lead" t-esc="line"/>
+                                    </t>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- Responsibilities / Must Have / Nice to have -->
+                <section class="s_comparisons pt24 pb24 bg-200">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-4 pt16 pb16">
+                                <div class="card text-bg-primary">
+                                    <h4 class="card-header">Responsibilities</h4>
+                                    <ul class="list-group list-group-flush" itemprop="responsibilities">
+                                        <t t-if="job.responsibilities">
+                                            <t t-foreach="job.responsibilities.splitlines()" t-as="item">
+                                                <li t-if="item.strip()" class="list-group-item" t-esc="item"/>
+                                            </t>
+                                        </t>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 pt16 pb16">
+                                <div class="card text-bg-primary">
+                                    <h4 class="card-header">Must Have</h4>
+                                    <ul class="list-group list-group-flush" itemprop="skills">
+                                        <t t-if="job.must_have">
+                                            <t t-foreach="job.must_have.splitlines()" t-as="item">
+                                                <li t-if="item.strip()" class="list-group-item" t-esc="item"/>
+                                            </t>
+                                        </t>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 pt16 pb16">
+                                <div class="card text-bg-primary">
+                                    <h4 class="card-header">Nice to have</h4>
+                                    <ul class="list-group list-group-flush">
+                                        <t t-if="job.nice_to_have">
+                                            <t t-foreach="job.nice_to_have.splitlines()" t-as="item">
+                                                <li t-if="item.strip()" class="list-group-item" t-esc="item"/>
+                                            </t>
+                                        </t>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- What's great in the job? -->
+                <t t-if="job.whats_great">
+                    <section class="s_comparisons pt24 pb24">
+                        <div class="container">
+                            <div class="row align-items-center">
+                                <div class="col-sm-12 pb40">
+                                    <h2>What's great in the job?</h2>
+                                    <br/>
+                                    <ul class="lead">
+                                        <t t-foreach="job.whats_great.splitlines()" t-as="item">
+                                            <li t-if="item.strip()" t-esc="item"/>
+                                        </t>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </t>
+            </t>
+            <t t-else="">
+                <!-- Fallback: render website_description gốc -->
+                <div t-field="job.website_description"/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="interview_slot_confirm" name="Interview Slot Confirm">
+        <t t-call="website.layout">
+            <div id="wrap" style="background:#f5f5f5; padding:48px 16px 72px;">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-xl-8 col-lg-9">
+                            <div style="background:#FFFFFF; border-radius:28px; overflow:hidden; box-shadow:0 20px 45px rgba(0,0,0,0.08);">
+                                <div style="display:flex; min-height:18px;">
+                                    <div style="flex:1; background:#FFC72C;"></div>
+                                    <div style="flex:1; background:#DA291C;"></div>
+                                    <div style="flex:1; background:#000000;"></div>
+                                    <div style="flex:1; background:#FFFFFF;"></div>
+                                </div>
+
+                                <div style="padding:42px 40px 36px; font-family:Arial, sans-serif; color:#111111;">
+                                    <div style="display:inline-flex; align-items:center; justify-content:center; width:78px; height:78px; border-radius:50%; background:#FFC72C; color:#000000; font-size:40px; font-weight:700; margin-bottom:20px;">
+                                        ✓
+                                    </div>
+
+                                    <h1 style="margin:0 0 12px; font-family:Arial, sans-serif; font-size:48px; line-height:1.05; font-weight:800; color:#000000;">
+                                        Đã ghi nhận lịch phỏng vấn
+                                    </h1>
+
+                                    <p style="margin:0 0 28px; font-family:Arial, sans-serif; font-size:20px; line-height:1.6; color:#3f3f46;">
+                                        Cảm ơn bạn đã xác nhận khung giờ phỏng vấn. Đội ngũ tuyển dụng sẽ liên hệ lại với bạn trong thời gian sớm nhất.
+                                    </p>
+
+                                    <div style="border:1px solid #ececec; border-radius:22px; overflow:hidden; background:#fffdf8;">
+                                        <div style="padding:18px 24px; background:#000000; color:#FFFFFF; font-family:Arial, sans-serif; font-size:15px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;">
+                                            Thông tin đã xác nhận
+                                        </div>
+
+                                        <div style="padding:24px;">
+                                            <div style="display:flex; flex-wrap:wrap; gap:18px;">
+                                                <div style="flex:1 1 220px; padding:18px 20px; border-radius:18px; background:#FFFFFF; border:1px solid #ececec;">
+                                                    <div style="font-family:Arial, sans-serif; font-size:13px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#DA291C; margin-bottom:10px;">
+                                                        Ứng viên
+                                                    </div>
+                                                    <div style="font-family:Arial, sans-serif; font-size:26px; line-height:1.3; font-weight:700; color:#000000;">
+                                                        <t t-out="applicant.partner_name"/>
+                                                    </div>
+                                                </div>
+
+                                                <div style="flex:1 1 220px; padding:18px 20px; border-radius:18px; background:#FFFFFF; border:1px solid #ececec;">
+                                                    <div style="font-family:Arial, sans-serif; font-size:13px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#DA291C; margin-bottom:10px;">
+                                                        Thời gian
+                                                    </div>
+                                                    <div style="font-family:Arial, sans-serif; font-size:26px; line-height:1.3; font-weight:700; color:#000000;">
+                                                        <t t-out="event_start_display"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div style="margin-top:22px; padding:18px 20px; border-radius:18px; background:#FFF4CC; border-left:6px solid #FFC72C;">
+                                                <div style="font-family:Arial, sans-serif; font-size:16px; line-height:1.7; color:#2d2d2d;">
+                                                    Vị trí ứng tuyển:
+                                                    <strong><t t-out="applicant.job_id.name or 'Đang cập nhật'"/></strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-top:28px; font-family:Arial, sans-serif; font-size:16px; line-height:1.8; color:#3f3f46;">
+                                        Nếu cần thay đổi lịch hoặc có thêm câu hỏi, bạn có thể phản hồi lại email tuyển dụng để được hỗ trợ.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="interview_slot_invalid" name="Interview Slot Invalid">
+        <t t-call="website.layout">
+            <div id="wrap" class="container mt32 mb32">
+                <div class="row">
+                    <div class="col-lg-8 offset-lg-2 text-center">
+                        <h2>Lien ket khong hop le</h2>
+                        <p>Vui long kiem tra lai email hoac lien he bo phan tuyen dung.</p>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

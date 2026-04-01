@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="website_job_apply_custom" name="Custom Application Form">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container py-5">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-10">
+                            <h1 class="text-center mb-4" t-field="job.name"/>
+
+                            <t t-if="not form_fields">
+                                <div class="alert alert-warning text-center mt-4 shadow-sm">
+                                    <h4 class="alert-heading mb-3"><i class="fa fa-exclamation-triangle me-2"/>Chưa thiết lập biểu mẫu</h4>
+                                    <p class="mb-0">Vị trí này chưa được thiết lập biểu mẫu ứng tuyển trực tuyến. Vui lòng quay lại sau hoặc liên hệ bộ phận nhân sự để được hỗ trợ.</p>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <form action="/jobs/apply/submit" method="post" class="js_website_submit_form" enctype="multipart/form-data">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <input type="hidden" name="job_id" t-att-value="job.id"/>
+                                    <input type="hidden" name="schedule_id" t-if="schedule" t-att-value="schedule.id"/>
+
+                                    <div class="card shadow-sm mb-4">
+                                        <div class="card-header bg-primary text-white">
+                                            <h4 class="mb-0">PHẦN 1: THÔNG TIN CÁ NHÂN</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <t t-foreach="form_fields" t-as="field">
+                                                    <div t-if="field.is_active" t-attf-class="col-md-#{field.col_size} mb-3">
+                                                        <label class="form-label fw-bold">
+                                                            <t t-esc="field.field_label"/>
+                                                            <span t-if="field.is_required" class="text-danger"> *</span>
+                                                        </label>
+                                                        
+                                                        <!-- Text Box / Email / Tel / Number / Date -->
+                                                        <t t-if="field.field_type in ['text', 'email', 'tel', 'number', 'date']">
+                                                            <input t-att-type="field.field_type if field.field_type != 'text' else 'text'" 
+                                                                   t-att-name="field.field_name" 
+                                                                   class="form-control" 
+                                                                   t-att-required="field.is_required"/>
+                                                        </t>
+                                                        
+                                                        <!-- Textarea -->
+                                                        <t t-if="field.field_type == 'textarea'">
+                                                            <textarea t-att-name="field.field_name" 
+                                                                      class="form-control" 
+                                                                      rows="3" 
+                                                                      t-att-required="field.is_required"/>
+                                                        </t>
+                                                        
+                                                        <!-- Select -->
+                                                        <t t-if="field.field_type == 'select'">
+                                                            <select t-att-name="field.field_name" 
+                                                                    class="form-control" 
+                                                                    t-att-required="field.is_required">
+                                                                <option value="">-- Chọn --</option>
+                                                                <t t-foreach="field.get_selection_list()" t-as="opt">
+                                                                    <option t-att-value="opt['value']" t-esc="opt['label']"/>
+                                                                </t>
+                                                            </select>
+                                                        </t>
+                                                        
+                                                        <!-- Radio -->
+                                                        <t t-if="field.field_type == 'radio'">
+                                                            <t t-foreach="field.get_selection_list()" t-as="opt">
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="radio" 
+                                                                           t-att-name="field.field_name" 
+                                                                           t-att-id="'radio_' + field.field_name + '_' + opt['value']" 
+                                                                           t-att-value="opt['value']" 
+                                                                           t-att-required="field.is_required"/>
+                                                                    <label class="form-check-label" t-att-for="'radio_' + field.field_name + '_' + opt['value']">
+                                                                        <t t-esc="opt['label']"/>
+                                                                    </label>
+                                                                </div>
+                                                            </t>
+                                                        </t>
+                                                        
+                                                        <!-- Checkbox -->
+                                                        <t t-if="field.field_type == 'checkbox'">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" 
+                                                                       t-att-name="field.field_name" 
+                                                                       t-att-id="'checkbox_' + field.field_name" 
+                                                                       value="1"/>
+                                                                <label class="form-check-label" t-att-for="'checkbox_' + field.field_name">
+                                                                    <t t-esc="field.field_label"/>
+                                                                </label>
+                                                            </div>
+                                                        </t>
+                                                        
+                                                        <!-- File -->
+                                                        <t t-if="field.field_type == 'file'">
+                                                            <input type="file" t-att-name="field.field_name" 
+                                                                   class="form-control" 
+                                                                   t-att-accept="'image/*' if field.field_name == 'x_portrait_image' else ''"
+                                                                   t-att-required="field.is_required"/>
+                                                        </t>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card shadow-sm mb-4" t-if="questions">
+                                        <div class="card-header bg-success text-white">
+                                            <h4 class="mb-0">PHẦN 2: CÂU HỎI BỔ SUNG</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <t t-foreach="questions" t-as="question">
+                                                <!-- Bỏ qua câu hỏi phỏng vấn nếu đã có phần lịch PV riêng (kiểm tra title không phân biệt dấu và hoa thường) -->
+                                                <t t-set="q_title" t-value="(question.title or '').lower()"/>
+                                                <t t-if="'phỏng vấn' not in q_title and 'pv' not in q_title and 'schedule' not in q_title">
+                                                    <div class="mb-4 survey_question" t-att-data-question-type="question.question_type">
+                                                        <h5 class="fw-bold"><t t-esc="question.title"/> <span t-if="question.is_mandatory_correct" class="text-danger">*</span></h5>
+                                                        <div class="question_input">
+                                                            <!-- Char Box -->
+                                                            <t t-if="question.question_type == 'char_box'">
+                                                                <input type="text" t-att-name="'question_' + str(question.id)" class="form-control" t-att-required="question.is_mandatory_correct"/>
+                                                            </t>
+                                                            <!-- Text Box -->
+                                                            <t t-if="question.question_type == 'text_box'">
+                                                                <textarea t-att-name="'question_' + str(question.id)" class="form-control" rows="3" t-att-required="question.is_mandatory_correct"/>
+                                                            </t>
+                                                            <!-- Numerical Box -->
+                                                            <t t-if="question.question_type == 'numerical_box'">
+                                                                <input type="number" step="any" t-att-name="'question_' + str(question.id)" class="form-control" t-att-required="question.is_mandatory_correct"/>
+                                                            </t>
+                                                            <!-- Date -->
+                                                            <t t-if="question.question_type == 'date'">
+                                                                <input type="date" t-att-name="'question_' + str(question.id)" class="form-control" t-att-required="question.is_mandatory_correct"/>
+                                                            </t>
+                                                            <!-- Simple Choice (Radio) -->
+                                                            <t t-if="question.question_type == 'simple_choice'">
+                                                                <t t-foreach="question.suggested_answer_ids" t-as="answer">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="radio" 
+                                                                               t-att-name="'question_' + str(question.id)" 
+                                                                               t-att-id="'answer_' + str(answer.id)" 
+                                                                               t-att-value="answer.id" 
+                                                                               t-att-required="question.is_mandatory_correct"/>
+                                                                        <label class="form-check-label" t-att-for="'answer_' + str(answer.id)">
+                                                                            <t t-esc="answer.value"/>
+                                                                        </label>
+                                                                    </div>
+                                                                </t>
+                                                            </t>
+                                                            <!-- Multiple Choice (Checkbox) -->
+                                                            <t t-if="question.question_type == 'multiple_choice'">
+                                                                <t t-foreach="question.suggested_answer_ids" t-as="answer">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" 
+                                                                               t-att-name="'question_' + str(question.id) + '[]'" 
+                                                                               t-att-id="'answer_' + str(answer.id)" 
+                                                                               t-att-value="answer.id"/>
+                                                                        <label class="form-check-label" t-att-for="'answer_' + str(answer.id)">
+                                                                            <t t-esc="answer.value"/>
+                                                                        </label>
+                                                                    </div>
+                                                                </t>
+                                                            </t>
+                                                        </div>
+                                                    </div>
+                                                </t>
+                                            </t>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- LỊCH PHỎNG VẤN REAL-TIME -->
+                                    <div class="card shadow-sm mb-4" t-if="schedule">
+                                        <div class="card-header bg-info text-white">
+                                            <h4 class="mb-0">PHẦN 3: LỊCH PHỎNG VẤN DỰ KIẾN</h4>
+                                        </div>
+                                        <div class="card-body" id="interview_slots_container" t-att-data-schedule-id="schedule.id">
+                                            <p class="text-muted small mb-3">Vui lòng chọn 1 khung giờ phỏng vấn phù hợp với bạn. (Cập nhật trực tuyến)</p>
+                                            
+                                            <div class="row">
+                                                <!-- Slot 1 -->
+                                                <div class="col-md-4 mb-3 slot-option" data-slot="1" t-if="schedule.interview_date_1">
+                                                    <div class="border rounded p-3 text-center h-100 position-relative">
+                                                        <input class="form-check-input position-absolute top-0 start-0 m-2" type="radio" 
+                                                               name="interview_slot" value="1" id="slot_1" 
+                                                               t-att-disabled="schedule.slot_1_remaining &lt;= 0" required="1"/>
+                                                        <label class="form-check-label w-100" for="slot_1">
+                                                            <div class="fw-bold text-primary mb-1">Ngày PV 1</div>
+                                                            <div class="small mb-2"><t t-esc="schedule.interview_date_1_vn"/></div>
+                                                            <span t-attf-class="badge #{'bg-success' if schedule.slot_1_remaining > 0 else 'bg-danger'} slot-badge" data-slot="1">
+                                                                <t t-esc="schedule.slot_1_remaining"/> chỗ trống
+                                                            </span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <!-- Slot 2 -->
+                                                <div class="col-md-4 mb-3 slot-option" data-slot="2" t-if="schedule.interview_date_2">
+                                                    <div class="border rounded p-3 text-center h-100 position-relative">
+                                                        <input class="form-check-input position-absolute top-0 start-0 m-2" type="radio" 
+                                                               name="interview_slot" value="2" id="slot_2" 
+                                                               t-att-disabled="schedule.slot_2_remaining &lt;= 0" required="1"/>
+                                                        <label class="form-check-label w-100" for="slot_2">
+                                                            <div class="fw-bold text-primary mb-1">Ngày PV 2</div>
+                                                            <div class="small mb-2"><t t-esc="schedule.interview_date_2_vn"/></div>
+                                                            <span t-attf-class="badge #{'bg-success' if schedule.slot_2_remaining > 0 else 'bg-danger'} slot-badge" data-slot="2">
+                                                                <t t-esc="schedule.slot_2_remaining"/> chỗ trống
+                                                            </span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <!-- Slot 3 -->
+                                                <div class="col-md-4 mb-3 slot-option" data-slot="3" t-if="schedule.interview_date_3">
+                                                    <div class="border rounded p-3 text-center h-100 position-relative">
+                                                        <input class="form-check-input position-absolute top-0 start-0 m-2" type="radio" 
+                                                               name="interview_slot" value="3" id="slot_3" 
+                                                               t-att-disabled="schedule.slot_3_remaining &lt;= 0" required="1"/>
+                                                        <label class="form-check-label w-100" for="slot_3">
+                                                            <div class="fw-bold text-primary mb-1">Ngày PV 3</div>
+                                                            <div class="small mb-2"><t t-esc="schedule.interview_date_3_vn"/></div>
+                                                            <span t-attf-class="badge #{'bg-success' if schedule.slot_3_remaining > 0 else 'bg-danger'} slot-badge" data-slot="3">
+                                                                <t t-esc="schedule.slot_3_remaining"/> chỗ trống
+                                                            </span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-center mt-5 mb-5">
+                                        <button type="submit" class="btn btn-primary btn-lg px-5 py-3 shadow">
+                                            <i class="fa fa-paper-plane me-2"/>NỘP HỒ SƠ
+                                        </button>
+                                    </div>
+                                </form>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <script type="text/javascript">
+                document.addEventListener('DOMContentLoaded', function() {
+                    const container = document.getElementById('interview_slots_container');
+                    if (!container) return;
+                    const scheduleId = container.dataset.scheduleId;
+                    
+                    // Lấy bus_service từ session hoặc owl env
+                    const busService = (window.odoo &amp;&amp; window.odoo.__session_info__ &amp;&amp; window.odoo.__session_info__.bus_service) 
+                        || (window.__owl__ &amp;&amp; window.__owl__.app &amp;&amp; window.__owl__.app.env &amp;&amp; window.__owl__.app.env.services &amp;&amp; window.__owl__.app.env.services.bus_service);
+                    
+                    if (busService) {
+                        console.log("Subscribing to interview_slots_" + scheduleId);
+                        busService.addChannel('interview_slots_' + scheduleId);
+                        busService.addEventListener('notification', ({ detail }) => {
+                            for (const { type, payload } of detail) {
+                                if (type === 'slot_update' &amp;&amp; payload.schedule_id == scheduleId) {
+                                    updateSlotUI(payload);
+                                }
+                            }
+                        });
+                    }
+                });
+
+                function updateSlotUI(data) {
+                    [1, 2, 3].forEach(slot => {
+                        const remaining = data['slot_' + slot + '_remaining'];
+                        const badge = document.querySelector(`.slot-badge[data-slot="${slot}"]`);
+                        const radio = document.getElementById('slot_' + slot);
+                        const option = document.querySelector(`.slot-option[data-slot="${slot}"]`);
+                        
+                        if (badge) {
+                            badge.textContent = remaining + ' chỗ trống';
+                            if (remaining &lt;= 0) {
+                                badge.classList.remove('bg-success');
+                                badge.classList.add('bg-danger');
+                            } else {
+                                badge.classList.remove('bg-danger');
+                                badge.classList.add('bg-success');
+                            }
+                        }
+                        
+                        if (radio) {
+                            if (remaining &lt;= 0) {
+                                radio.disabled = true;
+                                if (radio.checked) radio.checked = false;
+                            } else {
+                                radio.disabled = false;
+                            }
+                        }
+                        
+                        if (option) {
+                            if (remaining &lt;= 0) {
+                                option.style.opacity = '0.5';
+                            } else {
+                                option.style.opacity = '1';
+                            }
+                        }
+                    });
+                }
+            </script>
+        </t>
+    </template>
+
+    <template id="website_apply_thankyou" name="Custom Thank You">
+        <t t-call="website.layout">
+            <div id="wrap" class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 text-center py-5 shadow-sm rounded bg-white">
+                        <div class="mb-4">
+                            <i class="fa fa-check-circle text-success" style="font-size: 80px;"/>
+                        </div>
+                        <h1 class="fw-bolder text-success mb-3">CẢM ƠN BẠN ĐÃ ỨNG TUYỂN!</h1>
+                        <p class="lead mb-4">
+                            Hồ sơ của bạn cho vị trí <strong t-esc="job.name"/> đã được tiếp nhận thành công.
+                        </p>
+                        <div class="alert alert-info border-0 bg-light p-4 mb-4">
+                            <p class="mb-0">Hệ thống đang xử lý hồ sơ ứng tuyển của bạn. Chúng tôi sẽ liên hệ sớm nhất qua email hoặc số điện thoại bạn đã cung cấp.</p>
+                        </div>
+                        <a href="/jobs" class="btn btn-primary btn-lg rounded-pill px-5 shadow">
+                            XEM CÁC VỊ TRÍ KHÁC
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

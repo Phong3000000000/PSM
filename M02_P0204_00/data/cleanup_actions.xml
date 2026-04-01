@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- ================================================
+             AUTO CLEANUP: Chạy tự động khi install/upgrade
+             Xóa stages thừa: 'both', 'New' staff/mgmt, duplicates
+        ================================================ -->
+        <function model="hr.recruitment.stage" name="_auto_cleanup_redundant_stages"/>
+
+        <!-- Server Action: Manual Cleanup (giữ lại để admin bấm tay nếu cần) -->
+        <record id="action_migrate_and_clean_stages" model="ir.actions.server">
+            <field name="name">Clean Old Stages and Demo Data</field>
+            <field name="model_id" ref="hr_recruitment.model_hr_recruitment_stage"/>
+            <field name="binding_model_id" ref="hr_recruitment.model_hr_recruitment_stage"/>
+            <field name="state">code</field>
+            <field name="code">
+# ========== Step 1: Delete Demo Applicants (Created by OdooBot or no recruitment_type) ==========
+demo_applicants = env['hr.applicant'].search([
+    '|', '|', ('recruitment_type', '=', False),
+    ('recruitment_type', '=', None),
+    ('create_uid', '=', 1)
+])
+demo_count = len(demo_applicants)
+if demo_applicants:
+    demo_applicants.unlink()
+    
+# ========== Step 2: Find Default Odoo Stages (by NAME) ==========
+default_odoo_stage_names = [
+    'New', 'Qualification', 'First Interview', 'Second Interview',
+    'Contract Proposal', 'Contract Signed', 'Refused'
+]
+
+# Tìm stages có tên mặc định mà KHÔNG PHẢI là stage custom của mình 
+# (Ở đây ta check if recruitment_type is False OR is 'both' - vì 'both' là default ta tự gán)
+old_stages = env['hr.recruitment.stage'].search([
+    ('name', 'in', default_odoo_stage_names),
+    '|', ('recruitment_type', '=', False),
+         ('recruitment_type', '=', 'both')
+])
+
+if not old_stages:
+    action = {
+        'type': 'ir.actions.client',
+        'tag': 'display_notification',
+        'params': {
+            'title': 'Done!',
+            'message': f'Deleted {demo_count} demo applicants. No redundant stages found.',
+            'type': 'success',
+        }
+    }
+else:
+    # ========== Step 3: Migrate Applicants from Old Stages ==========
+    applicants_in_limbo = env['hr.applicant'].search([
+        ('stage_id', 'in', old_stages.ids),
+    ])
+    
+    migrated_count = 0
+    for app in applicants_in_limbo:
+        # Tìm stage đầu tiên phù hợp với loại của ứng viên
+        stage_type = app.position_level or app.recruitment_type
+        new_stage = env['hr.recruitment.stage'].search([
+            ('recruitment_type', '=', stage_type)
+        ], order='sequence asc', limit=1)
+        
+        if new_stage:
+            app.write({'stage_id': new_stage.id})
+            migrated_count += 1
+    
+    # ========== Step 4: DELETE Old Stages ==========
+    stage_count = len(old_stages)
+    try:
+        old_stages.unlink()
+        deleted = True
+    except Exception as e:
+        deleted = False
+        error_msg = str(e)
+    
+    # ========== Result Message ==========
+    if deleted:
+        action = {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Success!',
+                'message': f'✅ Deleted {demo_count} demo applicants\n✅ Migrated {migrated_count} applicants\n✅ DELETED {stage_count} old stages',
+                'type': 'success',
+                'sticky': True,
+            }
+        }
+    else:
+        action = {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Partial Success',
+                'message': f'✅ Deleted {demo_count} demo applicants\n✅ Migrated {migrated_count} applicants\n⚠️ Could not delete stages: {error_msg[:100]}',
+                'type': 'warning',
+                'sticky': True,
+            }
+        }
+            </field>
+        </record>
+    </data>
+</odoo>

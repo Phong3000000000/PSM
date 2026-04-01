@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="psm_purchase_receiving.BarcodeCameraWidget">
+        <div class="o_barcode_camera_widget d-inline-block">
+            <button t-if="isBarcodeScannerSupported" t-attf-class="btn {{ buttonClass }}" t-on-click="openCameraScanner">
+                <i class="fa fa-camera me-2" />
+                <t t-esc="placeholder" />
+            </button>
+            <!-- Nếu không hỗ trợ camera, không hiện gì cả -->
+            <!-- Các chức năng khác (keyboard scanner, manual input) sẽ xử lý -->
+        </div>
+    </t>
+</templates>

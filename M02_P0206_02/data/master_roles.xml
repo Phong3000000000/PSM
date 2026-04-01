@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- ========================================== -->
+        <!-- MASTER ROLES - VỊ TRÍ LÀM VIỆC            -->
+        <!-- Import từ Config PDF                       -->
+        <!-- ========================================== -->
+        
+        <!-- Front Counter -->
+        <record id="role_fcot" model="planning.role">
+            <field name="name">FCOT (Front Counter)</field>
+            <field name="color">1</field><!-- Đỏ -->
+        </record>
+        
+        <!-- Drive Thru -->
+        <record id="role_dtot" model="planning.role">
+            <field name="name">DTOT (Drive Thru)</field>
+            <field name="color">2</field><!-- Cam -->
+        </record>
+        
+        <!-- Kitchen -->
+        <record id="role_kitchen" model="planning.role">
+            <field name="name">Kitchen (Bếp)</field>
+            <field name="color">3</field><!-- Vàng -->
+        </record>
+        
+        <!-- Barista -->
+        <record id="role_barista" model="planning.role">
+            <field name="name">Barista (Pha chế)</field>
+            <field name="color">4</field><!-- Xanh lá nhạt -->
+        </record>
+        
+        <!-- Lobby -->
+        <record id="role_lobby" model="planning.role">
+            <field name="name">Lobby</field>
+            <field name="color">5</field><!-- Xanh lá đậm -->
+        </record>
+        
+        <!-- Cashier -->
+        <record id="role_cashier" model="planning.role">
+            <field name="name">Cashier (Thu ngân)</field>
+            <field name="color">6</field><!-- Xanh dương nhạt -->
+        </record>
+        
+        <!-- Manager on Duty -->
+        <record id="role_mod" model="planning.role">
+            <field name="name">MOD (Manager on Duty)</field>
+            <field name="color">10</field><!-- Tím -->
+        </record>
+        
+        <!-- Trainee -->
+        <record id="role_trainee" model="planning.role">
+            <field name="name">Trainee (Thực tập)</field>
+            <field name="color">8</field><!-- Xám -->
+        </record>
+
+    </data>
+</odoo>
+

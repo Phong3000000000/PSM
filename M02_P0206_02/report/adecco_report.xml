@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Report Action -->
+    <record id="action_report_adecco" model="ir.actions.report">
+        <field name="name">Báo cáo Adecco</field>
+        <field name="model">adecco.report.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">m02_p0206_00.report_adecco_template</field>
+        <field name="report_file">m02_p0206_00.report_adecco_template</field>
+        <field name="print_report_name">'Adecco_Report_%s' % object.date_from</field>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>
+

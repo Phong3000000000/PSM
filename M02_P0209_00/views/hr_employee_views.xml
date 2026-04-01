@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_employee_form_training_gap" model="ir.ui.view">
+        <field name="name">hr.employee.form.training.gap</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='hr_settings']" position="before">
+                <page string="Development" name="training_development">
+                    <group>
+                        <div class="mb-3">
+                            <button name="action_assess_training_needs" 
+                                    string="Analyze Needs &amp; Suggest Training (B5/B13)" 
+                                    type="object" 
+                                    class="btn-primary" 
+                                    icon="fa-refresh"
+                                    help="Run Gap Analysis and suggest next training steps."/>
+                        </div>
+                        <group string="Gap Analysis (B5)">
+                            <field name="training_progress" widget="progressbar"/>
+                            <div class="text-muted" colspan="2" invisible="missing_soc_ids">
+                                <i class="fa fa-check-circle text-success"/> Employee is fully qualified for current position.
+                            </div>
+                            
+                             <!-- B6: E-Schedule Link -->
+                             <label for="action_open_planning" string="Schedule Training" invisible="not missing_soc_ids"/>
+                             <div invisible="not missing_soc_ids">
+                                <button name="action_open_planning" 
+                                        string="Open Schedule (B6)" 
+                                        type="object" 
+                                        class="btn-sm btn-outline-primary"
+                                        icon="fa-calendar"
+                                        groups="hr.group_hr_manager"/>
+                             </div>
+                        </group>
+                        
+                        <group string="Station Capacity (B12)">
+                            <field name="current_station"/>
+                            <field name="station_progress" widget="progressbar" invisible="not current_station"/>
+                            <field name="is_station_fully_competent" widget="boolean_toggle" readonly="1" invisible="not current_station"/>
+                        </group>
+                        
+                        <group string="Progression (B13-B17)">
+                            <field name="next_suggested_station" decoration-bf="1" decoration-info="1" readonly="1" invisible="not is_station_fully_competent"/>
+                            <field name="is_path_completed" widget="boolean_toggle" readonly="1"/>
+                            <field name="is_manager_candidate" widget="boolean_toggle" readonly="1" 
+                                   decoration-success="is_manager_candidate"
+                                   invisible="not is_path_completed"/>
+                           
+                            <div class="alert alert-success" role="alert" colspan="2" invisible="not is_manager_candidate">
+                                <strong>Candidate for Manager Trainee:</strong> This employee has completed all required training paths.
+                            </div>
+                            
+                            <!-- B16: Approval Button -->
+                            <button name="action_approve_manager_training" 
+                                    string="Approve Training (B16)" 
+                                    type="object" 
+                                    class="btn-primary"
+                                    icon="fa-star"
+                                    invisible="not is_manager_candidate or is_manager_trainee"
+                                    groups="hr.group_hr_manager"/>
+                                    
+                            <div class="alert alert-info" role="alert" colspan="2" invisible="not is_manager_trainee">
+                                <i class="fa fa-trophy"/> <strong>Manager Trainee:</strong> Promotion Approved. Training Workflow Activated.
+                            </div>
+                        </group>
+                    </group>
+                    
+                    <!-- B5: Failed / Retake Alert -->
+                    <separator string="Need Retake (Failed Attempts)" class="text-danger" invisible="not recent_failure_soc_ids"/>
+                    <field name="recent_failure_soc_ids" readonly="1" invisible="not recent_failure_soc_ids">
+                        <list decoration-danger="1" create="false" delete="false" edit="false">
+                            <field name="name"/>
+                            <field name="soc_code"/>
+                            <field name="soc_sub_area"/>
+                        </list>
+                    </field>
+                    
+                    <separator string="Missing Training (SOCs)"/>
+                    <field name="missing_soc_ids" readonly="1">
+                        <list decoration-danger="1">
+                            <field name="name"/>
+                            <field name="channel_id"/>
+                            <field name="slide_category"/>
+                            <field name="soc_sub_area"/>
+                            <field name="soc_code"/>
+                        </list>
+                    </field>
+                </page>
+                
+
+            </xpath>
+        </field>
+    </record>
+</odoo>

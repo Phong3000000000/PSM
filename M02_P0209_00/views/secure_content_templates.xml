@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Sidebar Override: Pass 'is_soc' data attribute -->
+    <template id="slide_fullscreen_sidebar_category_soc" inherit_id="website_slides.slide_fullscreen_sidebar_category">
+        <xpath expr="//li[contains(@class, 'o_wslides_fs_sidebar_list_item')]" position="attributes">
+            <attribute name="t-att-data-is-soc">1 if slide.is_soc else 0</attribute>
+        </xpath>
+    </template>
+
+    <!-- Task A & B: Secure Content Rendering in Detailed View -->
+    <template id="slide_content_detailed_secure" inherit_id="website_slides.slide_content_detailed">
+        <!-- Override Document Rendering (PDF) -->
+        <xpath expr="//div[@t-if=&quot;slide.slide_category == 'document'&quot;]" position="replace">
+            <div t-if="slide.slide_category == 'document'" class="ratio ratio-4x3 embed-responsive-item mb8" style="height: 85vh;">
+                <!-- Logic: SOC specific rendering (Start Button) -->
+                <t t-if="slide.is_soc">
+                    <div class="text-center p-5 bg-light border rounded">
+                        <h3 class="mb-4">Station Observation Checklist (SOC)</h3>
+                        <p class="text-muted mb-4">Interactive Skill Assessment</p>
+                        <a t-att-href="'/slides/soc/take/%s' % slide.id" class="btn btn-primary btn-lg px-5 py-3">
+                            <i class="fa fa-play-circle me-2"/> <b>Start Assessment</b>
+                        </a>
+                    </div>
+                </t>
+                <!-- Logic: Secure PDF (No Download) -->
+                <t t-elif="not slide.slide_resource_downloadable">
+                    <div class="d-flex flex-column h-100">
+                        <!-- Document Selector (If multiple resources exist) -->
+                        <div t-if="slide.slide_resource_ids" class="d-flex gap-2 p-2 bg-light border-bottom overflow-auto">
+                            <!-- Main Document Button -->
+                            <button class="btn btn-sm btn-outline-primary o_soc_doc_btn active" 
+                                    t-att-data-src="'/web/static/lib/pdfjs/web/viewer.html?file=/web/content/slide.slide/%s/datas' % slide.id"
+                                    onclick="document.getElementById('soc_pdf_viewer').src = this.dataset.src; document.querySelectorAll('.o_soc_doc_btn').forEach(b => b.classList.remove('active', 'btn-primary')); this.classList.add('active', 'btn-primary'); this.classList.remove('btn-outline-primary');">
+                                <i class="fa fa-file-pdf-o me-1"/> Main Document
+                            </button>
+                            <!-- Additional Resources -->
+                            <t t-foreach="slide.slide_resource_ids" t-as="resource">
+                                <t t-if="resource.resource_type == 'file'">
+                                    <button class="btn btn-sm btn-outline-secondary o_soc_doc_btn" 
+                                            t-att-data-src="'/web/static/lib/pdfjs/web/viewer.html?file=/web/content/slide.slide.resource/%s/data' % resource.id"
+                                            onclick="document.getElementById('soc_pdf_viewer').src = this.dataset.src; document.querySelectorAll('.o_soc_doc_btn').forEach(b => b.classList.remove('active', 'btn-primary')); document.querySelectorAll('.o_soc_doc_btn').forEach(b => b.classList.add('btn-outline-primary')); this.classList.add('active', 'btn-primary'); this.classList.remove('btn-outline-primary');">
+                                        <i class="fa fa-paperclip me-1"/> <t t-out="resource.name"/>
+                                    </button>
+                                </t>
+                            </t>
+                        </div>
+
+                        <!-- PDF Frame using PDF.js -->
+                        <iframe id="soc_pdf_viewer"
+                                t-att-src="'/web/static/lib/pdfjs/web/viewer.html?file=/web/content/slide.slide/%s/datas' % slide.id" 
+                                allowFullScreen="true" 
+                                frameborder="0"
+                                style="width: 100%; height: 100%; pointer-events: auto; flex-grow: 1;"
+                                oncontextmenu="return false;">
+                        </iframe>
+                        <!-- Control Panel -->
+                        <div class="text-center p-2 bg-white border-top">
+                            <!-- Mark as Done -->
+                            <button class="btn btn-success o_wslides_soc_mark_done px-4 mb-2">
+                                <i class="fa fa-check me-2"/> <b>I have read this document / Tôi đã đọc xong</b>
+                            </button>
+                            <!-- Fallback Link (Fail-safe) -->
+                            <div class="small">
+                                <span class="text-muted me-2">Không xem được?</span>
+                                <a t-att-href="'/web/content/slide.slide/%s/datas' % slide.id" target="_blank" class="text-primary fw-bold">
+                                    <i class="fa fa-external-link"/> Mở trong tab mới
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+                <t t-else="">
+                    <t t-out="slide.embed_code"/>
+                </t>
+            </div>
+        </xpath>
+
+        <!-- Override Video Rendering -->
+        <xpath expr="//div[@t-if=&quot;slide.slide_category == 'video'&quot;]" position="replace">
+            <div t-if="slide.slide_category == 'video'" class="ratio ratio-16x9 embed-responsive-item mb8">
+                <!-- Logic: Check for Binary Video Data -->
+                <t t-if="slide.datas">
+                    <video controls="controls" controlsList="nodownload" oncontextmenu="return false;" style="width: 100%; height: 100%;">
+                        <source t-att-src="'/web/content/slide.slide/%s/datas' % slide.id" type="video/mp4"/>
+                        Your browser does not support the video tag.
+                    </video>
+                </t>
+                <t t-else="">
+                    <t t-out="slide.embed_code"/>
+                </t>
+            </div>
+        </xpath>
+
+        <!-- Override Article Rendering (Web Page / "Like Word") -->
+        <xpath expr="//div[@t-if=&quot;slide.slide_category == 'article'&quot;]" position="replace">
+            <div t-if="slide.slide_category == 'article'" class="bg-white p-3 mb8">
+                <!-- SOC Header (Interactive Assessment) -->
+                <t t-if="slide.is_soc">
+                    <div class="text-center p-4 bg-light border rounded mb-4">
+                        <h3 class="mb-3">Station Observation Checklist (SOC)</h3>
+                        <p class="text-muted mb-3">Bài kiểm tra kỹ năng tương tác / Interactive Skill Assessment</p>
+                        <a t-att-href="'/slides/soc/take/%s' % slide.id" class="btn btn-primary btn-lg px-5">
+                            <i class="fa fa-play-circle me-2"/> <b>Start Assessment / Làm bài</b>
+                        </a>
+                    </div>
+                </t>
+
+                <!-- Main Article Content (The "Word-like" content) -->
+                <div t-if="is_html_empty(slide.html_content)" class="alert alert-info o_not_editable">
+                    Click on the "Edit" button in the top corner of the screen to edit your slide content.
+                </div>
+                <!-- Ensure o_wslides_article_content class is present for Editor styling -->
+                <div class="o_wslides_article_content">
+                    <div t-field="slide.html_content" class="oe_no_empty"/>
+                </div>
+
+                <!-- SOC Footer (Mark as Done - if applicable) -->
+                <t t-if="slide.is_soc">
+                    <div class="text-center p-3 mt-4 border-top">
+                        <button class="btn btn-success o_wslides_soc_mark_done px-4">
+                            <i class="fa fa-check me-2"/> <b>I have read this content / Tôi đã đọc xong</b>
+                        </button>
+                    </div>
+                </t>
+            </div>
+        </xpath>
+    </template>
+</odoo>

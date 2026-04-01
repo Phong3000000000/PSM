@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- 
+        Master Roles đã được chuyển sang M02_P0206_00/data/master_roles.xml
+        File này giữ lại để backward compatibility với các bản cài đặt cũ
+        -->
+        <!-- Legacy Roles - để tương thích ngược -->
+        <record id="role_waiter" model="planning.role">
+            <field name="name">Phục vụ (Server)</field>
+            <field name="color">1</field>
+        </record>
+
+        <record id="role_bartender" model="planning.role">
+            <field name="name">Pha chế (Barista)</field>
+            <field name="color">4</field>
+        </record>
+
+        <record id="role_cashier" model="planning.role">
+            <field name="name">Thu ngân (Cashier)</field>
+            <field name="color">8</field>
+        </record>
+    </data>
+</odoo>

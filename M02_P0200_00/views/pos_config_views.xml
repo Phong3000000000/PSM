@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Extend POS Config Form: thêm store_code -->
+    <record id="view_pos_config_form_store_code" model="ir.ui.view">
+        <field name="name">pos.config.form.store_code</field>
+        <field name="model">pos.config</field>
+        <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="store_code"/>
+            </xpath>
+            <xpath expr="//div[@id='title']" position="after">
+                <group string="Giờ Hoạt Động">
+                    <field name="opening_hour" widget="float_time"/>
+                    <field name="closing_hour" widget="float_time"/>
+                </group>
+                <notebook>
+                    <page string="Ca chính">
+                        <field name="main_shift_ids">
+                            <list editable="bottom">
+                                <field name="name"/>
+                                <field name="hour_from" widget="float_time"/>
+                                <field name="hour_to" widget="float_time"/>
+                            </list>
+                        </field>
+                    </page>
+                    <page string="Ca phụ">
+                        <field name="secondary_shift_ids">
+                            <list editable="bottom">
+                                <field name="name"/>
+                                <field name="hour_from" widget="float_time"/>
+                                <field name="hour_to" widget="float_time"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

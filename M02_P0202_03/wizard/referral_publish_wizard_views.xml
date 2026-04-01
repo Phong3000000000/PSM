@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_referral_publish_wizard_form" model="ir.ui.view">
+        <field name="name">referral.publish.wizard.form</field>
+        <field name="model">referral.publish.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Tạo Bài viết Giới thiệu">
+                <group>
+                    <field name="request_id" invisible="1" />
+                    <field name="name" />
+                </group>
+                <notebook>
+                    <page string="Nội dung bài viết" name="description">
+                        <field name="description" widget="html" />
+                    </page>
+                </notebook>
+                <footer>
+                    <button string="Đăng tin" name="action_publish" type="object"
+                        class="btn-primary" data-hotkey="q" />
+                    <button string="Hủy" class="btn-secondary" special="cancel" data-hotkey="x" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_referral_publish_wizard" model="ir.actions.act_window">
+        <field name="name">Tạo Bài đăng Giới thiệu</field>
+        <field name="res_model">referral.publish.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_referral_publish_wizard_form" />
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="model_employee_referral_program" />
+
+    </record>
+</odoo>

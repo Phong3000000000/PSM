@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <record id="dep_b1_ops" model="hr.department">
+            <field name="name">Vận hành (CN1)</field>
+            <field name="company_id" ref="company_branch_1"/>
+        </record>
+
+        <record id="job_b1_rgm" model="hr.job">
+            <field name="name">Regional General Manager</field>
+            <field name="company_id" ref="company_branch_1"/>
+            <field name="department_id" ref="dep_b1_ops"/>
+        </record>
+        <record id="job_b1_mgr" model="hr.job">
+            <field name="name">Branch Manager</field>
+            <field name="company_id" ref="company_branch_1"/>
+            <field name="department_id" ref="dep_b1_ops"/>
+        </record>
+        <record id="job_b1_staff" model="hr.job">
+            <field name="name">Staff</field>
+            <field name="company_id" ref="company_branch_1"/>
+            <field name="department_id" ref="dep_b1_ops"/>
+        </record>
+
+        <record id="emp_b1_rgm" model="hr.employee">
+            <field name="name">Nguyễn Văn RGM (CN1)</field>
+            <field name="job_id" ref="job_b1_rgm"/>
+            <field name="department_id" ref="dep_b1_ops"/>
+            <field name="company_id" ref="company_branch_1"/>
+            <field name="work_email">rgm1@demo.com</field>
+        </record>
+
+        <record id="dep_b1_ops" model="hr.department">
+            <field name="manager_id" ref="emp_b1_rgm"/>
+        </record>
+
+        <record id="emp_b1_mgr_1" model="hr.employee">
+            <field name="name">Trần Manager 1 (CN1)</field>
+            <field name="job_id" ref="job_b1_mgr"/>
+            <field name="parent_id" ref="emp_b1_rgm"/> <field name="department_id" ref="dep_b1_ops"/>
+            <field name="company_id" ref="company_branch_1"/>
+            <field name="work_email">mgr1@demo.com</field>
+        </record>
+
+        <record id="emp_b1_mgr_2" model="hr.employee">
+            <field name="name">Lê Manager 2 (CN1)</field>
+            <field name="job_id" ref="job_b1_mgr"/>
+            <field name="parent_id" ref="emp_b1_rgm"/> <field name="department_id" ref="dep_b1_ops"/>
+            <field name="company_id" ref="company_branch_1"/>
+            <field name="work_email">mgr2@demo.com</field>
+        </record>
+
+        <record id="emp_b1_m1_staff_1" model="hr.employee">
+            <field name="name">NV A1 (Team Mgr 1)</field>
+            <field name="job_id" ref="job_b1_staff"/>
+            <field name="parent_id" ref="emp_b1_mgr_1"/>
+            <field name="company_id" ref="company_branch_1"/>
+            <field name="work_email">staff1m1@demo.com</field>
+        </record>
+        <record id="emp_b1_m1_staff_2" model="hr.employee">
+            <field name="name">NV A2 (Team Mgr 1)</field>
+            <field name="job_id" ref="job_b1_staff"/>
+            <field name="parent_id" ref="emp_b1_mgr_1"/>
+            <field name="company_id" ref="company_branch_1"/>
+            <field name="work_email">staff2m1@demo.com</field>
+        </record>
+        <record id="emp_b1_m1_staff_3" model="hr.employee">
+            <field name="name">NV A3 (Team Mgr 1)</field>
+            <field name="job_id" ref="job_b1_staff"/>
+            <field name="parent_id" ref="emp_b1_mgr_1"/>
+            <field name="company_id" ref="company_branch_1"/>
+            <field name="work_email">staff3m1@demo.com</field>
+        </record>
+
+        <record id="emp_b1_m2_staff_1" model="hr.employee">
+            <field name="name">NV B1 (Team Mgr 2)</field>
+            <field name="job_id" ref="job_b1_staff"/>
+            <field name="parent_id" ref="emp_b1_mgr_2"/>
+            <field name="company_id" ref="company_branch_1"/>
+            <field name="work_email">staff1m2@demo.com</field>
+        </record>
+        <record id="emp_b1_m2_staff_2" model="hr.employee">
+            <field name="name">NV B2 (Team Mgr 2)</field>
+            <field name="job_id" ref="job_b1_staff"/>
+            <field name="parent_id" ref="emp_b1_mgr_2"/>
+            <field name="company_id" ref="company_branch_1"/>
+            <field name="work_email">staff2m2@demo.com</field>
+        </record>
+        <record id="emp_b1_m2_staff_3" model="hr.employee">
+            <field name="name">NV B3 (Team Mgr 2)</field>
+            <field name="job_id" ref="job_b1_staff"/>
+            <field name="parent_id" ref="emp_b1_mgr_2"/>
+            <field name="company_id" ref="company_branch_1"/>
+            <field name="work_email">staff3m2@demo.com</field>
+        </record>
+
+    </data>
+</odoo>

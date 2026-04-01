@@ -1,0 +1,33 @@
+# PSM Database Sync Module Requirements
+
+# Core Database Connectivity
+sqlalchemy>=1.4.0,<2.0.0
+alembic>=1.7.0
+
+# MySQL/MariaDB
+pymysql>=1.0.0
+cryptography>=3.4.0
+
+# PostgreSQL
+psycopg2-binary>=2.9.0
+
+# MS SQL Server
+pyodbc>=4.0.0
+pymssql>=2.2.0
+
+# Oracle (optional - requires Oracle Instant Client)
+cx_Oracle>=8.3.0
+
+# Additional utilities
+python-dateutil>=2.8.0
+chardet>=4.0.0
+
+# Development dependencies (optional)
+pytest>=6.0.0
+pytest-cov>=2.10.0
+black>=21.0.0
+isort>=5.0.0
+flake8>=3.8.0
+
+# Queue job support
+# Note: queue_job is an Odoo module, not a Python package

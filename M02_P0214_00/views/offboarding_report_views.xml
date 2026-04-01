@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- Tree View: Offboarding Requests of Subordinates               -->
+    <!-- ============================================================ -->
+    <record id="view_offboarding_report_tree" model="ir.ui.view">
+        <field name="name">approval.request.offboarding.report.tree</field>
+        <field name="model">approval.request</field>
+        <field name="arch" type="xml">
+            <list string="Offboarding Report"
+                  create="0" delete="0" edit="0"
+                  default_order="resignation_date asc">
+                <field name="name" string="Tên đơn"/>
+                <field name="employee_id" string="Nhân viên" widget="many2one_avatar"/>
+                <field name="resignation_date_formatted" string="Ngày nghỉ dự kiến"/>
+                <field name="exit_survey_completed" string="Khảo sát"/>
+                <field name="all_activities_completed" string="Công việc"/>
+                <field name="request_status" string="Trạng thái" widget="badge"
+                       decoration-info="request_status == 'approved'"
+                       decoration-success="request_status == 'done'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Search View for Offboarding Report -->
+    <record id="view_offboarding_report_search" model="ir.ui.view">
+        <field name="name">approval.request.offboarding.report.search</field>
+        <field name="model">approval.request</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="resignation_reason_id"/>
+                <filter name="groupby_reason" string="Group by Lý do nghỉ việc" context="{'group_by': 'resignation_reason_id'}"/>
+                <filter name="groupby_status" string="Group by Trạng thái" context="{'group_by': 'request_status'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Server Action: Gọi Python method để lọc động theo cấp dưới -->
+    <record id="action_pending_offboarding_activities" model="ir.actions.server">
+        <field name="name">Offboarding Report</field>
+        <field name="model_id" ref="approvals.model_approval_request"/>
+        <field name="state">code</field>
+        <field name="code">
+action = model.action_pending_offboarding_subordinates()
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Menu Items                                                    -->
+    <!-- ============================================================ -->
+
+    <!-- Top-level: Reports under Approvals -->
+    <menuitem id="menu_rst_reports"
+              name="Report"
+              parent="approvals.approvals_menu_root"
+              sequence="30"/>
+
+    <!-- Sub-menu: Pending Offboarding Activities -->
+    <menuitem id="menu_pending_offboarding_activities"
+              name="Offboarding Report"
+              parent="menu_rst_reports"
+              action="action_pending_offboarding_activities"
+              sequence="10"/>
+
+</odoo>

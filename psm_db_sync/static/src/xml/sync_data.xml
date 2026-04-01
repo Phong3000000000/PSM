@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="psm_db_sync.SyncData">
+        <DropdownItem class="'o_sync_data_menu'" onSelected.bind="onSyncData">
+            <i class="fa fa-fw fa-refresh me-1"/>Đồng bộ dữ liệu
+        </DropdownItem>
+    </t>
+
+</templates>

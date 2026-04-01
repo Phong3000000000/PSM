@@ -1,0 +1,12 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mcd_ops_capacity_process_all,mcd.ops.capacity.process.all,model_mcd_ops_capacity_process,,1,1,1,1
+access_mcd_ops_evaluation_all,mcd.ops.evaluation.all,model_mcd_ops_evaluation,,1,1,1,1
+access_mcd_ops_profile_update_all,mcd.ops.profile.update.all,model_mcd_ops_profile_update,,1,1,1,1
+access_mcd_ops_evaluation_wizard_all,mcd.ops.evaluation_wizard.all,model_mcd_ops_evaluation_wizard,,1,1,1,1
+access_mcd_ops_feedback_wizard_all,mcd.ops.feedback_wizard.all,model_mcd_ops_feedback_wizard,,1,1,1,1
+access_mcd_manager_schedule_all,mcd.manager.schedule.all,model_mcd_manager_schedule,,1,1,1,1
+access_mcd_manager_proposal_wizard_all,mcd.manager.proposal_wizard.all,model_mcd_manager_proposal_wizard,,1,1,1,1
+access_mcd_development_config_all,mcd.development.config.all,model_mcd_development_config,,1,1,1,1
+access_mcd_development_config_line_all,mcd.development.config_line.all,model_mcd_development_config_line,,1,1,1,1
+access_mcd_development_config_version_all,mcd.development.config_version.all,model_mcd_development_config_version,,1,1,1,1
+access_mcd_development_config_version_line_all,mcd.development.config_version_line.all,model_mcd_development_config_version_line,,1,1,1,1

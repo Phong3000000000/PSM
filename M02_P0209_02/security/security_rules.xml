@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Security Groups -->
+    <data noupdate="0">
+        <!-- 1. Crew Group (Base) - Can be Portal or Internal user -->
+        <record id="group_crew" model="res.groups">
+            <field name="name">Crew</field>
+            <field name="implied_ids" eval="[(3, ref('base.group_user'))]"/>
+        </record>
+        
+        <!-- 2. Trainer Group -->
+        <record id="group_trainer" model="res.groups">
+            <field name="name">Trainer</field>
+            <field name="implied_ids" eval="[(4, ref('group_crew'))]"/>
+        </record>
+        
+        <!-- 3. RGM (Restaurant General Manager) Group -->
+        <record id="group_rgm" model="res.groups">
+            <field name="name">Restaurant General Manager</field>
+            <field name="implied_ids" eval="[(4, ref('group_trainer'))]"/>
+        </record>
+        
+        <!-- 4. L&D Manager Group (Full Access) -->
+        <record id="group_lnd_manager" model="res.groups">
+            <field name="name">L&amp;D Manager</field>
+            <field name="implied_ids" eval="[(4, ref('group_rgm'))]"/>
+        </record>
+        
+        <!-- 5. OC (Operations Consultant) Group -->
+        <record id="group_oc" model="res.groups">
+            <field name="name">Operations Consultant</field>
+            <field name="implied_ids" eval="[(4, ref('group_rgm'))]"/>
+        </record>
+    </data>
+    
+    <data noupdate="1">
+        <!-- Allow all internal users to CRUD slides -->
+        <record id="rule_slide_slide_user_crud" model="ir.rule">
+            <field name="name">Slide: internal user: crud all</field>
+            <field name="model_id" ref="website_slides.model_slide_slide"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_create" eval="1"/>
+        </record>
+
+        <!-- Allow all internal users to CRUD slide channels -->
+        <record id="rule_slide_channel_user_crud" model="ir.rule">
+            <field name="name">Channel: internal user: crud all</field>
+            <field name="model_id" ref="website_slides.model_slide_channel"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_create" eval="1"/>
+        </record>
+
+        <!-- Allow all internal users to CRUD slide channel partner (membership) -->
+        <record id="rule_slide_channel_partner_user_crud" model="ir.rule">
+            <field name="name">Channel Partner: internal user: crud all</field>
+            <field name="model_id" ref="website_slides.model_slide_channel_partner"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_create" eval="1"/>
+        </record>
+
+        <!-- Allow all internal users to CRUD slide partner (completion) -->
+        <record id="rule_slide_slide_partner_user_crud" model="ir.rule">
+            <field name="name">Slide Partner: internal user: crud all</field>
+            <field name="model_id" ref="website_slides.model_slide_slide_partner"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_create" eval="1"/>
+        </record>
+    </data>
+</odoo>

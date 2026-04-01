@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- STORE User - Nhân viên cửa hàng tạo phiếu khiếu nại -->
+    <record id="group_store_complaint_user" model="res.groups">
+        <field name="name">Store - Complaint User</field>
+        <field name="comment">Nhân viên cửa hàng tạo và theo dõi phiếu khiếu nại hàng hóa</field>
+    </record>
+
+    <!-- QA User - Bộ phận QA đánh giá chất lượng -->
+    <record id="group_qa_user" model="res.groups">
+        <field name="name">QA User</field>
+        <field name="implied_ids" eval="[(4, ref('group_store_complaint_user'))]"/>
+        <field name="comment">QA đánh giá mức độ lỗi và đề xuất phương án xử lý</field>
+    </record>
+
+    <!-- FSC Manager - Bộ phận FSC quyết định cuối cùng -->
+    <record id="group_fsc_manager" model="res.groups">
+        <field name="name">FSC Manager</field>
+        <field name="implied_ids" eval="[(4, ref('group_qa_user'))]"/>
+        <field name="comment">FSC chốt phương án xử lý và phê duyệt giao bù hàng</field>
+    </record>
+
+    <!-- Finance User - Kế toán ghi nhận thanh toán -->
+    <record id="group_finance_user" model="res.groups">
+        <field name="name">Finance - Vendor Complaint</field>
+        <field name="comment">Finance ghi nhận công nợ và thanh toán</field>
+    </record>
+
+    <!-- Grant functional groups to Administrators via implied_ids -->
+    <record id="base.group_system" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_fsc_manager')), (4, ref('group_finance_user'))]"/>
+    </record>
+</odoo>

@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="email_template_social_insurance" model="mail.template">
+            <field name="name">[HR] Nhận Sổ/Tờ rời BHXH và Quyết Định Nghỉ việc</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="subject">[HR] Nhận Sổ/Tờ rời BHXH và Quyết Định Nghỉ việc</field>
+            <field name="email_from">{{ (object.company_id.email or user.email_formatted) }}</field>
+            <field name="email_to">{{ object.work_email or object.user_id.email or object.private_email }}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px; font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif; font-size: 14px;">
+                    <p style="margin: 0px; padding: 0px;">
+                        Dear anh/chị <strong><t t-out="object.name"/></strong>,
+                        <br/><br/>
+                        Sổ/Tờ rời BHXH và Quyết Định Nghỉ Việc của anh/ chị đã được cơ quan BHXH gửi về văn phòng công ty, anh/chị vui lòng phản hồi mail này và gửi những thông tin cần bên dưới, để HR có thể gửi chuyển phát đến anh/chị: 
+                        <br/><br/>
+                        - <strong>Địa chỉ nhận (địa chỉ sau sáp nhập):</strong> ............................................................
+                        <br/>
+                        - <strong>Họ tên người nhận:</strong> ............................................................
+                        <br/>
+                        - <strong>Số điện thoại người nhận:</strong> ............................................................
+                        <br/><br/>
+                        <span style="color: #d9534f;"><strong>Lưu ý:</strong></span> Từ ngày anh/chị phản hồi email, HR sẽ sắp xếp gửi đến anh/chị trong khoảng 4-5 ngày (không tính ngày nghỉ cuối tuần, ngày lễ) sau đó.
+                        <br/><br/>
+                        Trường hợp anh/chị phản hồi chậm trễ thông tin, ảnh hưởng đến việc làm hồ sơ nhận Bảo hiểm thất nghiệp, Công ty hoàn toàn không chịu trách nhiệm. 
+                        <br/><br/>
+                        <em><strong>Lưu ý:</strong> Đối với anh/chị chuyển đổi loại hình Full-time sang Part-time cũng sẽ được nhận theo thông tin như trên nhé!</em>
+                        <br/><br/>
+                        Mong nhận được sự phản hồi sớm từ anh/ chị.
+                        <br/><br/>
+                        Trân trọng,
+                        <br/>
+                        <strong>Phòng Nhân sự</strong>
+                        <br/>
+                        McDonald's Việt Nam
+                    </p>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

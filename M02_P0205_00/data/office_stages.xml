@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Recruitment Stages for Office (M02_P0205_00) -->
+        <record id="stage_office_new" model="hr.recruitment.stage">
+            <field name="name">New</field>
+            <field name="sequence">1</field>
+            <field name="recruitment_type">office</field>
+            <field name="office_pipeline_visible">False</field>
+        </record>
+
+        <record id="stage_office_screening" model="hr.recruitment.stage">
+            <field name="name">Screening</field>
+            <field name="sequence">10</field>
+            <field name="recruitment_type">office</field>
+        </record>
+
+        <record id="stage_office_interview_1" model="hr.recruitment.stage">
+            <field name="name">Interview 1</field>
+            <field name="sequence">20</field>
+            <field name="recruitment_type">office</field>
+        </record>
+
+        <record id="stage_office_interview_2" model="hr.recruitment.stage">
+            <field name="name">Interview 2</field>
+            <field name="sequence">30</field>
+            <field name="recruitment_type">office</field>
+        </record>
+
+        <record id="stage_office_interview_3" model="hr.recruitment.stage">
+            <field name="name">Interview 3</field>
+            <field name="sequence">40</field>
+            <field name="recruitment_type">office</field>
+        </record>
+
+        <record id="stage_office_interview_4" model="hr.recruitment.stage">
+            <field name="name">Interview 4</field>
+            <field name="sequence">50</field>
+            <field name="recruitment_type">office</field>
+        </record>
+
+        <record id="stage_office_probation" model="hr.recruitment.stage">
+            <field name="name">Probation</field>
+            <field name="sequence">70</field>
+            <field name="recruitment_type">office</field>
+            <field name="office_pipeline_visible">False</field>
+        </record>
+
+        <record id="stage_office_proposal" model="hr.recruitment.stage">
+            <field name="name">Offer</field>
+            <field name="sequence">60</field>
+            <field name="recruitment_type">office</field>
+        </record>
+
+        <record id="stage_office_hired" model="hr.recruitment.stage">
+            <field name="name">Hired</field>
+            <field name="sequence">80</field>
+            <field name="recruitment_type">office</field>
+            <field name="hired_stage">True</field>
+            <field name="fold">True</field>
+        </record>
+
+        <record id="stage_office_reject" model="hr.recruitment.stage">
+            <field name="name">Reject</field>
+            <field name="sequence">85</field>
+            <field name="recruitment_type">office</field>
+            <field name="fold">True</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?> <odoo> <!-- Add approval UI to purchase.order --> <record id="purchase_order_form_approval_engine" model="ir.ui.view"> <field name="name">purchase.order.form.approval.engine</field> <field name="model">purchase.order</field> <field name="inherit_id" ref="purchase.purchase_order_form"/> <field name="arch" type="xml"> <!-- Statusbar --> <xpath expr="//header/field[@name='state']" position="after"> <field name="approval_state" widget="statusbar" statusbar_visible="draft,waiting,approved,rejected"/> </xpath>
+        <!-- Buttons -->
+        <xpath expr="//header" position="inside">
+            <button name="action_submit_for_approval" type="object" string="Submit for Approval"
+                    class="btn-primary"
+                    context="{'approval_pending_action': 'button_confirm'}"
+                    attrs="{'invisible': [('approval_can_submit','=',False)]}"/>
+
+            <button name="action_approve" type="object" string="Approve" class="btn-primary"
+                    attrs="{'invisible': [('approval_can_approve','=',False)]}"/>
+
+            <!-- Simple reject: uses context to pass reason via wizard in real-life; here we use a quick prompt alternative:
+                 Developers can replace with a proper wizard. -->
+            <button name="action_reject" type="object" string="Reject" class="btn-secondary"
+                    context="{'default_reason':'Not approved'}"
+                    attrs="{'invisible': [('approval_can_approve','=',False)]}"/>
+        </xpath>
+
+        <!-- Smart button -->
+        <xpath expr="//div[@name='button_box']" position="inside">
+            <button type="action" class="oe_stat_button" icon="fa-check-square-o"
+                    name="%(approval_engine.action_approval_logs)d"
+                    context="{'search_default_res_model': 'purchase.order', 'search_default_res_id': id}"
+                    string="Approval Logs"/>
+        </xpath>
+
+        <!-- Show next approvers / current step -->
+        <xpath expr="//sheet/group" position="after">
+            <group string="Approval">
+                <field name="current_step_id" readonly="1"/>
+                <field name="next_approver_ids" widget="many2many_tags" readonly="1"/>
+            </group>
+        </xpath>
+    </field>
+</record>
+</odoo>

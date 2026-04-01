@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menu đơn giản - không auto-create -->
+    <menuitem 
+        id="menu_interview_schedule"
+        name="Lịch phỏng vấn dự kiến"
+        parent="hr_recruitment.menu_hr_recruitment_root"
+        action="action_interview_schedule"
+        sequence="15"/>
+</odoo>

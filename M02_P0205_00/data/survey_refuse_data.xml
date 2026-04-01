@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="email_candidate_survey_fail" model="mail.template">
+            <field name="name">Thông báo không đạt khảo sát - Văn phòng</field>
+            <field name="model_id" ref="hr_recruitment.model_hr_applicant" />
+            <field name="subject">Kết quả khảo sát năng lực - {{ object.job_id.name }}</field>
+            <field name="email_from">{{ object.user_id.email_formatted or
+                object.company_id.email_formatted or 'recruitment@example.com' }}</field>
+            <field name="email_to">{{ object.email_from }}</field>
+            <field name="body_html"><![CDATA[
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9fbfc; border: 1px solid #e1e4e8; border-radius: 8px;">
+    <div style="text-align: center; margin-bottom: 25px;">
+        <h2 style="margin: 0; color: #c0392b;">Kết quả khảo sát năng lực</h2>
+        <p style="margin: 5px 0 0;">{{ object.survey_id.title or 'Bài khảo sát năng lực' }}</p>
+    </div>
+
+    <p style="line-height: 1.6; color: #333;">
+        Kính gửi {{ object.partner_name or 'ứng viên' }},
+    </p>
+    <p style="line-height: 1.6; color: #333;">
+        Cảm ơn bạn đã dành thời gian hoàn thành bài khảo sát phù hợp với vị trí <strong>{{ object.job_id.name }}</strong>.
+        Sau khi kiểm tra kết quả, số điểm bạn đạt được là <strong><t t-esc="ctx.get('survey_fail_score_pct', '0.0')"/>%</strong>, chưa đạt ngưỡng yêu cầu nên chúng tôi không thể tiếp tục trong vòng này.
+    </p>
+    <p style="line-height: 1.6; color: #333;">
+        Chúng tôi rất trân trọng sự quan tâm của bạn. Nếu trong tương lai có cơ hội phù hợp hơn, hy vọng vẫn giữ liên lạc.
+    </p>
+    <p style="line-height: 1.6; color: #333;">
+        Trân trọng,<br/>
+        Đội ngũ Tuyển dụng {{ object.company_id.name or 'Công ty' }}
+    </p>
+</div>
+            ]]></field>
+        </record>
+
+        <record id="applicant_refuse_reason_survey_fail" model="hr.applicant.refuse.reason">
+            <field name="name">Không đạt khảo sát năng lực</field>
+            <field name="template_id" ref="email_candidate_survey_fail" />
+            <field name="sequence">25</field>
+        </record>
+    </data>
+</odoo>

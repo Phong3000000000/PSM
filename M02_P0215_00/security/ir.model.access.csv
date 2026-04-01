@@ -1,0 +1,14 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_discipline_violation_category_user,hr.discipline.violation.category.user,model_hr_discipline_violation_category,base.group_user,1,0,0,0
+access_hr_discipline_violation_category_admin,hr.discipline.violation.category.admin,model_hr_discipline_violation_category,hr.group_hr_manager,1,1,1,1
+access_hr_discipline_violation_type_user,hr.discipline.violation.type.user,model_hr_discipline_violation_type,base.group_user,1,0,0,0
+access_hr_discipline_violation_type_admin,hr.discipline.violation.type.admin,model_hr_discipline_violation_type,hr.group_hr_manager,1,1,1,1
+access_hr_discipline_action_user,hr.discipline.action.user,model_hr_discipline_action,base.group_user,1,0,0,0
+access_hr_discipline_action_admin,hr.discipline.action.admin,model_hr_discipline_action,hr.group_hr_manager,1,1,1,1
+access_hr_discipline_record_user,hr.discipline.record.user,model_hr_discipline_record,base.group_user,1,1,1,0
+access_hr_discipline_record_admin,hr.discipline.record.admin,model_hr_discipline_record,hr.group_hr_manager,1,1,1,1
+access_hr_discipline_record_portal,hr.discipline.record.portal,model_hr_discipline_record,base.group_portal,1,0,0,0
+access_hr_discipline_explanation_user,hr.discipline.explanation.user,model_hr_discipline_explanation,base.group_user,1,1,1,0
+access_hr_discipline_explanation_admin,hr.discipline.explanation.admin,model_hr_discipline_explanation,hr.group_hr_manager,1,1,1,1
+access_hr_discipline_explanation_portal,hr.discipline.explanation.portal,model_hr_discipline_explanation,base.group_portal,1,1,1,0
+access_hr_discipline_reject_wizard,hr.discipline.reject.wizard,model_hr_discipline_reject_wizard,hr.group_hr_manager,1,1,1,1

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="group_ceo_recruitment" model="res.groups">
+            <field name="name">CEO Recruitment Approver</field>
+            <field name="implied_ids" eval="[(6, 0, [ref('hr.group_hr_manager')])]" />
+        </record>
+        <record id="group_bod_recruitment" model="res.groups">
+            <field name="name">BOD Recruitment Viewer</field>
+            <field name="implied_ids" eval="[(6, 0, [ref('hr.group_hr_manager')])]" />
+        </record>
+        <record id="group_abu_recruitment" model="res.groups">
+            <field name="name">ABU Recruitment Control</field>
+            <field name="implied_ids" eval="[(6, 0, [ref('hr.group_hr_manager')])]" />
+        </record>
+    </data>
+</odoo>

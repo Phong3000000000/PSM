@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="paperformat_unc" model="report.paperformat">
+        <field name="name">Uỷ Nhiệm Chi</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">10</field>
+        <field name="margin_bottom">10</field>
+        <field name="margin_left">10</field>
+        <field name="margin_right">10</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <template id="report_payment_authorization_document">
+        <t t-call="web.basic_layout">
+            <div class="page" style="font-family: 'Times New Roman', serif; font-size: 14px;">
+                <!-- Header -->
+                <div class="row mb-4">
+                    <div class="col-4 text-center">
+                        <strong>ỦY NHIỆM CHI</strong><br/>
+                        PAYMENT ORDER
+                    </div>
+                    <div class="col-4 text-center">
+                        Số: <span t-field="o.name"/>
+                    </div>
+                    <div class="col-4 text-right">
+                        Ngày: <span t-field="o.date"/>
+                    </div>
+                </div>
+
+                <!-- Content Table -->
+                <table class="table table-bordered" style="width: 100%; border: 1px solid black;">
+                    <tr>
+                        <td style="width: 50%; padding: 10px;">
+                            <strong>ĐƠN VỊ TRẢ TIỀN (Applicant)</strong><br/>
+                            Họ tên: <span t-field="o.company_id.name"/><br/>
+                            Địa chỉ: <span t-field="o.company_id.partner_id.contact_address_complete"/><br/>
+                            Số tài khoản: <span t-field="o.bank_id.acc_number"/><br/>
+                            Tại ngân hàng: <span t-field="o.bank_id.bank_id.name"/>
+                        </td>
+                        <td style="width: 50%; padding: 10px;">
+                            <strong>ĐƠN VỊ THỤ HƯỞNG (Beneficiary)</strong><br/>
+                            Họ tên: <span t-field="o.receiver_name"/><br/>
+                            Số tài khoản: <span t-field="o.receiver_bank_account"/><br/>
+                            Tại ngân hàng: <span t-field="o.receiver_bank_name"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="padding: 10px;">
+                            <strong>Số tiền bằng số (Amount in figures):</strong> <span t-field="o.total_amount" t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/><br/>
+                            <strong>Số tiền bằng chữ (Amount in words):</strong> <span t-field="o.amount_text"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="padding: 10px;">
+                            <strong>Nội dung (Details of Payment):</strong> <span t-field="o.reason"/>
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- Signatures -->
+                <div class="row mt-4">
+                    <div class="col-6 text-center">
+                        <strong>Kế toán trưởng</strong><br/>
+                        (Chief Accountant)<br/><br/><br/><br/>
+                    </div>
+                    <div class="col-6 text-center">
+                        <strong>Giám đốc</strong><br/>
+                        (Director)<br/><br/><br/><br/>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_payment_authorization">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="M02_P0207_00.report_payment_authorization_document" t-lang="o.company_id.partner_id.lang"/>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_payment_authorization" model="ir.actions.report">
+        <field name="name">Uỷ Nhiệm Chi (Payment Order)</field>
+        <field name="model">payment.authorization</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">M02_P0207_00.report_payment_authorization</field>
+        <field name="report_file">M02_P0207_00.report_payment_authorization</field>
+        <field name="print_report_name">'Payment Order - %s' % (object.name)</field>
+        <field name="paperformat_id" ref="M02_P0207_00.paperformat_unc"/>
+        <field name="binding_model_id" ref="model_payment_authorization"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>
+

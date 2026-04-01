@@ -1,0 +1,258 @@
+.o_mic_assignment_matrix {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: #1a1a1b;
+    color: #e8eaed;
+    font-family: 'Inter', sans-serif;
+
+    .o_control_panel {
+        background-color: #202124 !important;
+        border-bottom: 1px solid #3c4043 !important;
+        padding: 10px 20px !important;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+
+        .o_cp_left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-grow: 1;
+        }
+
+        select, input {
+            background-color: #303134;
+            border: 1px solid #5f6368;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            outline: none;
+
+            &:focus {
+                border-color: #8ab4f8;
+            }
+        }
+
+        .o_cp_buttons {
+            display: flex;
+            gap: 10px;
+        }
+    }
+
+    .o_matrix_container {
+        flex-grow: 1;
+        overflow: auto;
+        padding: 20px;
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #3c4043;
+            border-radius: 8px;
+            overflow: hidden;
+
+            thead {
+                background-color: #303134;
+                position: sticky;
+                top: 0;
+                z-index: 10;
+
+                th {
+                    padding: 12px;
+                    text-align: center;
+                    border-bottom: 1px solid #3c4043;
+                    border-right: 1px solid #3c4043;
+                    font-weight: 600;
+                    color: #9aa0a6;
+
+                    &:last-child {
+                        border-right: none;
+                    }
+                }
+            }
+
+            tbody {
+                tr {
+                    &:nth-child(even) {
+                        background-color: #202124;
+                    }
+                    &:hover {
+                        background-color: #292a2d;
+                    }
+
+                    td {
+                        padding: 10px;
+                        border-bottom: 1px solid #3c4043;
+                        border-right: 1px solid #3c4043;
+                        text-align: center;
+                        position: relative;
+
+                        &:last-child {
+                            border-right: none;
+                        }
+
+                        &.o_day_cell {
+                            background-color: #303134;
+                            color: white;
+                            font-weight: bold;
+                            width: 150px;
+                        }
+
+                        &.o_shift_cell {
+                            cursor: pointer;
+                            transition: all 0.2s;
+                            min-width: 180px;
+                            padding: 0; /* Remove padding to allow select to fill */
+
+                            .o_cell_content {
+                                height: 100%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+
+                                select {
+                                    font-size: 13px;
+                                    padding: 10px;
+                                    height: 50px;
+                                    color: #8ab4f8 !important;
+                                    appearance: none;
+                                    text-align-last: center;
+                                    background: none !important;
+                                    border: none !important;
+                                    box-shadow: none !important;
+
+                                    &:hover {
+                                        background-color: rgba(138, 180, 248, 0.1) !important;
+                                    }
+                                }
+                            }
+
+                            &.o_empty {
+                                color: #5f6368;
+                                font-style: italic;
+                            }
+
+                            &.o_selected {
+                                outline: 2px solid #8ab4f8;
+                                z-index: 5;
+                            }
+
+                            &.o_brush_active {
+                                background-color: rgba(138, 180, 248, 0.2) !important;
+                            }
+
+                            .o_mic_name {
+                                font-weight: 500;
+                                color: #8ab4f8;
+                            }
+
+                            .o_shift_info {
+                                font-size: 11px;
+                                color: #9aa0a6;
+                                margin-top: 4px;
+                            }
+
+                            .o_conflict_badge {
+                                position: absolute;
+                                top: 5px;
+                                right: 5px;
+                                color: #f28b82;
+                                font-size: 12px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /* Floating Toolbar for MIC Selection */
+    .o_mic_toolbar {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background-color: #202124;
+        border: 1px solid #3c4043;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 250px;
+        z-index: 100;
+
+        h4 {
+            margin: 0;
+            font-size: 14px;
+            color: #9aa0a6;
+        }
+
+        .o_active_mic {
+            background-color: #303134;
+            padding: 8px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #8ab4f8;
+
+            .o_avatar {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background-color: #5f6368;
+            }
+        }
+
+        .o_brush_toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #303134;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+
+            &.active {
+                background-color: #174ea6;
+                color: white;
+            }
+        }
+    }
+
+    /* Context Menu / Dropdown */
+    .o_mic_dropdown {
+        position: absolute;
+        width: 200px;
+        background-color: #303134;
+        border: 1px solid #5f6368;
+        border-radius: 4px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        z-index: 1000;
+        max-height: 300px;
+        overflow-y: auto;
+
+        .o_dropdown_item {
+            padding: 8px 12px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #3c4043;
+            }
+        }
+    }
+}
+
+.btn-primary-mcd {
+    background-color: #8ab4f8 !important;
+    color: #202124 !important;
+    border: none !important;
+    font-weight: bold !important;
+
+    &:hover {
+        background-color: #aecbfa !important;
+    }
+}

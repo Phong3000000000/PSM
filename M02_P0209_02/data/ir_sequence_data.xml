@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Sequence for SOC Code -->
+        <record id="seq_mcd_soc_code" model="ir.sequence">
+            <field name="name">MCD SOC Code</field>
+            <field name="code">mcd.soc.code</field>
+            <field name="prefix">SOC</field>
+            <field name="padding">3</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

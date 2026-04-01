@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- 1. DEPARTMENTS -->
+        <record id="dept_rst_sales" model="hr.department">
+            <field name="name">RST Sales Department</field>
+        </record>
+        <record id="dept_rst_it" model="hr.department">
+            <field name="name">RST IT Department</field>
+        </record>
+        <record id="dept_rst_admin" model="hr.department">
+            <field name="name">RST Admin Department</field>
+        </record>
+        <record id="dept_rst_hr" model="hr.department">
+            <field name="name">RST HR Department</field>
+        </record>
+
+        <!-- 2. USERS -->
+        <!-- Manager -->
+        <record id="user_rst_manager" model="res.users">
+            <field name="name">RST Manager</field>
+            <field name="login">manager_rst</field>
+            <field name="password">123</field>
+            <field name="email">manager_rst@example.com</field>
+            <field name="group_ids" eval="[(6, 0, [ref('base.group_user'), ref('hr.group_hr_manager'), ref('approvals.group_approval_manager')])]"/>
+        </record>
+
+        <!-- Employee -->
+        <record id="user_rst_employee" model="res.users">
+            <field name="name">RST Employee</field>
+            <field name="login">employee_rst</field>
+            <field name="password">123</field>
+            <field name="email">employee_rst@example.com</field>
+            <field name="group_ids" eval="[(6, 0, [ref('base.group_user')])]"/>
+        </record>
+
+        <!-- IT Staff -->
+        <record id="user_rst_it" model="res.users">
+            <field name="name">RST IT Staff</field>
+            <field name="login">it_rst</field>
+            <field name="password">123</field>
+            <field name="email">it_rst@example.com</field>
+            <field name="group_ids" eval="[(6, 0, [ref('base.group_user')])]"/>
+        </record>
+
+        <!-- Admin Staff -->
+        <record id="user_rst_admin" model="res.users">
+            <field name="name">RST Admin Staff</field>
+            <field name="login">admin_rst</field>
+            <field name="password">123</field>
+            <field name="email">admin_rst@example.com</field>
+            <field name="group_ids" eval="[(6, 0, [ref('base.group_user')])]"/>
+        </record>
+
+        <!-- HR Staff -->
+        <record id="user_rst_hr" model="res.users">
+            <field name="name">RST HR Staff</field>
+            <field name="login">hr_rst</field>
+            <field name="password">123</field>
+            <field name="email">hr_rst@example.com</field>
+            <field name="group_ids" eval="[(6, 0, [ref('base.group_user'), ref('hr.group_hr_user'), ref('survey.group_survey_manager')])]"/>
+        </record>
+
+        <!-- 3. EMPLOYEES -->
+        <!-- Manager Employee -->
+        <record id="emp_rst_manager" model="hr.employee">
+            <field name="name">RST Manager</field>
+            <field name="user_id" ref="user_rst_manager"/>
+            <field name="department_id" ref="dept_rst_sales"/>
+            <field name="work_email">manager_rst@example.com</field>
+        </record>
+
+        <!-- Employee linked to Manager -->
+        <record id="emp_rst_employee" model="hr.employee">
+            <field name="name">RST Employee</field>
+            <field name="user_id" ref="user_rst_employee"/>
+            <field name="department_id" ref="dept_rst_sales"/>
+            <field name="parent_id" ref="emp_rst_manager"/>
+            <field name="work_email">employee_rst@example.com</field>
+        </record>
+
+        <!-- IT Employee -->
+        <record id="emp_rst_it" model="hr.employee">
+            <field name="name">RST IT Staff</field>
+            <field name="user_id" ref="user_rst_it"/>
+            <field name="department_id" ref="dept_rst_it"/>
+            <field name="work_email">it_rst@example.com</field>
+        </record>
+
+        <!-- Admin Employee -->
+        <record id="emp_rst_admin" model="hr.employee">
+            <field name="name">RST Admin Staff</field>
+            <field name="user_id" ref="user_rst_admin"/>
+            <field name="department_id" ref="dept_rst_admin"/>
+            <field name="work_email">admin_rst@example.com</field>
+        </record>
+
+        <!-- HR Employee -->
+        <record id="emp_rst_hr" model="hr.employee">
+            <field name="name">RST HR Staff</field>
+            <field name="user_id" ref="user_rst_hr"/>
+            <field name="department_id" ref="dept_rst_hr"/>
+            <field name="work_email">hr_rst@example.com</field>
+        </record>
+    </data>
+</odoo>

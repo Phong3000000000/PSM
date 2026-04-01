@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================== REFERRAL CONFIG VIEWS ==================== -->
+
+    <!-- Form View -->
+    <record id="view_referral_config_form" model="ir.ui.view">
+        <field name="name">employee.referral.config.form</field>
+        <field name="model">employee.referral.config</field>
+        <field name="arch" type="xml">
+            <form string="Cấu hình Giới thiệu Nhân sự">
+                <header>
+                    <button name="action_apply"
+                        string="Áp dụng cấu hình này"
+                        type="object"
+                        class="btn-primary"
+                        invisible="is_default"
+                        confirm="Đặt cấu hình này làm mặc định? Các cấu hình khác sẽ bị bỏ áp dụng." />
+
+                    <span class="badge bg-success" invisible="not is_default">✔ Đang áp dụng</span>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="THÔNG TIN CHUNG">
+                            <field name="name" />
+                            <field name="company_id" groups="base.group_multi_company" />
+                            <field name="active" invisible="1" />
+                            <field name="is_default" invisible="1" />
+                            <field name="announcement_channel_id" />
+                            <field name="news_blog_id" />
+                        </group>
+                        <group string="NỘI DUNG BÀI ĐĂNG">
+                            <field name="default_post_template" nolabel="1" colspan="2" />
+                        </group>
+                    </group>
+
+                    <separator string="CẤU HÌNH THƯỞNG THEO CẤP BẬC" />
+                    <field name="bonus_tier_ids" nolabel="1">
+                        <list editable="bottom">
+                            <field name="level" />
+                            <field name="bonus_amount" string="Tiền thưởng (VNĐ)" />
+                            <field name="note" />
+                        </list>
+                    </field>
+
+                    <group string="THƯỞNG MẶC ĐỊNH (khi không khớp cấp bậc)">
+                        <field name="bonus_amount" string="Mức thưởng mặc định (VNĐ)" />
+                    </group>
+
+                    <group string="TÍCH HỢP PAYROLL">
+                        <field name="auto_create_payslip_input" />
+                        <field name="payslip_input_type_id"
+                            invisible="not auto_create_payslip_input" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="view_referral_config_tree" model="ir.ui.view">
+        <field name="name">employee.referral.config.tree</field>
+        <field name="model">employee.referral.config</field>
+        <field name="arch" type="xml">
+            <list string="Cấu hình">
+                <field name="name" />
+                <field name="is_default" string="Đang áp dụng" widget="boolean_toggle" />
+                <field name="company_id" groups="base.group_multi_company" />
+                <field name="bonus_amount" string="Thưởng mặc định" />
+                <field name="probation_days" />
+                <field name="active" />
+            </list>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_referral_config" model="ir.actions.act_window">
+        <field name="name">Cấu hình thưởng</field>
+        <field name="res_model">employee.referral.config</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tạo cấu hình thưởng giới thiệu
+            </p>
+        </field>
+    </record>
+
+</odoo>

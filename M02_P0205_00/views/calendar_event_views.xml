@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="m02_p0205_calendar_event_tree_inherit" model="ir.ui.view">
+            <field name="name">calendar.event.list.interview.round</field>
+            <field name="model">calendar.event</field>
+            <field name="priority" eval="1" />
+            <field name="inherit_id" ref="calendar.view_calendar_event_tree" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_ids']" position="after">
+                    <field name="interview_round" string="Vòng PV" optional="hide" />
+                </xpath>
+            </field>
+        </record>
+
+        <record id="m02_p0205_calendar_event_form_inherit" model="ir.ui.view">
+            <field name="name">calendar.event.form.interview.round</field>
+            <field name="model">calendar.event</field>
+            <field name="inherit_id" ref="calendar.view_calendar_event_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='location']" position="after">
+                    <field name="interview_round" placeholder="Vòng phỏng vấn" />
+                </xpath>
+            </field>
+        </record>
+
+        <record id="m02_p0205_calendar_event_quick_create_inherit" model="ir.ui.view">
+            <field name="name">calendar.event.form.quick_create.interview.round</field>
+            <field name="model">calendar.event</field>
+            <field name="inherit_id" ref="calendar.view_calendar_event_form_quick_create" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_ids']" position="after">
+                    <field name="interview_round" placeholder="Vòng PV" />
+                </xpath>
+            </field>
+        </record>
+
+        <record id="m02_p0205_calendar_event_search_interview_round" model="ir.ui.view">
+            <field name="name">calendar.event.search.interview.round</field>
+            <field name="model">calendar.event</field>
+            <field name="inherit_id" ref="calendar.view_calendar_event_search" />
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='recurrent']" position="after">
+                    <separator/>
+                    <filter name="interview_round_1" string="Vòng 1" domain="[('interview_round', '=', '1')]" />
+                    <filter name="interview_round_2" string="Vòng 2" domain="[('interview_round', '=', '2')]" />
+                    <filter name="interview_round_3" string="Vòng 3" domain="[('interview_round', '=', '3')]" />
+                    <filter name="interview_round_4" string="Vòng 4" domain="[('interview_round', '=', '4')]" />
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

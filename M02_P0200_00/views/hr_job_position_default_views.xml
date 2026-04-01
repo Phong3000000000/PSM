@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ========================================== -->
+    <!-- Tree View: Vị Trí Mặc Định                -->
+    <!-- ========================================== -->
+    <record id="view_hr_job_position_default_tree" model="ir.ui.view">
+        <field name="name">hr.job.position.default.tree</field>
+        <field name="model">hr.job.position.default</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="name_ll"/>
+                <field name="block_id"/>
+                <field name="level_id"/>
+                <field name="contract_type_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ========================================== -->
+    <!-- Form View: Vị Trí Mặc Định                -->
+    <!-- ========================================== -->
+    <record id="view_hr_job_position_default_form" model="ir.ui.view">
+        <field name="name">hr.job.position.default.form</field>
+        <field name="model">hr.job.position.default</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="name_ll"/>
+                            <field name="code"/>
+                        </group>
+                        <group>
+                            <field name="block_id"/>
+                            <field name="level_id"/>
+                            <field name="contract_type_id"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ========================================== -->
+    <!-- Search View                                -->
+    <!-- ========================================== -->
+    <record id="view_hr_job_position_default_search" model="ir.ui.view">
+        <field name="name">hr.job.position.default.search</field>
+        <field name="model">hr.job.position.default</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="block_id"/>
+                <filter string="Khối" name="groupby_block" context="{'group_by': 'block_id'}"/>
+                <filter string="Level" name="groupby_level" context="{'group_by': 'level_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ========================================== -->
+    <!-- Action + Menu                              -->
+    <!-- ========================================== -->
+    <record id="action_hr_job_position_default" model="ir.actions.act_window">
+        <field name="name">Default Positions</field>
+        <field name="res_model">hr.job.position.default</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_hr_job_position_default_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create default job positions
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_hr_job_position_default_categ"
+              name="Default Positions"
+              parent="hr.menu_human_resources_configuration"
+              sequence="25"/>
+
+    <menuitem id="menu_hr_job_position_default"
+              name="Default Positions"
+              parent="menu_hr_job_position_default_categ"
+              action="action_hr_job_position_default"
+              sequence="10"/>
+
+</odoo>

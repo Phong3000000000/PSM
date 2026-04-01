@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="approval_request_form_inherit_detail_info" model="ir.ui.view">
+        <field name="name">approval.request.form.detail.info</field>
+        <field name="model">approval.request</field>
+        <field name="inherit_id" ref="approvals.approval_request_view_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Chèn button vào HEADER, cùng hàng với Attach Document -->
+            <xpath expr="//form/header" position="inside">
+
+                <button
+                    name="action_create_advance_request"
+                    type="object"
+                    string="Tạo phiếu tạm ứng"
+                    class="btn-secondary"
+                    invisible="request_status != 'approved' or is_business_trip != 'yes'"
+                />
+
+                <button
+                    name="action_confirm_ticket_purchase"
+                    type="object"
+                    string="Đã mua vé"
+                    class="btn-primary"
+                    invisible="request_status != 'approved' or is_business_trip != 'yes' or is_ticket_purchased == True"
+                />
+
+                <button
+                    name="action_complete"
+                    type="object"
+                    string="Hoàn thành"
+                    class="btn-primary"
+                    invisible="request_status != 'approved' or is_business_trip != 'yes' or is_ticket_purchased == False"
+                />
+
+            </xpath>
+
+            <!-- Thêm smart button -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_advance_requests"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-money"
+                        invisible="advance_request_count == 0 or is_business_trip != 'yes'">
+                    <field name="advance_request_count" widget="statinfo" 
+                           string="Advance Requests"/>
+                </button>
+            </xpath>
+
+            <!-- Thêm link Travel Request vào form Advance Claim -->
+            <xpath expr="//field[@name='category_id']" position="after">
+                
+                <!-- Hidden field for control -->
+                <field name="is_advance_claim" invisible="1"/>
+                
+                <!-- Budget Check Status for Travel Requests (NOT advance claims) -->
+                <field name="budget_check_status" 
+                       invisible="is_advance_claim == 'yes'"
+                       readonly="1"
+                       widget="badge"
+                       decoration-success="budget_check_status == 'in_budget'"
+                       decoration-danger="budget_check_status == 'out_of_budget'"/>
+                
+                <field name="travel_request_id"
+                       invisible="not travel_request_id"
+                       readonly="1"/>
+            </xpath>
+
+            <xpath expr="//sheet/group" position="after">
+
+                <!-- Employee Information -->
+                <group string="Employee Information"
+                       invisible="has_detail_information == 'no'">
+
+                    <field name="employee_full_name"
+                           required="has_detail_information == 'required'"
+                           readonly="1"/>
+
+                    <field name="employee_email"
+                           required="has_detail_information == 'required'"
+                           readonly="1"/>
+
+                    <field name="employee_phone"
+                           required="has_detail_information == 'required'"
+                           readonly="1"/>
+
+                    <field name="employee_identity_id"
+                           required="has_detail_information == 'required'"
+                           readonly="1"/>
+                </group>
+
+                <!-- Destination Information -->
+                <group string="Destination Information"
+                        invisible="is_business_trip == 'no'">
+
+                    <field name="destination_province_id"
+                        required="is_business_trip == 'yes'"
+                        readonly="request_status != 'new'"/>
+
+                    <field name="travel_hotel_id"
+                        required="is_business_trip == 'yes'"
+                        readonly="request_status != 'new'"
+                        domain="[('active', '=', True), ('province_id', '=', destination_province_id)]"
+                        options="{'no_create': True}"/>
+
+                    <field name="hotel_price"
+                        readonly="1"/>
+
+                    <field name="currency_id"
+                        invisible="1"/>
+
+                    <field name="hotel_nights" readonly="1"/>
+
+                    <field name="hotel_price" readonly="1"/>
+
+                    <field name="estimated_hotel_cost" readonly="1"/>
+
+                    <field name="currency_id" invisible="1"/>
+
+                    <field name="airline_id"
+                        invisible="is_business_trip == 'no'"
+                        required="is_business_trip == 'yes'"
+                        readonly="request_status != 'new'"/>
+
+                    <field name="ticket_class_id"
+                        invisible="is_business_trip == 'no'"
+                        required="is_business_trip == 'yes'"
+                        readonly="request_status != 'new'"/>
+
+                    <field name="ticket_purchaser_id"
+                        invisible="is_business_trip == 'no'"
+                        required="0"
+                        readonly="request_status != 'new'"/>
+                    
+                    <field name="ticket_attachment_ids"
+                        widget="many2many_binary"
+                        invisible="is_business_trip == 'no' or request_status not in ['approved', 'completed']"
+                        readonly="request_status == 'completed'"/>
+                </group>
+
+
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

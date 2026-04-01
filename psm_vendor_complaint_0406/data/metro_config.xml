@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 
+        Metro Areas Configuration
+        Configure which states/provinces are considered "Metro" for TH3 vs TH4 complaint type detection.
+        
+        Format: Comma-separated state IDs or keywords
+        - If value starts with "id:", it's treated as state record IDs (e.g., "id:740,id:739")
+        - Otherwise, it's treated as keywords to match in state name
+        
+        Default: Keywords for Ho Chi Minh and Ha Noi
+    -->
+    <record id="vendor_complaint_metro_states_config" model="ir.config_parameter" forcecreate="True">
+        <field name="key">vendor_complaint.metro_state_keywords</field>
+        <field name="value">Hồ Chí Minh,Ho Chi Minh,TP. Hồ Chí Minh,Hà Nội,Ha Noi,TP. Hà Nội,Thành phố Hồ Chí Minh,Thành phố Hà Nội,HCM,HN</field>
+    </record>
+</odoo>

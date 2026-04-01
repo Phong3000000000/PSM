@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Sequence for Recruitment Request -->
+        <record id="seq_recruitment_request" model="ir.sequence">
+            <field name="name">Recruitment Request</field>
+            <field name="code">recruitment.request</field>
+            <field name="prefix">RR/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Sequence for Recruitment Plan -->
+        <record id="seq_recruitment_plan" model="ir.sequence">
+            <field name="name">Recruitment Plan</field>
+            <field name="code">recruitment.plan</field>
+            <field name="prefix">PLAN/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

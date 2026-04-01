@@ -1,0 +1,21 @@
+{
+    'name': 'Staff Change Request',
+    'version': '1.0',
+    'summary': 'Handle Staff Change Requests via Portal (Formal Approval Workflow)',
+    'category': 'Human Resources',
+    'author': 'Your Company',
+    'depends': ['base', 'portal', 'approvals', 'mail', 'hr'],
+    'data': [
+        'security/ir.model.access.csv',
+        'data/approval_category_data.xml',
+        'data/mail_template_data.xml',
+        'data/ir_actions_server.xml',
+        'views/hr_employee_change_history_views.xml',
+        'views/request_portal_templates.xml',
+        'views/approval_request_views.xml',
+        'views/portal_home_banner.xml',
+    ],
+    'installable': True,
+    'application': True,
+    'auto_install': False,
+}

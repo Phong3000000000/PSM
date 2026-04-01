@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extend approval.request form view to show resignation fields -->
+    <record id="approval_request_resignation_view_form" model="ir.ui.view">
+        <field name="name">approval.request.resignation.form</field>
+        <field name="model">approval.request</field>
+        <field name="inherit_id" ref="approvals.approval_request_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_withdraw']" position="attributes">
+                <attribute name="invisible">request_status == 'new' or user_status in ['waiting', 'pending', 'cancel'] or not user_status or (category_id == %(M02_P0213_00.approval_category_resignation)d and request_status in ['approved', 'refused'])</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_cancel']" position="attributes">
+                <attribute name="invisible">request_status in ['new', 'cancel'] or request_owner_id != uid or (category_id == %(M02_P0213_00.approval_category_resignation)d and request_status in ['approved', 'refused'])</attribute>
+            </xpath>
+            <xpath expr="//header/widget[@name='attach_document'][last()]" position="after">
+                <!-- <button name="action_launch_plan" string="Launch Plan" type="object" class="btn btn-secondary" groups="hr.group_hr_user" confirm="Bạn có chắc chắn muốn Launch Plan không? Nút này sẽ ẩn sau khi bạn nhấn OK." invisible="is_plan_launched == True or category_id != %(M02_P0213_00.approval_category_resignation)d or not employee_id" /> -->
+                <button name="action_send_social_insurance" string="Gửi thông tin bảo hiểm xã hội" type="object" class="oe_highlight" invisible="request_status == 'done' or category_id != %(M02_P0213_00.approval_category_resignation)d or type_contract != 'Full-Time' or not all_activities_completed" />
+                <button name="action_send_adecco_notification" string="Gửi thông tin Adecco" type="object" class="oe_highlight"
+                    invisible="request_status != 'approved' or category_id != %(M02_P0213_00.approval_category_resignation)d or type_contract == 'Full-Time' or not all_activities_completed or not exit_survey_completed or adecco_notification_sent"
+                    confirm="Xác nhận gửi thông tin nghỉ việc cho Adecco?" />
+                <button name="action_done" string="Hoàn thành nghỉ việc" type="object"
+                    class="btn-success"
+                    invisible="request_status != 'approved' or category_id != %(M02_P0213_00.approval_category_resignation)d or not all_activities_completed or not exit_survey_completed or (type_contract != 'Full-Time' and not adecco_notification_sent)"
+                    confirm="Xác nhận hoàn tất quy trình nghỉ việc? Tài khoản của nhân viên sẽ bị vô hiệu hóa." />
+                <!-- <button name="action_rehire" string="Tái tuyển" type="object"
+                    class="btn-primary"
+                    invisible="request_status != 'done' or not category_id.is_offboarding or is_rehire or is_blacklisted"
+                    confirm="Xác nhận đánh dấu nhân viên này đủ điều kiện tái tuyển dụng?" /> -->
+                <!-- <button name="action_rehire" string="Tái tuyển" type="object"
+                    class="btn-primary"
+                    invisible="category_id != %(M02_P0213_00.approval_category_resignation)d" />
+                <button name="action_blacklist" string="Đưa vào Blacklist" type="object"
+                    class="btn-danger"
+                    invisible="request_status != 'done' or not category_id.is_offboarding or is_rehire or is_blacklisted"
+                    confirm="Xác nhận đưa nhân viên này vào danh sách đen?" /> -->
+                <button name="action_rehire" string="Tái tuyển" type="object"
+                    class="btn-primary"
+                    invisible="request_status != 'done' or category_id != %(M02_P0213_00.approval_category_resignation)d or is_rehire or is_blacklisted"
+                    confirm="Xác nhận đánh dấu nhân viên này đủ điều kiện tái tuyển dụng?" />
+                <button name="action_blacklist" string="Đưa vào Blacklist" type="object"
+                    class="btn-danger"
+                    invisible="request_status != 'done' or category_id != %(M02_P0213_00.approval_category_resignation)d or is_rehire or is_blacklisted"
+                    confirm="Xác nhận đưa nhân viên này vào danh sách đen?" />
+            </xpath>
+            <xpath expr="//field[@name='request_status']" position="attributes">
+                <attribute name="statusbar_visible">new,pending,approved,done</attribute>
+            </xpath>
+            <!-- Add employee_id field (invisible) for context -->
+            <xpath expr="//field[@name='has_access_to_request']" position="after">
+                <field name="employee_id" invisible="1" />
+                <field name="adecco_notification_sent" invisible="1" />
+            </xpath>
+            <!-- Resignation info tab -->
+            <xpath expr="//notebook/page[1]" position="before">
+                <!-- <page name="resignation_info" string="Thông tin nghỉ việc" invisible="not category_id.is_offboarding"> -->
+                <page name="resignation_info" string="Thông tin nghỉ việc" invisible="category_id != %(M02_P0213_00.approval_category_resignation)d">
+                    <group>
+                        <group string="Thông tin nhân viên">
+                            <field name="resignation_employee_name" />
+                            <field name="resignation_manager_name" />
+                            <field name="resignation_department" />
+                            <field name="employee_id" invisible="1" />
+                            <field name="job_id" />
+                            <field name="type_contract" />
+                            <label for="exit_survey_completed" />
+                            <div class="o_row">
+                                <field name="exit_survey_completed" widget="boolean_toggle" readonly="1" />
+                                <button name="action_view_survey_results" string="Xem kết quả" type="object" class="btn btn-link py-0" invisible="not exit_survey_completed" />
+                            </div>
+                            <field name="all_activities_completed" widget="boolean_toggle" />
+                            <field name="is_plan_launched" widget="boolean_toggle" readonly="1" />
+                            <field name="adecco_notification_sent" widget="boolean_toggle" readonly="1" invisible="type_contract == 'Full-Time'" />
+                            <field name="resignation_owner_email" widget="email" />
+                            <field name="is_rehire" widget="boolean_toggle" readonly="1" invisible="request_status != 'done'" />
+                            <field name="is_blacklisted" widget="boolean_toggle" readonly="1" invisible="request_status != 'done'" />
+                        </group>
+                        <group string="Chi tiết yêu cầu">
+                            <field name="resignation_reason_id" string="Loại nghỉ việc" />
+                            <field name="resignation_date" />
+                            <field name="resignation_reason" widget="text" />
+                        </group>
+                    </group>
+                </page>
+                <!-- Offboarding process activities tab -->
+                <page name="offboarding_activities" string="Quá trình nghỉ việc" invisible="category_id != %(M02_P0213_00.approval_category_resignation)d">
+                    <field name="employee_activity_ids" readonly="1" nolabel="1"
+                           context="{'active_test': False}"
+                           domain="['|', ('active', '=', True), ('active', '=', False)]">
+                        <list create="0" delete="0" edit="0"
+                              decoration-muted="active == False"
+                              default_order="date_deadline asc">
+                            <field name="active" column_invisible="True" />
+                            <field name="activity_type_id" />
+                            <field name="summary" />
+                            <field name="date_deadline" widget="remaining_days" />
+                            <field name="user_id" widget="many2one_avatar_user" />
+                            <field name="ops_display_state" widget="badge"
+                                   decoration-success="ops_display_state == 'done'"
+                                   decoration-warning="ops_display_state == 'pending'"
+                                   decoration-danger="ops_display_state == 'overdue'"
+                                   string="Trạng thái" />
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extend approval.category form view to add is_offboarding field -->
+    <record id="approval_category_resignation_view_form" model="ir.ui.view">
+        <field name="name">approval.category.resignation.form</field>
+        <field name="model">approval.category</field>
+        <field name="inherit_id" ref="approvals.approval_category_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='description']" position="after">
+                <field name="is_offboarding" widget="boolean_toggle" />
+            </xpath>
+        </field>
+    </record>
+</odoo>

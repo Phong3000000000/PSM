@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Ghi đè form view applicant.get.refuse.reason để hiển thị multi-select reasons -->
+    <record id="applicant_get_refuse_reason_view_form_inherit" model="ir.ui.view">
+        <field name="name">applicant.get.refuse.reason.form.inherit.m02.p0204.00</field>
+        <field name="model">applicant.get.refuse.reason</field>
+        <field name="inherit_id" ref="hr_recruitment.applicant_get_refuse_reason_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Ẩn field default của Odoo -->
+            <xpath expr="//field[@name='refuse_reason_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+                <attribute name="required">0</attribute>
+            </xpath>
+
+            <!-- Thêm logic danh sách lý do mới -->
+            <xpath expr="//field[@name='refuse_reason_id']" position="after">
+                <field name="job_id" invisible="1"/>
+                <field name="source_action" invisible="1"/>
+                <field name="wizard_line_ids" nolabel="1">
+                    <list editable="bottom" create="0" delete="0">
+                        <field name="job_refuse_reason_id" column_invisible="1"/>
+                        <field name="is_selected" widget="boolean_toggle"/>
+                        <field name="name" readonly="1" force_save="1"/>
+                        <field name="reason_type" column_invisible="1"/>
+                        <field name="custom_text" invisible="reason_type != 'text'" placeholder="Ghi rõ lý do..."/>
+                    </list>
+                </field>
+            </xpath>
+        </field>
+    </record>
+</odoo>

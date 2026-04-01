@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_ops_payroll_root"
+              name="OPS Payroll"
+              parent="hr_work_entry_enterprise.menu_hr_payroll_root"
+              sequence="50"/>
+
+    <menuitem id="menu_ops_attendance_sheet"
+              name="Attendance Sheets"
+              parent="menu_ops_payroll_root"
+              action="action_hr_attendance_sheet"
+              sequence="10"/>
+
+    <menuitem id="menu_ops_payment_authorization"
+              name="Payment Orders"
+              parent="menu_ops_payroll_root"
+              action="action_payment_authorization"
+              sequence="20"/>
+
+    <menuitem id="menu_ops_data_loader"
+              name="Data Loader"
+              parent="menu_ops_payroll_root"
+              action="action_m02_p0207_data_loader"
+              sequence="99"/>
+
+    <!-- Payslip Approval custom UI -->
+    <record id="action_payslip_approval_ui" model="ir.actions.client">
+        <field name="name">Payslip Approval</field>
+        <field name="tag">payslip_approval_action</field>
+    </record>
+
+    <menuitem id="menu_ops_payslip_approval"
+              name="Payslip Approval"
+              parent="menu_ops_payroll_root"
+              action="action_payslip_approval_ui"
+              sequence="15"/>
+</odoo>
+
+

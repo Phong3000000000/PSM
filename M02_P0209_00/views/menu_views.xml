@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root Menu -->
+    <menuitem id="menu_lnd_root" 
+              name="L&amp;D Development" 
+              web_icon="M02_P0209_00,static/description/icon.png" 
+              sequence="50" 
+              groups="M02_P0209_00.group_rgm,M02_P0209_00.group_trainer,M02_P0209_00.group_barista_trainer,M02_P0209_00.group_lnd_manager"/>
+    
+    <!-- URL Actions -->
+    <record id="action_open_my_soc_dashboard" model="ir.actions.act_url">
+        <field name="name">My SOC Profile</field>
+        <field name="url">/soc/my/dashboard</field>
+        <field name="target">self</field>
+    </record>
+
+    <record id="action_open_trainer_dashboard" model="ir.actions.act_url">
+        <field name="name">Trainer Dashboard</field>
+        <field name="url">/soc/trainer/dashboard</field>
+        <field name="target">self</field>
+    </record>
+
+    <!-- SOC Management -->
+    <menuitem id="menu_soc_management" name="SOC Management" 
+              parent="menu_lnd_root"
+              sequence="10" 
+              groups="M02_P0209_00.group_rgm,M02_P0209_00.group_trainer,M02_P0209_00.group_barista_trainer,M02_P0209_00.group_lnd_manager"/>
+    
+    <menuitem id="menu_soc_templates" name="SOC Templates" parent="menu_soc_management" action="action_lnd_soc_template_slide" sequence="10"/>
+
+    <!-- NEW MENU ITEM FOR SOC EVALUATIONS -->
+    <menuitem id="menu_soc_evaluations" name="SOC Evaluations" 
+              parent="menu_soc_management" 
+              action="action_mcd_soc_evaluation" 
+              sequence="20"/>
+
+    <!-- Store Management - Root App (only visible to RGM) -->
+    <menuitem id="menu_store_management" name="Store Management" 
+              web_icon="M02_P0209_00,static/description/icon.png" 
+              sequence="45"
+              groups="M02_P0209_00.group_rgm,M02_P0209_00.group_lnd_manager"/>
+    
+    <!-- Human Resources Submenu -->
+    <menuitem id="menu_store_hr" name="Human Resources" parent="menu_store_management" sequence="10"/>
+
+    <menuitem id="menu_lnd_store_employees" name="Employees" parent="menu_store_hr" action="hr.open_view_employee_list_my" sequence="5"/>
+    <menuitem id="menu_lnd_potential_list" name="Potential List" parent="menu_store_hr" action="action_lnd_potential_list" sequence="10"/>
+    
+    <!-- Training Library (Consolidated from eLearning) -->
+    <menuitem id="menu_lnd_library" name="Training Library" parent="menu_lnd_root" sequence="20" />
+    
+    <!-- Courses (Training Paths) -->
+    <menuitem id="menu_lnd_courses" name="Training Paths" parent="menu_lnd_library" action="website_slides.slide_channel_action_overview" sequence="10"/>
+
+    <!-- Content (All Slides) -->
+    <menuitem id="menu_lnd_contents" name="All Content" parent="menu_lnd_library" action="website_slides.slide_slide_action" sequence="20"/>
+
+    <!-- Reporting -->
+    <menuitem id="menu_lnd_reporting" name="Reporting" parent="menu_lnd_root" sequence="30"/>
+    <menuitem id="menu_lnd_report_course" name="Courses" parent="menu_lnd_reporting" action="website_slides.rating_rating_action_slide_channel" sequence="10"/>
+
+    <!-- Configuration -->
+    <menuitem id="menu_lnd_configuration" name="Configuration" parent="menu_lnd_root" sequence="99"/>
+    <menuitem id="menu_lnd_config_course_tags" name="Course Tags" parent="menu_lnd_configuration" action="website_slides.slide_channel_tag_action" sequence="10"/>
+    <menuitem id="menu_lnd_config_content_tags" name="Content Tags" parent="menu_lnd_configuration" action="website_slides.action_slide_tag" sequence="20"/>
+</odoo>

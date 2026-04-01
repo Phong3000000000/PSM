@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!--
+            ============================================================
+            KHẢO SÁT NĂNG LỰC - Odoo Developer
+            Dành cho ứng viên tuyển vị trí Odoo Dev
+            Scoring: Must Have >= 80% -> tự động PASS
+            ============================================================
+        -->
+
+        <record id="survey_odoo_dev" model="survey.survey">
+            <field name="title">Khảo sát năng lực - Odoo Developer</field>
+            <field name="scoring_type">scoring_with_answers</field>
+            <field name="scoring_success_min">80</field>
+            <field name="is_pre_interview">True</field>
+            <field name="users_login_required">False</field>
+            <field name="description"><![CDATA[
+                <p>Xin chào! Chúng tôi muốn hiểu rõ hơn về kinh nghiệm và tư duy kỹ thuật của bạn khi ứng tuyển vị trí <strong>Odoo Developer</strong>.</p>
+                <p>Bài khảo sát này đánh giá mức độ phù hợp với yêu cầu dự án nội bộ. Không có câu trả lời đúng sai tuyệt đối – chọn đáp án phản ánh chính xác kinh nghiệm của bạn.</p>
+                <p>⏱ Thời gian dự kiến: <strong>5–10 phút</strong>.</p>
+            ]]></field>
+            <field name="description_done"><![CDATA[
+                <p>✅ <strong>Cảm ơn bạn đã hoàn thành bài khảo sát!</strong></p>
+                <p>Chúng tôi sẽ phản hồi trong vòng <strong>3 ngày làm việc</strong> nếu hồ sơ tiếp tục được xem xét.</p>
+                <p>Nếu có thắc mắc, vui lòng liên hệ bộ phận HR.</p>
+            ]]></field>
+        </record>
+
+        <!-- ==================== SECTION 1: KINH NGHIỆM & NỀN TẢNG ==================== -->
+        <record id="sq_odoo_dev_s1" model="survey.question">
+            <field name="survey_id" ref="survey_odoo_dev" />
+            <field name="title">I. Kinh Nghiệm &amp; Nền Tảng</field>
+            <field name="is_page">True</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <!-- Q1: Exp -->
+        <record id="sq_odoo_dev_q1" model="survey.question">
+            <field name="survey_id" ref="survey_odoo_dev" />
+            <field name="page_id" ref="sq_odoo_dev_s1" />
+            <field name="title">Bạn có bao nhiêu kinh nghiệm thực tế triển khai hoặc tùy biến Odoo?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">2</field>
+            <field name="constr_mandatory">True</field>
+        </record>
+        <record id="sq_odoo_dev_q1_a1" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q1" />
+            <field name="value">Chưa từng triển khai (sẵn sàng học)</field>
+            <field name="answer_score">0</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="sq_odoo_dev_q1_a2" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q1" />
+            <field name="value">Dưới 1 năm</field>
+            <field name="answer_score">4</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="sq_odoo_dev_q1_a3" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q1" />
+            <field name="value">1–2 năm</field>
+            <field name="answer_score">8</field>
+            <field name="is_must_have">True</field>
+            <field name="is_correct">True</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="sq_odoo_dev_q1_a4" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q1" />
+            <field name="value">Trên 2 năm</field>
+            <field name="answer_score">10</field>
+            <field name="is_must_have">True</field>
+            <field name="is_correct">True</field>
+            <field name="sequence">4</field>
+        </record>
+
+        <!-- Q2: Module -->
+        <record id="sq_odoo_dev_q2" model="survey.question">
+            <field name="survey_id" ref="survey_odoo_dev" />
+            <field name="page_id" ref="sq_odoo_dev_s1" />
+            <field name="title">Bạn từng triển khai/custom module nào trên Odoo? (Chọn tất cả phù hợp)</field>
+            <field name="question_type">multiple_choice</field>
+            <field name="sequence">3</field>
+            <field name="constr_mandatory">True</field>
+        </record>
+        <record id="sq_odoo_dev_q2_a1" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q2" />
+            <field name="value">Sales/CRM + Billing</field>
+            <field name="answer_score">8</field>
+            <field name="is_must_have">True</field>
+            <field name="is_correct">True</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="sq_odoo_dev_q2_a2" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q2" />
+            <field name="value">Inventory/Warehouse + MRP</field>
+            <field name="answer_score">8</field>
+            <field name="is_must_have">True</field>
+            <field name="is_correct">True</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="sq_odoo_dev_q2_a3" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q2" />
+            <field name="value">Accounting/Payroll/Timesheet</field>
+            <field name="answer_score">5</field>
+            <field name="is_nice_to_have">True</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="sq_odoo_dev_q2_a4" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q2" />
+            <field name="value">Website/eCommerce/Portal</field>
+            <field name="answer_score">5</field>
+            <field name="is_nice_to_have">True</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="sq_odoo_dev_q2_a5" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q2" />
+            <field name="value">Chưa từng triển khai module nào</field>
+            <field name="answer_score">0</field>
+            <field name="sequence">5</field>
+        </record>
+
+        <!-- ==================== SECTION 2: KỸ NĂNG & THÁI ĐỘ ==================== -->
+        <record id="sq_odoo_dev_s2" model="survey.question">
+            <field name="survey_id" ref="survey_odoo_dev" />
+            <field name="title">II. Kỹ Năng &amp; Thái Độ Kỹ Thuật</field>
+            <field name="is_page">True</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <!-- Q3: Python + ORM -->
+        <record id="sq_odoo_dev_q3" model="survey.question">
+            <field name="survey_id" ref="survey_odoo_dev" />
+            <field name="page_id" ref="sq_odoo_dev_s2" />
+            <field name="title">Bạn đánh giá khả năng lập trình Python &amp; sử dụng ORM của mình đến mức nào?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">11</field>
+            <field name="constr_mandatory">True</field>
+        </record>
+        <record id="sq_odoo_dev_q3_a1" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q3" />
+            <field name="value">Cơ bản, chưa từng viết module</field>
+            <field name="answer_score">0</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="sq_odoo_dev_q3_a2" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q3" />
+            <field name="value">Có thể đọc code, sửa bug nhỏ</field>
+            <field name="answer_score">5</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="sq_odoo_dev_q3_a3" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q3" />
+            <field name="value">Tự xây module, viết ORM/SQL chuẩn</field>
+            <field name="answer_score">10</field>
+            <field name="is_must_have">True</field>
+            <field name="is_correct">True</field>
+            <field name="sequence">3</field>
+        </record>
+
+        <!-- Q4: Giải quyết vấn đề -->
+        <record id="sq_odoo_dev_q4" model="survey.question">
+            <field name="survey_id" ref="survey_odoo_dev" />
+            <field name="page_id" ref="sq_odoo_dev_s2" />
+            <field name="title">Bạn thường xử lý sự cố Odoo như thế nào?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">12</field>
+            <field name="constr_mandatory">True</field>
+        </record>
+        <record id="sq_odoo_dev_q4_a1" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q4" />
+            <field name="value">Chờ hướng dẫn, ít tự debug</field>
+            <field name="answer_score">0</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="sq_odoo_dev_q4_a2" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q4" />
+            <field name="value">Tìm log, thử nhiều cách, hỏi senior nếu cần</field>
+            <field name="answer_score">6</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="sq_odoo_dev_q4_a3" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q4" />
+            <field name="value">Phân tích trước, debug bằng tools, document lại</field>
+            <field name="answer_score">10</field>
+            <field name="is_must_have">True</field>
+            <field name="is_correct">True</field>
+            <field name="sequence">3</field>
+        </record>
+
+        <!-- Q5: Kiểm thử & CI -->
+        <record id="sq_odoo_dev_q5" model="survey.question">
+            <field name="survey_id" ref="survey_odoo_dev" />
+            <field name="page_id" ref="sq_odoo_dev_s2" />
+            <field name="title">Bạn có kinh nghiệm viết test (unit/integration) trên Odoo hoặc pipeline CI/CD không?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">13</field>
+        </record>
+        <record id="sq_odoo_dev_q5_a1" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q5" />
+            <field name="value">Không</field>
+            <field name="answer_score">0</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="sq_odoo_dev_q5_a2" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q5" />
+            <field name="value">Có viết script test cơ bản</field>
+            <field name="answer_score">5</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="sq_odoo_dev_q5_a3" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q5" />
+            <field name="value">Từng đóng góp vào test suite hoặc pipeline CI</field>
+            <field name="answer_score">10</field>
+            <field name="is_nice_to_have">True</field>
+            <field name="is_correct">True</field>
+            <field name="sequence">3</field>
+        </record>
+
+        <!-- ==================== SECTION 3: THỜI GIAN & CAM KẾT ==================== -->
+        <record id="sq_odoo_dev_s3" model="survey.question">
+            <field name="survey_id" ref="survey_odoo_dev" />
+            <field name="title">III. Thời Gian &amp; Cam Kết</field>
+            <field name="is_page">True</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- Q6: Loại hình làm việc -->
+        <record id="sq_odoo_dev_q6" model="survey.question">
+            <field name="survey_id" ref="survey_odoo_dev" />
+            <field name="page_id" ref="sq_odoo_dev_s3" />
+            <field name="title">Bạn ưu tiên mô hình làm việc nào?</field>
+            <field name="question_type">multiple_choice</field>
+            <field name="sequence">21</field>
+            <field name="constr_mandatory">True</field>
+        </record>
+        <record id="sq_odoo_dev_q6_a1" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q6" />
+            <field name="value">Làm onsite/Hybrid theo lịch công ty</field>
+            <field name="answer_score">8</field>
+            <field name="is_must_have">True</field>
+            <field name="is_correct">True</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="sq_odoo_dev_q6_a2" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q6" />
+            <field name="value">Làm remote toàn thời gian</field>
+            <field name="answer_score">6</field>
+            <field name="is_nice_to_have">True</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="sq_odoo_dev_q6_a3" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q6" />
+            <field name="value">Sẵn sàng support on-call / làm thêm giờ khi cần</field>
+            <field name="answer_score">10</field>
+            <field name="is_nice_to_have">True</field>
+            <field name="sequence">3</field>
+        </record>
+
+        <!-- Q7: Thời gian bắt đầu -->
+        <record id="sq_odoo_dev_q7" model="survey.question">
+            <field name="survey_id" ref="survey_odoo_dev" />
+            <field name="page_id" ref="sq_odoo_dev_s3" />
+            <field name="title">Bạn có thể bắt đầu công việc khi nào?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">22</field>
+            <field name="constr_mandatory">True</field>
+        </record>
+        <record id="sq_odoo_dev_q7_a1" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q7" />
+            <field name="value">Sau 1 tháng trở lên</field>
+            <field name="answer_score">3</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="sq_odoo_dev_q7_a2" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q7" />
+            <field name="value">Trong vòng 2 tuần</field>
+            <field name="answer_score">7</field>
+            <field name="sequence">2</field>
+            <field name="is_must_have">True</field>
+            <field name="is_correct">True</field>
+        </record>
+        <record id="sq_odoo_dev_q7_a3" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q7" />
+            <field name="value">Ngay lập tức / trong vòng 1 tuần</field>
+            <field name="answer_score">10</field>
+            <field name="is_must_have">True</field>
+            <field name="is_nice_to_have">True</field>
+            <field name="is_correct">True</field>
+            <field name="sequence">3</field>
+        </record>
+
+        <!-- ==================== SECTION 4: THÔNG TIN BỔ SUNG ==================== -->
+        <record id="sq_odoo_dev_s4" model="survey.question">
+            <field name="survey_id" ref="survey_odoo_dev" />
+            <field name="title">IV. Thông Tin Bổ Sung</field>
+            <field name="is_page">True</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- Q8: Agile -->
+        <record id="sq_odoo_dev_q8" model="survey.question">
+            <field name="survey_id" ref="survey_odoo_dev" />
+            <field name="page_id" ref="sq_odoo_dev_s4" />
+            <field name="title">Bạn có kinh nghiệm làm việc trong môi trường Agile (scrum/kanban) không?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="sequence">31</field>
+            <field name="constr_mandatory">True</field>
+        </record>
+        <record id="sq_odoo_dev_q8_a1" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q8" />
+            <field name="value">Chưa từng</field>
+            <field name="answer_score">0</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="sq_odoo_dev_q8_a2" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q8" />
+            <field name="value">Đã tham gia sprint, có cập nhật task hàng ngày</field>
+            <field name="answer_score">6</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="sq_odoo_dev_q8_a3" model="survey.question.answer">
+            <field name="question_id" ref="sq_odoo_dev_q8" />
+            <field name="value">Từng làm chủ nhiệm task, review code và báo cáo sprint</field>
+            <field name="answer_score">10</field>
+            <field name="is_nice_to_have">True</field>
+            <field name="is_correct">True</field>
+            <field name="sequence">3</field>
+        </record>
+
+        <!-- Q9: Motivation -->
+        <record id="sq_odoo_dev_q9" model="survey.question">
+            <field name="survey_id" ref="survey_odoo_dev" />
+            <field name="page_id" ref="sq_odoo_dev_s4" />
+            <field name="title">Điều gì khiến bạn muốn ứng tuyển vị trí Odoo Developer tại công ty chúng tôi?</field>
+            <field name="question_type">text_box</field>
+            <field name="sequence">32</field>
+            <field name="constr_mandatory">False</field>
+        </record>
+
+    </data>
+</odoo>

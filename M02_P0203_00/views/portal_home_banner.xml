@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_my_home_contact_banner_request" inherit_id="portal.portal_my_home">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="icon" t-value="'/portal_contact_update/static/src/img/icon.png'"/> 
+                <t t-set="title">Cập nhật hồ sơ</t>
+                <t t-set="text">Gửi yêu cầu cập nhật thông tin cá nhân của bạn</t>
+                <t t-set="url" t-value="'/my/update_info'"/>
+                <t t-set="config_card" t-value="True"/>
+            </t>
+        </xpath>
+    </template>
+</odoo>

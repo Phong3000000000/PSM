@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- STORE User - Nhân viên cửa hàng nhận hàng -->
+    <record id="group_store_receiving_user" model="res.groups">
+        <field name="name">Store - Receiving User</field>
+        <field name="comment">Nhân viên cửa hàng có thể thực hiện quy trình nhận hàng</field>
+        <field name="implied_ids" eval="[(4, ref('stock.group_stock_user'))]"/>
+    </record>
+
+    <!-- Grant this group to Administrators via implied_ids -->
+    <record id="base.group_system" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_store_receiving_user'))]"/>
+    </record>
+</odoo>

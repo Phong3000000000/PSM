@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Action for Performance Manager OPS Appraisals -->
+    <record id="action_performance_manager_ops_appraisals" model="ir.actions.act_window">
+        <field name="name">Performance Manager OPS</field>
+        <field name="res_model">hr.appraisal</field>
+        <field name="view_mode">kanban,list,gantt,calendar,form,activity,graph,pivot</field>
+        <field name="domain">[('is_performance_manager_ops', '=', True)]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Performance Manager OPS appraisals found
+            </p>
+            <p>
+                Appraisals marked as Performance Manager OPS will appear here.
+            </p>
+        </field>
+    </record>
+
+    <!-- Dedicated List View for Performance Manager OPS -->
+    <record id="view_hr_appraisal_list_performance_ops" model="ir.ui.view">
+        <field name="name">hr.appraisal.list.performance.ops</field>
+        <field name="model">hr.appraisal</field>
+        <field name="priority" eval="99"/>
+        <field name="arch" type="xml">
+            <list string="Performance Manager OPS Appraisals" multi_edit="1" sample="1" js_class="appraisal_list_view">
+                <header>
+                    <button name="%(action_create_performance_appraisal_wizard)d"
+                            string="Tạo Đánh Giá"
+                            type="action"
+                            class="btn-primary"
+                            groups="hr_appraisal.group_hr_appraisal_user"
+                            display="always"/>
+                    <button name="%(action_server_generate_salary_plan)d"
+                            string="Generate Salary Increase Plan"
+                            type="action"
+                            class="btn-success"
+                            groups="hr_appraisal.group_hr_appraisal_manager"
+                            display="always"/>
+                </header>
+                <field name="active" column_invisible="True"/>
+                <field name="employee_id" string="Name" readonly="1" widget="many2one_avatar_employee"/>
+                <field name="department_id"/>
+                <field name="create_date" options="{'show_time': False}" optional="hide"/>
+                <field name="date_close" widget="appraisal_remaining_days"/>
+                <field name="next_appraisal_date" optional="hide"/>
+                <field name="performance_rating" string="Performance Rating" optional="show"/>
+                <field name="assessment_note"/>
+                <field name="state" widget="badge" readonly="1"
+                    invisible="state == '1_new'" decoration-success="state == '2_pending'"
+                    decoration-primary="state == '3_done'"/>
+                <field name="department_id" readonly="1" optional="hide"/>
+                <field name="activity_exception_decoration" widget="activity_exception"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Action for Performance Manager OPS Appraisals - Updated to use dedicated view -->
+    <record id="action_performance_manager_ops_appraisals" model="ir.actions.act_window">
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_hr_appraisal_list_performance_ops')}),
+            (0, 0, {'view_mode': 'kanban'}),
+            (0, 0, {'view_mode': 'form'}),
+            (0, 0, {'view_mode': 'gantt'}),
+            (0, 0, {'view_mode': 'calendar'}),
+            (0, 0, {'view_mode': 'activity'}),
+            (0, 0, {'view_mode': 'graph'}),
+            (0, 0, {'view_mode': 'pivot'}),
+        ]"/>
+    </record>
+
+    <!-- Parent Menu for Performance Manager OPS -->
+    <menuitem 
+        id="menu_performance_manager_ops_root"
+        name="Performance Manager OPS"
+        parent="hr_appraisal.menu_hr_appraisal_root"
+        sequence="10"
+        groups="hr_appraisal.group_hr_appraisal_user"/>
+
+    <!-- Submenu item for Performance Manager OPS Appraisals -->
+    <menuitem 
+        id="menu_performance_manager_ops_appraisals"
+        name="Appraisals"
+        parent="menu_performance_manager_ops_root"
+        action="action_performance_manager_ops_appraisals"
+        sequence="1"
+        groups="hr_appraisal.group_hr_appraisal_user"/>
+    
+    <!-- Submenu item for Salary Increase Configuration -->
+    <!-- <menuitem 
+        id="menu_performance_manager_ops_salary_config"
+        name="Salary Increase Config"
+        parent="menu_performance_manager_ops_root"
+        action="action_salary_increase_config"
+        sequence="2"
+        groups="hr_appraisal.group_hr_appraisal_manager"/> -->
+    
+    <!-- Submenu item for Salary Increase Plan Wizard -->
+    <menuitem 
+        id="menu_performance_manager_ops_salary_plan"
+        name="Salary Increase Plan"
+        parent="menu_performance_manager_ops_root"
+        action="action_salary_increase_plan_line"
+        sequence="3"
+        groups="hr_appraisal.group_hr_appraisal_manager"/>
+    <!-- Inherit Form View to Add Surveys Tab -->
+    <record id="view_hr_appraisal_form_inherit_surveys" model="ir.ui.view">
+        <field name="name">hr.appraisal.form.inherit.surveys</field>
+        <field name="model">hr.appraisal</field>
+        <field name="inherit_id" ref="hr_appraisal.view_hr_appraisal_form"/>
+        <field name="arch" type="xml">
+            <!-- Add Average Matrix Score Field -->
+            <xpath expr="//field[@name='next_appraisal_date']" position="after">
+                <field name="average_matrix_score" readonly="1" invisible="not is_performance_manager_ops"/>
+                <field name="average_store_goal_score" readonly="1"/>
+                <field name="average_individual_goal_score" readonly="1"/>
+                <field name="performance_rating" readonly="1"/>
+            </xpath>
+            
+            <!-- Add Selected Surveys Tab -->
+            <xpath expr="//page[@name='appraisal']" position="after">
+                <page string="Selected Surveys" name="selected_surveys">
+                    <group>
+                        <field name="survey_ids" on_change="1" can_create="True" can_write="True">
+                            <list string="Survey" js_class="survey_view_tree">
+                                <field name="active" column_invisible="True"/>
+                                <field name="certification" column_invisible="True" on_change="1"/>
+                                <field name="title"/>
+                                <button name="certification" type="button" disabled="disabled" icon="fa-trophy" title="Certification" aria-label="Certification" invisible="not certification"/>
+                                <field name="user_id" widget="many2one_avatar_user" on_change="1"/>
+                                <field name="answer_duration_avg" widget="float_time"/>
+                                <field name="answer_count"/>
+                                <field name="answer_done_count"/>
+                                <field name="answer_score_avg"/>
+                            </list>
+                        </field>
+                    </group>
+                </page>
+                
+                <!-- Add Survey Responses Tab (answers for THIS appraisal only) -->
+                <page string="Survey Responses" name="survey_responses">
+                    <field name="survey_response_ids" readonly="1">
+                        <list string="Responses">
+                            <field name="survey_id"/>
+                            <field name="partner_id"/>
+                            <field name="create_date"/>
+                            <field name="state" widget="badge" 
+                                   decoration-info="state == 'new'" 
+                                   decoration-warning="state == 'in_progress'"
+                                   decoration-success="state == 'done'"/>
+                            <field name="scoring_percentage" widget="percentage"/>
+                            <field name="matrix_average_score" string="Avg Score"/>
+                            <field name="scoring_total" string="Total Score"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Offboarding Activity Plan for RST -->
+    <record id="offboarding_activity_plan_rst" model="mail.activity.plan">
+        <field name="name">Quy trình nghỉ việc RST</field>
+        <field name="res_model">hr.employee</field>
+        <field name="active" eval="True"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+
+    <!-- Step 7: Employee Checklist -->
+    <record id="rst_template_employee_checklist" model="mail.activity.plan.template">
+        <field name="plan_id" ref="offboarding_activity_plan_rst"/>
+        <field name="sequence">10</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">Thực hiện checklist nghỉ việc</field>
+        <field name="note">Thực hiện các công việc bàn giao theo quy trình.</field>
+        <field name="responsible_type">employee</field>
+    </record>
+
+    <!-- Step 9: Handover Documents/Work -->
+    <record id="rst_template_handover" model="mail.activity.plan.template">
+        <field name="plan_id" ref="offboarding_activity_plan_rst"/>
+        <field name="sequence">20</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">Bàn giao công việc, tài liệu, giấy tờ</field>
+        <field name="note">Bàn giao toàn bộ tài liệu và công việc cho người kế nhiệm hoặc quản lý.</field>
+        <field name="responsible_type">employee</field>
+    </record>
+
+    <!-- Step 13: IT Checklist -->
+    <record id="rst_template_it_checklist" model="mail.activity.plan.template">
+        <field name="plan_id" ref="offboarding_activity_plan_rst"/>
+        <field name="sequence">30</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">IT: Thu hồi thiết bị &amp; Vô hiệu hóa tài khoản</field>
+        <field name="note"><![CDATA[<ul>
+            <li>Deactivate email</li>
+            <li>Tài khoản nội bộ</li>
+            <li>Thiết bị máy móc liên quan</li>
+        </ul>]]></field>
+        <field name="responsible_type">other</field>
+        <field name="responsible_id" ref="user_rst_it"/> <!-- Default to Admin/Bot, reassigned by HR -->
+    </record>
+
+    <!-- Step 14: Admin Checklist -->
+    <record id="rst_template_admin_checklist" model="mail.activity.plan.template">
+        <field name="plan_id" ref="offboarding_activity_plan_rst"/>
+        <field name="sequence">40</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">Admin: Thu hồi tài sản văn phòng</field>
+        <field name="note"><![CDATA[<ul>
+            <li>Office keyboard</li>
+            <li>Biometric Staff ID Deletion</li>
+            <li>Desk / cabinet keys</li>
+            <li>Mobile phone &amp; accessories</li>
+        </ul>]]></field>
+        <field name="responsible_type">other</field>
+        <field name="responsible_id" ref="user_rst_admin"/>
+    </record>
+
+    <!-- Step 15: HR Checklist -->
+    <record id="rst_template_hr_checklist" model="mail.activity.plan.template">
+        <field name="plan_id" ref="offboarding_activity_plan_rst"/>
+        <field name="sequence">50</field>
+        <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+        <field name="summary">HR: Thu hồi thẻ BHYT &amp; Giấy tờ</field>
+        <field name="note"><![CDATA[<ul>
+            <li>PVI Health Insurance Card (included dependents)</li>
+            <li>Thu hồi các giấy tờ, hồ sơ nhân sự liên quan</li>
+            <li>Xác nhận bảng quyết toán bàn giao cuối cùng</li>
+        </ul>]]></field>
+        <field name="responsible_type">other</field>
+        <!-- Assuming HR Manager group exists, but for simplicity user 'on_demand' or fixed user. Use admin for layout. -->
+        <field name="responsible_id" ref="user_rst_hr"/>
+    </record>
+
+</odoo>

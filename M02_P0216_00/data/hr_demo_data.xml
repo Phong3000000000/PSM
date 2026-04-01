@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="company_hq" model="res.company">
+            <field name="name">Tổng Công Ty (HQ)</field>
+            <field name="currency_id" ref="base.VND"/>
+        </record>
+
+        <record id="company_branch_1" model="res.company">
+            <field name="name">Chi nhánh 1 (Hà Nội)</field>
+            <field name="parent_id" ref="company_hq"/> <field name="currency_id" ref="base.VND"/>
+        </record>
+
+        <record id="company_branch_2" model="res.company">
+            <field name="name">Chi nhánh 2 (Đà Nẵng)</field>
+            <field name="parent_id" ref="company_hq"/>
+            <field name="currency_id" ref="base.VND"/>
+        </record>
+
+        <record id="company_branch_3" model="res.company">
+            <field name="name">Chi nhánh 3 (TP.HCM)</field>
+            <field name="parent_id" ref="company_hq"/>
+            <field name="currency_id" ref="base.VND"/>
+        </record>
+
+        <record id="base.user_admin" model="res.users">
+            <field name="company_ids" eval="[(4, ref('company_hq')), (4, ref('company_branch_1')), (4, ref('company_branch_2')), (4, ref('company_branch_3'))]"/>
+        </record>
+
+
+    </data>
+</odoo>

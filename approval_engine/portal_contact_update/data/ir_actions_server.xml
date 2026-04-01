@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="action_mass_update_gov_status" model="ir.actions.server">
+            <field name="name">Xác nhận: Đã cập nhật Web Dịch vụ công</field>
+            <field name="model_id" ref="approvals.model_approval_request"/>
+            <field name="binding_model_id" ref="approvals.model_approval_request"/>
+            <field name="binding_view_types">list</field>
+            <field name="state">code</field>
+            <field name="code">
+# Check quyền
+if not env.user.has_group('hr.group_hr_user'):
+    raise UserError("Bạn không có quyền thực hiện thao tác này!")
+
+# Lấy ID của Category "Cập nhật thông tin"
+target_category = env.ref('portal_contact_update.approval_category_contact_update', raise_if_not_found=False)
+
+if target_category:
+    # Lọc những bản ghi đuọc chọn VÀ thuộc đúng category này
+    valid_records = records.filtered(lambda r: r.category_id == target_category)
+    
+    if valid_records:
+        # Update hàng loạt
+        valid_records.write({'is_government_updated': True})
+            </field>
+        </record>
+    </data>
+</odoo>

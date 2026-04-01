@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Group cho Regional General Manager -->
+        <record id="group_regional_general_manager" model="res.groups">
+            <field name="name">Regional General Manager</field>
+        </record>
+        <record id="group_hr_department" model="res.groups">
+            <field name="name">HR Department</field>
+            <field name="comment">Nhân viên thuộc phòng HR</field>
+        </record>
+    </data>
+</odoo>

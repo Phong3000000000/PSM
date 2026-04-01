@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Recruitment Stages for Store -->
+        <!-- Chỉ giữ lại: New, Interview, OJE -->
+        <delete model="hr.recruitment.stage" id="stage_store_new"/>
+
+        <record id="stage_store_interview" model="hr.recruitment.stage">
+            <field name="name">Interview</field>
+            <field name="sequence">30</field>
+            <field name="recruitment_type">store</field>
+            <field name="fold">False</field>
+        </record>
+
+        <record id="stage_store_oje" model="hr.recruitment.stage">
+            <field name="name">OJE</field>
+            <field name="sequence">40</field>
+            <field name="recruitment_type">store</field>
+            <field name="fold">False</field>
+        </record>
+    </data>
+</odoo>

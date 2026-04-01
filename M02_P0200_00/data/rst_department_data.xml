@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================ -->
+        <!-- PHÒNG BAN KHỐI RST (Văn Phòng)              -->
+        <!-- ============================================ -->
+
+        <record id="dept_rst_maintenance" model="hr.department">
+            <field name="name">Maintenance</field>
+            <field name="block_id" ref="block_rst"/>
+        </record>
+
+        <record id="dept_rst_management" model="hr.department">
+            <field name="name">Management</field>
+            <field name="block_id" ref="block_rst"/>
+        </record>
+
+        <record id="dept_rst_human_resource" model="hr.department">
+            <field name="name">Human Resource</field>
+            <field name="block_id" ref="block_rst"/>
+        </record>
+
+        <record id="dept_rst_marketing" model="hr.department">
+            <field name="name">Marketing</field>
+            <field name="block_id" ref="block_rst"/>
+        </record>
+
+        <record id="dept_rst_supply_chain" model="hr.department">
+            <field name="name">Supply Chain</field>
+            <field name="block_id" ref="block_rst"/>
+        </record>
+
+        <record id="dept_rst_it" model="hr.department">
+            <field name="name">Information Technology</field>
+            <field name="block_id" ref="block_rst"/>
+        </record>
+
+        <record id="dept_rst_development" model="hr.department">
+            <field name="name">Development</field>
+            <field name="block_id" ref="block_rst"/>
+        </record>
+
+        <record id="dept_rst_finance" model="hr.department">
+            <field name="name">Finance</field>
+            <field name="block_id" ref="block_rst"/>
+        </record>
+
+        <record id="dept_rst_legal" model="hr.department">
+            <field name="name">Legal</field>
+            <field name="block_id" ref="block_rst"/>
+        </record>
+
+        <record id="dept_rst_rsg" model="hr.department">
+            <field name="name">RSG</field>
+            <field name="block_id" ref="block_rst"/>
+        </record>
+
+        <record id="dept_rst_ld" model="hr.department">
+            <field name="name">L&amp;D</field>
+            <field name="block_id" ref="block_rst"/>
+        </record>
+
+        <record id="dept_rst_menu" model="hr.department">
+            <field name="name">Menu</field>
+            <field name="block_id" ref="block_rst"/>
+        </record>
+
+        <record id="dept_rst_strategy_insights" model="hr.department">
+            <field name="name">Strategy &amp; Insights</field>
+            <field name="block_id" ref="block_rst"/>
+        </record>
+
+        <record id="dept_rst_operation" model="hr.department">
+            <field name="name">Operations</field>
+            <field name="block_id" ref="block_rst"/>
+        </record>
+
+    </data>
+</odoo>

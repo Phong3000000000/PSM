@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Email Template: RGM Request to OC -->
+        <record id="email_referral_request_pending_v2" model="mail.template">
+            <field name="name">Yêu cầu giới thiệu nhân sự - Chờ duyệt</field>
+            <field name="model_id" ref="model_employee_referral_program" />
+            <field name="subject">Yêu cầu giới thiệu nhân sự mới: {{ object.name }}</field>
+            <field name="email_from">{{ object.create_uid.email_formatted or 'noreply@company.com'
+                }}</field>
+            <field name="email_to">{{ object.oc_id.email_formatted }}</field>
+            <field name="body_html"><![CDATA[
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background-color: #DA291C; color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1 style="margin: 0;">Yêu cầu Giới thiệu Nhân sự</h1>
+    </div>
+    
+    <div style="background-color: #f8f9fa; padding: 20px; border: 1px solid #dee2e6;">
+        <p>Kính gửi OC,</p>
+        
+        <p>Có yêu cầu tuyển dụng nội bộ mới cần được duyệt:</p>
+        
+        <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+            <tr>
+                <td style="padding: 10px; border: 1px solid #dee2e6; background: #fff;"><strong>Mã yêu cầu:</strong></td>
+                <td style="padding: 10px; border: 1px solid #dee2e6; background: #fff;"><span t-out="object.name"/></td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #dee2e6; background: #fff;"><strong>Cửa hàng:</strong></td>
+                <td style="padding: 10px; border: 1px solid #dee2e6; background: #fff;"><span t-out="object.store_id.name"/></td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #dee2e6; background: #fff;"><strong>Restaurant General Manager:</strong></td>
+                <td style="padding: 10px; border: 1px solid #dee2e6; background: #fff;"><span t-out="object.rgm_id.name or 'N/A'"/></td>
+            </tr>
+        </table>
+        
+        <p><strong>Chi tiết vị trí tuyển dụng:</strong></p>
+        <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+            <thead>
+                <tr style="background-color: #e9ecef;">
+                    <th style="padding: 8px; border: 1px solid #dee2e6;">Vị trí</th>
+                    <th style="padding: 8px; border: 1px solid #dee2e6;">Số lượng</th>
+                    <th style="padding: 8px; border: 1px solid #dee2e6;">Loại</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr t-foreach="object.request_line_ids" t-as="line">
+                    <td style="padding: 8px; border: 1px solid #dee2e6;"><span t-out="line.job_id.name"/></td>
+                    <td style="padding: 8px; border: 1px solid #dee2e6; text-align: center;"><span t-out="line.quantity"/></td>
+                    <td style="padding: 8px; border: 1px solid #dee2e6; text-align: center;"><span t-out="line.job_type"/></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <a t-attf-href="{{ object.get_base_url() }}/web#id={{ object.id }}&amp;model=employee.referral.program&amp;view_type=form" 
+               style="display: inline-block; background-color: #DA291C; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                Xem &amp; Duyệt Yêu cầu
+            </a>
+        </div>
+        
+        <p style="color: #666; font-size: 12px; margin-top: 20px;">
+            Email này được gửi tự động từ hệ thống giới thiệu nhân sự.
+        </p>
+    </div>
+</div>
+            ]]></field>
+        </record>
+
+        <!-- Email Template: OC Approved to HR -->
+        <record id="email_referral_approved_v2" model="mail.template">
+            <field name="name">Yêu cầu giới thiệu đã được duyệt</field>
+            <field name="model_id" ref="model_employee_referral_program" />
+            <field name="subject">✅ Yêu cầu {{ object.name }} đã được OC duyệt - Cần đăng tin</field>
+            <field name="email_from">{{ object.oc_user_id.email_formatted or 'noreply@company.com'
+                }}</field>
+            <field name="body_html"><![CDATA[
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background-color: #28a745; color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1 style="margin: 0;">✅ Yêu cầu Đã Được Duyệt</h1>
+    </div>
+    
+    <div style="background-color: #f8f9fa; padding: 20px; border: 1px solid #dee2e6;">
+        <p>Kính gửi HR,</p>
+        
+        <p>Yêu cầu tuyển dụng nội bộ sau đã được OC duyệt. Vui lòng tiến hành đăng tin chương trình giới thiệu.</p>
+        
+        <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+            <tr>
+                <td style="padding: 10px; border: 1px solid #dee2e6; background: #fff;"><strong>Mã yêu cầu:</strong></td>
+                <td style="padding: 10px; border: 1px solid #dee2e6; background: #fff;"><span t-out="object.name"/></td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #dee2e6; background: #fff;"><strong>Cửa hàng:</strong></td>
+                <td style="padding: 10px; border: 1px solid #dee2e6; background: #fff;"><span t-out="object.store_id.name"/></td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #dee2e6; background: #fff;"><strong>OC duyệt:</strong></td>
+                <td style="padding: 10px; border: 1px solid #dee2e6; background: #fff;"><span t-out="object.oc_user_id.name"/></td>
+            </tr>
+        </table>
+
+        <p><strong>Các vị trí cần tuyển:</strong></p>
+        <ul>
+            <li t-foreach="object.request_line_ids" t-as="line">
+                <span t-out="line.job_id.name"/>: <span t-out="line.quantity"/> (<span t-out="line.job_type"/>)
+            </li>
+        </ul>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <a t-attf-href="{{ object.get_base_url() }}/web#id={{ object.id }}&amp;model=employee.referral.program&amp;view_type=form" 
+               style="display: inline-block; background-color: #28a745; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                Đăng Tin Ngay
+            </a>
+        </div>
+    </div>
+</div>
+            ]]></field>
+        </record>
+
+        <!-- Email Template: OC Rejected to RGM -->
+        <record id="email_referral_rejected_v2" model="mail.template">
+            <field name="name">Yêu cầu giới thiệu bị từ chối</field>
+            <field name="model_id" ref="model_employee_referral_program" />
+            <field name="subject">❌ Yêu cầu {{ object.name }} không được duyệt</field>
+            <field name="email_from">{{ object.oc_user_id.email_formatted or 'noreply@company.com'
+                }}</field>
+            <field name="email_to">{{ object.rgm_id.email_formatted or '' }}</field>
+            <field name="body_html"><![CDATA[
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background-color: #dc3545; color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1 style="margin: 0;">❌ Yêu cầu Không Được Duyệt</h1>
+    </div>
+    
+    <div style="background-color: #f8f9fa; padding: 20px; border: 1px solid #dee2e6;">
+        <p>Kính gửi <span t-out="object.rgm_id.name or 'RGM'"/>,</p>
+        
+        <p>Yêu cầu tuyển dụng nội bộ của bạn đã không được OC duyệt.</p>
+        
+        <div style="background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 20px 0;">
+            <strong>Lý do từ chối:</strong><br/>
+            <span t-out="object.rejection_reason or 'Không có lý do được ghi nhận.'"/>
+        </div>
+        
+        <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+            <tr>
+                <td style="padding: 10px; border: 1px solid #dee2e6; background: #fff;"><strong>Mã yêu cầu:</strong></td>
+                <td style="padding: 10px; border: 1px solid #dee2e6; background: #fff;"><span t-out="object.name"/></td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #dee2e6; background: #fff;"><strong>Cửa hàng:</strong></td>
+                <td style="padding: 10px; border: 1px solid #dee2e6; background: #fff;"><span t-out="object.store_id.name"/></td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #dee2e6; background: #fff;"><strong>OC từ chối:</strong></td>
+                <td style="padding: 10px; border: 1px solid #dee2e6; background: #fff;"><span t-out="object.oc_user_id.name"/></td>
+            </tr>
+        </table>
+        
+        <p>Nếu có thắc mắc, vui lòng liên hệ OC để được hỗ trợ.</p>
+    </div>
+</div>
+            ]]></field>
+        </record>
+
+        <!-- Email Template: Program Announcement to All Employees -->
+        <record id="email_referral_program_announce_v2" model="mail.template">
+            <field name="name">Thông báo chương trình giới thiệu nhân sự</field>
+            <field name="model_id" ref="model_employee_referral_program" />
+            <field name="subject">🎉 Chương trình giới thiệu nhân sự: {{ object.name }}</field>
+            <field name="email_from">{{ object.create_uid.email_formatted or 'hr@company.com' }}</field>
+            <field name="body_html"><![CDATA[
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background: linear-gradient(135deg, #DA291C, #FFC72C); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1 style="margin: 0;">🎉 Chương Trình Giới Thiệu Nhân Sự</h1>
+        <p style="margin: 10px 0 0 0; font-size: 18px;">Nhận thưởng khi giới thiệu ứng viên thành công!</p>
+    </div>
+    
+    <div style="background-color: #f8f9fa; padding: 20px; border: 1px solid #dee2e6;">
+        <p>Kính gửi toàn thể nhân viên,</p>
+        
+        <p>Chúng tôi đang tìm kiếm ứng viên cho vị trí:</p>
+        
+        <div style="background: #fff; padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h2 style="color: #DA291C; margin-top: 0;"><span t-out="object.name"/></h2>
+            <p><strong>Vi tri:</strong> Xem chi tiet trong bai viet</p>
+            <p><strong>📍 Cửa hàng:</strong> <span t-out="object.store_id.name"/></p>
+        </div>
+        
+        <h3>📋 Cách thức tham gia:</h3>
+        <ol>
+            <li>Đăng nhập vào hệ thống</li>
+            <li>Vào menu <strong>Giới thiệu nhân sự &gt; Chương trình đang mở</strong></li>
+            <li>Nhập thông tin ứng viên bạn muốn giới thiệu + CV</li>
+            <li>Hệ thống sẽ tự động gửi email mời ứng viên đăng ký</li>
+            <li>Khi ứng viên pass thử việc, bạn sẽ nhận thưởng!</li>
+        </ol>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a t-attf-href="{{ object.get_base_url() }}/my/referrals/submit?program_id={{ object.id }}" 
+               style="display: inline-block; background-color: #DA291C; color: white; padding: 15px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">
+                Giới Thiệu Ngay
+            </a>
+        </div>
+        
+        <p style="color: #666; font-size: 12px; text-align: center; margin-top: 30px;">
+            Chương trình có hiệu lực từ <span t-out="object.start_date"/> <span t-if="object.end_date">đến <span t-out="object.end_date"/></span>
+        </p>
+    </div>
+</div>
+            ]]></field>
+        </record>
+
+        <!-- Email Template: Candidate Invitation -->
+        <record id="email_referral_candidate_invite_v2" model="mail.template">
+            <field name="name">Mời ứng viên đăng ký qua giới thiệu</field>
+            <field name="model_id" ref="model_employee_referral_submission" />
+            <field name="subject">Bạn được giới thiệu ứng tuyển tại McDonald's!</field>
+            <field name="email_from">{{ object.program_id.hr_user_id.email_formatted or
+                'hr@mcdonalds.com.vn' }}</field>
+            <field name="email_to">{{ object.candidate_email }}</field>
+            <field name="body_html"><![CDATA[
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background: linear-gradient(135deg, #DA291C, #FFC72C); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1 style="margin: 0;">Bạn Được Giới Thiệu!</h1>
+    </div>
+    
+    <div style="background-color: #f8f9fa; padding: 20px; border: 1px solid #dee2e6;">
+        <p>Xin chào <strong><span t-out="object.candidate_name"/></strong>,</p>
+        
+        <p>Bạn đã được <strong><span t-out="object.referrer_id.name"/></strong> giới thiệu ứng tuyển vào vị trí:</p>
+        
+        <div style="background: #fff; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h2 style="color: #DA291C; margin-top: 0;"><span t-out="object.job_id.name"/></h2>
+            <p><strong>📍 Cửa hàng:</strong> <span t-out="object.store_id.name"/></p>
+        </div>
+        
+        <p>Để hoàn tất đăng ký ứng tuyển, vui lòng nhấn nút bên dưới:</p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a t-attf-href="{{ object.get_base_url() }}/referral/register/{{ object.referral_code }}" 
+               style="display: inline-block; background-color: #DA291C; color: white; padding: 15px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">
+                Đăng Ký Ứng Tuyển
+            </a>
+        </div>
+        
+        <p style="color: #666; font-size: 14px;">
+            <strong>Mã giới thiệu của bạn:</strong> <span t-out="object.referral_code"/>
+        </p>
+        
+        <hr style="border: none; border-top: 1px solid #dee2e6; margin: 20px 0;"/>
+        
+        <p style="color: #666; font-size: 12px;">
+            Email này được gửi tự động từ hệ thống tuyển dụng McDonald's Việt Nam.
+        </p>
+    </div>
+</div>
+            ]]></field>
+        </record>
+
+        <!-- Email Template: Bonus Eligible Notification -->
+        <record id="email_referral_bonus_eligible_v2" model="mail.template">
+            <field name="name">Thông báo đủ điều kiện nhận thưởng giới thiệu</field>
+            <field name="model_id" ref="model_employee_referral_submission" />
+            <field name="subject">🎉 Bạn đủ điều kiện nhận thưởng giới thiệu {{
+                '{:,.0f}'.format(object.bonus_amount) }} VND!</field>
+            <field name="email_to">{{ object.referrer_id.work_email or '' }}</field>
+            <field name="body_html"><![CDATA[
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background: linear-gradient(135deg, #28a745, #20c997); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1 style="margin: 0;">🎉 Chúc Mừng!</h1>
+        <p style="margin: 10px 0 0 0; font-size: 18px;">Bạn đủ điều kiện nhận thưởng giới thiệu!</p>
+    </div>
+    
+    <div style="background-color: #f8f9fa; padding: 20px; border: 1px solid #dee2e6;">
+        <p>Xin chào <strong><span t-out="object.referrer_id.name"/></strong>,</p>
+        
+        <p>Ứng viên mà bạn giới thiệu đã hoàn thành thử việc thành công!</p>
+        
+        <div style="background: #fff; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <p style="margin: 0; color: #666;">Ứng viên:</p>
+            <h2 style="color: #28a745; margin: 5px 0;"><span t-out="object.candidate_name"/></h2>
+            <p style="margin: 0; color: #666;">Vị trí: <span t-out="object.job_id.name"/></p>
+            
+            <hr style="border: none; border-top: 1px solid #dee2e6; margin: 20px 0;"/>
+            
+            <p style="margin: 0; color: #666;">Thưởng giới thiệu:</p>
+            <h1 style="color: #28a745; margin: 5px 0;"><span t-out="'{:,.0f}'.format(object.bonus_amount)"/> VND</h1>
+        </div>
+        
+        <p>Khoản thưởng sẽ được tính vào phiếu lương kỳ tiếp theo của bạn.</p>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <a t-attf-href="{{ object.get_base_url() }}/my/referrals" 
+               style="display: inline-block; background-color: #28a745; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                Theo Dõi Thưởng
+            </a>
+        </div>
+        
+        <p style="color: #666; font-size: 12px; text-align: center;">
+            Cảm ơn bạn đã tham gia chương trình giới thiệu nhân sự!
+        </p>
+    </div>
+</div>
+            ]]></field>
+        </record>
+
+    </data>
+</odoo>

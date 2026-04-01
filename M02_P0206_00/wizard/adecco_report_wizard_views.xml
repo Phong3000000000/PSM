@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Adecco Report Wizard Form -->
+    <record id="adecco_report_wizard_form" model="ir.ui.view">
+        <field name="name">adecco.report.wizard.form</field>
+        <field name="model">adecco.report.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group string="Khoảng thời gian">
+                        <field name="date_from" />
+                        <field name="date_to" />
+                    </group>
+                    <group string="Lọc nhân viên">
+                        <field name="employee_ids" widget="many2many_tags" />
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_print_report" string="In PDF" type="object" class="btn-primary" icon="fa-file-pdf-o" />
+                    <button string="Đóng" class="btn-secondary" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+    <!-- Action -->
+    <record id="action_adecco_report_wizard" model="ir.actions.act_window">
+        <field name="name">Xuất báo cáo Adecco</field>
+        <field name="res_model">adecco.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Categories -->
+        <record id="violation_category_1" model="hr.discipline.violation.category">
+            <field name="name">Vi phạm quy định, quy chế hoặc nội quy lao động của Công ty (bao gồm Quy tắc đạo đức trong kinh doanh – Standards of Business Conduct)</field>
+            <field name="code">CAT1</field>
+        </record>
+
+        <record id="violation_category_2" model="hr.discipline.violation.category">
+            <field name="name">Quấy rối, Phân biệt đối xử, Bắt nạt hoặc Hành vi trả đũa tại nơi làm việc</field>
+            <field name="code">CAT2</field>
+        </record>
+
+        <record id="violation_category_3" model="hr.discipline.violation.category">
+            <field name="name">Hành vi bạo lực tại nơi làm việc</field>
+            <field name="code">CAT3</field>
+        </record>
+
+        <!-- Types for Category 1 -->
+        <record id="violation_type_cat1_1" model="hr.discipline.violation.type">
+            <field name="name">Đi làm muộn / Về sớm không xin phép</field>
+            <field name="category_id" ref="violation_category_1"/>
+            <field name="severity">minor</field>
+            <field name="improvement_period">30</field>
+            <field name="max_repeats">3</field>
+        </record>
+
+        <record id="violation_type_cat1_2" model="hr.discipline.violation.type">
+            <field name="name">Ăn uống trong giờ làm việc (không đúng nơi quy định)</field>
+            <field name="category_id" ref="violation_category_1"/>
+            <field name="severity">minor</field>
+            <field name="improvement_period">30</field>
+            <field name="max_repeats">3</field>
+        </record>
+
+         <record id="violation_type_cat1_3" model="hr.discipline.violation.type">
+            <field name="name">Không mặc đúng đồng phục</field>
+            <field name="category_id" ref="violation_category_1"/>
+            <field name="severity">minor</field>
+            <field name="improvement_period">30</field>
+            <field name="max_repeats">3</field>
+        </record>
+
+        <!-- Types for Category 2 -->
+        <record id="violation_type_cat2_1" model="hr.discipline.violation.type">
+            <field name="name">Quấy rối bằng lời nói</field>
+            <field name="category_id" ref="violation_category_2"/>
+            <field name="severity">major</field>
+            <field name="improvement_period">180</field>
+            <field name="max_repeats">1</field>
+        </record>
+
+        <record id="violation_type_cat2_2" model="hr.discipline.violation.type">
+            <field name="name">Phân biệt đối xử với đồng nghiệp/khách hàng</field>
+            <field name="category_id" ref="violation_category_2"/>
+            <field name="severity">major</field>
+            <field name="improvement_period">180</field>
+            <field name="max_repeats">1</field>
+        </record>
+
+        <!-- Types for Category 3 -->
+        <record id="violation_type_cat3_1" model="hr.discipline.violation.type">
+            <field name="name">Đánh nhau / Xô xát</field>
+            <field name="category_id" ref="violation_category_3"/>
+            <field name="severity">major</field>
+            <field name="improvement_period">365</field>
+            <field name="max_repeats">0</field>
+        </record>
+
+        <record id="violation_type_cat3_2" model="hr.discipline.violation.type">
+            <field name="name">Đe dọa vũ lực</field>
+            <field name="category_id" ref="violation_category_3"/>
+            <field name="severity">major</field>
+            <field name="improvement_period">365</field>
+            <field name="max_repeats">0</field>
+        </record>
+    </data>
+</odoo>

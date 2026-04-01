@@ -1,0 +1,509 @@
+/* =========================================
+   1. CSS VARIABLES (THEME COLORS)
+========================================= */
+:root {
+    /* --- Light mode (Warm & Clean Glass) --- */
+    --background: #fdfaf5;
+    --foreground: #292524;
+
+    /* Glassmorphism Variables */
+    --glass-bg: rgba(255, 255, 255, 0.75);
+    --glass-border: rgba(231, 229, 228, 0.6);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+
+    --card: var(--glass-bg);
+    --card-foreground: #292524;
+    --popover: var(--glass-bg);
+    --popover-foreground: #292524;
+
+    --primary: #bd0017;
+    /* Đỏ McDonald's (Trầm) */
+    --primary-foreground: #ffbc0d;
+
+    --secondary: #ffbc0d;
+    /* Vàng Golden */
+    --secondary-foreground: #292524;
+
+    --muted: rgba(243, 242, 238, 0.8);
+    --muted-foreground: #78716c;
+
+    --accent: #ffbc0d;
+    --accent-foreground: #292524;
+
+    --destructive: #dc2626;
+    --destructive-foreground: #ffffff;
+    --border: var(--glass-border);
+    --input: rgba(231, 229, 228, 0.5);
+    --ring: rgba(189, 0, 23, 0.3);
+
+    /* Odoo Variable Overrides */
+    --o-color-primary: var(--primary);
+    --o-color-secondary: var(--secondary);
+    --o-brand-odoo: var(--primary);
+    --o-brand-primary: var(--primary);
+    --o-brand-secondary: var(--secondary);
+    --o-brand-darkest: var(--primary);
+    --o-brand-lightest: var(--secondary);
+    --o-primary: var(--primary);
+    --o-ring-color: var(--ring);
+    --o-form-input-focus-border-color: var(--primary);
+    --o-link-color: var(--primary);
+    --o-we-handle-color: var(--primary);
+    --o-we-active-handle-color: var(--secondary);
+}
+
+html[data-theme='dark'] {
+    /* --- Dark mode (Premium Midnight Glass) --- */
+    --background: #151413;
+    /* Nâu đen rất đậm, sang trọng */
+    --foreground: #f5f5f4;
+
+    /* Glassmorphism Variables for Dark */
+    --glass-bg: rgba(38, 36, 34, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.05);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+
+    --card: var(--glass-bg);
+    --card-foreground: #f5f5f4;
+    --popover: var(--glass-bg);
+    --popover-foreground: #f5f5f4;
+
+    --primary: #da291c;
+    /* Đỏ McDonald's (Tươi hơn nền tối) */
+    --primary-foreground: #ffbc0d;
+
+    --secondary: #ffbc0d;
+    --secondary-foreground: #151413;
+
+    --muted: rgba(255, 255, 255, 0.05);
+    --muted-foreground: #a8a29e;
+
+    --accent: #ffbc0d;
+    --accent-foreground: #151413;
+
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+    --border: var(--glass-border);
+    --input: rgba(255, 255, 255, 0.05);
+    --ring: rgba(218, 41, 28, 0.5);
+
+    /* Odoo Variable Overrides */
+    --o-color-primary: var(--primary);
+    --o-color-secondary: var(--secondary);
+    --o-brand-odoo: var(--primary);
+    --o-brand-primary: var(--primary);
+    --o-brand-secondary: var(--secondary);
+    --o-brand-darkest: var(--primary);
+    --o-brand-lightest: var(--secondary);
+    --o-primary: var(--primary);
+    --o-ring-color: var(--ring);
+    --o-form-input-focus-border-color: var(--primary);
+    --o-link-color: var(--primary);
+    --o-we-handle-color: var(--primary);
+    --o-we-active-handle-color: var(--secondary);
+}
+
+/* =========================================
+   2. GLOBAL STYLES & GLASSMORPHISM
+========================================= */
+body {
+    background-color: var(--background) !important;
+    color: var(--foreground) !important;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Class dùng chung cho hiệu ứng kính mờ */
+.glass-panel,
+.social-card,
+.bg-white,
+.o_header_standard,
+.navbar {
+    background: var(--card) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border) !important;
+    box-shadow: var(--glass-shadow);
+}
+
+/* =========================================
+   3. CARDS & COMPONENTS
+========================================= */
+.social-card {
+    border-radius: 16px;
+    /* Bo góc mềm mại hơn */
+    margin-bottom: 20px;
+    color: var(--card-foreground);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.social-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.08);
+}
+
+.social-btn {
+    color: var(--muted-foreground);
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.social-btn:hover {
+    background-color: var(--muted);
+    color: var(--foreground);
+    text-decoration: none;
+}
+
+/* =========================================
+   4. SIDEBAR & ICONS
+========================================= */
+.app-icon-wrapper {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    /* Bo góc dạng app thay vì tròn vo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    background: rgba(218, 41, 28, 0.08) !important;
+    /* Nền đỏ rất nhạt */
+    color: var(--primary) !important;
+    border: 1px solid rgba(218, 41, 28, 0.15);
+    transition: all 0.3s ease;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: 12px;
+    color: var(--foreground);
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    margin-bottom: 4px;
+}
+
+.sidebar-link:hover {
+    background-color: var(--muted);
+    color: var(--primary) !important;
+    transform: translateX(4px);
+    /* Hiệu ứng trượt nhẹ chuyên nghiệp */
+}
+
+.sidebar-link:hover .app-icon-wrapper {
+    background: var(--primary) !important;
+    color: var(--primary-foreground) !important;
+    box-shadow: 0 4px 12px rgba(218, 41, 28, 0.3);
+}
+
+.sidebar-link span {
+    color: var(--foreground);
+}
+
+.input-fake {
+    background-color: var(--input);
+    border-radius: 24px;
+    padding: 10px 16px;
+    color: var(--muted-foreground);
+    cursor: pointer;
+    border: 1px solid var(--border);
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+}
+
+.input-fake:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary);
+}
+
+/* =========================================
+   5. MOBILE APP GRID
+========================================= */
+.mobile-app-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px 12px;
+    margin-bottom: 30px;
+    padding: 10px;
+}
+
+.mobile-app-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background: transparent;
+    text-decoration: none !important;
+    color: var(--foreground);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.mobile-app-item:active {
+    transform: scale(0.92);
+}
+
+.mobile-app-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    margin-bottom: 10px;
+    background: rgba(218, 41, 28, 0.08) !important;
+    color: var(--primary) !important;
+    border: 1px solid rgba(218, 41, 28, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+}
+
+.mobile-app-item:hover .mobile-app-icon {
+    background: var(--primary) !important;
+    color: var(--primary-foreground) !important;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(218, 41, 28, 0.25);
+}
+
+.mobile-app-label {
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    color: var(--foreground) !important;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* =========================================
+   6. GLOBAL OVERRIDES (ODOO / BOOTSTRAP)
+========================================= */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.text-dark,
+.fw-bold.text-dark {
+    color: var(--foreground) !important;
+}
+
+.text-muted {
+    color: var(--muted-foreground) !important;
+}
+
+.text-primary {
+    color: var(--primary) !important;
+}
+
+.bg-light,
+.bg-100,
+.bg-200 {
+    background-color: var(--muted) !important;
+}
+
+hr,
+.border-bottom,
+.border {
+    border-color: var(--border) !important;
+}
+
+/* Override Odoo standard primary colors */
+.btn-primary,
+.btn-outline-primary:hover,
+.bg-primary,
+.badge-primary,
+.o_btn_primary,
+.o_primary_button,
+.o_selected_database .btn {
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: var(--primary-foreground) !important;
+}
+
+.btn-secondary,
+.btn-outline-secondary:hover,
+.bg-secondary,
+.badge-secondary {
+    background-color: var(--secondary) !important;
+    border-color: var(--secondary) !important;
+    color: var(--secondary-foreground) !important;
+}
+
+.btn-outline-primary {
+    color: var(--primary) !important;
+    border-color: var(--primary) !important;
+}
+
+/* Dropdown & Icons */
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background-color: var(--muted) !important;
+    color: var(--primary) !important;
+}
+
+.dropdown-item i,
+.dropdown-item .fa {
+    color: var(--primary) !important;
+}
+
+a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--primary) !important;
+    filter: brightness(1.1);
+}
+
+/* Aggressive Focus & Selection Overrides */
+.form-control:focus,
+.form-select:focus,
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 0.25rem var(--ring) !important;
+    outline: none !important;
+}
+
+::selection {
+    background-color: var(--primary) !important;
+    color: var(--primary-foreground) !important;
+}
+
+/* Odoo-specific Link/Action overrides */
+.o_link_muted:hover {
+    color: var(--primary) !important;
+}
+
+.text-primary {
+    color: var(--primary) !important;
+}
+
+.btn-link {
+    color: var(--primary) !important;
+}
+
+.btn-link:hover {
+    color: var(--primary) !important;
+    filter: brightness(1.1);
+}
+
+/* =========================================
+   7. HEADER & FOOTER
+========================================= */
+header#top,
+header,
+.o_header_standard,
+.navbar,
+.navbar-light {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid var(--border) !important;
+    /* Background & blur đã được xử lý ở class .glass-panel phía trên */
+}
+
+footer,
+footer#bottom {
+    background: var(--card) !important;
+    backdrop-filter: blur(16px);
+    color: var(--foreground) !important;
+    border-top: 1px solid var(--border) !important;
+}
+
+.navbar-light .navbar-nav .nav-link,
+.navbar-light .navbar-brand,
+.navbar .nav-link,
+footer a {
+    color: var(--foreground) !important;
+    transition: color 0.2s ease;
+}
+
+.navbar .nav-link:hover {
+    color: var(--primary) !important;
+}
+
+/* =========================================
+   8. THEME TOGGLE SWITCH
+========================================= */
+.theme-switch-wrapper {
+    display: flex;
+    align-items: center;
+    margin-left: 15px;
+}
+
+.theme-switch {
+    display: inline-block;
+    height: 32px;
+    position: relative;
+    width: 56px;
+}
+
+.theme-switch input {
+    display: none;
+}
+
+.theme-switch-slider {
+    background-color: rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border);
+    bottom: 0;
+    cursor: pointer;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: .4s;
+    border-radius: 32px;
+    backdrop-filter: blur(4px);
+}
+
+html[data-theme='dark'] .theme-switch-slider {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.theme-switch-slider:before {
+    background-color: #fff;
+    bottom: 3px;
+    content: "\f185";
+    /* Sun icon */
+    font-family: 'FontAwesome';
+    color: #f39c12;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    height: 24px;
+    left: 4px;
+    position: absolute;
+    transition: transform .4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* Bounce nhẹ */
+    width: 24px;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input:checked+.theme-switch-slider {
+    background-color: rgba(218, 41, 28, 0.2);
+    /* Đỏ mờ khi bật dark mode */
+    border-color: var(--primary);
+}
+
+input:checked+.theme-switch-slider:before {
+    transform: translateX(24px);
+    content: "\f186";
+    /* Moon icon */
+    color: #2c3e50;
+    background-color: var(--secondary);
+    /* Icon mặt trăng màu vàng */
+}

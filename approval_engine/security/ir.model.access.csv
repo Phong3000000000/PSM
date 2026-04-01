@@ -1,0 +1,14 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_approval_workflow_admin,access.approval.workflow.admin,model_approval_workflow,approval_engine.group_approval_admin,1,1,1,1
+access_approval_step_admin,access.approval.step.admin,model_approval_step,approval_engine.group_approval_admin,1,1,1,1
+access_approval_request_admin,access.approval.engine.request.admin,model_approval_engine_request,approval_engine.group_approval_admin,1,1,1,1
+access_approval_step_run_admin,access.approval.engine.request.step.run.admin,model_approval_engine_request_step_run,approval_engine.group_approval_admin,1,1,1,1
+access_approval_approver_run_admin,access.approval.engine.request.approver.run.admin,model_approval_engine_request_approver_run,approval_engine.group_approval_admin,1,1,1,1
+access_approval_log_admin,access.approval.log.admin,model_approval_log,approval_engine.group_approval_admin,1,1,1,1
+
+access_approval_workflow_read,access.approval.workflow.read,model_approval_workflow,approval_engine.group_approval_admin,1,0,0,0
+access_approval_step_read,access.approval.step.read,model_approval_step,approval_engine.group_approval_admin,1,0,0,0
+access_approval_request_user,access.approval.engine.request.user,model_approval_engine_request,base.group_user,1,1,1,0
+access_approval_step_run_user,access.approval.engine.request.step.run.user,model_approval_engine_request_step_run,base.group_user,1,1,1,0
+access_approval_approver_run_user,access.approval.engine.request.approver.run.user,model_approval_engine_request_approver_run,base.group_user,1,1,1,0
+access_approval_log_user,access.approval.log.user,model_approval_log,base.group_user,1,0,1,0

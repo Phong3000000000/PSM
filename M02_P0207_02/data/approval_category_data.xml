@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="approval_category_payroll" model="approval.category">
+            <field name="name">Payroll Approval / Duyệt Bảng Lương</field>
+            <field name="sequence">50</field>
+            <field name="has_product">no</field>
+            <field name="has_quantity">no</field>
+            <field name="has_amount">no</field>
+            <field name="has_reference">no</field>
+            <field name="has_partner">no</field>
+            <field name="has_payment_method">no</field>
+            <field name="has_period">no</field>
+            <field name="approval_minimum">1</field>
+            <field name="active" eval="True"/>
+            <field name="image" type="base64" file="approvals/static/description/icon.png"/> 
+        </record>
+    </data>
+</odoo>
+

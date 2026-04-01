@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ============================================================ -->
+    <!-- PURCHASE ORDER LIST VIEWS (from purchase_barcode_scanner) -->
+    <!-- ============================================================ -->
+    
+    <!-- Add barcode scanner to Purchase Order KPIs list view -->
+    <record id="purchase_order_tree_inherit_barcode" model="ir.ui.view">
+        <field name="name">purchase.order.list.inherit.barcode.scanner</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_kpis_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">purchase_barcode_list</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add barcode scanner to main Purchase Order list view -->
+    <record id="purchase_order_view_tree_inherit_barcode" model="ir.ui.view">
+        <field name="name">purchase.order.view.list.inherit.barcode.scanner</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">purchase_barcode_list</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- PURCHASE ORDER KANBAN VIEWS (for mobile) -->
+    <!-- ============================================================ -->
+    
+    <!-- Add barcode scanner to Kanban view (mobile default) -->
+    <record id="purchase_order_kanban_inherit_barcode" model="ir.ui.view">
+        <field name="name">purchase.order.kanban.inherit.barcode.scanner</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_view_kanban_without_dashboard"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="js_class">purchase_barcode_kanban</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- STOCK PICKING FORM VIEW (from stock_picking_product_filter) -->
+    <!-- ============================================================ -->
+    
+    <record id="view_picking_form_barcode_filter" model="ir.ui.view">
+        <field name="name">stock.picking.form.barcode.filter</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- 1. Thêm INLINE BARCODE SCANNER ngay trước notebook (Operations tab) -->
+            <!-- Camera sẽ mở ngay inline, không popup -->
+            <xpath expr="//notebook" position="before">
+                <div class="alert alert-light border py-2 px-3 mb-2" invisible="state in ('done', 'cancel')">
+                    <div class="d-flex align-items-center">
+                        <span class="o_form_label me-2 fw-bold text-nowrap" style="min-width: 100px;">
+                            <i class="fa fa-barcode me-1"/> Lọc SP:
+                        </span>
+                        <field name="scan_filter_product_id" 
+                               widget="inline_barcode_action" 
+                               nolabel="1"
+                               class="flex-grow-1"/>
+                    </div>
+                </div>
+            </xpath>
+
+            <!-- 2. Thêm cột Trạng thái QIP vào bảng operations (Bước 3 - QIP Check) -->
+            <xpath expr="//field[@name='move_ids']//field[@name='quantity']" position="after">
+                <field name="qip_status" string="Trạng thái QIP"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Sequence -->
+    <record id="seq_hr_discipline_record" model="ir.sequence">
+        <field name="name">Discipline Record Sequence</field>
+        <field name="code">hr.discipline.record</field>
+        <field name="prefix">DIS/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_hr_discipline_record_tree" model="ir.ui.view">
+        <field name="name">hr.discipline.record.tree</field>
+        <field name="model">hr.discipline.record</field>
+        <field name="arch" type="xml">
+            <list string="Disciplinary Records" decoration-danger="state == 'hr_review'" decoration-muted="state == 'cancel'">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="employee_id"/>
+                <field name="violation_category_id"/>
+                <field name="violation_type_id"/>
+                <field name="action_id"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'done'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_hr_discipline_record_form" model="ir.ui.view">
+        <field name="name">hr.discipline.record.form</field>
+        <field name="model">hr.discipline.record</field>
+        <field name="arch" type="xml">
+            <form string="Disciplinary Record">
+                <header>
+                    <button name="action_send_to_employee" string="Gửi yêu cầu tường trình" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                    
+                    <button name="action_confirm" string="Xác nhận &amp; Phân loại" type="object" class="oe_highlight" invisible="state != 'manager_review'"/>
+                    <button name="action_reject_explanation" string="Từ chối" type="object" class="btn-secondary" invisible="state != 'manager_review'"/>
+                    
+                    <button name="action_rgm_store_level" string="Xử lý cấp cửa hàng" type="object" class="oe_highlight" invisible="state != 'rgm_decision'"/>
+                    <button name="action_rgm_company_level" string="Xử lý cấp công ty" type="object" class="oe_highlight" invisible="state != 'rgm_decision'"/>
+                    
+                    <button name="action_store_confirm" string="Bắt đầu cải thiện" type="object" class="oe_highlight" invisible="state != 'store_discipline'"/>
+                    
+                    <button name="action_hr_submit_meeting" string="Gửi phê duyệt CEO" type="object" class="oe_highlight" invisible="state != 'hr_meeting'"/>
+                    
+                    <button name="action_ceo_approve" string="Phê duyệt" type="object" class="oe_highlight" invisible="state != 'ceo_approve'" groups="hr.group_hr_manager"/>
+                    <button name="action_ceo_reject" string="Từ chối" type="object" class="btn-secondary" invisible="state != 'ceo_approve'" groups="hr.group_hr_manager"/>
+                    
+                    <button name="action_complete_improvement" string="Hoàn thành cải thiện" type="object" class="oe_highlight" invisible="state != 'improving'"/>
+                    
+                    <field name="state" widget="statusbar" statusbar_visible="draft,waiting_explanation,manager_review,improving,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_schedule_meeting" type="object" class="oe_stat_button" icon="fa-calendar">
+                            <field name="meeting_count" widget="statinfo" string="Meetings"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="employee_id"/>
+                            <field name="date"/>
+                            <field name="discipline_level" readonly="1" invisible="not discipline_level"/>
+                        </group>
+                        <group>
+                            <field name="violation_type_id"/>
+                            <field name="violation_category_id"/>
+                            <field name="is_repeat_offense" invisible="1"/>
+                            <field name="related_records_count" invisible="not is_repeat_offense"/>
+                        </group>
+                    </group>
+                    
+                    <div class="alert alert-danger" role="alert" invisible="not is_repeat_offense">
+                        <strong>CẢNH BÁO:</strong> Nhân viên này đã có <field name="related_records_count"/> vi phạm trước đó chưa hết thời hạn lưu trữ.
+                    </div>
+
+                    <group string="Action &amp; Escalation">
+                        <group>
+                            <field name="action_id" readonly="state != 'rgm_decision'" required="state == 'rgm_decision'"/>
+                            <field name="previous_record_id" invisible="not previous_record_id"/>
+                        </group>
+                        <group>
+                            <div class="alert alert-warning" role="alert" invisible="not previous_record_id">
+                                This is a REPEAT OFFENSE escalated from a previous record.
+                            </div>
+                        </group>
+                    </group>
+                    
+                    <group string="Thông tin Cải thiện" invisible="state not in ['improving', 'done']">
+                        <group>
+                            <field name="improvement_start_date" readonly="1"/>
+                            <field name="improvement_end_date" readonly="1"/>
+                        </group>
+                        <group>
+                            <label for="days_improving_remaining" string="Thời gian còn lại"/>
+                            <div class="d-flex align-items-center">
+                                <field name="days_improving_remaining" class="oe_inline fw-bold text-danger" style="font-size: 24px;"/>
+                                <span class="ms-2">ngày</span>
+                            </div>
+                        </group>
+                    </group>
+                    
+                    <group string="Biên bản họp &amp; Quyết định" invisible="discipline_level != 'company'">
+                         <group>
+                            <label for="latest_meeting_id" string="Linked to"/>
+                            <field name="latest_meeting_id" widget="many2one" nolabel="1" readonly="1" options="{'no_create': True, 'no_open': False}"/>
+                            <field name="meeting_date"/>
+                            <field name="meeting_notes"/>
+                        </group>
+                        <group>
+                            <field name="meeting_attachment_filename" invisible="1"/>
+                            <field name="meeting_attachment" widget="binary" filename="meeting_attachment_filename"/>
+                        </group>
+                        <separator string="Hồ sơ trình ký CEO" colspan="2"/>
+                        <group>
+                            <label for="disciplinary_decision_attachment" string="Quyết định xử lý kỷ luật"/>
+                            <div class="o_row">
+                                <button name="action_generate_disciplinary_decision" 
+                                        type="object" 
+                                        string="Tạo Quyết định" 
+                                        class="btn-primary" 
+                                        invisible="disciplinary_decision_attachment or state != 'hr_meeting'"/>
+                                
+                                <button name="action_generate_disciplinary_decision" 
+                                        type="object" 
+                                        icon="fa-refresh" 
+                                        title="Tạo lại"
+                                        confirm="Tạo lại sẽ ghi đè file cũ. Bạn có chắc không?"
+                                        invisible="not disciplinary_decision_attachment or state != 'hr_meeting'"/>
+                                
+                                <field name="disciplinary_decision_filename" invisible="1"/>
+                                <field name="disciplinary_decision_attachment" 
+                                       widget="binary" 
+                                       filename="disciplinary_decision_filename" 
+                                       readonly="1"
+                                       invisible="not disciplinary_decision_attachment"/>
+                            </div>
+                        </group>
+                        <group invisible="not has_compensation">
+                             <label for="compensation_decision_attachment" string="Quyết định đền bù"/>
+                            <div class="o_row">
+                                <button name="action_generate_compensation_decision" 
+                                        type="object" 
+                                        string="Tạo Quyết định" 
+                                        class="btn-primary" 
+                                        invisible="compensation_decision_attachment or state != 'hr_meeting'"/>
+                                
+                                <button name="action_generate_compensation_decision" 
+                                        type="object" 
+                                        icon="fa-refresh" 
+                                        title="Tạo lại"
+                                        confirm="Tạo lại sẽ ghi đè file cũ. Bạn có chắc không?"
+                                        invisible="not compensation_decision_attachment or state != 'hr_meeting'"/>
+                                
+                                <field name="compensation_decision_filename" invisible="1"/>
+                                <field name="compensation_decision_attachment" 
+                                       widget="binary" 
+                                       filename="compensation_decision_filename" 
+                                       readonly="1"
+                                       invisible="not compensation_decision_attachment"/>
+                            </div>
+                        </group>
+                    </group>
+
+                    <group string="Bồi thường (Finance)" invisible="discipline_level != 'company'">
+                        <group>
+                            <field name="has_compensation"/>
+                            <field name="compensation_amount" invisible="not has_compensation" required="has_compensation"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <group string="Details">
+                        <field name="description" placeholder="Describe the incident..."/>
+                    </group>
+                    
+                    <!-- Notebook for Explanations -->
+                    <notebook invisible="not employee_explanation and explanation_count == 0">
+                        <page string="Tường trình hiện tại" name="current_explanation" invisible="not employee_explanation">
+                            <group>
+                                <group>
+                                    <field name="incident_date_time" readonly="1"/>
+                                    <field name="incident_location" readonly="1"/>
+                                    <field name="witness_names" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="explanation_date" readonly="1"/>
+                                    <field name="explanation_count" readonly="1" string="Lần tường trình thứ"/>
+                                </group>
+                            </group>
+                            <separator string="Nội dung sự việc"/>
+                            <field name="employee_explanation" readonly="1" string="Chi tiết sự việc"/>
+                            
+                            <separator string="Nguyên nhân &amp; Cam kết"/>
+                            <field name="explanation_reason" readonly="1"/>
+                            <field name="explanation_commitment" readonly="1"/>
+                            
+                            <separator string="Chữ ký nhân viên"/>
+                            <field name="employee_signature" widget="image" readonly="1"/>
+                        </page>
+                        
+                        <page string="Lịch sử tường trình" name="explanation_history">
+                            <field name="explanation_ids" readonly="1">
+                                <list decoration-danger="state == 'rejected'" decoration-success="state == 'accepted'" decoration-info="state == 'submitted'">
+                                    <field name="sequence" string="#"/>
+                                    <field name="submitted_date" string="Ngày gửi"/>
+                                    <field name="state" widget="badge" 
+                                        decoration-danger="state == 'rejected'" 
+                                        decoration-success="state == 'accepted'" 
+                                        decoration-info="state == 'submitted'"/>
+                                    <field name="rejection_reason" optional="hide"/>
+                                    <field name="reviewed_by" optional="hide"/>
+                                </list>
+                                <form string="Chi tiết tường trình">
+                                    <group>
+                                        <group>
+                                            <field name="sequence" readonly="1"/>
+                                            <field name="submitted_date" readonly="1"/>
+                                            <field name="state" readonly="1"/>
+                                        </group>
+                                        <group>
+                                            <field name="incident_date_time" readonly="1"/>
+                                            <field name="incident_location" readonly="1"/>
+                                            <field name="witness_names" readonly="1"/>
+                                        </group>
+                                    </group>
+                                    <separator string="Nội dung"/>
+                                    <field name="explanation_content" readonly="1"/>
+                                    <separator string="Nguyên nhân"/>
+                                    <field name="explanation_reason" readonly="1"/>
+                                    <separator string="Cam kết"/>
+                                    <field name="explanation_commitment" readonly="1"/>
+                                    <separator string="Chữ ký"/>
+                                    <field name="employee_signature" widget="image" readonly="1"/>
+                                    <group invisible="state != 'rejected'" string="Lý do từ chối">
+                                        <field name="rejection_reason" readonly="1"/>
+                                        <field name="reviewed_by" readonly="1"/>
+                                        <field name="reviewed_date" readonly="1"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_hr_discipline_record_kanban" model="ir.ui.view">
+        <field name="name">hr.discipline.record.kanban</field>
+        <field name="model">hr.discipline.record</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_mobile" sample="1">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="state"/>
+                <field name="is_repeat_offense"/>
+                <field name="violation_category_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="name"/>
+                                        </strong>
+                                    </div>
+                                    <div class="o_dropdown_kanban dropdown">
+                                        <a class="dropdown-toggle o-no-caret btn" role="button" data-bs-toggle="dropdown" data-bs-display="static" href="#" aria-label="Dropdown menu" title="Dropdown menu">
+                                            <span class="fa fa-ellipsis-v"/>
+                                        </a>
+                                        <div class="dropdown-menu" role="menu">
+                                            <a role="menuitem" type="edit" class="dropdown-item">Edit</a>
+                                            <a role="menuitem" type="delete" class="dropdown-item">Delete</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <div><field name="employee_id"/></div>
+                                    <div class="text-muted"><field name="violation_category_id"/></div>
+                                    <div t-if="record.is_repeat_offense.raw_value" class="badge text-bg-danger mt-1">⚠️ Tái phạm</div>
+                                </div>
+                                <div class="o_kanban_record_bottom mt-2">
+                                    <div class="oe_kanban_bottom_left">
+                                        <field name="activity_ids" widget="kanban_activity"/>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <field name="state" widget="label_selection" options="{'classes': {'draft': 'default', 'done': 'success', 'improving': 'warning'}}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_hr_discipline_record_main" model="ir.actions.act_window">
+        <field name="name">Disciplinary Records</field>
+        <field name="res_model">hr.discipline.record</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_discipline_record_main" name="Records" parent="menu_discipline_root" action="action_hr_discipline_record_main" sequence="1"/>
+
+</odoo>

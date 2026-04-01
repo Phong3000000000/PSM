@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================== -->
+    <!-- Security Rules for New Models -->
+    <!-- This file is loaded AFTER models are created -->
+    <!-- ===================== -->
+    
+    <!-- Workforce Month Closing - User Access -->
+    <record id="access_month_closing_user" model="ir.model.access">
+        <field name="name">workforce.month.closing.user</field>
+        <field name="model_id" ref="model_workforce_month_closing"/>
+        <field name="group_id" ref="base.group_user"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">0</field>
+        <field name="perm_unlink">0</field>
+    </record>
+    
+    <!-- Workforce Month Closing - Manager Access -->
+    <record id="access_month_closing_manager" model="ir.model.access">
+        <field name="name">workforce.month.closing.manager</field>
+        <field name="model_id" ref="model_workforce_month_closing"/>
+        <field name="group_id" ref="hr.group_hr_manager"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">1</field>
+    </record>
+    
+    <!-- Workforce Month Closing - Portal Access -->
+    <record id="access_month_closing_portal" model="ir.model.access">
+        <field name="name">workforce.month.closing.portal</field>
+        <field name="model_id" ref="model_workforce_month_closing"/>
+        <field name="group_id" ref="base.group_portal"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">0</field>
+        <field name="perm_unlink">0</field>
+    </record>
+    
+    <!-- Dispute Wizard - User Access -->
+    <record id="access_dispute_wizard_user" model="ir.model.access">
+        <field name="name">workforce.dispute.wizard.user</field>
+        <field name="model_id" ref="model_workforce_dispute_wizard"/>
+        <field name="group_id" ref="base.group_user"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">1</field>
+    </record>
+    
+    <!-- Dispute Wizard - Portal Access -->
+    <record id="access_dispute_wizard_portal" model="ir.model.access">
+        <field name="name">workforce.dispute.wizard.portal</field>
+        <field name="model_id" ref="model_workforce_dispute_wizard"/>
+        <field name="group_id" ref="base.group_portal"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">1</field>
+    </record>
+
+</odoo>

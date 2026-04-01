@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_generate_soc_channels" model="ir.actions.server">
+        <field name="name">Generate Training Paths for Stations</field>
+        <field name="model_id" ref="model_mcd_soc_station"/>
+        <field name="binding_model_id" ref="model_mcd_soc_station"/>
+        <field name="state">code</field>
+        <field name="code">
+# Generate Channels for Stations that don't have one
+for record in records:
+    if not record.channel_id:
+        # Check if channel with same name exists to avoid duplicate
+        existing_channel = env['slide.channel'].search([('name', '=', record.name)], limit=1)
+        if existing_channel:
+            record.write({'channel_id': existing_channel.id})
+            existing_channel.write({'soc_station_id': record.id})
+        else:
+            channel = env['slide.channel'].create({
+                'name': record.name,
+                'is_published': True,
+                'soc_station_id': record.id,
+                'description': f"Training Path for Station: {record.name}",
+                'enroll': 'public', 
+                'channel_type': 'training',
+                'promote_strategy': 'most_voted',
+            })
+            record.write({'channel_id': channel.id})
+        </field>
+    </record>
+</odoo>

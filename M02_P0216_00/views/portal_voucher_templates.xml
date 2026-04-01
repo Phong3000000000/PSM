@@ -1,0 +1,269 @@
+<odoo>
+    <template id="portal_voucher_list" name="Voucher List">
+    <t t-call="portal.portal_layout">
+        <t t-set="additional_title">Đổi Voucher</t>
+        
+        <div class="container py-4">
+            <!-- Header Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 class="mb-2 fw-bold">🎁 Chợ Voucher</h2>
+                    <p class="text-muted">Đổi điểm thưởng lấy voucher từ các đối tác hàng đầu</p>
+                </div>
+            </div>
+
+            <!-- User Points Display -->
+            <t t-if="employee">
+                <div class="alert alert-info mb-4 d-flex align-items-center">
+                    <i class="fa fa-star text-warning me-3" style="font-size: 24px;"/>
+                    <div>
+                        <strong>Điểm của bạn:</strong> <span class="fs-4 text-primary"><t t-esc="employee.total_points"/> điểm</span>
+                    </div>
+                </div>
+            </t>
+
+            <!-- Alert Messages -->
+            <div t-if="request.params.get('error') == 'not_enough_points'" class="alert alert-danger alert-dismissible fade show">
+                <i class="fa fa-exclamation-circle me-2"/>
+                <strong>Không đủ điểm!</strong> Bạn không có đủ điểm để đổi voucher này.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"/>
+            </div>
+            <div t-if="request.params.get('success')" class="alert alert-success alert-dismissible fade show">
+                <i class="fa fa-check-circle me-2"/>
+                <strong>Thành công!</strong> Bạn đã đổi voucher thành công. Kiểm tra trong lịch sử của bạn.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"/>
+            </div>
+
+            <!-- Filter and Sort Bar -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <form method="get" action="/my/vouchers" class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="fa fa-filter me-1"/>Lọc theo đối tác
+                            </label>
+                            <select name="partner_id" class="form-select" onchange="this.form.submit()">
+                                <option value="">Tất cả đối tác</option>
+                                <t t-foreach="partners" t-as="partner">
+                                    <option t-att-value="partner.id" t-att-selected="'selected' if partner.id == selected_partner else None">
+                                        <t t-esc="partner.name"/>
+                                    </option>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="fa fa-sort me-1"/>Sắp xếp theo
+                            </label>
+                            <select name="sort" class="form-select" onchange="this.form.submit()">
+                                <option value="name" t-att-selected="'selected' if sort_by == 'name' else None">Tên A-Z</option>
+                                <option value="price_asc" t-att-selected="'selected' if sort_by == 'price_asc' else None">Giá tăng dần</option>
+                                <option value="price_desc" t-att-selected="'selected' if sort_by == 'price_desc' else None">Giá giảm dần</option>
+                                <option value="points_asc" t-att-selected="'selected' if sort_by == 'points_asc' else None">Điểm tăng dần</option>
+                                <option value="points_desc" t-att-selected="'selected' if sort_by == 'points_desc' else None">Điểm giảm dần</option>
+                            </select>
+                        </div>
+                        <input type="hidden" name="partner_id" t-att-value="selected_partner or ''"/>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Voucher Cards Grid -->
+            <t t-if="vouchers">
+                <div class="row g-4">
+                    <t t-foreach="vouchers" t-as="voucher">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 shadow-sm hover-lift" style="transition: transform 0.2s, box-shadow 0.2s;">
+                                <div class="card-body d-flex flex-column">
+                                    <!-- Partner Logo -->
+                                    <div class="text-center mb-3">
+                                        <t t-if="voucher.partner_id and voucher.partner_id.logo">
+                                            <img t-att-src="'data:image/png;base64,%s' % voucher.partner_id.logo.decode()" 
+                                                 class="img-fluid rounded" 
+                                                 style="max-height: 80px; max-width: 120px; object-fit: contain;"
+                                                 t-att-alt="voucher.partner_id.name"/>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="bg-light rounded d-flex align-items-center justify-content-center" 
+                                                 style="height: 80px;">
+                                                <i class="fa fa-gift text-muted" style="font-size: 40px;"/>
+                                            </div>
+                                        </t>
+                                    </div>
+
+                                    <!-- Voucher Info -->
+                                    <h5 class="card-title mb-2 text-center">
+                                        <t t-esc="voucher.name"/>
+                                    </h5>
+                                    
+                                    <p class="text-muted small text-center mb-3" t-if="voucher.partner_id">
+                                        <i class="fa fa-building me-1"/>
+                                        <t t-esc="voucher.partner_id.name"/>
+                                    </p>
+
+                                    <!-- Price Badge -->
+                                    <div class="text-center mb-3">
+                                        <span class="badge bg-success fs-5 px-3 py-2">
+                                            <i class="fa fa-money-bill-wave me-1"/>
+                                            <t t-esc="'{:,.0f}'.format(voucher.value)"/> VNĐ
+                                        </span>
+                                    </div>
+
+                                    <!-- Points Required -->
+                                    <div class="d-flex align-items-center justify-content-center mb-3 p-2 bg-light rounded">
+                                        <i class="fa fa-star text-warning me-2" style="font-size: 20px;"/>
+                                        <span class="fw-bold text-primary fs-5">
+                                            <t t-esc="voucher.point_required"/> điểm
+                                        </span>
+                                    </div>
+
+                                    <!-- Stock -->
+                                    <p class="text-center text-muted small mb-3">
+                                        <i class="fa fa-box me-1"/>
+                                        Còn <strong><t t-esc="voucher.quantity"/></strong> voucher
+                                    </p>
+
+                                    <!-- Redeem Button -->
+                                    <form t-att-action="'/my/voucher/redeem/%s' % voucher.id" method="POST" class="mt-auto">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <button type="submit" 
+                                                t-att-class="'btn w-100 btn-lg ' + ('btn-primary' if (employee and employee.total_points >= voucher.point_required) else 'btn-secondary disabled')"
+                                                t-att-disabled="'disabled' if not (employee and employee.total_points >= voucher.point_required) else None">
+                                            <t t-if="employee and employee.total_points >= voucher.point_required">
+                                                <i class="fa fa-exchange-alt me-2"/>Đổi ngay
+                                            </t>
+                                            <t t-else="">
+                                                <i class="fa fa-lock me-2"/>Không đủ điểm
+                                            </t>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+
+            <!-- Empty State -->
+            <t t-else="">
+                <div class="text-center py-5">
+                    <i class="fa fa-inbox text-muted" style="font-size: 72px;"/>
+                    <h4 class="mt-3 text-muted">Không có voucher nào</h4>
+                    <p class="text-muted">Hiện tại không có voucher phù hợp với bộ lọc của bạn.</p>
+                    <a href="/my/vouchers" class="btn btn-primary mt-3">
+                        <i class="fa fa-refresh me-2"/>Xem tất cả
+                    </a>
+                </div>
+            </t>
+        </div>
+
+        <!-- Custom CSS -->
+        <style>
+            .hover-lift:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+            }
+        </style>
+    </t>
+</template>
+
+    <template id="portal_my_home_voucher" name="Show Vouchers" inherit_id="portal.portal_my_home" priority="100">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Vouchers</t>
+                <t t-set="url" t-value="'/my/vouchers'"/>
+                <t t-set="placeholder_count" t-value="'0'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_voucher_history" name="My Voucher History">
+        <t t-call="portal.portal_layout">
+            <div class="container">
+                <h3>Lịch sử đổi Voucher của tôi</h3>
+                <br/>
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Ngày đổi</th>
+                            <th>Mã Voucher</th>
+                            <th>Voucher</th>
+                            <th>Điểm đã dùng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="history" t-as="h">
+                            <tr>
+                                <td><span t-field="h.redeem_date"/></td>
+                                <td><span t-field="h.voucher_id.code"/></td>
+                                <td><span t-field="h.voucher_id.name"/></td>
+                                <td><span t-field="h.point_used"/></td>
+                            </tr>
+                        </t>
+                        <t t-if="not history">
+                            <tr>
+                                <td colspan="3" class="text-center">Bạn chưa đổi voucher nào.</td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+                <div class="mt-3">
+                     <a href="/my/vouchers" class="btn btn-secondary">Quay lại đổi Voucher</a>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Header Menus -->
+    <!-- <template id="portal_header_menus" inherit_id="portal.frontend_layout">
+        <xpath expr="//ul[@id='top_menu']" position="inside">
+            <li class="nav-item">
+                <a href="/my/eotq" class="nav-link">EOTQ</a>
+            </li>
+            <li class="nav-item">
+                <a href="/my/vouchers" class="nav-link">Đổi Voucher</a>
+            </li>
+            <li class="nav-item">
+                <a href="/my/vouchers/history" class="nav-link">Voucher của tôi</a>
+            </li>
+            <li class="nav-item">
+                <a href="/my/shift_evaluations" class="nav-link">Chấm điểm (MIC)</a>
+            </li>
+        </xpath>
+    </template> -->
+
+    <!-- Inject submenu into App thưởng in portal_custom -->
+    <template id="portal_rewards_submenu" inherit_id="portal_custom.portal_my_home_inherit">
+        <xpath expr="//a[@href='/my/rewards']" position="replace">
+            <!-- App thưởng - Expandable Menu -->
+            <a role="button" data-bs-toggle="collapse" data-bs-target="#rewardsSubMenu" class="sidebar-link">
+                <div class="app-icon-wrapper me-3" style="background: #e1bee7; color: #8e24aa;">
+                    <i class="fa fa-gift" />
+                </div>
+                <span class="flex-grow-1">App thưởng</span>
+                <i class="fa fa-chevron-down" style="font-size: 12px; color: #65676b;" />
+            </a>
+            <!-- Rewards Submenu -->
+            <div id="rewardsSubMenu" class="collapse">
+                <div class="ms-4 border-start ps-2" style="border-color: #e4e6eb !important;">
+                    <a href="/my/eotq" class="sidebar-link py-2">
+                        <i class="fa fa-star text-warning me-2" style="font-size: 14px;" />
+                        <span style="font-size: 14px;">EOTQ</span>
+                    </a>
+                    <a href="/my/vouchers" class="sidebar-link py-2">
+                        <i class="fa fa-ticket text-success me-2" style="font-size: 14px;" />
+                        <span style="font-size: 14px;">Đổi Voucher</span>
+                    </a>
+                    <a href="/my/vouchers/history" class="sidebar-link py-2">
+                        <i class="fa fa-history text-info me-2" style="font-size: 14px;" />
+                        <span style="font-size: 14px;">Voucher của tôi</span>
+                    </a>
+                    <a href="/my/shift_evaluations" class="sidebar-link py-2">
+                        <i class="fa fa-check-circle text-primary me-2" style="font-size: 14px;" />
+                        <span style="font-size: 14px;">Chấm điểm (MIC)</span>
+                    </a>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Sequence: Supplier Evaluation -->
+        <record id="seq_supplier_evaluation" model="ir.sequence">
+            <field name="name">Supplier Evaluation Sequence</field>
+            <field name="code">supplier.evaluation</field>
+            <field name="prefix">SE</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+        <!-- Sequence: Supplier Audit -->
+        <record id="seq_supplier_audit" model="ir.sequence">
+            <field name="name">Supplier Audit Sequence</field>
+            <field name="code">supplier.audit</field>
+            <field name="prefix">AUDIT-</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+        <!-- Sequence: Lab Test -->
+        <record id="seq_lab_test" model="ir.sequence">
+            <field name="name">Lab Test Sequence</field>
+            <field name="code">lab.test</field>
+            <field name="prefix">LAB-</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+        <!-- Sequence: Sensory Test -->
+        <record id="seq_sensory_test" model="ir.sequence">
+            <field name="name">Sensory Test Sequence</field>
+            <field name="code">sensory.test</field>
+            <field name="prefix">SENS-</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+        <!-- Sequence: Product PIF -->
+        <record id="seq_product_pif" model="ir.sequence">
+            <field name="name">Product PIF Sequence</field>
+            <field name="code">product.pif</field>
+            <field name="prefix">PIF-</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+    </data>
+</odoo>

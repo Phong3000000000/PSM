@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Ghi đè view tạo nhanh User của HR để hiển thị tuỳ chọn Role (VD: Member / Administrator) và phân quyền chi tiết -->
+        <record id="view_users_simple_form_inherit_custom" model="ir.ui.view">
+            <field name="name">res.users.simple.form.inherit.custom</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_simple_form"/>
+            <field name="arch" type="xml">
+                <!-- Thay thế nội dung của access_groups để hiển thị nhóm quyền thay vì dòng text ẩn -->
+                <xpath expr="//group[@name='access_groups']" position="replace">
+                    <group name="access_groups">
+                        <!-- Thêm label và placeholder cho rõ ràng -->
+                        <field name="group_ids" string="Access Rights" widget="many2many_tags" placeholder="Select roles (e.g. Portal, Administrator...)" readonly="0" colspan="2"/>
+                        
+                        <!-- Giữ lại các field của hr để không bị lỗi lúc lưu form -->
+                        <field name="create_employee_id" force_save="1" invisible="1"/>
+                        <field name="create_employee" force_save="1" string="Create Employee" invisible="1" groups="hr.group_hr_user"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

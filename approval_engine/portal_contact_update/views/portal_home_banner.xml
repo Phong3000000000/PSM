@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_my_home_contact_banner" inherit_id="portal.portal_my_home">
+        <xpath expr="//div[hasclass('o_portal_my_home')]" position="before">
+            <div class="row mb-4">  
+                <div class="col-12">
+                    <div class="alert alert-info border-0 shadow-sm d-flex align-items-center justify-content-between" role="alert" style="background-color: #e3f2fd; color: #0c5460;">
+                        <div class="d-flex align-items-center">
+                            <i class="fa fa-info-circle fa-2x me-3 text-info"></i>
+                            <div>
+                                <h4 class="alert-heading mb-1" style="font-size: 1.1rem; font-weight: bold;">Cập nhật hồ sơ</h4>
+                                <p class="mb-0 small">Vui lòng cập nhật thông tin cá nhân và tải lên tài liệu cần thiết.</p>
+                            </div>
+                        </div>
+                        <a href="/my/contact" class="btn btn-info text-white px-4 rounded-pill">
+                            Đi tới trang cập nhật <i class="fa fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//div[hasclass('o_portal_my_home')]" position="before">
+            <div class="row mb-4">  
+                <div class="col-12">
+                    <div class="alert alert-info border-0 shadow-sm d-flex align-items-center justify-content-between" role="alert" style="background-color: #e3f2fd; color: #0c5460;">
+                        <div class="d-flex align-items-center">
+                            <i class="fa fa-info-circle fa-2x me-3 text-info"></i>
+                            <div>
+                                <h4 class="alert-heading mb-1" style="font-size: 1.1rem; font-weight: bold;">Cập nhật hồ sơ</h4>
+                                <p class="mb-0 small">Vui lòng cập nhật thông tin cá nhân và tải lên tài liệu cần thiết.</p>
+                            </div>
+                        </div>
+                        <a href="/my/update_info" class="btn btn-info text-white px-4 rounded-pill">
+                            Gửi yêu cầu cập nhật thông tin cá nhân <i class="fa fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>

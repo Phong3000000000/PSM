@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Approval Category for Salary Increase Plan -->
+        <record id="approval_category_salary_increase" model="approval.category">
+            <field name="name">Salary Increase Plan</field>
+            <field name="description">Approval for salary increase recommendations based on employee performance ratings</field>
+            <field name="automated_sequence" eval="True"/>
+            <field name="sequence_code">salary.increase.approval</field>
+            <field name="approver_sequence" eval="True"/>
+            <field name="approval_minimum">2</field>
+            <field name="has_amount">no</field>
+            <field name="has_date">no</field>
+            <field name="has_period">no</field>
+            <field name="has_quantity">no</field>
+            <field name="has_reference">no</field>
+            <field name="has_partner">no</field>
+            <field name="has_location">no</field>
+            <field name="has_product">no</field>
+            <field name="requirer_document">optional</field>
+        </record>
+
+        <!-- OC Approver (First in sequence) -->
+        <!-- <record id="approval_category_approver_oc" model="approval.category.approver">
+            <field name="category_id" ref="approval_category_salary_increase"/>
+            <field name="user_id" ref="M02_P0218_01.user_oc"/>
+            <field name="required" eval="True"/>
+            <field name="sequence">10</field>
+        </record> -->
+
+        <!-- CEO Approver (Second in sequence) -->
+        <!-- <record id="approval_category_approver_ceo" model="approval.category.approver">
+            <field name="category_id" ref="approval_category_salary_increase"/>
+            <field name="user_id" ref="M02_P0218_01.user_ceo"/>
+            <field name="required" eval="True"/>
+            <field name="sequence">20</field>
+        </record> -->
+
+    </data>
+</odoo>

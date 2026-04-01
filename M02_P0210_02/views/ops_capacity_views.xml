@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- ================================ -->
+        <!-- FORM VIEW - Full B1-B32 Workflow -->
+        <!-- ================================ -->
+        <record id="view_ops_capacity_process_form" model="ir.ui.view">
+            <field name="name">mcd.ops.capacity.process.form</field>
+            <field name="model">mcd.ops.capacity.process</field>
+            <field name="arch" type="xml">
+                <form string="OPS Capacity Process">
+                    <header>
+                        <!-- Status Bar -->
+                        <field name="state" widget="statusbar" 
+                               statusbar_visible="draft,b6_learning,b7_gateway_sm,b11_slv,b17_gateway_dm1,b21_3sv_eval,b22_gateway_dm2,b26_2sv_eval,b30_4sv_eval,b32_final_eval,done"/>
+                        
+                        <!-- Phase 1: Setup Actions -->
+                        <button name="action_b1_identify" string="B1: Identify Candidate" type="object" 
+                                class="btn-primary" invisible="state != 'draft'"/>
+                        <button name="action_b2_b4_class_setup" string="B2-B4: Setup Class" type="object" 
+                                class="btn-primary" invisible="state != 'b1_identify'"/>
+                        <button name="action_b5_schedule" string="B5: Schedule Training" type="object" 
+                                class="btn-primary" invisible="state != 'b2_b4_class'"/>
+                        <button name="action_b6_start_learning" string="B6: Start Learning" type="object" 
+                                class="btn-primary" invisible="state != 'b5_schedule'"/>
+                        
+                        <!-- SM Level Actions -->
+                        <button name="action_b8_complete" string="B8: Complete Running Areas" type="object" 
+                                class="btn-success" invisible="state != 'b8_running_areas'"/>
+                        <button name="%(M02_P0210_02.action_evaluation_wizard)d" string="B9: Evaluate SET/PET" type="action"
+                                class="btn-warning" invisible="state != 'b9_set_pet'"
+                                context="{'default_eval_type': 'set_pet'}"/>
+                        <button name="action_b10_complete" string="B10: Complete SLF" type="object" 
+                                class="btn-success" invisible="state != 'b10_slf'"/>
+                        <button name="%(M02_P0210_02.action_evaluation_wizard)d" string="B11: Evaluate SLV" type="action"
+                                class="btn-danger" invisible="state != 'b11_slv'"
+                                context="{'default_eval_type': 'slv'}"/>
+                        
+                        <!-- Profile Update Actions (B12-B16) -->
+                        <button name="%(M02_P0210_02.action_feedback_wizard)d" string="B12: L&amp;D Feedback" type="action"
+                                class="btn-info" invisible="state != 'b12_lnd_eval'"
+                                context="{'default_feedback_type': 'lnd'}"/>
+                        <button name="%(M02_P0210_02.action_feedback_wizard)d" string="B13: Employee Feedback" type="action"
+                                class="btn-info" invisible="state != 'b13_emp_feedback'"
+                                context="{'default_feedback_type': 'employee'}"/>
+                        
+                        <!-- DM1 Level Actions -->
+                        <button name="action_b18_complete" string="B18: Complete Adv Leadership" type="object" 
+                                class="btn-success" invisible="state != 'b18_adv_leadership'"/>
+                        <button name="%(M02_P0210_02.action_evaluation_wizard)d" string="B19: Evaluate Course" type="action"
+                                class="btn-warning" invisible="state != 'b19_course_check'"
+                                context="{'default_eval_type': 'dm1_course'}"/>
+                        <button name="action_b20_complete" string="B20: Complete 3 SV Training" type="object" 
+                                class="btn-success" invisible="state != 'b20_3sv_training'"/>
+                        <button name="%(M02_P0210_02.action_evaluation_wizard)d" string="B21: Evaluate 3 SV" type="action"
+                                class="btn-danger" invisible="state != 'b21_3sv_eval'"
+                                context="{'default_eval_type': '3sv'}"/>
+                        
+                        <!-- DM2 Level Actions -->
+                        <button name="action_b23_complete" string="B23: Complete DLIM" type="object" 
+                                class="btn-success" invisible="state != 'b23_dlim'"/>
+                        <button name="%(M02_P0210_02.action_evaluation_wizard)d" string="B24: Evaluate DLIM" type="action"
+                                class="btn-warning" invisible="state != 'b24_course_check'"
+                                context="{'default_eval_type': 'dm2_course'}"/>
+                        <button name="action_b25_complete" string="B25: Complete 2 SV Training" type="object" 
+                                class="btn-success" invisible="state != 'b25_2sv_training'"/>
+                        <button name="%(M02_P0210_02.action_evaluation_wizard)d" string="B26: Evaluate 2 SV" type="action"
+                                class="btn-danger" invisible="state != 'b26_2sv_eval'"
+                                context="{'default_eval_type': '2sv'}"/>
+                        
+                        <!-- RGM Level Actions -->
+                        <button name="action_b27_complete" string="B27: Complete LGR" type="object" 
+                                class="btn-success" invisible="state != 'b27_lgr'"/>
+                        <button name="%(M02_P0210_02.action_evaluation_wizard)d" string="B28: Evaluate LGR" type="action"
+                                class="btn-warning" invisible="state != 'b28_course_check'"
+                                context="{'default_eval_type': 'rgm_course'}"/>
+                        <button name="action_b29_complete" string="B29: Complete 4 SV Training" type="object" 
+                                class="btn-success" invisible="state != 'b29_4sv_training'"/>
+                        <button name="%(M02_P0210_02.action_evaluation_wizard)d" string="B30: Evaluate 4 SV" type="action"
+                                class="btn-danger" invisible="state != 'b30_4sv_eval'"
+                                context="{'default_eval_type': '4sv'}"/>
+                        
+                        <!-- Leader Level Actions -->
+                        <button name="action_b31_complete" string="B31: Complete LFF" type="object" 
+                                class="btn-success" invisible="state != 'b31_lff'"/>
+                        <button name="%(M02_P0210_02.action_evaluation_wizard)d" string="B32: Final Evaluation" type="action"
+                                class="btn-danger" invisible="state != 'b32_final_eval'"
+                                context="{'default_eval_type': 'lff'}"/>
+                    </header>
+                    
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive" invisible="1">
+                                <field name="evaluation_ids" invisible="1"/>
+                            </button>
+                        </div>
+                        
+                        <div class="oe_title">
+                            <h1><field name="name"/></h1>
+                        </div>
+                        
+                        <group>
+                            <group string="Employee Information">
+                                <field name="employee_id"/>
+                                <field name="current_level" widget="badge"/>
+                                <field name="target_level"/>
+                            </group>
+                            <group string="Evaluators">
+                                <field name="evaluator_rgm_id"/>
+                                <field name="evaluator_oc_id"/>
+                            </group>
+                        </group>
+                        
+                        <notebook>
+                            <!-- Current Step Details -->
+                            <page string="Current Step" name="current_step">
+                                <group>
+                                    <field name="state" widget="radio" readonly="1"/>
+                                </group>
+                                
+                                <!-- Show relevant evaluation results based on state -->
+                                <group string="SM Level Results (B9-B11)" invisible="current_level not in ['crew', 'sm'] and state not in ['b8_running_areas', 'b9_set_pet', 'b10_slf', 'b11_slv']">
+                                    <field name="b9_result" widget="badge"/>
+                                    <field name="b9_fail_reason" invisible="b9_result != 'fail'"/>
+                                    <field name="b11_result" widget="badge"/>
+                                    <field name="b11_fail_reason" invisible="b11_result != 'fail'"/>
+                                </group>
+                                
+                                <group string="DM1 Level Results (B19-B21)" invisible="current_level not in ['sm', 'dm1'] or state not in ['b18_adv_leadership', 'b19_course_check', 'b20_3sv_training', 'b21_3sv_eval']">
+                                    <field name="b19_result" widget="badge"/>
+                                    <field name="b19_fail_reason" invisible="b19_result != 'fail'"/>
+                                    <field name="b21_result" widget="badge"/>
+                                    <field name="b21_fail_reason" invisible="b21_result != 'fail'"/>
+                                </group>
+                                
+                                <group string="DM2 Level Results (B24-B26)" invisible="current_level not in ['dm1', 'dm2'] or state not in ['b23_dlim', 'b24_course_check', 'b25_2sv_training', 'b26_2sv_eval']">
+                                    <field name="b24_result" widget="badge"/>
+                                    <field name="b24_fail_reason" invisible="b24_result != 'fail'"/>
+                                    <field name="b26_result" widget="badge"/>
+                                    <field name="b26_fail_reason" invisible="b26_result != 'fail'"/>
+                                </group>
+                                
+                                <group string="RGM Level Results (B28-B30)" invisible="current_level not in ['dm2', 'rgm'] or state not in ['b27_lgr', 'b28_course_check', 'b29_4sv_training', 'b30_4sv_eval']">
+                                    <field name="b28_result" widget="badge"/>
+                                    <field name="b28_fail_reason" invisible="b28_result != 'fail'"/>
+                                    <field name="b30_result" widget="badge"/>
+                                    <field name="b30_fail_reason" invisible="b30_result != 'fail'"/>
+                                </group>
+                                
+                                <group string="Leader Level Results (B32)" invisible="current_level not in ['rgm', 'leader'] or state not in ['b31_lff', 'b32_final_eval', 'done']">
+                                    <field name="b32_result" widget="badge"/>
+                                    <field name="b32_fail_reason" invisible="b32_result != 'fail'"/>
+                                </group>
+                            </page>
+                            
+                            <!-- Profile Update (B12-B16) -->
+                            <page string="Profile Updates (B12-B16)" name="profile_updates">
+                                <group>
+                                    <field name="b12_lnd_feedback"/>
+                                    <field name="b13_employee_feedback"/>
+                                    <field name="b16_training_cost"/>
+                                </group>
+                                <field name="profile_update_ids">
+                                    <list>
+                                        <field name="old_level"/>
+                                        <field name="new_level"/>
+                                        <field name="budget_recorded"/>
+                                        <field name="update_date"/>
+                                    </list>
+                                </field>
+                            </page>
+                            
+                            <!-- Evaluation History -->
+                            <page string="Evaluation History" name="evaluations">
+                                <field name="evaluation_ids">
+                                    <list>
+                                        <field name="eval_type"/>
+                                        <field name="evaluator_id"/>
+                                        <field name="evaluator_role" widget="badge"/>
+                                        <field name="result" widget="badge" decoration-success="result == 'pass'" decoration-danger="result == 'fail'"/>
+                                        <field name="fail_reason"/>
+                                        <field name="eval_date"/>
+                                    </list>
+                                </field>
+                            </page>
+                            
+                            <!-- Linked Courses -->
+                            <page string="Linked Courses" name="courses">
+                                <group>
+                                    <group string="SM Level">
+                                        <field name="running_areas_course_id"/>
+                                        <field name="slf_course_id"/>
+                                    </group>
+                                    <group string="DM Levels">
+                                        <field name="adv_leadership_course_id"/>
+                                        <field name="dlim_course_id"/>
+                                    </group>
+                                    <group string="RGM and Leader">
+                                        <field name="lgr_course_id"/>
+                                        <field name="lff_course_id"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- ================================ -->
+        <!-- TREE VIEW -->
+        <!-- ================================ -->
+        <record id="view_ops_capacity_process_tree" model="ir.ui.view">
+            <field name="name">mcd.ops.capacity.process.tree</field>
+            <field name="model">mcd.ops.capacity.process</field>
+            <field name="arch" type="xml">
+                <list string="OPS Capacity Processes" decoration-success="state == 'done'" decoration-info="state == 'draft'">
+                    <field name="employee_id"/>
+                    <field name="current_level" widget="badge"/>
+                    <field name="target_level"/>
+                    <field name="state" widget="badge"/>
+                    <field name="evaluator_rgm_id"/>
+                    <field name="evaluator_oc_id"/>
+                    <field name="create_date"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- ================================ -->
+        <!-- KANBAN VIEW -->
+        <!-- ================================ -->
+        <record id="view_ops_capacity_process_kanban" model="ir.ui.view">
+            <field name="name">mcd.ops.capacity.process.kanban</field>
+            <field name="model">mcd.ops.capacity.process</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" default_group_by="state">
+                    <field name="name"/>
+                    <field name="employee_id"/>
+                    <field name="current_level"/>
+                    <field name="state"/>
+                    <templates>
+                        <t t-name="card">
+                            <div class="o_kanban_record_title">
+                                <strong><field name="employee_id"/></strong>
+                            </div>
+                            <div class="o_kanban_record_subtitle">
+                                Level: <field name="current_level"/>
+                            </div>
+                            <div>
+                                <field name="state" widget="label_selection" options="{'classes': {'draft': 'secondary', 'done': 'success'}}"/>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- ================================ -->
+        <!-- ACTION -->
+        <!-- ================================ -->
+        <record id="action_ops_capacity_process" model="ir.actions.act_window">
+            <field name="name">OPS Capacity Processes</field>
+            <field name="res_model">mcd.ops.capacity.process</field>
+            <field name="view_mode">kanban,list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Start a new OPS Capacity Development Process
+                </p>
+                <p>
+                    Track employee progression from Crew to Future Leader.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

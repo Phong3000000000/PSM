@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="ir_cron_reset_point_funds" model="ir.cron">
+            <field name="name">Shift Reward: Reset Department Point Funds</field>
+            <field name="model_id" ref="model_shift_point_fund"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_reset_monthly_scores()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">months</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <!-- Run on 1st day of month -->
+            <field name="nextcall" eval="(DateTime.now() + relativedelta(months=1, day=1)).strftime('%Y-%m-%d 00:00:00')"/>
+        </record>
+    </data>
+</odoo>

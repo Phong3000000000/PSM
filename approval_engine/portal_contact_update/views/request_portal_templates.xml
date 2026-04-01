@@ -1,0 +1,278 @@
+<odoo>
+    <template id="request_portal_templates" name="Thông tin yêu cầu">
+        <t t-call="portal.portal_layout">
+            <div id="wrap" class="container mt-4">
+                <div class="card p-4 shadow-sm">
+                    <h3>Gửi yêu cầu cập nhật hồ sơ</h3>
+                    <form action="/my/update_info/submit" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="new_name">Họ tên mới</label>
+                                <input type="text" name="new_name" id="new_name" class="form-control" t-att-value="partner.name"/>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="new_phone">Số điện thoại mới</label>
+                                <input type="tel" name="new_phone" id="new_phone" class="form-control" t-att-value="partner.phone"/>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="o_form_label" for="passport_photo">Ảnh Hộ chiếu (.jpg, .png)</label>
+                            <input type="file" name="passport_photo" id="passport_photo" class="form-control" accept="image/*"/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="o_form_label" for="id_card_front">Mặt trước CCCD (.jpg, .png)</label>
+                            <input type="file" name="id_card_front" id="id_card_front" class="form-control" accept="image/*"/>
+                        </div>
+
+                        <!-- Private Contact -->
+                        <h5 class="text-primary mt-4">Thông tin liên hệ riêng tư</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="private_email">Email riêng</label>
+                                <input type="email" name="private_email" class="form-control" t-att-value="employee.private_email"/>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="private_phone">Số điện thoại riêng</label>
+                                <input type="tel" name="private_phone" class="form-control" t-att-value="employee.private_phone"/>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label class="o_form_label" for="legal_name">Tên pháp lý (Legal Name)</label>
+                                <input type="text" name="legal_name" class="form-control" t-att-value="employee.legal_name"/>
+                            </div>
+                        </div>
+
+                        <!-- Personal Information -->
+                        <h5 class="text-primary mt-4">Thông tin cá nhân</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="sex">Giới tính</label>
+                                <select name="sex" class="form-control">
+                                    <option value="male" t-att-selected="employee.sex == 'male'">Nam</option>
+                                    <option value="female" t-att-selected="employee.sex == 'female'">Nữ</option>
+                                    <option value="other" t-att-selected="employee.sex == 'other'">Khác</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="birthday">Ngày sinh</label>
+                                <input type="date" name="birthday" class="form-control" t-att-value="employee.birthday"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="place_of_birth">Nơi sinh (Tỉnh/TP)</label>
+                                <input type="text" name="place_of_birth" class="form-control" t-att-value="employee.place_of_birth"/>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="country_of_birth">Quốc gia sinh</label>
+                                <select name="country_of_birth" class="form-control">
+                                    <option value="">-- Chọn quốc gia --</option>
+                                    <t t-foreach="countries" t-as="c">
+                                        <option t-att-value="c.id" t-att-selected="c.id == employee.country_of_birth.id">
+                                            <t t-esc="c.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Citizenship -->
+                        <h5 class="text-primary mt-4">Công dân &amp; Hộ chiếu</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="country_id">Quốc tịch</label>
+                                <select name="country_id" class="form-control">
+                                    <option value="">-- Chọn quốc tịch --</option>
+                                    <t t-foreach="countries" t-as="c">
+                                        <option t-att-value="c.id" t-att-selected="c.id == employee.country_id.id">
+                                            <t t-esc="c.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="identification_id">Số CCCD</label>
+                                <input type="text" name="identification_id" class="form-control" t-att-value="employee.identification_id"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="ssnid">Số BHXH/SSN</label>
+                                <input type="text" name="ssnid" class="form-control" t-att-value="employee.ssnid"/>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="passport_id">Số Hộ chiếu</label>
+                                <input type="text" name="passport_id" class="form-control" t-att-value="employee.passport_id"/>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="passport_expiration_date">Ngày hết hạn Hộ chiếu</label>
+                                <input type="date" name="passport_expiration_date" class="form-control" t-att-value="employee.passport_expiration_date"/>
+                            </div>
+                        </div>
+
+                        <!-- Visa & Work Permit -->
+                        <h5 class="text-primary mt-4">Visa &amp; Giấy phép lao động</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="visa_no">Số Visa</label>
+                                <input type="text" name="visa_no" class="form-control" t-att-value="employee.visa_no" readonly="1"/>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="visa_expire">Ngày hết hạn Visa</label>
+                                <input type="date" name="visa_expire" class="form-control" t-att-value="employee.visa_expire" readonly="1"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="permit_no">Số Giấy phép lao động</label>
+                                <input type="text" name="permit_no" class="form-control" t-att-value="employee.permit_no" readonly="1"/>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="work_permit_expiration_date">Ngày hết hạn GPLĐ</label>
+                                <input type="date" name="work_permit_expiration_date" class="form-control" t-att-value="employee.work_permit_expiration_date" readonly="1"/>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label class="o_form_label" for="has_work_permit">Tải lên Giấy phép lao động</label>
+                                <input type="file" name="has_work_permit" class="form-control" readonly="1"/>
+                            </div>
+                        </div>
+
+                        <!-- Private Address -->
+                        <h5 class="text-primary mt-4">Địa chỉ tư nhân</h5>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="o_form_label" for="private_street">Đường/Số nhà</label>
+                                <input type="text" name="private_street" class="form-control" t-att-value="employee.private_street" placeholder="Street..."/>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <input type="text" name="private_street2" class="form-control" t-att-value="employee.private_street2" placeholder="Street 2..."/>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="o_form_label" for="private_city">Thành phố</label>
+                                <input type="text" name="private_city" class="form-control" t-att-value="employee.private_city"/>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="o_form_label" for="private_state_id">Tỉnh/Bang</label>
+                                <select name="private_state_id" class="form-control">
+                                    <option value="">-- Chọn Tỉnh/Bang --</option>
+                                    <t t-foreach="states" t-as="s">
+                                        <option t-att-value="s.id" t-att-selected="s.id == employee.private_state_id.id">
+                                            <t t-esc="s.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="o_form_label" for="private_zip">Mã bưu chính</label>
+                                <input type="text" name="private_zip" class="form-control" t-att-value="employee.private_zip"/>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="private_country_id">Quốc gia (Địa chỉ)</label>
+                                <select name="private_country_id" class="form-control">
+                                    <option value="">-- Chọn quốc gia --</option>
+                                    <t t-foreach="countries" t-as="c">
+                                        <option t-att-value="c.id" t-att-selected="c.id == employee.private_country_id.id">
+                                            <t t-esc="c.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="distance_home_work">Khoảng cách từ nhà đến cơ quan (km)</label>
+                                <input type="number" name="distance_home_work" class="form-control" t-att-value="employee.distance_home_work"/>
+                            </div>
+                        </div>
+
+                        <!-- Family & Marital -->
+                        <h5 class="text-primary mt-4">Gia đình &amp; Hôn nhân</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="marital">Tình trạng hôn nhân</label>
+                                <select name="marital" class="form-control">
+                                    <option value="single" t-att-selected="employee.marital == 'single'">Độc thân</option>
+                                    <option value="married" t-att-selected="employee.marital == 'married'">Đã kết hôn</option>
+                                    <option value="cohabitant" t-att-selected="employee.marital == 'cohabitant'">Sống chung hợp pháp</option>
+                                    <option value="divorced" t-att-selected="employee.marital == 'divorced'">Ly hôn</option>
+                                    <option value="widower" t-att-selected="employee.marital == 'widower'">Góa</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="children">Số con</label>
+                                <input type="number" name="children" class="form-control" t-att-value="employee.children"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="spouse_complete_name">Tên vợ/chồng</label>
+                                <input type="text" name="spouse_complete_name" class="form-control" t-att-value="employee.spouse_complete_name"/>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="spouse_birthdate">Ngày sinh vợ/chồng</label>
+                                <input type="date" name="spouse_birthdate" class="form-control" t-att-value="employee.spouse_birthdate"/>
+                            </div>
+                        </div>
+
+                        <!-- Emergency -->
+                        <h5 class="text-primary mt-4">Liên hệ khẩn cấp</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="emergency_contact">Người liên hệ</label>
+                                <input type="text" name="emergency_contact" class="form-control" t-att-value="employee.emergency_contact"/>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="emergency_phone">Số điện thoại</label>
+                                <input type="text" name="emergency_phone" class="form-control" t-att-value="employee.emergency_phone"/>
+                            </div>
+                        </div>
+
+                        <!-- Education -->
+                        <h5 class="text-primary mt-4">Học vấn</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="certificate">Bằng cấp cao nhất</label>
+                                <select name="certificate" class="form-control">
+                                    <option value="other" t-att-selected="employee.certificate == 'other'">Khác</option>
+                                    <option value="bachelor" t-att-selected="employee.certificate == 'bachelor'">Cử nhân</option>
+                                    <option value="master" t-att-selected="employee.certificate == 'master'">Thạc sĩ</option>
+                                    <option value="doctor" t-att-selected="employee.certificate == 'doctor'">Tiến sĩ</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="o_form_label" for="study_field">Chuyên ngành</label>
+                                <input type="text" name="study_field" class="form-control" t-att-value="employee.study_field"/>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label class="o_form_label" for="study_school">Trường</label>
+                                <input type="text" name="study_school" class="form-control" t-att-value="employee.study_school"/>
+                            </div>
+                        </div>
+                        
+
+                  <div class="col-md-6 mb-3">
+    <label class="o_form_label" for="approver_user_id">Gửi yêu cầu duyệt tới quản lý</label>
+    
+    <select class="form-control" disabled="1">
+        <option value="">-- Chọn quản lý --</option>
+        <t t-foreach="users" t-as="u">
+            <option t-att-value="u.id" t-att-selected="employee.parent_id.user_id.id == u.id">
+                <t t-esc="u.name"/>
+            </option>
+        </t>
+    </select>
+
+    <input type="hidden" name="approver_user_id" t-att-value="employee.parent_id.user_id.id"/>
+</div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">Xác nhận gửi yêu cầu</button>
+                            <a href="/my" class="btn btn-light btn-lg">Quay lại</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

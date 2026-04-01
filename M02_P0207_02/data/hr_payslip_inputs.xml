@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="inp_delivery" model="hr.payslip.input.type">
+            <field name="name">Phụ cấp giao hàng (MDS)</field>
+            <field name="code">INP_DELIVERY</field>
+            <field name="country_id" eval="False"/>
+        </record>
+        
+        <record id="inp_perdiem" model="hr.payslip.input.type">
+            <field name="name">Công tác phí (Manual Import)</field>
+            <field name="code">INP_PERDIEM</field>
+            <field name="country_id" eval="False"/>
+        </record>
+        
+        <record id="inp_adj_tax" model="hr.payslip.input.type">
+            <field name="name">Chênh lệch tháng trước (Chịu thuế)</field>
+            <field name="code">INP_ADJ_TAX</field>
+            <field name="country_id" eval="False"/>
+        </record>
+        
+        <record id="inp_adj_nontax" model="hr.payslip.input.type">
+            <field name="name">Chênh lệch tháng trước (Không chịu thuế)</field>
+            <field name="code">INP_ADJ_NONTAX</field>
+            <field name="country_id" eval="False"/>
+        </record>
+        
+        <record id="inp_other_tax" model="hr.payslip.input.type">
+            <field name="name">Phụ cấp khác (Chịu thuế)</field>
+            <field name="code">INP_OTHER_TAX</field>
+            <field name="country_id" eval="False"/>
+        </record>
+        
+        <record id="inp_other_nontax" model="hr.payslip.input.type">
+            <field name="name">Phụ cấp khác (Không chịu thuế)</field>
+            <field name="code">INP_OTHER_NONTAX</field>
+            <field name="country_id" eval="False"/>
+        </record>
+
+        <record id="inp_bonus_role" model="hr.payslip.input.type">
+            <field name="name">Thưởng xuất sắc (Role Model)</field>
+            <field name="code">INP_BONUS_ROLE</field>
+            <field name="country_id" eval="False"/>
+        </record>
+        
+        <record id="inp_bonus_perf" model="hr.payslip.input.type">
+            <field name="name">Thưởng thành tích</field>
+            <field name="code">INP_BONUS_PERF</field>
+            <field name="country_id" eval="False"/>
+        </record>
+        
+        <record id="inp_bonus_spot" model="hr.payslip.input.type">
+            <field name="name">Thưởng nóng (Spot Bonus)</field>
+            <field name="code">INP_BONUS_SPOT</field>
+            <field name="country_id" eval="False"/>
+        </record>
+        
+        <record id="inp_bonus_ref" model="hr.payslip.input.type">
+            <field name="name">Thưởng giới thiệu (Referral)</field>
+            <field name="code">INP_BONUS_REF</field>
+            <field name="country_id" eval="False"/>
+        </record>
+        
+        <record id="inp_bonus_tsi" model="hr.payslip.input.type">
+            <field name="name">Thưởng dự án (TSI Bonus)</field>
+            <field name="code">INP_BONUS_TSI</field>
+            <field name="country_id" eval="False"/>
+        </record>
+        
+        <record id="inp_bonus_rgm" model="hr.payslip.input.type">
+            <field name="name">Thưởng mục tiêu (RGM)</field>
+            <field name="code">INP_BONUS_RGM</field>
+            <field name="country_id" eval="False"/>
+        </record>
+
+        <record id="inp_health_chk" model="hr.payslip.input.type">
+            <field name="name">Hỗ trợ khám sức khỏe</field>
+            <field name="code">INP_HEALTH_CHK</field>
+            <field name="country_id" eval="False"/>
+        </record>
+        
+        <record id="inp_housing_bt" model="hr.payslip.input.type">
+            <field name="name">Phụ cấp nhà ở (Công tác dài ngày)</field>
+            <field name="code">INP_HOUSING_BT</field>
+            <field name="country_id" eval="False"/>
+        </record>
+
+        <record id="inp_no_att" model="hr.payslip.input.type">
+            <field name="name">Vi phạm Food Safety (Cắt chuyên cần)</field>
+            <field name="code">INP_NO_ATT</field>
+            <field name="country_id" eval="False"/>
+        </record>
+
+        <record id="input_type_ot_200" model="hr.payslip.input.type">
+            <field name="name">Số giờ OT Ngày nghỉ (200%)</field>
+            <field name="code">OT_200</field>
+            <field name="country_id" eval="False"/>
+        </record>
+
+        <record id="input_type_ot_300" model="hr.payslip.input.type">
+            <field name="name">Số giờ OT Ngày lễ (300%)</field>
+            <field name="code">OT_300</field>
+            <field name="country_id" eval="False"/>
+        </record>
+
+        <record id="input_type_ot_night" model="hr.payslip.input.type">
+            <field name="name">Số giờ OT Ban đêm (Ngày thường)</field>
+            <field name="code">OT_NIGHT</field>
+            <field name="country_id" eval="False"/>
+        </record>
+
+        <record id="inp_resign_days" model="hr.payslip.input.type">
+            <field name="name">Số ngày vi phạm báo trước nghỉ việc</field>
+            <field name="code">INP_RESIGN_DAYS</field>
+            <field name="country_id" eval="False"/>
+        </record>
+
+        <record id="inp_severance_years" model="hr.payslip.input.type">
+            <field name="name">Số năm làm việc tính trợ cấp thôi việc</field>
+            <field name="code">INP_SEVERANCE_YRS</field>
+            <field name="country_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

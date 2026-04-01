@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ===== WORKFORCE STORE CONFIG VIEWS ===== -->
+    
+    <!-- Config Form View -->
+    <record id="view_workforce_store_config_form" model="ir.ui.view">
+        <field name="name">workforce.store.config.form</field>
+        <field name="model">workforce.store.config</field>
+        <field name="arch" type="xml">
+            <form string="Cấu hình Workforce">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object" 
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group string="Phạm vi áp dụng">
+                            <field name="store_id"/>
+                            <field name="period_id"/>
+                        </group>
+                        <group string="KPI Mục tiêu">
+                            <field name="target_gcpch"/>
+                            <field name="target_labor_cost" widget="percentage"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Điều chỉnh">
+                            <field name="trend_factor"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Config List View -->
+    <record id="view_workforce_store_config_list" model="ir.ui.view">
+        <field name="name">workforce.store.config.list</field>
+        <field name="model">workforce.store.config</field>
+        <field name="arch" type="xml">
+            <list string="Cấu hình Workforce">
+                <field name="store_id"/>
+                <field name="period_id"/>
+                <field name="target_gcpch"/>
+                <field name="target_labor_cost"/>
+                <field name="trend_factor"/>
+            </list>
+        </field>
+    </record>
+    
+    <!-- Config Search View -->
+    <!--
+    <record id="view_workforce_store_config_search" model="ir.ui.view">
+        <field name="name">workforce.store.config.search</field>
+        <field name="model">workforce.store.config</field>
+        <field name="arch" type="xml">
+            <search string="Tìm cấu hình">
+                <field name="store_id"/>
+                <field name="period_id"/>
+                <filter string="Cấu hình mặc định" name="default" domain="[('period_id', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Cửa hàng" name="group_store" context="{'group_by': 'store_id'}"/>
+                    <filter string="Kỳ" name="group_period" context="{'group_by': 'period_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    -->
+    
+    <!-- Config Action -->
+    <record id="action_workforce_store_config" model="ir.actions.act_window">
+        <field name="name">Cấu hình Workforce</field>
+        <field name="res_model">workforce.store.config</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tạo cấu hình Workforce cho cửa hàng
+            </p>
+            <p>
+                Cấu hình các chỉ tiêu KPI như GCPCH (năng suất), L% (chi phí nhân sự) 
+                và Trend Factor (hệ số điều chỉnh) cho từng cửa hàng.
+            </p>
+        </field>
+    </record>
+</odoo>

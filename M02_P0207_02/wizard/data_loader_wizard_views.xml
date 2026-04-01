@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_m02_p0207_data_loader_form" model="ir.ui.view">
+        <field name="name">m02.p0207.data.loader.form</field>
+        <field name="model">m02.p0207.data.loader</field>
+        <field name="arch" type="xml">
+            <form string="Generate Test Attendance Data">
+                <sheet>
+                    <div class="oe_title">
+                        <h2>🗓️ Tạo Dữ Liệu Bảng Công Test</h2>
+                    </div>
+
+                    <group string="Kỳ tính lương">
+                        <group>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                        </group>
+                    </group>
+
+                    <group string="Nhân viên">
+                        <group>
+                            <field name="create_employees" widget="boolean_toggle"/>
+                            <field name="employee_count" invisible="not create_employees" string="Số nhân viên tạo mới"/>
+                        </group>
+                        <group>
+                            <field name="employee_ids"
+                                   widget="many2many_tags"
+                                   invisible="create_employees"
+                                   string="Chọn nhân viên có sẵn"
+                                   placeholder="Chọn nhân viên..."/>
+                        </group>
+                    </group>
+
+                    <group string="Cấu hình dữ liệu bảng công">
+                        <group>
+                            <field name="leave_profile" string="Cấu hình ngày nghỉ"/>
+                            <field name="include_overtime" widget="boolean_toggle" string="Có giờ OT (OTN/OTW)"/>
+                        </group>
+                        <group>
+                            <div class="text-muted" colspan="2">
+                                <ul>
+                                    <li><b>Bình thường:</b> ~1 ngày nghỉ phép AL</li>
+                                    <li><b>Có nghỉ bệnh:</b> AL + 1 ngày bệnh có giấy (SD)</li>
+                                    <li><b>Có vắng không phép:</b> AL + NS (ảnh hưởng thưởng chuyên cần)</li>
+                                    <li><b>Mix đầy đủ:</b> AL + SD + PL + 2 ngày công tác (BT)</li>
+                                    <li><b>Không ngày nghỉ:</b> Toàn bộ là ngày làm</li>
+                                </ul>
+                                <small class="text-info">
+                                    ⚠️ Ngày Chủ Nhật không tạo attendance. Ngày nghỉ được chọn ngẫu nhiên trong tháng.
+                                </small>
+                            </div>
+                        </group>
+                    </group>
+
+                    <group string="⏳ Dữ liệu Giữa tháng (Waitlist)">
+                        <group>
+                            <field name="create_mid_month" widget="boolean_toggle"/>
+                            <field name="mid_month_count" invisible="not create_mid_month"
+                                   string="Số nhân viên giữa tháng"/>
+                            <field name="mid_month_type" invisible="not create_mid_month"
+                                   string="Loại quy trình"/>
+                        </group>
+                        <group invisible="not create_mid_month">
+                            <div class="alert alert-info" colspan="2">
+                                <b>ℹ️ Cách hoạt động:</b>
+                                <p>Wizard sẽ tạo <b>approval.request</b> ở trạng thái <b>pending</b>
+                                   cho N nhân viên đầu trong danh sách.</p>
+                                <p>Khi bạn click <b>"Kiểm tra điều kiện"</b> trên Pay Run,
+                                   những nhân viên này sẽ tự động vào <b>Danh sách Giữa tháng</b>.</p>
+                                <small class="text-warning">
+                                    ⚠️ Nhân viên phải có User account (user_id) thì mới tạo được approval request.
+                                </small>
+                            </div>
+                        </group>
+                    </group>
+
+                    <footer>
+                        <button name="action_generate_data"
+                                string="🚀 Tạo Dữ Liệu"
+                                type="object"
+                                class="btn-primary"/>
+                        <button string="Hủy" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_m02_p0207_data_loader" model="ir.actions.act_window">
+        <field name="name">Generate Test Data</field>
+        <field name="res_model">m02.p0207.data.loader</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

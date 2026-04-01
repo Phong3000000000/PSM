@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Actions - MUST BE DEFINED FIRST -->
+
+        <!-- Dashboard Action -->
+        <record id="action_psm_db_sync_dashboard" model="ir.actions.client">
+            <field name="name">Dashboard đồng bộ CSDL</field>
+            <field name="tag">psm_db_sync_dashboard</field>
+        </record>
+
+        <!-- DB Connection Action -->
+        <record id="action_psm_db_connection" model="ir.actions.act_window">
+            <field name="name">Kết nối cơ sở dữ liệu</field>
+            <field name="res_model">psm.db.connection</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Tạo kết nối cơ sở dữ liệu đầu tiên!
+                </p>
+                <p>
+                    Thiết lập kết nối tới các cơ sở dữ liệu ngoài như MySQL, PostgreSQL, MS SQL Server, Oracle để đồng bộ dữ liệu vào Odoo.
+                </p>
+            </field>
+        </record>
+
+        <!-- Mapping Model Action -->
+        <record id="action_psm_db_mapping_model" model="ir.actions.act_window">
+            <field name="name">Ánh xạ mô hình dữ liệu</field>
+            <field name="res_model">psm.db.mapping.model</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Tạo ánh xạ mô hình đầu tiên!
+                </p>
+                <p>
+                    Thiết lập ánh xạ giữa bảng/truy vấn trong cơ sở dữ liệu nguồn với các model trong Odoo.
+                </p>
+            </field>
+        </record>
+
+        <!-- Mapping Field Action -->
+        <record id="action_psm_db_mapping_field" model="ir.actions.act_window">
+            <field name="name">Ánh xạ trường dữ liệu</field>
+            <field name="res_model">psm.db.mapping.field</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'create': 0, 'edit': 0, 'delete': 0}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Cấu hình ánh xạ trường!
+                </p>
+                <p>
+                    Thiết lập cách chuyển đổi dữ liệu từ các trường trong cơ sở dữ liệu nguồn sang các trường trong Odoo.
+                </p>
+            </field>
+        </record>
+
+        <!-- Mapping Data Action -->
+        <record id="action_psm_db_mapping_data" model="ir.actions.act_window">
+            <field name="name">Dữ liệu ánh xạ</field>
+            <field name="res_model">psm.db.mapping.data</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'create': 0, 'edit': 0, 'delete': 0}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Chưa có dữ liệu ánh xạ nào!
+                </p>
+                <p>
+                    Dữ liệu ánh xạ sẽ xuất hiện sau khi bạn thực hiện đồng bộ. Đây là nơi lưu trữ mối quan hệ giữa bản ghi nguồn và bản ghi đích.
+                </p>
+            </field>
+        </record>
+
+        <!-- Sync Task Action -->
+        <record id="action_psm_db_sync" model="ir.actions.act_window">
+            <field name="name">Nhiệm vụ đồng bộ</field>
+            <field name="res_model">psm.db.sync</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'search_default_scheduled': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Tạo nhiệm vụ đồng bộ đầu tiên!
+                </p>
+                <p>
+                    Thiết lập các nhiệm vụ đồng bộ để tự động hoặc thủ công đồng bộ dữ liệu từ cơ sở dữ liệu ngoài vào Odoo.
+                </p>
+            </field>
+        </record>
+
+        <!-- Sync Log Action -->
+        <record id="action_psm_db_sync_log" model="ir.actions.act_window">
+            <field name="name">Nhật ký đồng bộ</field>
+            <field name="res_model">psm.db.sync.log</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'create': 0, 'edit': 0, 'delete': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Chưa có nhật ký đồng bộ nào!
+                </p>
+                <p>
+                    Nhật ký đồng bộ sẽ xuất hiện sau khi bạn thực hiện đồng bộ. Đây là nơi xem chi tiết kết quả và lỗi của các lần đồng bộ.
+                </p>
+            </field>
+        </record>
+
+        <!-- Manual Sync Wizard Action -->
+        <record id="action_psm_db_wizard" model="ir.actions.act_window">
+            <field name="name">Đồng bộ thủ công</field>
+            <field name="res_model">psm.db.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <!-- MENUS - DEFINED AFTER ACTIONS -->
+
+        <!-- Main Menu -->
+        <menuitem id="menu_psm_db_sync_root"
+                  name="Đồng bộ CSDL"
+                  web_icon="psm_db_sync,static/description/icon.png"
+                  action="action_psm_db_connection"
+                  sequence="1"/>
+
+        <!-- Dashboard Menu -->
+        <menuitem id="menu_psm_db_sync_dashboard"
+                  name="Tổng quan"
+                  parent="menu_psm_db_sync_root"
+                  action="action_psm_db_sync_dashboard"
+                  sequence="10"
+/>
+
+        <!-- Configuration Menu -->
+        <menuitem id="menu_psm_db_sync_config"
+                  name="Cấu hình"
+                  parent="menu_psm_db_sync_root"
+                  sequence="90"
+/>
+
+        <!-- Database Connections -->
+        <menuitem id="menu_psm_db_connection"
+                  name="Kết nối CSDL"
+                  parent="menu_psm_db_sync_config"
+                  action="action_psm_db_connection"
+                  sequence="10"
+/>
+
+        <!-- Mapping Models -->
+        <menuitem id="menu_psm_db_mapping_model"
+                  name="Ánh xạ mô hình"
+                  parent="menu_psm_db_sync_config"
+                  action="action_psm_db_mapping_model"
+                  sequence="20"
+/>
+
+        <!-- Field Mappings -->
+        <menuitem id="menu_psm_db_mapping_field"
+                  name="Ánh xạ trường"
+                  parent="menu_psm_db_sync_config"
+                  action="action_psm_db_mapping_field"
+                  sequence="30"
+/>
+
+        <!-- Synchronization Menu -->
+        <menuitem id="menu_psm_db_sync_operations"
+                  name="Đồng bộ hóa"
+                  parent="menu_psm_db_sync_root"
+                  sequence="30"
+/>
+
+        <!-- Sync Tasks -->
+        <menuitem id="menu_psm_db_sync"
+                  name="Nhiệm vụ đồng bộ"
+                  parent="menu_psm_db_sync_operations"
+                  action="action_psm_db_sync"
+                  sequence="10"
+/>
+
+        <!-- Manual Sync Wizard -->
+        <menuitem id="menu_psm_db_wizard"
+                  name="Đồng bộ thủ công"
+                  parent="menu_psm_db_sync_operations"
+                  action="action_psm_db_wizard"
+                  sequence="20"
+/>
+
+        <!-- Monitoring Menu -->
+        <menuitem id="menu_psm_db_sync_monitoring"
+                  name="Giám sát"
+                  parent="menu_psm_db_sync_root"
+                  sequence="40"
+/>
+
+        <!-- Sync Logs -->
+        <menuitem id="menu_psm_db_sync_log"
+                  name="Nhật ký đồng bộ"
+                  parent="menu_psm_db_sync_monitoring"
+                  action="action_psm_db_sync_log"
+                  sequence="10"
+/>
+
+        <!-- Mapping Data -->
+        <menuitem id="menu_psm_db_mapping_data"
+                  name="Dữ liệu ánh xạ"
+                  parent="menu_psm_db_sync_monitoring"
+                  action="action_psm_db_mapping_data"
+                  sequence="20"
+/>
+
+    </data>
+</odoo>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ===== VENDOR DRAFT LIST VIEW ===== -->
+    <record id="view_vendor_draft_tree" model="ir.ui.view">
+        <field name="name">res.partner.vendor.draft.tree</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="x_supplier_status=='draft'" decoration-success="x_supplier_status=='approved'">
+                <field name="name" />
+                <field name="vat" optional="show" />
+                <field name="email" optional="show" />
+                <field name="phone" optional="show" />
+                <field name="supplied_product_ids" string="Sản phẩm cung cấp" widget="many2many_tags" />
+                <field name="supplied_product_info" string="Chi tiết giá" optional="hide" />
+                <field name="current_evaluation_id" string="SE đang chạy" optional="show" />
+                <field name="x_supplier_status" widget="badge" decoration-warning="x_supplier_status=='draft'" decoration-success="x_supplier_status=='approved'" />
+                <field name="x_supplier_code" optional="show" />
+                <button name="action_create_evaluation" string="Tạo SE" type="object" class="btn-primary" icon="fa-clipboard-check" invisible="x_supplier_status == 'approved' or current_evaluation_id" />
+            </list>
+        </field>
+    </record>
+    <!-- ===== VENDOR DRAFT FORM VIEW ===== -->
+    <record id="view_vendor_draft_form" model="ir.ui.view">
+        <field name="name">res.partner.vendor.draft.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet" position="before">
+                <header invisible="supplier_rank == 0">
+                    <button name="action_create_evaluation" string="Tạo Phiếu SE" type="object" class="oe_highlight" invisible="x_supplier_status == 'approved' or current_evaluation_id" />
+                    <button name="action_approve_vendor" string="Duyệt NCC (Cấp mã)" type="object" class="oe_highlight" invisible="x_supplier_status == 'approved'" />
+                    <field name="x_supplier_status" widget="statusbar" statusbar_visible="draft,approved" />
+                </header>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_evaluations" type="object" class="oe_stat_button" icon="fa-clipboard-list" invisible="supplier_rank == 0">
+                    <field name="evaluation_count" string="Evaluations" widget="statinfo" />
+                </button>
+                <button name="action_view_supplied_products" type="object" class="oe_stat_button" icon="fa-cubes" invisible="supplier_rank == 0">
+                    <field name="supplied_product_count" string="Products" widget="statinfo" />
+                </button>
+            </xpath>
+            <xpath expr="//form/sheet" position="inside">
+                <widget name="web_ribbon" title="Draft Vendor" bg_color="text-bg-warning" invisible="x_supplier_status != 'draft' or supplier_rank == 0" />
+                <widget name="web_ribbon" title="Official Vendor" bg_color="text-bg-success" invisible="x_supplier_status != 'approved' or supplier_rank == 0" />
+            </xpath>
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="x_supplier_code" readonly="1" invisible="supplier_rank == 0" />
+                <field name="x_supplier_status" invisible="supplier_rank == 0" />
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page name="supplied_products" string="Sản phẩm cung cấp" invisible="supplier_rank == 0">
+                    <group>
+                        <field name="supplied_product_ids" widget="many2many_tags" readonly="1" />
+                        <field name="supplied_product_info" readonly="1" />
+                        <field name="current_evaluation_id" readonly="1" />
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    <!-- ===== SEARCH VIEW (ĐÃ SỬA LẠI) ===== -->
+    <!-- Sử dụng inherit từ view gốc để giữ lại các tính năng search cơ bản của Odoo -->
+    <record id="view_vendor_draft_search" model="ir.ui.view">
+        <field name="name">res.partner.vendor.draft.search</field>
+        <field name="model">res.partner</field>
+        <!-- Quan trọng: Kế thừa từ view search mặc định để tránh lỗi mất tính năng search cơ bản -->
+        <field name="inherit_id" ref="base.view_res_partner_filter" />
+        <field name="arch" type="xml">
+            <!-- Thêm trường search -->
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="x_supplier_code" />
+                <field name="vat" />
+            </xpath>
+            <!-- Thêm Filter vào Group Filter -->
+            <xpath expr="//filter[@name='type_person']" position="before">
+                <separator />
+                <filter name="draft_vendors" string="Vendor Draft" domain="[('x_supplier_status', '=', 'draft')]" />
+                <filter name="approved_vendors" string="Official Vendors" domain="[('x_supplier_status', '=', 'approved')]" />
+                <separator />
+            </xpath>
+            <!-- Thêm Group By -->
+            <xpath expr="//group" position="inside">
+                <filter name="group_status" string="Status" context="{'group_by': 'x_supplier_status'}" />
+            </xpath>
+        </field>
+    </record>
+    <!-- ===== ACTION: VENDOR DRAFTS ===== -->
+    <record id="action_vendor_drafts" model="ir.actions.act_window">
+        <field name="name">Vendor Drafts</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('supplier_rank', '>', 0)]</field>
+        <field name="context">{
+            'default_supplier_rank': 1, 
+            'default_x_supplier_status': 'draft',
+            'default_is_company': True,
+            'search_default_draft_vendors': 1
+        }</field>
+        <!-- QUAN TRỌNG: Phải mở comment dòng này để Odoo biết dùng Search View chứa filter "draft_vendors" -->
+        <field name="search_view_id" ref="view_vendor_draft_search" />
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Chưa có Vendor Draft nào</p>
+            <p>Vendor Draft sẽ tự động xuất hiện khi Menu team thêm NCC vào tab Purchase của sản phẩm.</p>
+        </field>
+    </record>
+    <!-- View List binding -->
+    <record id="action_vendor_drafts_tree" model="ir.actions.act_window.view">
+        <field name="sequence">1</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_vendor_draft_tree" />
+        <field name="act_window_id" ref="action_vendor_drafts" />
+    </record>
+    <!-- ===== MENU ITEM ===== -->
+    <menuitem id="menu_vendor_drafts" name="Vendor Drafts" parent="SC_0402_supplier_management.menu_app_root" action="action_vendor_drafts" sequence="15" />
+</odoo>

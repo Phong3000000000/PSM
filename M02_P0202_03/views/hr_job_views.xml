@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Smart button: Chương trình tuyển dụng trên form hr.job -->
+    <record id="view_hr_job_form_inherit_referral" model="ir.ui.view">
+        <field name="name">hr.job.form.inherit.referral.program</field>
+        <field name="model">hr.job</field>
+        <field name="inherit_id" ref="hr.view_hr_job_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_referral_programs"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-users"
+                    invisible="referral_program_count == 0">
+                    <field name="referral_program_count"
+                        widget="statinfo"
+                        string="Tuyển dụng" />
+                </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>

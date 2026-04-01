@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- 1. SEARCH VIEW -->
+        <record id="view_food_safety_complaint_search" model="ir.ui.view">
+            <field name="name">food.safety.complaint.search</field>
+            <field name="model">food.safety.complaint</field>
+            <field name="arch" type="xml">
+                <search string="Search Complaints"/>
+            </field>
+        </record>
+
+        <!-- 2. FORM VIEW -->
+        <record id="view_food_safety_complaint_form" model="ir.ui.view">
+            <field name="name">food.safety.complaint.form</field>
+            <field name="model">food.safety.complaint</field>
+            <field name="arch" type="xml">
+                <form string="Food Safety Complaint">
+                    <header>
+                        <!-- Draft state -->
+                        <button name="action_submit" string="Submit" type="object" 
+                                invisible="state != 'draft'" class="oe_highlight"/>
+                        
+                        <!-- After Submitted: Select Error Origin -->
+                        <button name="action_select_store_error" string="Lỗi từ Store" type="object" 
+                                invisible="state != 'submitted'" class="btn-warning"/>
+                        <button name="action_select_supplier_error" string="Lỗi từ NCC" type="object" 
+                                invisible="state != 'submitted'" class="btn-primary"/>
+                        
+                        <!-- Store Evaluation Flow -->
+                        <button name="action_request_store_capa" string="Yêu cầu Store cung cấp lại CAPA" type="object" 
+                                invisible="state != 'evaluation_store'" class="btn-info"/>
+                        <button name="action_approve_store_capa" string="Đồng ý" type="object" 
+                                invisible="state != 'evaluation_store'" class="oe_highlight"/>
+                        
+                        <!-- Supplier Evaluation Flow -->
+                        <button name="action_send_supplier_email" string="Gửi Email cho NCC" type="object" 
+                                invisible="state != 'evaluation_supplier'" class="oe_highlight"/>
+                        <button name="action_request_supplier_capa_resend" string="Yêu cầu cấp lại CAPA" type="object" 
+                                invisible="state != 'evaluation_supplier'" class="btn-warning"/>
+                        <button name="action_approve_supplier_capa" string="Đồng ý CAPA" type="object" 
+                                invisible="state != 'evaluation_supplier'" class="btn-success"/>
+                        <button name="action_reject_supplier_capa" string="Từ chối CAPA" type="object" 
+                                invisible="state != 'evaluation_supplier'" class="btn-danger"/>
+                        <button name="action_create_quarantine_request" string="Tạo yêu cầu cách ly lô hàng" type="object" 
+                                invisible="state != 'evaluation_supplier'"/>
+                        
+                        <!-- Follow Up Flow -->
+                        <button name="action_mark_completed" string="Hoàn thành" type="object" 
+                                invisible="state != 'follow_up'" class="oe_highlight"/>
+                        
+                        <!-- Compensation Actions (Supplier - after CAPA approved) -->
+                        <button name="action_create_compensation_receipt" string="Tạo Phiếu giao bù" type="object" 
+                                invisible="state != 'follow_up' or error_origin != 'supplier'" class="btn-success"/>
+                        <button name="action_deduct_payables" string="Khấu trừ công nợ" type="object" 
+                                invisible="state != 'follow_up' or error_origin != 'supplier'" class="btn-info"/>
+                        <button name="action_compensation_payment" string="Đền bù" type="object" 
+                                invisible="state != 'follow_up' or error_origin != 'supplier'" class="btn-warning"/>
+                        
+                        <!-- Cancel -->
+                        <button name="action_cancel" string="Cancel" type="object" 
+                                invisible="state in ['follow_up', 'completed', 'capa_rejected', 'cancelled']"/>
+                        <button name="action_reset_to_draft" string="Reset to Draft" type="object" 
+                                invisible="state != 'cancelled'"/>
+                        
+                        <!-- Statusbar: Dynamic based on error origin -->
+                        <field name="state" widget="statusbar" 
+                               statusbar_visible="draft,submitted,evaluation_store,follow_up,completed"
+                               invisible="error_origin == 'supplier'"/>
+                        <field name="state" widget="statusbar" 
+                               statusbar_visible="draft,submitted,evaluation_supplier,follow_up,completed"
+                               invisible="error_origin != 'supplier'"/>
+                    </header>
+                    <sheet>
+                        <!-- Smart Buttons -->
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_supplier_agreements" type="object" 
+                                    class="oe_stat_button" icon="fa-file-text-o"
+                                    invisible="state != 'evaluation_supplier' or not receipt_supplier_id">
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_text">Agreements</span>
+                                </div>
+                            </button>
+                            <button name="action_view_compensation_pickings" type="object" 
+                                    class="oe_stat_button" icon="fa-truck"
+                                    invisible="compensation_picking_count == 0">
+                                <field name="compensation_picking_count" widget="statinfo" string="Compensation"/>
+                            </button>
+                        </div>
+                        
+                        <field name="image_1920" widget="image" class="oe_avatar"/>
+                        <div class="oe_title">
+                            <label for="name" string="Complaint Number"/>
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                            <label for="title" string="Title"/>
+                            <h2>
+                                <field name="title" placeholder="e.g., Foreign object found in burger"/>
+                            </h2>
+                        </div>
+                        <group>
+                            <group name="complaint_info" string="Complaint Information">
+                                <field name="source_type" widget="radio"/>
+                                <field name="store_id" options="{'no_create': True}"/>
+                                <field name="partner_id" invisible="source_type != 'customer'" required="source_type == 'customer'"/>
+                                <field name="complaint_date"/>
+                                <field name="user_id"/>
+                            </group>
+                            <group name="product_info" string="Product Information">
+                                <field name="product_id" options="{'no_create': True}"/>
+                                <field name="safety_issue_type"/>
+                                <field name="severity" widget="priority"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Description" name="description">
+                                <field name="description" placeholder="Describe the complaint in detail..."/>
+                            </page>
+                            
+                            <page string="Store Handling" name="store_handling" invisible="error_origin != 'store'">
+                                <group string="Store CAPA (Corrective &amp; Preventive Action)">
+                                    <field name="store_capa_file" filename="store_capa_filename"/>
+                                    <field name="store_capa_filename" invisible="1"/>
+                                </group>
+                                <group string="Resolution Notes">
+                                    <field name="evaluation_notes" placeholder="Enter resolution notes and corrective actions taken by the store..."/>
+                                </group>
+                            </page>
+                            <page string="Supplier Handling" name="supplier_handling" invisible="error_origin != 'supplier'">
+                                <group>
+                                    <group string="Faulty Receipt">
+                                        <field name="receipt_id" domain="[('picking_type_code', '=', 'incoming')]"/>
+                                        <field name="receipt_supplier_id" readonly="1"/>
+                                        <field name="isolate_lot"/>
+                                    </group>
+                                </group>
+                                <separator string="Supplier CAPA"/>
+                                <group>
+                                    <field name="capa_file" filename="capa_filename"/>
+                                    <field name="capa_filename" invisible="1"/>
+                                </group>
+                                <separator string="Solution Evaluation" invisible="state not in ['evaluation_supplier', 'follow_up', 'capa_rejected']"/>
+                                <group invisible="state not in ['evaluation_supplier', 'follow_up', 'capa_rejected']">
+                                    <field name="evaluation_notes" placeholder="Enter evaluation notes..."/>
+                                </group>
+                            </page>
+                            
+                            <page string="CAPA" name="capa">
+                                <field name="capa" placeholder="Enter CAPA evaluation notes..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <!-- 3. LIST VIEW -->
+        <record id="view_food_safety_complaint_list" model="ir.ui.view">
+            <field name="name">food.safety.complaint.list</field>
+            <field name="model">food.safety.complaint</field>
+            <field name="arch" type="xml">
+                <list string="Food Safety Complaints" multi_edit="1">
+                    <field name="name"/>
+                    <field name="title"/>
+                    <field name="complaint_date"/>
+                    <field name="store_id"/>
+                    <field name="error_origin"/>
+                    <field name="source_type"/>
+                    <field name="safety_issue_type"/>
+                    <field name="severity" widget="priority"/>
+                    <field name="state" widget="badge" 
+                           decoration-info="state == 'draft'" 
+                           decoration-warning="state in ['submitted', 'evaluation_store', 'evaluation_supplier']" 
+                           decoration-success="state == 'completed'"
+                           decoration-danger="state == 'capa_rejected'"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- 4. KANBAN VIEW -->
+        <record id="view_food_safety_complaint_kanban" model="ir.ui.view">
+            <field name="name">food.safety.complaint.kanban</field>
+            <field name="model">food.safety.complaint</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile">
+                    <templates>
+                        <t t-name="card">
+                            <div class="row">
+                                <div class="col-8">
+                                    <field class="fw-bolder" name="name"/>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <field class="badge rounded-pill" name="state"/>
+                                </div>
+                            </div>
+                            <div>
+                                <field name="title"/>
+                            </div>
+                            <div>
+                                <strong>Store: </strong>
+                                <field name="store_id"/>
+                            </div>
+                            <div>
+                                <strong>Product: </strong>
+                                <field name="product_id"/>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- 5. ACTION -->
+        <record id="action_food_safety_complaint" model="ir.actions.act_window">
+            <field name="name">Food Safety Complaints</field>
+            <field name="res_model">food.safety.complaint</field>
+            <field name="view_mode">list,kanban,form</field>
+            <field name="search_view_id" ref="view_food_safety_complaint_search"/>
+            <field name="view_id" ref="view_food_safety_complaint_list"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first Food Safety Complaint
+                </p>
+                <p>
+                    Register and track complaints about food safety issues from stores and customers.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

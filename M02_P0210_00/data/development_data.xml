@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Shift Manager Configuration -->
+        <record id="dev_config_sm" model="mcd.development.config">
+            <field name="development_type">shift_manager</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <!-- DM1 Configuration -->
+        <record id="dev_config_dm1" model="mcd.development.config">
+            <field name="development_type">dm1</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <!-- DM2 Configuration -->
+        <record id="dev_config_dm2" model="mcd.development.config">
+            <field name="development_type">dm2</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <!-- RGM Configuration -->
+        <record id="dev_config_rgm" model="mcd.development.config">
+            <field name="development_type">rgm</field>
+            <field name="active" eval="True"/>
+        </record>
+    </data>
+</odoo>

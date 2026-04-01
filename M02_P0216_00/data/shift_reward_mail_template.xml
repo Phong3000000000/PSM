@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="mail_template_shift_reward_winner" model="mail.template">
+            <field name="name">Shift Reward: Winner Notification</field>
+            <field name="model_id" ref="model_shift_reward"/>
+            <field name="subject">Chúc mừng bạn đã đạt danh hiệu {{ object.name }}</field>
+            <field name="email_from">{{ (object.company_id.email or user.email_formatted) }}</field>
+            <field name="email_to">{{ object.employee_id.work_email }}</field>
+            <field name="description">Sent to the winner of EOTM/EOTQ upon confirmation</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Xin chào <t t-out="object.employee_id.name or ''">Employee</t>,<br/><br/>
+                        Ban lãnh đạo xin trân trọng thông báo và chúc mừng bạn đã đạt danh hiệu cao quý:
+                        <strong><t t-out="object.name or ''">EOTM - 01/2026</t></strong>.<br/><br/>
+                        Với điểm số trung bình là <strong><t t-out="object.score or 0">95.0</t></strong>, 
+                        bạn đã thể hiện sự nỗ lực và cống hiến tuyệt vời trong công việc.<br/><br/>
+                        Phần thưởng của bạn đã được ghi nhận vào hệ thống.<br/>
+                        Vui lòng liên hệ bộ phận nhân sự để biết thêm chi tiết về thủ tục nhận thưởng.<br/><br/>
+                        Một lần nữa xin chúc mừng và cảm ơn bạn!<br/><br/>
+                        Trân trọng,<br/>
+                        <t t-out="object.company_id.name or ''">Company</t>
+                    </p>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

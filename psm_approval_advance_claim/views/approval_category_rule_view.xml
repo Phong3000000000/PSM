@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="approval_category_rule_view_tree" model="ir.ui.view">
+        <field name="name">approval.category.rule.view.tree</field>
+        <field name="model">approval.category.rule</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                
+                <!-- Hidden field để lấy approver_type -->
+                <field name="approver_type" column_invisible="1"/>
+
+                <!-- Job Position: hiển thị khi approver_type = job -->
+                <field name="approver_job_id"
+                       domain="[('active', '=', True)]"
+                       column_invisible="parent.approver_type != 'job'"/>
+
+                <!-- Approver User: hiển thị khi approver_type = job, read-only -->
+                <field name="approver_user_id"
+                       readonly="1"
+                       column_invisible="parent.approver_type != 'job'"/>
+
+                <!-- Condition Fields: hiển thị cho cả hai type -->
+                <field name="condition_field"
+                       column_invisible="parent.approver_type != 'job'"/>
+                <field name="condition_operator"
+                       column_invisible="parent.approver_type != 'job'"/>
+                <field name="condition_value"
+                       column_invisible="parent.approver_type != 'job'"/>
+
+                <!-- User approver type: chỉ chọn user active -->
+                <field name="approver_user_id"
+                       domain="[('active', '=', True)]"
+                       column_invisible="parent.approver_type != 'user'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form view để edit chi tiết -->
+    <record id="approval_category_rule_view_form" model="ir.ui.view">
+        <field name="name">approval.category.rule.view.form</field>
+        <field name="model">approval.category.rule</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="category_id"/>
+                        <field name="approver_type" invisible="1"/>
+                        <field name="sequence"/>
+                    </group>
+
+                    <!-- Job Position Type -->
+                    <group invisible="approver_type != 'job'">
+                        <separator string="Job Position Approval" colspan="2"/>
+                        <field name="approver_job_id"
+                               domain="[('active', '=', True)]"
+                               required="approver_type == 'job'"/>
+                        <field name="approver_user_id"
+                               readonly="1"
+                               force_save="1"/>
+                    </group>
+
+                    <!-- Condition -->
+                    <group invisible="approver_type != 'job'">
+                        <separator string="Approval Condition" colspan="2"/>
+                        <field name="condition_field"/>
+                        <field name="condition_operator"/>
+                        <field name="condition_value"/>
+                    </group>
+
+                    <!-- User Type -->
+                    <group invisible="approver_type != 'user'">
+                        <separator string="User Approval" colspan="2"/>
+                        <field name="approver_user_id"
+                               domain="[('active', '=', True)]"
+                               required="approver_type == 'user'"/>
+                    </group>
+
+                    <!-- Condition for User Type -->
+                    <group invisible="approver_type != 'user'">
+                        <separator string="Approval Condition" colspan="2"/>
+                        <field name="condition_field"/>
+                        <field name="condition_operator"/>
+                        <field name="condition_value"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="approval_category_referral_request" model="approval.category">
+            <field name="name">Phê duyệt Yêu cầu Giới thiệu Nhân sự</field>
+            <field name="description">Quy trình phê duyệt yêu cầu phát sinh giới thiệu nhân sự từ Cửa hàng (RGM gửi OC duyệt).</field>
+            <!-- Tắt manager_approval để tránh lỗi chặn của Odoo nếu profile nhân sự chưa chuẩn -->
+            <field name="has_period">no</field>
+            <field name="has_date">no</field>
+            <field name="has_amount">no</field>
+            <field name="has_location">no</field>
+            <field name="has_payment_method">no</field>
+            <field name="has_reference">optional</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit hr.appraisal.goal form view to add goal_type field -->
+    <record id="view_hr_appraisal_goal_form_inherit" model="ir.ui.view">
+        <field name="name">hr.appraisal.goal.form.inherit.goal.type</field>
+        <field name="model">hr.appraisal.goal</field>
+        <field name="inherit_id" ref="hr_appraisal.hr_appraisal_goal_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Add goal_type field after name field -->
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="goal_type" widget="radio" options="{'horizontal': true}"/>
+                <field name="score" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

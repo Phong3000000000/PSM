@@ -1,0 +1,37 @@
+<odoo>
+  <data>
+    <!-- Control Panel button -> open OCR wizard action (list view invoices/bills) -->
+    <record id="view_cp_button_ocr_invoice" model="ir.ui.view">
+      <field name="name">account.move.list.controlpanel.ocr.button</field>
+      <field name="type">qweb</field>
+      <field name="inherit_id" ref="web.ControlPanel"/>
+      <field name="arch" type="xml">
+        <xpath expr="//t[@t-set-slot='buttons']" position="inside">
+          <t t-if="env.searchModel
+                   and env.searchModel.modelName == 'account.move'
+                   and env.viewType == 'list'">
+            <t t-set="mv" t-value="(env.searchModel.context or {}).get('default_move_type')"/>
+            <t t-if="mv in ('out_invoice','in_invoice')">
+              <a type="button"
+                 role="button"
+                 class="btn btn-primary"
+                 t-attf-href="/web#action=odx_invoice_digitization_19.action_odx_ocr_wizard&model=account.move&view_type=form&cids=1">
+                Create Via OCR
+              </a>
+            </t>
+          </t>
+        </xpath>
+      </field>
+    </record>
+
+    <!-- Wizard action -->
+    <record id="action_odx_ocr_wizard" model="ir.actions.act_window">
+      <field name="name">Create via OCR</field>
+      <field name="res_model">odx.ocr.wizard</field>
+      <field name="view_mode">form</field>
+      <field name="target">new</field>
+      <field name="context">{}</field>
+    </record>
+
+  </data>
+</odoo>

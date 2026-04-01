@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record id="view_employee_potential_list_tree" model="ir.ui.view">
+        <field name="name">hr.employee.potential.list.tree</field>
+        <field name="model">hr.employee</field>
+        <field name="arch" type="xml">
+            <list string="Potential List" default_order="is_trainer_job desc, soc_completed_count desc, job_id asc">
+                <field name="name" string="Employee Name"/>
+                <field name="job_id" string="Job"/>
+                <field name="soc_progress_display" string="SOC Completed"/>
+                <field name="training_progress" string="% Completion" widget="progressbar"/>
+                <field name="is_trainer_job" column_invisible="1"/>
+                <field name="can_propose_manager" column_invisible="1"/>
+                <button name="action_open_manager_proposal" type="object" 
+                        string="Đề xuất phát triển Manager" 
+                        class="btn-primary"
+                        invisible="not can_propose_manager"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_lnd_potential_list" model="ir.actions.act_window">
+        <field name="name">Potential List</field>
+        <field name="res_model">hr.employee</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_employee_potential_list_tree"/>
+        <field name="domain">[('job_id.name', 'not ilike', 'RGM'), ('job_id.name', 'not ilike', 'Restaurant General Manager')]</field>
+        <field name="context">{'search_default_company_id': allowed_company_ids[0]}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No employees found.
+            </p>
+            <p>
+                Potential List shows all employees sorted by: Trainers first, then by SOC completion count.
+            </p>
+        </field>
+    </record>
+
+</odoo>
