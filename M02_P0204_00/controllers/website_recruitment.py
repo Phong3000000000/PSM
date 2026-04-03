@@ -234,7 +234,7 @@ class WebsiteRecruitmentCustom(http.Controller):
         if failed_auto_reject_fields:
             auto_reject_list = ', '.join(failed_auto_reject_fields)
             note_html = (
-                f"<p><b>⛔ Ứng viên bị loại ngay do trả lời sai câu có cờ 'Loại khi sai':</b></p>"
+                f"<p><b>Ứng viên bị loại ngay do trả lời sai câu có cờ 'Loại khi sai':</b></p>"
                 f"<ul>{''.join(f'<li>{f}</li>' for f in failed_auto_reject_fields)}</ul>"
             )
 
