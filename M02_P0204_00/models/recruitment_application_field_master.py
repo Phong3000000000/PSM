@@ -51,6 +51,10 @@ class RecruitmentApplicationFieldMaster(models.Model):
         help='Khi load vào job, trường này sẽ được đánh dấu "phải trả lời đúng" hay không.'
              ' Chỉ áp dụng cho select, radio, checkbox.'
     )
+    auto_reject_if_wrong_default = fields.Boolean(
+        'Loại khi sai', default=False,
+        help='Nếu trả lời sai câu này, ứng viên bị từ chối ngay'
+    )
     expected_answer = fields.Char(
         'Đáp án phải đúng (Technical)',
         help='Giá trị (value) kỹ thuật mà ứng viên phải chọn. '
@@ -130,6 +134,7 @@ class RecruitmentApplicationFieldMaster(models.Model):
     def _onchange_field_type_reset_expected(self):
         if self.field_type not in ('select', 'radio', 'checkbox'):
             self.is_answer_must_match_default = False
+            self.auto_reject_if_wrong_default = False
             self.expected_answer = ''
             self.expected_answer_option_id = False
             self.expected_answer_checkbox = False
@@ -138,13 +143,32 @@ class RecruitmentApplicationFieldMaster(models.Model):
         else:
             self.expected_answer_checkbox = False
 
+    @api.onchange('auto_reject_if_wrong_default')
+    def _onchange_auto_reject_if_wrong_default(self):
+        for rec in self:
+            if rec.auto_reject_if_wrong_default:
+                rec.update({
+                    'is_answer_must_match_default': True,
+                    'is_required_default': True,
+                })
+
+    @api.onchange('is_required_default')
+    def _onchange_is_required_default(self):
+        for rec in self:
+            if not rec.is_required_default:
+                rec.auto_reject_if_wrong_default = False
+
     # ===== Onchange: reset expected_answer khi tắt phải đúng =====
     @api.onchange('is_answer_must_match_default')
     def _onchange_is_answer_must_match_default(self):
-        if not self.is_answer_must_match_default:
-            self.expected_answer = ''
-            self.expected_answer_option_id = False
-            self.expected_answer_checkbox = False
+        for rec in self:
+            if not rec.is_answer_must_match_default:
+                rec.update({
+                    'auto_reject_if_wrong_default': False,
+                    'expected_answer': '',
+                    'expected_answer_option_id': False,
+                    'expected_answer_checkbox': False,
+                })
 
     # ===== Constrains: validate expected_answer =====
     @api.constrains('expected_answer', 'is_answer_must_match_default', 'field_type', 'option_ids')
@@ -164,6 +188,42 @@ class RecruitmentApplicationFieldMaster(models.Model):
                     raise exceptions.ValidationError(
                         f"Đáp án phải đúng cho checkbox '{rec.field_label}' chỉ được là 'yes' hoặc 'no'."
                     )
+
+    @api.constrains('auto_reject_if_wrong_default', 'is_answer_must_match_default', 'is_required_default')
+    def _check_auto_reject_requires_must_match(self):
+        for rec in self:
+            if rec.auto_reject_if_wrong_default and not rec.is_answer_must_match_default:
+                raise exceptions.ValidationError(
+                    "Không thể bật 'Loại khi sai' khi chưa bật 'Phải đúng'."
+                )
+            if rec.auto_reject_if_wrong_default and not rec.is_required_default:
+                raise exceptions.ValidationError(
+                    "Không thể bật 'Loại khi sai' khi chưa bật 'Bắt buộc'."
+                )
+
+    @api.model
+    def _normalize_auto_reject_dependency_vals(self, vals):
+        normalized_vals = dict(vals)
+        if normalized_vals.get('auto_reject_if_wrong_default'):
+            normalized_vals['is_answer_must_match_default'] = True
+            normalized_vals['is_required_default'] = True
+
+        if normalized_vals.get('is_answer_must_match_default') is False and 'auto_reject_if_wrong_default' not in normalized_vals:
+            normalized_vals['auto_reject_if_wrong_default'] = False
+
+        if normalized_vals.get('is_required_default') is False and 'auto_reject_if_wrong_default' not in normalized_vals:
+            normalized_vals['auto_reject_if_wrong_default'] = False
+
+        return normalized_vals
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        normalized_vals_list = [self._normalize_auto_reject_dependency_vals(vals) for vals in vals_list]
+        return super().create(normalized_vals_list)
+
+    def write(self, vals):
+        normalized_vals = self._normalize_auto_reject_dependency_vals(vals)
+        return super().write(normalized_vals)
 
 
 class RecruitmentApplicationFieldMasterOption(models.Model):

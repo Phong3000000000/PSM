@@ -1,4 +1,4 @@
-from odoo import models, fields, api, exceptions
+from odoo import models, fields, api, exceptions, _
 from datetime import timedelta
 import json
 import logging
@@ -17,14 +17,63 @@ class HrJob(models.Model):
         for vals in vals_list:
             if vals.get('no_of_recruitment', 0) > 0:
                 vals['recruitment_qty_updated_at'] = fields.Datetime.now()
-        return super().create(vals_list)
+        jobs = super().create(vals_list)
+
+        if not self.env.context.get('skip_default_config_bootstrap'):
+            jobs._bootstrap_default_configuration_on_create()
+
+        return jobs
+
+    def _bootstrap_default_configuration_on_create(self):
+        """Auto-load default settings for newly created jobs.
+
+        Applies defaults for:
+        - Application form fields
+        - OJE template (store jobs only)
+        - Refuse reasons
+        - Email rules
+        """
+        for job in self:
+            try:
+                if not job.application_field_ids:
+                    job.action_load_default_fields()
+            except Exception as err:
+                _logger.warning('[JOB_BOOTSTRAP] Cannot load default application fields for job %s: %s', job.id, err)
+
+            try:
+                if not job.job_refuse_reason_ids:
+                    job.action_load_default_refuse_reasons()
+            except Exception as err:
+                _logger.warning('[JOB_BOOTSTRAP] Cannot load default refuse reasons for job %s: %s', job.id, err)
+
+            try:
+                if not job.email_rule_ids:
+                    job.action_load_default_email_rules()
+            except Exception as err:
+                _logger.warning('[JOB_BOOTSTRAP] Cannot load default email rules for job %s: %s', job.id, err)
+
+            try:
+                if job.recruitment_type == 'store' and not job.oje_config_section_ids:
+                    job.action_load_default_oje_template()
+            except Exception as err:
+                _logger.warning('[JOB_BOOTSTRAP] Cannot load default OJE template for job %s: %s', job.id, err)
 
     def write(self, vals):
+        vals = dict(vals)
+        scope_key_changed = any(k in vals for k in ('recruitment_type', 'position_level'))
+
         if 'no_of_recruitment' in vals:
             changed_records = self.filtered(lambda r: r.no_of_recruitment != vals['no_of_recruitment'])
             if changed_records:
                 vals['recruitment_qty_updated_at'] = fields.Datetime.now()
-        return super().write(vals)
+
+        res = super().write(vals)
+
+        if scope_key_changed:
+            for rec in self:
+                rec._archive_oje_master_records_other_scopes(rec._get_oje_template_scope())
+
+        return res
 
     recruitment_type = fields.Selection([
         ('store', 'Khối Cửa Hàng'),
@@ -266,7 +315,193 @@ class HrJob(models.Model):
     # ==================== OJE CONFIGURATION ====================
     oje_pass_score = fields.Float(string='Điểm đạt OJE', default=6.0)
     oje_evaluator_user_id = fields.Many2one('res.users', string='Người đánh giá OJE', help='User chịu trách nhiệm đánh giá OJE (Snapshot từ requester của Job Request)')
+    oje_config_section_ids = fields.One2many('hr.job.oje.config.section', 'job_id', string='Cấu hình Section OJE')
     oje_config_line_ids = fields.One2many('hr.job.oje.config.line', 'job_id', string='Cấu hình tiêu chí OJE')
+
+    def action_preview_oje_form(self):
+        self.ensure_one()
+        scope = self._get_oje_template_scope()
+        if not scope:
+            raise exceptions.UserError(_('Chỉ hỗ trợ preview OJE cho job thuộc khối Cửa hàng.'))
+        return {
+            'type': 'ir.actions.act_url',
+            'name': _('Preview OJE Form'),
+            'url': f'/recruitment/oje/job-preview/{self.id}',
+            'target': 'new',
+        }
+
+    def _get_oje_template_scope(self):
+        self.ensure_one()
+        if self.recruitment_type != 'store':
+            return False
+        if self.position_level == 'management':
+            return 'store_management'
+        return 'store_staff'
+
+    def _get_oje_rating_mode(self, scope, section_kind):
+        if scope == 'store_staff':
+            return 'staff_matrix'
+        if section_kind == 'management_xfactor':
+            return 'xfactor_yes_no'
+        return 'management_1_5'
+
+    def _archive_oje_master_records_other_scopes(self, active_scope):
+        self.ensure_one()
+
+        section_domain = self.oje_config_section_ids.filtered(
+            lambda s: s.is_from_master and s.scope and s.scope != active_scope and s.is_active
+        )
+        if section_domain:
+            section_domain.write({'is_active': False})
+
+        line_domain = self.oje_config_line_ids.filtered(
+            lambda l: l.is_from_master and l.scope and l.scope != active_scope and l.is_active
+        )
+        if line_domain:
+            line_domain.write({'is_active': False})
+
+    def action_load_default_oje_template(self):
+        self.ensure_one()
+        scope = self._get_oje_template_scope()
+
+        if not scope:
+            raise exceptions.UserError(_('Chỉ hỗ trợ tải template OJE mặc định cho job thuộc khối Cửa hàng.'))
+
+        template = self.env['recruitment.oje.template'].search([
+            ('scope', '=', scope),
+            ('active', '=', True),
+        ], limit=1)
+
+        if not template:
+            raise exceptions.UserError(_('Chưa có template OJE mặc định active cho scope %s.') % scope)
+
+        stats = self._sync_default_oje_template(template)
+        message = (
+            f"Template: {template.name} | "
+            f"Section tạo mới {stats['section_created']}, cập nhật {stats['section_updated']}, archive {stats['section_archived']} | "
+            f"Line tạo mới {stats['line_created']}, cập nhật {stats['line_updated']}, archive {stats['line_archived']}"
+        )
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Đồng bộ OJE thành công',
+                'message': message,
+                'type': 'success',
+                'sticky': False,
+            },
+        }
+
+    def _sync_default_oje_template(self, template):
+        self.ensure_one()
+        scope = template.scope
+
+        section_created = section_updated = section_archived = 0
+        line_created = line_updated = line_archived = 0
+
+        existing_sections = self.oje_config_section_ids.filtered(
+            lambda s: s.is_from_master and s.scope == scope and s.source_template_section_id
+        )
+        section_map = {s.source_template_section_id.id: s for s in existing_sections}
+
+        kept_section_ids = set()
+        kept_line_ids = set()
+
+        active_template_sections = template.section_ids.filtered('is_active').sorted('sequence')
+        for template_section in active_template_sections:
+            rating_mode = self._get_oje_rating_mode(scope, template_section.section_kind)
+            section_vals = {
+                'job_id': self.id,
+                'name': template_section.name,
+                'sequence': template_section.sequence,
+                'section_kind': template_section.section_kind,
+                'objective_text': template_section.objective_text,
+                'hint_html': template_section.hint_html,
+                'behavior_html': template_section.behavior_html,
+                'scope': scope,
+                'rating_mode': rating_mode,
+                'is_from_master': True,
+                'source_template_section_id': template_section.id,
+                'is_active': True,
+            }
+
+            section = section_map.get(template_section.id)
+            if section:
+                section.write(section_vals)
+                section_updated += 1
+            else:
+                section = self.env['hr.job.oje.config.section'].create(section_vals)
+                section_created += 1
+
+            kept_section_ids.add(section.id)
+
+            existing_lines = section.line_ids.filtered(
+                lambda l: l.is_from_master and l.scope == scope and l.source_template_line_id
+            )
+            line_map = {l.source_template_line_id.id: l for l in existing_lines}
+
+            for template_line in template_section.line_ids.filtered('active').sorted('sequence'):
+                if template_line.line_kind == 'staff_question':
+                    field_type = 'radio'
+                elif template_line.line_kind == 'management_xfactor':
+                    field_type = 'checkbox'
+                else:
+                    field_type = 'text'
+
+                display_name = (template_line.question_text or '').strip().splitlines()
+                display_name = (display_name[0] if display_name else _('Nội dung đánh giá'))[:255]
+
+                line_vals = {
+                    'job_id': self.id,
+                    'section_id': section.id,
+                    'sequence': template_line.sequence,
+                    'name': display_name,
+                    'question_text': template_line.question_text,
+                    'line_kind': template_line.line_kind,
+                    'scope': scope,
+                    'rating_mode': rating_mode,
+                    'field_type': field_type,
+                    'is_required': template_line.is_required,
+                    'is_from_master': True,
+                    'source_template_line_id': template_line.id,
+                    'is_active': True,
+                    'text_max_score': 5.0 if template_line.line_kind == 'management_task' else 0.0,
+                    'checkbox_score': 1.0 if template_line.line_kind == 'management_xfactor' else 0.0,
+                }
+
+                line = line_map.get(template_line.id)
+                if line:
+                    line.write(line_vals)
+                    line_updated += 1
+                else:
+                    line = self.env['hr.job.oje.config.line'].create(line_vals)
+                    line_created += 1
+
+                kept_line_ids.add(line.id)
+
+        stale_sections = existing_sections.filtered(lambda s: s.id not in kept_section_ids and s.is_active)
+        if stale_sections:
+            stale_sections.write({'is_active': False})
+            section_archived += len(stale_sections)
+
+        stale_scope_lines = self.oje_config_line_ids.filtered(
+            lambda l: l.is_from_master and l.scope == scope and l.id not in kept_line_ids and l.is_active
+        )
+        if stale_scope_lines:
+            stale_scope_lines.write({'is_active': False})
+            line_archived += len(stale_scope_lines)
+
+        self._archive_oje_master_records_other_scopes(scope)
+
+        return {
+            'section_created': section_created,
+            'section_updated': section_updated,
+            'section_archived': section_archived,
+            'line_created': line_created,
+            'line_updated': line_updated,
+            'line_archived': line_archived,
+        }
 
     # ==================== APPLICATION FORM CONFIGURATION ====================
 
@@ -336,6 +571,13 @@ class HrJob(models.Model):
         
         for master in active_masters:
             expected_answer = master.expected_answer or ''
+            supports_must_match = master.field_type in ('select', 'radio', 'checkbox')
+            auto_reject_if_wrong = master.auto_reject_if_wrong_default if supports_must_match else False
+            is_answer_must_match = master.is_answer_must_match_default if supports_must_match else False
+            is_required = master.is_required_default or auto_reject_if_wrong
+            if auto_reject_if_wrong:
+                is_answer_must_match = True
+
             field_vals = {
                 'field_label': master.field_label,
                 'field_name': master.field_name,
@@ -344,8 +586,9 @@ class HrJob(models.Model):
                 'sequence': master.sequence,
                 'col_size': master.col_size,
                 'is_active': master.is_active_default,
-                'is_required': master.is_required_default,
-                'is_answer_must_match': master.is_answer_must_match_default,
+                'is_required': is_required,
+                'is_answer_must_match': is_answer_must_match,
+                'auto_reject_if_wrong': auto_reject_if_wrong,
                 'expected_answer': '' if master.field_type in ('select', 'radio') else expected_answer,
                 'is_default': True,
                 'is_from_master': True,

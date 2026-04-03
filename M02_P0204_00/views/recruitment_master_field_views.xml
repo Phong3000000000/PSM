@@ -29,6 +29,9 @@
                             <field name="is_answer_must_match_default" widget="boolean_toggle"
                                    string="Phải đúng"
                                    invisible="field_type not in ('select', 'radio', 'checkbox')"/>
+                            <field name="auto_reject_if_wrong_default" widget="boolean_toggle"
+                                string="Loại khi sai"
+                                invisible="field_type not in ('select', 'radio', 'checkbox')"/>
                             <!-- UI bridge: select/radio chọn từ option -->
                             <field name="expected_answer_option_id"
                                    string="Đáp án phải đúng"
@@ -71,7 +74,10 @@
                 <field name="recruitment_scope"/>
                 <field name="is_active_default" widget="boolean_toggle" string="Mặc định Bật"/>
                 <field name="is_required_default" widget="boolean_toggle" string="Mặc định Bắt buộc"/>
-                <field name="is_answer_must_match_default" widget="boolean_toggle" string="Phải đúng"/>
+                    <field name="is_answer_must_match_default" widget="boolean_toggle" string="Phải đúng"
+                       invisible="field_type not in ('select', 'radio', 'checkbox')"/>
+                    <field name="auto_reject_if_wrong_default" widget="boolean_toggle" string="Loại khi sai"
+                       invisible="field_type not in ('select', 'radio', 'checkbox')"/>
                 <field name="expected_answer" optional="hide"/>
                 <field name="col_size" optional="hide"/>
             </list>

@@ -417,6 +417,16 @@ class RecruitmentPortal(CustomerPortal):
 
         return request.env['hr.applicant'].sudo().search(domain, order='partner_name asc')
 
+    def _should_use_internal_oje_form(self, applicant, evaluation=False):
+        """Store OJE always uses the new internal form route."""
+        job_scope = False
+        if applicant and applicant.job_id and hasattr(applicant.job_id, '_get_oje_template_scope'):
+            job_scope = applicant.job_id.sudo()._get_oje_template_scope()
+
+        eval_scope = evaluation.template_scope if evaluation else False
+        store_scopes = ('store_staff', 'store_management')
+        return job_scope in store_scopes or eval_scope in store_scopes
+
     @http.route(['/my/oje-evaluation', '/my/oje-evaluation/page/<int:page>'], type='http', auth='user', website=True)
     def portal_my_oje_evaluation(self, page=1, search='', department_id=0, result='', **kwargs):
         user = request.env.user
@@ -477,14 +487,29 @@ class RecruitmentPortal(CustomerPortal):
             return request.redirect('/my/oje-evaluation')
 
         evaluation = applicant.sudo()._ensure_oje_evaluation(evaluator_user=user)
+
+        if self._should_use_internal_oje_form(applicant, evaluation):
+            return request.redirect(f'/recruitment/oje/internal/{evaluation.id}')
+
         return request.redirect(f'/my/recruitment/oje/{applicant.id}')
 
     @http.route('/my/recruitment/oje/<int:applicant_id>', type='http', auth='user', website=True)
     def portal_oje_form(self, applicant_id, **kwargs):
         user = request.env.user
+        if not user.x_is_portal_manager:
+            return request.redirect('/my')
+
         applicant = request.env['hr.applicant'].sudo().browse(applicant_id)
-        if not applicant.exists() or not applicant.oje_evaluation_id:
+        if not applicant.exists():
             return request.redirect('/my/oje-evaluation')
+
+        dm_applicants = self._get_dm_oje_applicants(user)
+        if applicant not in dm_applicants:
+            return request.redirect('/my/oje-evaluation')
+
+        evaluation = applicant.sudo()._ensure_oje_evaluation(evaluator_user=user)
+        if self._should_use_internal_oje_form(applicant, evaluation):
+            return request.redirect(f'/recruitment/oje/internal/{evaluation.id}')
 
         evaluation = applicant.oje_evaluation_id
         if evaluation.state == 'done':
@@ -502,12 +527,23 @@ class RecruitmentPortal(CustomerPortal):
 
     @http.route('/my/recruitment/oje/submit', type='http', auth='user', methods=['POST'], website=True)
     def portal_oje_submit(self, **post):
+        user = request.env.user
+        if not user.x_is_portal_manager:
+            return request.redirect('/my')
+
         applicant_id = int(post.get('applicant_id', 0))
         applicant = request.env['hr.applicant'].sudo().browse(applicant_id)
         if not applicant.exists() or not applicant.oje_evaluation_id:
             return request.redirect('/my/oje-evaluation')
 
+        dm_applicants = self._get_dm_oje_applicants(user)
+        if applicant not in dm_applicants:
+            return request.redirect('/my/oje-evaluation')
+
         evaluation = applicant.oje_evaluation_id
+        if self._should_use_internal_oje_form(applicant, evaluation):
+            return request.redirect(f'/recruitment/oje/internal/{evaluation.id}')
+
         if evaluation.state == 'done':
             return request.redirect(f'/my/recruitment/oje/{applicant.id}')
 

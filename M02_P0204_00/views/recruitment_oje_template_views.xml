@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_recruitment_oje_template_tree" model="ir.ui.view">
+        <field name="name">recruitment.oje.template.tree</field>
+        <field name="model">recruitment.oje.template</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="scope"/>
+                <field name="version"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_recruitment_oje_template_form" model="ir.ui.view">
+        <field name="name">recruitment.oje.template.form</field>
+        <field name="model">recruitment.oje.template</field>
+        <field name="arch" type="xml">
+            <form string="Mẫu OJE mặc định">
+                <header>
+                    <button name="action_preview_oje_form"
+                            type="object"
+                            string="Preview"
+                            class="btn-primary"
+                            icon="fa-eye"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="scope"/>
+                            <field name="version"/>
+                        </group>
+                        <group>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <field name="intro_html" widget="html"/>
+                    </group>
+
+                    <field name="section_ids" nolabel="1">
+                        <list decoration-muted="not is_active">
+                            <field name="sequence" widget="handle"/>
+                            <field name="name"/>
+                            <field name="section_kind"/>
+                            <field name="line_count" string="Số câu"/>
+                            <field name="is_active" widget="boolean_toggle"/>
+                        </list>
+                        <form string="Section mẫu OJE">
+                            <sheet>
+                                <group>
+                                    <group>
+                                        <field name="name"/>
+                                        <field name="section_kind"/>
+                                        <field name="sequence"/>
+                                    </group>
+                                    <group>
+                                        <field name="is_active" widget="boolean_toggle"/>
+                                    </group>
+                                </group>
+
+                                <group>
+                                    <field name="objective_text"/>
+                                </group>
+                                <group>
+                                    <field name="hint_html" widget="html"/>
+                                </group>
+                                <group>
+                                    <field name="behavior_html" widget="html"/>
+                                </group>
+
+                                <field name="line_ids" nolabel="1">
+                                    <list editable="bottom" decoration-muted="not active">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="question_text"/>
+                                        <field name="line_kind"/>
+                                        <field name="is_required" widget="boolean_toggle"/>
+                                        <field name="active" widget="boolean_toggle"/>
+                                    </list>
+                                </field>
+                            </sheet>
+                        </form>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_recruitment_oje_template" model="ir.actions.act_window">
+        <field name="name">Mẫu OJE mặc định</field>
+        <field name="res_model">recruitment.oje.template</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

@@ -31,4 +31,12 @@
         action="action_recruitment_application_field_master"
         sequence="30"
         groups="hr_recruitment.group_hr_recruitment_manager"/>
+
+    <menuitem
+        id="menu_recruitment_oje_template"
+        name="Mẫu OJE mặc định"
+        parent="hr_recruitment.menu_hr_recruitment_configuration"
+        action="action_recruitment_oje_template"
+        sequence="35"
+        groups="hr_recruitment.group_hr_recruitment_manager"/>
 </odoo>

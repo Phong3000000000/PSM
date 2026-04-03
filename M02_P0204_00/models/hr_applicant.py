@@ -139,9 +139,9 @@ class HrApplicant(models.Model):
         else:
             domain.append(('recruitment_type', 'in', ['office', 'both']))
             
-        stage = self.env['hr.recruitment.stage'].search(domain, order='sequence asc', limit=1)
+        stage = self.env['hr.recruitment.stage'].sudo().search(domain, order='sequence asc', limit=1)
         if not stage:
-            stage = self.env['hr.recruitment.stage'].search([('name', '=', stage_name)], order='sequence asc', limit=1)
+            stage = self.env['hr.recruitment.stage'].sudo().search([('name', '=', stage_name)], order='sequence asc', limit=1)
         return stage
 
     # ==================== SURVEY ====================
@@ -285,32 +285,168 @@ class HrApplicant(models.Model):
                 )
             )
 
-    def _check_backend_oje_access(self):
+    def _check_backend_oje_access(self, user=False):
         self.ensure_one()
-        user = self.env.user
-        if user.has_group('base.group_system'):
+        current_user = user or self.env.user
+        applicant = self.sudo()
+
+        if current_user.has_group('base.group_system'):
             return True
-        if self.oje_evaluator_user_id and user == self.oje_evaluator_user_id:
+        if applicant.oje_evaluator_user_id and current_user == applicant.oje_evaluator_user_id:
             return True
+
+        # Portal manager fallback: allow DM hierarchy to access applicant in managed departments.
+        if getattr(current_user, 'x_is_portal_manager', False):
+            employee = self.env['hr.employee'].sudo().search([('user_id', '=', current_user.id)], limit=1)
+            if employee:
+                dept_domain = ['|', '|', '|',
+                    ('id', '=', employee.department_id.id),
+                    ('manager_id', '=', employee.id),
+                    ('parent_id.manager_id', '=', employee.id),
+                    ('parent_id.parent_id.manager_id', '=', employee.id),
+                ]
+            else:
+                dept_domain = ['|', '|',
+                    ('manager_id.user_id', '=', current_user.id),
+                    ('parent_id.manager_id.user_id', '=', current_user.id),
+                    ('parent_id.parent_id.manager_id.user_id', '=', current_user.id),
+                ]
+
+            managed_departments = self.env['hr.department'].sudo().search(dept_domain)
+            applicant_department = applicant.department_id or applicant.job_id.department_id
+            if applicant_department and applicant_department in managed_departments:
+                return True
+
         raise AccessError(_("Bạn không có quyền đánh giá OJE cho ứng viên này."))
 
     def _is_oje_stage_allowed(self):
         self.ensure_one()
         return self.current_stage_name in ('Interview & OJE', 'OJE')
 
+    def _get_oje_snapshot_source(self):
+        self.ensure_one()
+        template_scope = 'legacy'
+        if hasattr(self.job_id, '_get_oje_template_scope'):
+            template_scope = self.job_id._get_oje_template_scope() or 'legacy'
+
+        job_active_sections = self.job_id.oje_config_section_ids.filtered(
+            lambda s: s.is_active and (not s.scope or s.scope == template_scope)
+        ).sorted('sequence')
+
+        template_version = False
+        master_section = job_active_sections.filtered(lambda s: s.source_template_section_id)[:1]
+        if master_section and master_section.source_template_section_id.template_id:
+            template_version = master_section.source_template_section_id.template_id.version
+
+        if not template_version:
+            template_version = '1.0'
+
+        return template_scope, template_version, job_active_sections
+
+    def _populate_oje_evaluation_snapshot(self, evaluation, template_scope, job_active_sections):
+        self.ensure_one()
+        line_vals = []
+
+        if job_active_sections and template_scope in ('store_staff', 'store_management'):
+            for config_section in job_active_sections:
+                eval_section = self.env['hr.applicant.oje.evaluation.section'].create({
+                    'evaluation_id': evaluation.id,
+                    'source_config_section_id': config_section.id,
+                    'sequence': config_section.sequence,
+                    'name': config_section.name,
+                    'section_kind': config_section.section_kind,
+                    'scope': config_section.scope,
+                    'rating_mode': config_section.rating_mode,
+                    'objective_text': config_section.objective_text,
+                    'hint_html': config_section.hint_html,
+                    'behavior_html': config_section.behavior_html,
+                    'is_active': config_section.is_active,
+                })
+
+                for config_line in config_section.line_ids.filtered('is_active').sorted('sequence'):
+                    line_vals.append({
+                        'evaluation_id': evaluation.id,
+                        'section_id': eval_section.id,
+                        'template_line_id': config_line.id,
+                        'sequence': config_line.sequence,
+                        'name': config_line.name or config_line.question_text,
+                        'question_text': config_line.question_text or config_line.name,
+                        'line_kind': config_line.line_kind or 'legacy',
+                        'scope': config_line.scope,
+                        'rating_mode': config_line.rating_mode,
+                        'is_required': config_line.is_required,
+                        'is_active': config_line.is_active,
+                        'field_type': config_line.field_type,
+                        'text_max_score': config_line.text_max_score,
+                        'checkbox_score': config_line.checkbox_score,
+                    })
+        else:
+            legacy_lines = self.job_id.oje_config_line_ids.filtered('is_active').sorted('sequence')
+            for config_line in legacy_lines:
+                line_vals.append({
+                    'evaluation_id': evaluation.id,
+                    'template_line_id': config_line.id,
+                    'name': config_line.name,
+                    'question_text': config_line.question_text or config_line.name,
+                    'line_kind': config_line.line_kind or 'legacy',
+                    'scope': config_line.scope,
+                    'rating_mode': config_line.rating_mode,
+                    'is_required': config_line.is_required,
+                    'is_active': config_line.is_active,
+                    'field_type': config_line.field_type,
+                    'text_max_score': config_line.text_max_score,
+                    'checkbox_score': config_line.checkbox_score,
+                    'sequence': config_line.sequence,
+                })
+
+        if line_vals:
+            self.env['hr.applicant.oje.evaluation.line'].create(line_vals)
+
     def _ensure_oje_evaluation(self, evaluator_user=None):
         self.ensure_one()
-
-        if self.oje_evaluation_id:
-            return self.oje_evaluation_id
 
         if not self.job_id:
             raise exceptions.UserError(_("Ứng viên chưa có Job Position."))
 
-        if not self.job_id.oje_config_line_ids:
+        if not self.job_id.oje_config_line_ids and not self.job_id.oje_config_section_ids:
             raise exceptions.UserError(_("Job chưa có cấu hình OJE."))
 
         evaluator = evaluator_user or self.oje_evaluator_user_id or self.env.user
+
+        template_scope, template_version, job_active_sections = self._get_oje_snapshot_source()
+
+        if self.oje_evaluation_id:
+            evaluation = self.oje_evaluation_id
+
+            if evaluation.state != 'done' and template_scope in ('store_staff', 'store_management'):
+                has_scope_sections = bool(evaluation.section_ids.filtered(
+                    lambda s: s.is_active and s.section_kind in ('staff_block', 'management_dimension', 'management_xfactor')
+                ))
+                has_scope_lines = bool(evaluation.line_ids.filtered(
+                    lambda l: l.is_active and l.line_kind in ('staff_question', 'management_task', 'management_xfactor')
+                ))
+
+                needs_refresh = bool(
+                    evaluation.template_scope != template_scope
+                    or not has_scope_sections
+                    or not has_scope_lines
+                )
+
+                if needs_refresh:
+                    evaluation.line_ids.unlink()
+                    evaluation.section_ids.unlink()
+                    evaluation.write({
+                        'template_scope': template_scope,
+                        'template_version': template_version,
+                        'pass_score_snapshot': self.job_id.oje_pass_score,
+                        'evaluator_user_id': evaluator.id,
+                        'trial_date': evaluation.trial_date or fields.Date.today(),
+                        'restaurant_name': evaluation.restaurant_name or self.department_id.name or self.job_id.department_id.name,
+                        'operation_consultant_name': evaluation.operation_consultant_name or evaluator.name,
+                    })
+                    self._populate_oje_evaluation_snapshot(evaluation, template_scope, job_active_sections)
+
+            return evaluation
 
         evaluation = self.env['hr.applicant.oje.evaluation'].create({
             'applicant_id': self.id,
@@ -318,21 +454,13 @@ class HrApplicant(models.Model):
             'evaluator_user_id': evaluator.id,
             'pass_score_snapshot': self.job_id.oje_pass_score,
             'state': 'in_progress',
+            'template_scope': template_scope,
+            'template_version': template_version,
+            'trial_date': fields.Date.today(),
+            'restaurant_name': self.department_id.name or self.job_id.department_id.name,
+            'operation_consultant_name': evaluator.name,
         })
-
-        line_vals = []
-        for config_line in self.job_id.oje_config_line_ids.sorted('sequence'):
-            line_vals.append({
-                'evaluation_id': evaluation.id,
-                'template_line_id': config_line.id,
-                'name': config_line.name,
-                'field_type': config_line.field_type,
-                'text_max_score': config_line.text_max_score,
-                'checkbox_score': config_line.checkbox_score,
-                'sequence': config_line.sequence,
-            })
-        if line_vals:
-            self.env['hr.applicant.oje.evaluation.line'].create(line_vals)
+        self._populate_oje_evaluation_snapshot(evaluation, template_scope, job_active_sections)
 
         self.write({'oje_evaluation_id': evaluation.id})
         return evaluation
@@ -346,6 +474,14 @@ class HrApplicant(models.Model):
 
         evaluation = self._ensure_oje_evaluation(evaluator_user=self.env.user)
 
+        if evaluation.template_scope in ('store_staff', 'store_management'):
+            return {
+                'type': 'ir.actions.act_url',
+                'name': _('Pass OJE'),
+                'url': f'/recruitment/oje/internal/{evaluation.id}',
+                'target': 'new',
+            }
+
         if evaluation.state == 'done':
             view = self.env.ref('M02_P0204_00.hr_applicant_oje_evaluation_view_form')
         else:
@@ -353,7 +489,7 @@ class HrApplicant(models.Model):
 
         return {
             'type': 'ir.actions.act_window',
-            'name': _('Đánh giá OJE'),
+            'name': _('Pass OJE'),
             'res_model': 'hr.applicant.oje.evaluation',
             'res_id': evaluation.id,
             'view_mode': 'form',
@@ -396,6 +532,45 @@ class HrApplicant(models.Model):
     oje_pass_score_snapshot = fields.Float(
         related="oje_evaluation_id.pass_score_snapshot",
         string="Điểm Đạt OJE",
+        store=True,
+    )
+
+    oje_template_scope = fields.Selection(
+        related="oje_evaluation_id.template_scope",
+        string="Scope OJE",
+        store=True,
+    )
+
+    oje_staff_decision = fields.Selection(
+        related="oje_evaluation_id.staff_decision",
+        string="Kết luận Staff",
+        store=True,
+    )
+
+    oje_staff_ni_count = fields.Integer(
+        related="oje_evaluation_id.staff_ni_count",
+        string="NI",
+        store=True,
+    )
+    oje_staff_gd_count = fields.Integer(
+        related="oje_evaluation_id.staff_gd_count",
+        string="GD",
+        store=True,
+    )
+    oje_staff_ex_count = fields.Integer(
+        related="oje_evaluation_id.staff_ex_count",
+        string="EX",
+        store=True,
+    )
+    oje_staff_os_count = fields.Integer(
+        related="oje_evaluation_id.staff_os_count",
+        string="OS",
+        store=True,
+    )
+
+    oje_management_overall_rating = fields.Integer(
+        related="oje_evaluation_id.management_overall_rating",
+        string="Overall Rating",
         store=True,
     )
 
@@ -491,11 +666,17 @@ class HrApplicant(models.Model):
             elif state == "in_progress":
                 rec.oje_display_text = "Đang làm"
             elif state == "done":
-                score = int(rec.oje_total_score)
-                max_score = sum(rec.oje_evaluation_id.line_ids.mapped('text_max_score')) + sum(rec.oje_evaluation_id.line_ids.filtered(lambda l: l.field_type == 'checkbox').mapped('checkbox_score')) + sum(rec.oje_evaluation_id.line_ids.filtered(lambda l: l.field_type == 'radio').mapped('template_line_id.option_ids.score')) # This is a bit complex, maybe just show total_score / pass_score?
-                # Simplify: show total_score/pass_score
                 success = "✓" if rec.oje_result == 'pass' else "✗"
-                rec.oje_display_text = f"{score}/{int(rec.oje_pass_score_snapshot)} {success}"
+                if rec.oje_template_scope == 'store_staff':
+                    rec.oje_display_text = (
+                        f"NI:{rec.oje_staff_ni_count} GD:{rec.oje_staff_gd_count} "
+                        f"EX:{rec.oje_staff_ex_count} OS:{rec.oje_staff_os_count} {success}"
+                    )
+                elif rec.oje_template_scope == 'store_management':
+                    rec.oje_display_text = f"Overall {rec.oje_management_overall_rating or 0}/5 {success}"
+                else:
+                    score = int(rec.oje_total_score)
+                    rec.oje_display_text = f"{score}/{int(rec.oje_pass_score_snapshot)} {success}"
             else:
                 rec.oje_display_text = "N/A"
 
@@ -526,6 +707,15 @@ class HrApplicant(models.Model):
                     "target": "current",
                 }
             return False
+
+        if self.oje_evaluation_id.template_scope in ('store_staff', 'store_management'):
+            return {
+                'type': 'ir.actions.act_url',
+                'name': 'Kết quả Đánh giá OJE',
+                'url': f'/recruitment/oje/internal/{self.oje_evaluation_id.id}',
+                'target': 'new',
+            }
+
         return {
             "type": "ir.actions.act_window",
             "name": "Kết quả Đánh giá OJE",
@@ -1822,63 +2012,133 @@ class HrApplicant(models.Model):
 
     # ==================== OJE EVALUATION ACTIONS ====================
 
-    def action_apply_oje_evaluation_result(self):
-        """Kiểm tra điểm OJE và auto-progress từ model evaluation mới"""
+    def _build_store_staff_fail_reason(self, evaluation):
         self.ensure_one()
-        if not self.oje_evaluation_id or self.oje_evaluation_state != 'done':
+        reasons = []
+
+        ni_lines = evaluation.line_ids.filtered(
+            lambda l: l.is_active and l.line_kind == 'staff_question' and l.staff_rating == 'ni'
+        )
+        if ni_lines:
+            labels = [line.question_text or line.name for line in ni_lines]
+            reasons.append(_("Có tiêu chí bị đánh giá NI: %s") % "; ".join(labels))
+
+        if evaluation.staff_decision in ('reject', 'other_position'):
+            decision_label = dict(evaluation._fields['staff_decision'].selection).get(
+                evaluation.staff_decision,
+                evaluation.staff_decision,
+            )
+            reasons.append(_("Kết luận cuối cùng: %s.") % decision_label)
+
+        return "\n".join(reasons) if reasons else _("Không đạt theo tiêu chuẩn đánh giá Staff.")
+
+    def _build_store_management_fail_reason(self, evaluation):
+        self.ensure_one()
+        return _("Overall rating dưới ngưỡng đạt (>= 3): %s/5.") % (evaluation.management_overall_rating or 0)
+
+    def _build_legacy_oje_fail_reason(self, evaluation):
+        self.ensure_one()
+        fail_reasons = []
+        for line in evaluation.line_ids:
+            if line.field_type == 'text':
+                if line.text_score < line.text_max_score:
+                    fail_reasons.append(
+                        f"- {line.name}: {line.text_score}/{line.text_max_score} điểm. "
+                        f"Nhận xét: {line.text_value or 'N/A'}"
+                    )
+            elif line.field_type == 'checkbox':
+                if not line.checkbox_value:
+                    fail_reasons.append(f"- {line.name}: Không đạt (0/{line.checkbox_score} điểm)")
+            elif line.field_type == 'radio':
+                max_opt_score = max(line.template_line_id.option_ids.mapped('score'), default=0)
+                if line.selected_option_score < max_opt_score:
+                    selected_name = line.selected_option_id.name if line.selected_option_id else 'N/A'
+                    fail_reasons.append(
+                        f"- {line.name}: {selected_name} ({line.selected_option_score}/{max_opt_score} điểm)"
+                    )
+        return "\n".join(fail_reasons) if fail_reasons else _("Không đáp ứng tiêu chuẩn OJE chung.")
+
+    def _find_oje_target_stage(self, stage_name, use_hired_flag=False, ilike=False):
+        self.ensure_one()
+        stage_type = self._get_pipeline_stage_type()
+        comparator = 'ilike' if ilike else '='
+
+        domain = [("name", comparator, stage_name)]
+        if use_hired_flag:
+            domain.append(("hired_stage", "=", True))
+        if stage_type:
+            domain.append(("recruitment_type", "in", [stage_type, "both"]))
+
+        stage = self.env["hr.recruitment.stage"].sudo().search(domain, limit=1)
+        if stage:
+            return stage
+
+        fallback_domain = [("name", comparator, stage_name)]
+        if use_hired_flag:
+            fallback_domain.append(("hired_stage", "=", True))
+        stage = self.env["hr.recruitment.stage"].sudo().search(fallback_domain, limit=1)
+        if stage:
+            return stage
+
+        if use_hired_flag:
+            plain_domain = [("name", comparator, stage_name)]
+            if stage_type:
+                plain_domain.append(("recruitment_type", "in", [stage_type, "both"]))
+            stage = self.env["hr.recruitment.stage"].sudo().search(plain_domain, limit=1)
+            if stage:
+                return stage
+
+        return stage
+
+    def action_apply_oje_evaluation_result(self):
+        """Áp kết quả OJE theo scope template mới, fallback legacy cho bản ghi cũ."""
+        self.ensure_one()
+        evaluation = self.oje_evaluation_id
+        if not evaluation or evaluation.state != 'done':
             raise exceptions.UserError("Phiếu đánh giá OJE chưa hoàn thành!")
-            
-        stage_type = self.position_level or self.recruitment_type
-        
-        if self.oje_result == 'pass':
-            # PASSED
-            if self.position_level == 'management':
-                domain = [("name", "=", "Offer")]
-                result_text = "Chuyển sang Offer"
-            else:
-                domain = [("name", "=", "Hired"), ("hired_stage", "=", True)]
-                result_text = "Chuyển sang Hired"
 
-            if stage_type:
-                domain.append(("recruitment_type", "in", [stage_type, "both"]))
-            target_stage = self.env["hr.recruitment.stage"].search(domain, limit=1)
-            
-            if target_stage:
-                self.stage_id = target_stage.id
-            else:
-                raise exceptions.UserError(f"Không tìm thấy Stage '{result_text.split()[-1]}'!")
+        scope = evaluation.template_scope or 'legacy'
+        if scope == 'store_staff':
+            is_pass = bool(evaluation.staff_decision == 'hire' and not evaluation.has_any_ni)
+        elif scope == 'store_management':
+            is_pass = bool((evaluation.management_overall_rating or 0) >= 3)
         else:
-            # FAILED
-            domain = [("name", "ilike", "Reject")]
-            if stage_type:
-                domain.append(("recruitment_type", "in", [stage_type, "both"]))
-            target_stage = self.env["hr.recruitment.stage"].search(domain, limit=1)
-            
-            if target_stage:
-                # Build fail reason from lines
-                fail_reasons = []
-                for line in self.oje_evaluation_id.line_ids:
-                    if line.field_type == 'text':
-                        if line.text_score < line.text_max_score:
-                            fail_reasons.append(f"- {line.name}: {line.text_score}/{line.text_max_score} điểm. Nhận xét: {line.text_value or 'N/A'}")
-                    elif line.field_type == 'checkbox':
-                        if not line.checkbox_value:
-                            fail_reasons.append(f"- {line.name}: Không đạt (0/{line.checkbox_score} điểm)")
-                    elif line.field_type == 'radio':
-                        max_opt_score = max(line.template_line_id.option_ids.mapped('score'), default=0)
-                        if line.selected_option_score < max_opt_score:
-                           fail_reasons.append(f"- {line.name}: {line.selected_option_id.name if line.selected_option_id else 'N/A'} ({line.selected_option_score}/{max_opt_score} điểm)")
+            is_pass = bool(evaluation.result == 'pass')
 
-                self.with_context(skip_rejection_email=True).write({
-                    'stage_id': target_stage.id,
-                    'document_approval_status': 'refused',
-                    'oje_fail_reason': "\n".join(fail_reasons) if fail_reasons else "Không đáp ứng tiêu chuẩn OJE chung."
-                })
-                
-                # Gửi email OJE rejection
-                self._send_oje_rejection_email(self)
+        if is_pass:
+            if self.position_level == 'management':
+                target_stage = self._find_oje_target_stage('Offer')
+                missing_stage_label = 'Offer'
             else:
+                target_stage = self._find_oje_target_stage('Hired', use_hired_flag=True)
+                missing_stage_label = 'Hired'
+
+            if not target_stage:
+                raise exceptions.UserError(f"Không tìm thấy Stage '{missing_stage_label}'!")
+
+            self.write({
+                'stage_id': target_stage.id,
+                'oje_fail_reason': False,
+            })
+        else:
+            target_stage = self._find_oje_target_stage('Reject', ilike=True)
+            if not target_stage:
                 raise exceptions.UserError("Không tìm thấy Stage 'Reject'!")
+
+            if scope == 'store_staff':
+                fail_reason = self._build_store_staff_fail_reason(evaluation)
+            elif scope == 'store_management':
+                fail_reason = self._build_store_management_fail_reason(evaluation)
+            else:
+                fail_reason = self._build_legacy_oje_fail_reason(evaluation)
+
+            self.with_context(skip_rejection_email=True).write({
+                'stage_id': target_stage.id,
+                'document_approval_status': 'refused',
+                'oje_fail_reason': fail_reason,
+            })
+
+            self._send_oje_rejection_email(self)
 
     # Legacy action (can be removed later)
     def action_check_oje_result(self):

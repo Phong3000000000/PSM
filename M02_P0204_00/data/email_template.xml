@@ -328,8 +328,10 @@
     <div style="background-color: white; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #dee2e6; border-top: none;">
         <p style="font-size: 16px; line-height: 1.6; color: #333;"><t t-out="object.partner_name or object.name"/> thân mến,</p>
         
-        <p style="font-size: 16px; line-height: 1.6; color: #333;">Cám ơn bạn đã dành thời gian quan tâm và ứng tuyển cho vị trí <t t-out="object.job_id.name"/> chúng tôi đang tìm kiếm.</p>
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">Cám ơn bạn đã dành thời gian quan tâm và ứng tuyển cho vị trí <t t-out="object.job_id.name"/>.</p>
         
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">Sau khi cân nhắc về hồ sơ của bạn, chúng tôi rất tiếc phải thông báo rằng trong thời điểm hiện tại, bạn chưa phù hợp với vị trí <t t-out="object.job_id.name"/> chúng tôi đang tìm kiếm.</p>
+
         <p style="font-size: 16px; line-height: 1.6; color: #333;">McDonald’s sẽ tiếp tục lưu giữ thông tin và liên hệ lại với bạn ngay khi có các vị trí khác phù hợp hơn trong tương lai.</p>
         
         <p style="font-size: 16px; line-height: 1.6; color: #333;">Chúc <t t-out="object.partner_name or object.name"/> sức khỏe và mọi điều may mắn trong sự nghiệp tương lai.</p>
@@ -412,7 +414,7 @@
     <record id="email_interview_slot_confirmed" model="mail.template">
         <field name="name">Xác nhận lịch phỏng vấn tự động</field>
         <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
-        <field name="subject">Xác nhận lịch phỏng vấn - {{object.company_id.name or 'Công ty'}}</field>
+        <field name="subject">[McDonald's Việt Nam] - Thư mời phỏng vấn</field>
         <field name="email_from">{{object.user_id.email_formatted or object.company_id.email_formatted or 'noreply@recruitment.com'}}</field>
         <field name="email_to">{{object.email_from}}</field>
         <field name="body_html" type="html">
@@ -421,13 +423,48 @@
         <h2 style="margin: 0;">Lịch phỏng vấn đã được xác nhận</h2>
     </div>
     <div style="background: white; padding: 24px; border: 1px solid #d9e1e6; border-top: 0; border-radius: 0 0 10px 10px;">
-        <p>Chào <strong><t t-out="object.partner_name or 'Ứng viên'"/></strong>,</p>
-        <p>Bạn đã hoàn thành khảo sát và hệ thống đã giữ chỗ thành công cho lịch phỏng vấn của bạn.</p>
-        <p style="padding: 12px; background: #eefaf5; border-left: 4px solid #117a65;">
-            Thời gian phỏng vấn: <strong><t t-out="format_datetime(object.interview_confirmed_datetime, tz='Asia/Ho_Chi_Minh', dt_format='dd/MM/yyyy HH:mm', lang_code='vi_VN')"/></strong>
+        <p>Thân chào <strong><t t-out="object.partner_name or 'Ứng viên'"/></strong>,</p>
+
+        <p>
+            Cám ơn bạn đã quan tâm và ứng tuyển gia nhập đội ngũ nhân viên tại McDonald's Việt Nam.
+            Chúng tôi trân trọng mời bạn đến tham gia buổi phỏng vấn và thử việc cho vị trí
+            <strong><t t-out="object.job_id.name or 'N/A'"/></strong> với lịch như sau:
         </p>
-        <p>Nếu có việc gấp cần đổi lịch, vui lòng liên hệ HR sớm để được hỗ trợ.</p>
-        <p>Trân trọng,<br/><strong>Phòng Nhân Sự</strong></p>
+
+        <p style="padding: 12px; background: #eefaf5; border-left: 4px solid #117a65;">
+            Thời gian:
+            <strong>
+                <t t-out="format_datetime(object.interview_confirmed_datetime, tz='Asia/Ho_Chi_Minh', dt_format='dd/MM/yyyy HH:mm', lang_code='vi_VN')"/>
+            </strong>.
+            Thời lượng: tối đa 3 tiếng.
+        </p>
+
+        <p>
+            Địa điểm: <strong><t t-out="object.department_id.name or 'N/A'"/></strong>.
+        </p>
+
+        <p>
+            Lưu ý trang phục thử việc: Áo (sơ mi, áo thun) trơn, trắng hoặc đen, quần dài đen trơn, giầy bít mũi tối màu.
+            Tóc gọn gàng, móng tay cần được cắt gọn và không sơn móng - kể cả sơn bóng.
+            Hạn chế mang theo tư trang quý giá, không mang trang sức (vòng, nhẫn, hoa tai hoặc phụ kiện khác, trừ nhẫn cưới).
+        </p>
+
+        <p>
+            Bạn vui lòng xác nhận sự tham gia khi nhận được email này trong ngày hôm nay.
+            Nếu có bất kì thắc mắc, thay đổi về lịch phỏng vấn, vui lòng liên hệ với nhà hàng qua mail này hoặc số điện thoại
+            <strong><t t-out="object.user_id.phone or ''"/></strong>.
+        </p>
+
+        <p>
+            Chúc bạn một ngày nhiều năng lượng. McDonald's chào đón bạn!
+        </p>
+
+        <p>
+            Hãy về đội chúng tôi! #Future #Flexibility #Family&amp;Friends #JoinMcDVN
+        </p>
+
+        <p>Trân trọng cám ơn,</p>
+        <p><strong>McDonald's Việt Nam</strong></p>
     </div>
 </div>
         </field>

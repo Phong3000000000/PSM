@@ -68,6 +68,10 @@ class JobApplicationField(models.Model):
         'Phải đúng', default=False,
         help='Ứng viên phải trả lời đúng đáp án mong đợi. Chỉ áp dụng cho select, radio, checkbox.'
     )
+    auto_reject_if_wrong = fields.Boolean(
+        'Loại khi sai', default=False,
+        help='Nếu trả lời sai câu này, ứng viên bị từ chối ngay'
+    )
     expected_answer = fields.Char(
         'Đáp án phải đúng (Technical)',
         help='Giá trị (value) kỹ thuật mà ứng viên phải chọn. Với checkbox: "yes" hoặc "no". Được tự động cập nhật từ UI.'
@@ -135,6 +139,7 @@ class JobApplicationField(models.Model):
     def _onchange_field_type_reset_expected(self):
         if self.field_type not in ('select', 'radio', 'checkbox'):
             self.is_answer_must_match = False
+            self.auto_reject_if_wrong = False
             self.expected_answer = ''
             self.expected_answer_option_id = False
             self.expected_answer_checkbox = False
@@ -143,13 +148,32 @@ class JobApplicationField(models.Model):
         else:
             self.expected_answer_checkbox = False
 
+    @api.onchange('auto_reject_if_wrong')
+    def _onchange_auto_reject_if_wrong(self):
+        for rec in self:
+            if rec.auto_reject_if_wrong:
+                rec.update({
+                    'is_answer_must_match': True,
+                    'is_required': True,
+                })
+
+    @api.onchange('is_required')
+    def _onchange_is_required(self):
+        for rec in self:
+            if not rec.is_required:
+                rec.auto_reject_if_wrong = False
+
     # ===== Onchange: reset expected_answer khi tắt phải đúng =====
     @api.onchange('is_answer_must_match')
     def _onchange_is_answer_must_match(self):
-        if not self.is_answer_must_match:
-            self.expected_answer = ''
-            self.expected_answer_option_id = False
-            self.expected_answer_checkbox = False
+        for rec in self:
+            if not rec.is_answer_must_match:
+                rec.update({
+                    'auto_reject_if_wrong': False,
+                    'expected_answer': '',
+                    'expected_answer_option_id': False,
+                    'expected_answer_checkbox': False,
+                })
 
     # ===== Constrains: validate expected_answer =====
     @api.constrains('expected_answer', 'is_answer_must_match', 'field_type', 'option_ids')
@@ -169,6 +193,18 @@ class JobApplicationField(models.Model):
                     raise exceptions.ValidationError(
                         f"Đáp án phải đúng cho checkbox '{rec.field_label}' chỉ được là 'yes' hoặc 'no'."
                     )
+
+    @api.constrains('auto_reject_if_wrong', 'is_answer_must_match', 'is_required')
+    def _check_auto_reject_requires_must_match(self):
+        for rec in self:
+            if rec.auto_reject_if_wrong and not rec.is_answer_must_match:
+                raise exceptions.ValidationError(
+                    "Không thể bật 'Loại khi sai' khi chưa bật 'Phải đúng'."
+                )
+            if rec.auto_reject_if_wrong and not rec.is_required:
+                raise exceptions.ValidationError(
+                    "Không thể bật 'Loại khi sai' khi chưa bật 'Bắt buộc'."
+                )
 
     @api.depends('field_name')
     def _compute_is_core_required_field(self):
@@ -229,16 +265,34 @@ class JobApplicationField(models.Model):
         s = s.strip('_')
         return s
 
+    @api.model
+    def _normalize_auto_reject_dependency_vals(self, vals):
+        normalized_vals = dict(vals)
+        if normalized_vals.get('auto_reject_if_wrong'):
+            normalized_vals['is_answer_must_match'] = True
+            normalized_vals['is_required'] = True
+
+        if normalized_vals.get('is_answer_must_match') is False and 'auto_reject_if_wrong' not in normalized_vals:
+            normalized_vals['auto_reject_if_wrong'] = False
+
+        if normalized_vals.get('is_required') is False and 'auto_reject_if_wrong' not in normalized_vals:
+            normalized_vals['auto_reject_if_wrong'] = False
+
+        return normalized_vals
+
     @api.model_create_multi
     def create(self, vals_list):
         """Khi tạo trường custom, cập nhật lại Properties Definition"""
-        res = super().create(vals_list)
+        normalized_vals_list = [self._normalize_auto_reject_dependency_vals(vals) for vals in vals_list]
+        res = super().create(normalized_vals_list)
         jobs_to_update = res.filtered(lambda r: not r.is_default).mapped('job_id')
         for job in jobs_to_update:
             self._rebuild_job_properties_definition(job)
         return res
 
     def write(self, vals):
+        vals = self._normalize_auto_reject_dependency_vals(vals)
+
         # Cho phép bypass protection khi reload từ master (context key)
         bypass_protection = self.env.context.get('master_reload', False)
 
@@ -257,7 +311,7 @@ class JobApplicationField(models.Model):
                     if rec.is_default or rec.is_from_master:
                         raise exceptions.UserError(
                             "Không được phép sửa đổi cấu trúc (Tên, Loại, Nhãn, Phân nhóm, Thứ tự, Lựa chọn) "
-                            "của các trường mặc định/master! Chỉ có thể đổi trạng thái 'Sử dụng', 'Bắt buộc' và 'Phải đúng'. "
+                            "của các trường mặc định/master! Chỉ có thể đổi trạng thái 'Sử dụng', 'Bắt buộc', 'Phải đúng' và 'Loại khi sai'. "
                             "Nếu cần thay đổi cấu trúc, hãy sửa trong Configuration > Default Application Fields rồi load lại."
                         )
 

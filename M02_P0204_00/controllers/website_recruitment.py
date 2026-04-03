@@ -168,7 +168,8 @@ class WebsiteRecruitmentCustom(http.Controller):
                 _logger.error(f"Error saving attachment {field_name}: {e}")
 
         # 2. Đánh giá "Phải đúng" (Answer Must Match) & Lưu Snapshot Lịch sử
-        failed_fields = []
+        failed_must_match_fields = []
+        failed_auto_reject_fields = []
         answer_lines_vals = []
         
         for field in form_fields:
@@ -207,7 +208,9 @@ class WebsiteRecruitmentCustom(http.Controller):
             if field.is_answer_must_match and expected_val:
                 if actual_val != expected_val:
                     is_correct = False
-                    failed_fields.append(field.field_label)
+                    failed_must_match_fields.append(field.field_label)
+                    if field.auto_reject_if_wrong:
+                        failed_auto_reject_fields.append(field.field_label)
 
             # Chuẩn bị data cho snapshot line
             answer_lines_vals.append({
@@ -228,11 +231,48 @@ class WebsiteRecruitmentCustom(http.Controller):
             request.env['hr.applicant.application.answer.line'].sudo().create(answer_lines_vals)
 
         # Xử lý kết quả logic
-        if failed_fields:
-            failed_list = ', '.join(failed_fields)
+        if failed_auto_reject_fields:
+            auto_reject_list = ', '.join(failed_auto_reject_fields)
+            note_html = (
+                f"<p><b>⛔ Ứng viên bị loại ngay do trả lời sai câu có cờ 'Loại khi sai':</b></p>"
+                f"<ul>{''.join(f'<li>{f}</li>' for f in failed_auto_reject_fields)}</ul>"
+            )
+
+            applicant.sudo().write({
+                'failed_mandatory_questions': note_html,
+                'survey_under_review_date': False,
+            })
+
+            reject_stage = request.env['hr.applicant']._get_target_pipeline_stage(
+                'Reject',
+                recruitment_type=job.recruitment_type,
+                position_level=job.position_level,
+            )
+            if reject_stage:
+                applicant.sudo().write({'stage_id': reject_stage.id})
+                _logger.info(
+                    "[ANSWER_MATCH] Applicant %s → Reject (immediate auto-reject: %s)",
+                    applicant.partner_name, auto_reject_list,
+                )
+            else:
+                _logger.warning(
+                    "[ANSWER_MATCH] Reject stage not found for applicant %s (failed auto-reject: %s)",
+                    applicant.partner_name, auto_reject_list,
+                )
+
+            try:
+                applicant.sudo().message_post(
+                    body=note_html,
+                    message_type='comment',
+                    subtype_xmlid='mail.mt_note',
+                )
+            except Exception as e:
+                _logger.error("[ANSWER_MATCH] Failed to post chatter note: %s", e)
+        elif failed_must_match_fields:
+            failed_list = ', '.join(failed_must_match_fields)
             note_html = (
                 f"<p><b>⚠ Ứng viên trả lời sai câu phải đúng:</b></p>"
-                f"<ul>{''.join(f'<li>{f}</li>' for f in failed_fields)}</ul>"
+                f"<ul>{''.join(f'<li>{f}</li>' for f in failed_must_match_fields)}</ul>"
             )
             # Ghi lại danh sách lỗi vào database (fallback UI)
             applicant.sudo().write({
@@ -242,8 +282,8 @@ class WebsiteRecruitmentCustom(http.Controller):
             if job.recruitment_type == 'store':
                 # Store: ép vào Under Review
                 review_stage = request.env['hr.applicant']._get_target_pipeline_stage(
-                    'Under Review', 
-                    recruitment_type='store', 
+                    'Under Review',
+                    recruitment_type='store',
                     position_level=job.position_level
                 )
                 

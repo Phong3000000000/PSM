@@ -98,7 +98,17 @@
                         confirm="Xác nhận ứng viên đủ điều kiện tiếp tục phỏng vấn?"/>
 
                 <field name="oje_evaluation_id" invisible="1"/>
+                <field name="can_backend_evaluate_oje" invisible="1"/>
                 <!-- Các nút OJE đã được đưa vào Tab Đánh giá OJE và tự động hóa qua Portal -->
+            </xpath>
+
+            <xpath expr="//header/button[@name='archive_applicant']" position="after">
+                <button name="action_open_backend_oje_evaluation"
+                        string="Pass OJE"
+                        type="object"
+                        class="btn-primary"
+                        icon="fa-clipboard"
+                        invisible="not can_backend_evaluate_oje"/>
             </xpath>
 
             <!-- Add Brand & Survey Fields after job_id -->
@@ -241,13 +251,12 @@
                             invisible="not can_backend_evaluate_oje"
                             icon="fa-clipboard"/>
                     <field name="can_backend_evaluate_oje" invisible="1"/>
+                    <field name="oje_template_scope" invisible="1"/>
                     <group>
                         <group string="Kết quả OJE">
                             <field name="oje_evaluation_id" readonly="1"/>
                             <field name="oje_evaluation_state"/>
-                            <field name="oje_total_score"/>
                             <field name="reject_reason" invisible="not reject_reason" readonly="1"/>
-                            <field name="oje_pass_score_snapshot"/>
                             <field name="oje_result"/>
                         </group>
                         <group string="Người đánh giá">
@@ -255,6 +264,37 @@
                             <field name="oje_evaluated_at"/>
                         </group>
                     </group>
+
+                    <group string="Tóm tắt OJE - Staff" invisible="oje_template_scope != 'store_staff'">
+                        <group>
+                            <field name="oje_staff_decision"/>
+                            <field name="oje_staff_ni_count"/>
+                            <field name="oje_staff_gd_count"/>
+                            <field name="oje_staff_ex_count"/>
+                            <field name="oje_staff_os_count"/>
+                        </group>
+                        <group>
+                            <field name="oje_total_score"/>
+                        </group>
+                    </group>
+
+                    <group string="Tóm tắt OJE - Management" invisible="oje_template_scope != 'store_management'">
+                        <group>
+                            <field name="oje_management_overall_rating"/>
+                        </group>
+                        <group>
+                            <field name="oje_total_score"/>
+                        </group>
+                    </group>
+
+                    <group string="Tóm tắt OJE - Legacy"
+                           invisible="oje_template_scope == 'store_staff' or oje_template_scope == 'store_management'">
+                        <group>
+                            <field name="oje_total_score"/>
+                            <field name="oje_pass_score_snapshot"/>
+                        </group>
+                    </group>
+
                     <group string="Lý do không đạt" invisible="oje_result != 'fail'">
                         <field name="oje_fail_reason" nolabel="1"/>
                     </group>
@@ -281,6 +321,10 @@
                         </page>
                     </notebook>
                 </page>
+            </xpath>
+
+            <xpath expr="//page[@name='oje_details']/button[@name='action_open_backend_oje_evaluation']" position="attributes">
+                <attribute name="invisible">1</attribute>
             </xpath>
 
 

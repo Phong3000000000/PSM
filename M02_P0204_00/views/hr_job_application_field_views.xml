@@ -26,6 +26,7 @@
                            invisible="field_type not in ('select', 'radio', 'checkbox')">
                         <group>
                             <field name="is_answer_must_match" widget="boolean_toggle" string="Phải đúng"/>
+                            <field name="auto_reject_if_wrong" widget="boolean_toggle" string="Loại khi sai"/>
                             <!-- UI bridge: select/radio chọn từ option -->
                             <field name="expected_answer_option_id"
                                    string="Đáp án phải đúng"
@@ -155,6 +156,8 @@
                             <field name="is_required" widget="boolean_toggle" readonly="is_core_required_field"/>
                             <field name="is_answer_must_match" widget="boolean_toggle" string="Phải đúng"
                                    invisible="field_type not in ('select', 'radio', 'checkbox')"/>
+                            <field name="auto_reject_if_wrong" widget="boolean_toggle" string="Loại khi sai"
+                                invisible="field_type not in ('select', 'radio', 'checkbox')"/>
                             <field name="expected_answer_option_id" string="Đáp án phải đúng"
                                    invisible="not is_answer_must_match or field_type not in ('select', 'radio')"/>
                             <field name="expected_answer_checkbox" string="Đáp án phải đúng"
@@ -179,6 +182,8 @@
                             <field name="is_required" widget="boolean_toggle" readonly="is_core_required_field"/>
                             <field name="is_answer_must_match" widget="boolean_toggle" string="Phải đúng"
                                    invisible="field_type not in ('select', 'radio', 'checkbox')"/>
+                            <field name="auto_reject_if_wrong" widget="boolean_toggle" string="Loại khi sai"
+                                invisible="field_type not in ('select', 'radio', 'checkbox')"/>
                             <field name="expected_answer_option_id" string="Đáp án phải đúng"
                                    invisible="not is_answer_must_match or field_type not in ('select', 'radio')"/>
                             <field name="expected_answer_checkbox" string="Đáp án phải đúng"
@@ -191,13 +196,84 @@
                     </field>
                 </page>
                 <page string="Cấu hình OJE" name="oje_config">
+                    <field name="recruitment_type" invisible="1"/>
+                    <field name="position_level" invisible="1"/>
                     <group>
                         <group>
-                            <field name="oje_pass_score"/>
                             <field name="oje_evaluator_user_id"/>
+                            <field name="oje_pass_score" invisible="recruitment_type == 'store'"/>
+                        </group>
+                        <group>
+                            <button name="action_load_default_oje_template"
+                                    string="Tải cấu hình OJE"
+                                    type="object"
+                                    class="btn-secondary"
+                                    style="white-space: nowrap;"
+                                    icon="fa-refresh"
+                                    invisible="recruitment_type != 'store'"
+                                    confirm="Hệ thống sẽ nạp dữ liệu từ Recruitment > Configuration > Mẫu OJE mặc định theo đúng scope của Job. Các line custom tự thêm sẽ được giữ nguyên. Bạn có chắc chắn?"/>
+                            <button name="action_preview_oje_form"
+                                    string="Preview"
+                                    type="object"
+                                    class="btn-primary"
+                                    icon="fa-eye"
+                                    invisible="recruitment_type != 'store'"/>
                         </group>
                     </group>
-                    <field name="oje_config_line_ids" nolabel="1">
+
+                    <field name="oje_config_section_ids" nolabel="1" invisible="recruitment_type != 'store'">
+                        <list decoration-muted="not is_active">
+                            <field name="sequence" widget="handle"/>
+                            <field name="name"/>
+                            <field name="section_kind"/>
+                            <field name="line_count" string="Số câu"/>
+                            <field name="rating_mode"/>
+                            <field name="scope"/>
+                            <field name="is_active" widget="boolean_toggle"/>
+                            <field name="is_from_master" optional="hide"/>
+                        </list>
+                        <form string="Section OJE">
+                            <sheet>
+                                <group>
+                                    <group>
+                                        <field name="name"/>
+                                        <field name="section_kind"/>
+                                        <field name="sequence"/>
+                                    </group>
+                                    <group>
+                                        <field name="scope" readonly="1"/>
+                                        <field name="rating_mode" readonly="1"/>
+                                        <field name="is_active" widget="boolean_toggle"/>
+                                        <field name="is_from_master" readonly="1"/>
+                                    </group>
+                                </group>
+
+                                <group>
+                                    <field name="objective_text"/>
+                                </group>
+                                <group>
+                                    <field name="hint_html" widget="html"/>
+                                </group>
+                                <group>
+                                    <field name="behavior_html" widget="html"/>
+                                </group>
+
+                                <field name="line_ids" nolabel="1" context="{'default_section_id': id, 'default_job_id': job_id}">
+                                    <list editable="bottom" decoration-muted="not is_active">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="question_text"/>
+                                        <field name="line_kind"/>
+                                        <field name="rating_mode" readonly="1"/>
+                                        <field name="is_required" widget="boolean_toggle"/>
+                                        <field name="is_active" widget="boolean_toggle"/>
+                                        <field name="is_from_master" optional="hide"/>
+                                    </list>
+                                </field>
+                            </sheet>
+                        </form>
+                    </field>
+
+                    <field name="oje_config_line_ids" nolabel="1" invisible="recruitment_type == 'store'">
                         <list>
                             <field name="sequence" widget="handle"/>
                             <field name="name"/>
