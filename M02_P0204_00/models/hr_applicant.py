@@ -242,6 +242,227 @@ class HrApplicant(models.Model):
             }
         }
 
+    # ==================== INTERVIEW EVALUATION (STORE MANAGEMENT) ====================
+
+    interview_evaluator_user_id = fields.Many2one(
+        "res.users",
+        string="Người đánh giá Interview",
+        tracking=True,
+        help="Người chịu trách nhiệm đánh giá Interview cho ứng viên này (snapshot từ Job).",
+    )
+
+    interview_evaluation_id = fields.Many2one(
+        "hr.applicant.interview.evaluation",
+        string="Phiếu Đánh Giá Interview",
+        copy=False,
+        readonly=True,
+    )
+
+    interview_evaluation_state = fields.Selection(
+        related="interview_evaluation_id.state",
+        string="Trạng Thái Interview",
+        store=True,
+    )
+
+    can_backend_evaluate_interview = fields.Boolean(
+        compute='_compute_can_backend_evaluate_interview',
+        string='Có thể đánh giá Interview trên backend',
+    )
+
+    @api.depends('interview_evaluator_user_id', 'current_stage_name', 'interview_evaluation_state', 'job_id')
+    def _compute_can_backend_evaluate_interview(self):
+        user = self.env.user
+        is_admin = user.has_group('base.group_system')
+        is_hr_manager = user.has_group('hr_recruitment.group_hr_recruitment_manager')
+        for rec in self:
+            assigned_user = rec.interview_evaluator_user_id or rec.job_id.interview_evaluator_user_id
+            rec.can_backend_evaluate_interview = bool(
+                rec.job_id
+                and rec.recruitment_type == 'store'
+                and rec.position_level == 'management'
+                and rec.current_stage_name == 'Interview'
+                and rec.interview_evaluation_state != 'done'
+                and (
+                    is_admin
+                    or is_hr_manager
+                    or (assigned_user and assigned_user == user)
+                )
+            )
+
+    def _check_backend_interview_access(self, user=False):
+        self.ensure_one()
+        current_user = user or self.env.user
+        applicant = self.sudo()
+
+        if current_user.has_group('base.group_system') or current_user.has_group('hr_recruitment.group_hr_recruitment_manager'):
+            return True
+
+        assigned_user = applicant.interview_evaluator_user_id or applicant.job_id.interview_evaluator_user_id
+        if assigned_user and current_user == assigned_user:
+            return True
+
+        raise AccessError(_("Bạn không có quyền đánh giá Interview cho ứng viên này."))
+
+    def _is_interview_stage_allowed(self):
+        self.ensure_one()
+        return self.current_stage_name == 'Interview'
+
+    def _get_interview_snapshot_source(self):
+        self.ensure_one()
+        job_active_sections = self.job_id.interview_config_section_ids.filtered('is_active').sorted('sequence')
+
+        template_version = False
+        master_section = job_active_sections.filtered(lambda section: section.source_template_section_id)[:1]
+        if master_section and master_section.source_template_section_id.template_id:
+            template_version = master_section.source_template_section_id.template_id.version
+        if not template_version:
+            template_version = '1.0'
+
+        if hasattr(self.job_id, '_get_interview_config_signature'):
+            config_signature = self.job_id._get_interview_config_signature()
+        else:
+            config_signature = False
+
+        return template_version, config_signature, job_active_sections
+
+    def _populate_interview_evaluation_snapshot(self, evaluation, job_active_sections):
+        self.ensure_one()
+        line_vals = []
+
+        for config_section in job_active_sections:
+            eval_section = self.env['hr.applicant.interview.evaluation.section'].create({
+                'evaluation_id': evaluation.id,
+                'source_config_section_id': config_section.id,
+                'sequence': config_section.sequence,
+                'name': config_section.name,
+                'is_active': config_section.is_active,
+            })
+
+            for config_line in config_section.line_ids.filtered('is_active').sorted('sequence'):
+                line_vals.append({
+                    'evaluation_id': evaluation.id,
+                    'section_id': eval_section.id,
+                    'template_line_id': config_line.id,
+                    'sequence': config_line.sequence,
+                    'display_type': config_line.display_type,
+                    'label': config_line.label,
+                    'question_text': config_line.question_text,
+                    'is_required': config_line.is_required,
+                    'is_active': config_line.is_active,
+                })
+
+        if line_vals:
+            self.env['hr.applicant.interview.evaluation.line'].create(line_vals)
+
+    def _ensure_interview_evaluation(self, evaluator_user=None):
+        self.ensure_one()
+
+        if not self.job_id:
+            raise exceptions.UserError(_("Ứng viên chưa có Job Position."))
+
+        if not (self.recruitment_type == 'store' and self.position_level == 'management'):
+            raise exceptions.UserError(_("Chỉ hỗ trợ đánh giá Interview cho scope Store + Management."))
+
+        if not self.job_id.interview_config_line_ids and not self.job_id.interview_config_section_ids:
+            raise exceptions.UserError(_("Job chưa có cấu hình Interview."))
+
+        evaluator = evaluator_user or self.interview_evaluator_user_id or self.job_id.interview_evaluator_user_id or self.env.user
+        template_version, config_signature, job_active_sections = self._get_interview_snapshot_source()
+
+        if self.interview_evaluation_id:
+            evaluation = self.interview_evaluation_id
+
+            if evaluation.state != 'done':
+                has_sections = bool(evaluation.section_ids.filtered('is_active'))
+                has_questions = bool(evaluation.line_ids.filtered(
+                    lambda line: line.is_active and line.display_type == 'question'
+                ))
+                needs_refresh = bool(
+                    evaluation.config_signature != config_signature
+                    or not has_sections
+                    or not has_questions
+                )
+
+                if needs_refresh:
+                    evaluation.line_ids.unlink()
+                    evaluation.section_ids.unlink()
+                    evaluation.write({
+                        'template_version': template_version,
+                        'config_signature': config_signature,
+                        'evaluator_user_id': evaluator.id,
+                        'interviewer_name': evaluation.interviewer_name or evaluator.name,
+                        'state': 'in_progress',
+                    })
+                    self._populate_interview_evaluation_snapshot(evaluation, job_active_sections)
+                elif not evaluation.evaluator_user_id:
+                    evaluation.write({'evaluator_user_id': evaluator.id})
+
+            if self.interview_evaluator_user_id != evaluator:
+                self.write({'interview_evaluator_user_id': evaluator.id})
+            return evaluation
+
+        evaluation = self.env['hr.applicant.interview.evaluation'].create({
+            'applicant_id': self.id,
+            'job_id': self.job_id.id,
+            'evaluator_user_id': evaluator.id,
+            'state': 'in_progress',
+            'template_version': template_version,
+            'config_signature': config_signature,
+            'interview_date': fields.Date.today(),
+            'interviewer_name': evaluator.name,
+        })
+        self._populate_interview_evaluation_snapshot(evaluation, job_active_sections)
+
+        self.write({
+            'interview_evaluation_id': evaluation.id,
+            'interview_evaluator_user_id': evaluator.id,
+        })
+        return evaluation
+
+    def action_open_backend_interview_evaluation(self):
+        self.ensure_one()
+        self._check_backend_interview_access()
+
+        if not self._is_interview_stage_allowed():
+            raise exceptions.UserError(_("Chỉ có thể đánh giá Interview khi ứng viên đang ở stage Interview."))
+
+        evaluation = self._ensure_interview_evaluation(evaluator_user=self.env.user)
+        return {
+            'type': 'ir.actions.act_url',
+            'name': _('Pass Interview'),
+            'url': f'/recruitment/interview/internal/{evaluation.id}',
+            'target': 'new',
+        }
+
+    interview_final_score = fields.Float(
+        related="interview_evaluation_id.final_score",
+        string="Điểm Interview",
+        store=True,
+    )
+
+    interview_result = fields.Selection(
+        related="interview_evaluation_id.result",
+        string="Kết Quả Interview",
+        store=True,
+    )
+
+    interview_evaluated_by = fields.Many2one(
+        related="interview_evaluation_id.evaluator_user_id",
+        string="Người Đánh Giá Interview",
+        store=True,
+    )
+
+    interview_evaluated_at = fields.Datetime(
+        related="interview_evaluation_id.submitted_at",
+        string="Ngày Đánh Giá Interview",
+        store=True,
+    )
+
+    interview_fail_reason = fields.Text(
+        string="Lý do không đạt Interview",
+        copy=False,
+    )
+
     # ==================== OJE EVALUATION (DYNAMIC) ====================
 
     oje_evaluator_user_id = fields.Many2one(
@@ -619,6 +840,8 @@ class HrApplicant(models.Model):
 
     survey_display_text = fields.Char(compute="_compute_survey_display")
     survey_display_result = fields.Char(compute="_compute_survey_display")
+    interview_display_text = fields.Char(compute="_compute_interview_display")
+    interview_display_result = fields.Char(compute="_compute_interview_display")
     oje_display_text = fields.Char(compute="_compute_oje_display")
     oje_display_result = fields.Char(compute="_compute_oje_display")
 
@@ -680,6 +903,24 @@ class HrApplicant(models.Model):
             else:
                 rec.oje_display_text = "N/A"
 
+    def _compute_interview_display(self):
+        for rec in self:
+            rec.interview_display_result = "Đánh giá Interview"
+            if not rec.interview_evaluation_id:
+                rec.interview_display_text = "Chưa có"
+                continue
+
+            state = rec.interview_evaluation_state
+            if state == "new":
+                rec.interview_display_text = "Chưa làm"
+            elif state == "in_progress":
+                rec.interview_display_text = "Đang làm"
+            elif state == "done":
+                success = "✓" if rec.interview_result == 'pass' else "✗"
+                rec.interview_display_text = f"{rec.interview_final_score or 0:.2f}/5 {success}"
+            else:
+                rec.interview_display_text = "N/A"
+
     def action_open_survey_results(self):
         self.ensure_one()
         if not self.survey_user_input_id:
@@ -723,6 +964,17 @@ class HrApplicant(models.Model):
             "res_id": self.oje_evaluation_id.id,
             "view_mode": "form",
             "target": "current",
+        }
+
+    def action_open_interview_results(self):
+        self.ensure_one()
+        if not self.interview_evaluation_id:
+            return False
+        return {
+            'type': 'ir.actions.act_url',
+            'name': 'Kết quả Đánh giá Interview',
+            'url': f'/recruitment/interview/internal/{self.interview_evaluation_id.id}',
+            'target': 'new',
         }
 
     # ==================== TRACKING ====================
@@ -1026,6 +1278,15 @@ class HrApplicant(models.Model):
             # Snapshot OJE Evaluator
             if not vals.get("oje_evaluator_user_id") and job.oje_evaluator_user_id:
                 vals["oje_evaluator_user_id"] = job.oje_evaluator_user_id.id
+
+            # Snapshot Interview Evaluator (Store + Management)
+            if (
+                not vals.get("interview_evaluator_user_id")
+                and job.recruitment_type == 'store'
+                and job.position_level == 'management'
+                and job.interview_evaluator_user_id
+            ):
+                vals["interview_evaluator_user_id"] = job.interview_evaluator_user_id.id
 
         applicants = super().create(vals_list)
 
@@ -1432,8 +1693,12 @@ class HrApplicant(models.Model):
             self._send_mail_async(template, self.id)
 
     def action_accept_interview(self):
-        """Chuyển ứng viên từ Interview sang OJE, bỏ qua kiểm tra Evaluation."""
+        """Store+Management mở phiếu Interview; các scope khác giữ hành vi cũ chuyển Interview -> OJE."""
         self.ensure_one()
+
+        if self.recruitment_type == 'store' and self.position_level == 'management':
+            return self.action_open_backend_interview_evaluation()
+
         # Tìm stage OJE theo recruitment_type của ứng viên
         stage_type = self._get_pipeline_stage_type() or 'store'
         oje_stage = self.env['hr.recruitment.stage'].search([
@@ -2009,6 +2274,64 @@ class HrApplicant(models.Model):
                 'reject_reason': reason.strip() if reason else False,
             })
             rec.message_post(body=f"Từ chối Survey. Lý do: {reason}")
+
+    # ==================== INTERVIEW EVALUATION ACTIONS ====================
+
+    def _build_interview_fail_reason(self, evaluation):
+        self.ensure_one()
+        return _("Final Score %s < 3.") % (f"{evaluation.final_score or 0.0:.2f}")
+
+    def _find_interview_target_stage(self, stage_name, ilike=False):
+        self.ensure_one()
+        stage_type = self._get_pipeline_stage_type()
+        comparator = 'ilike' if ilike else '='
+
+        domain = [("name", comparator, stage_name)]
+        if stage_type:
+            domain.append(("recruitment_type", "in", [stage_type, "both"]))
+
+        stage = self.env["hr.recruitment.stage"].sudo().search(domain, limit=1)
+        if stage:
+            return stage
+
+        return self.env["hr.recruitment.stage"].sudo().search([
+            ("name", comparator, stage_name),
+        ], limit=1)
+
+    def action_apply_interview_evaluation_result(self):
+        self.ensure_one()
+        evaluation = self.interview_evaluation_id
+        if not evaluation or evaluation.state != 'done':
+            raise exceptions.UserError("Phiếu đánh giá Interview chưa hoàn thành!")
+
+        if evaluation.stage_applied:
+            return True
+
+        if evaluation.result == 'pass':
+            target_stage = self._find_interview_target_stage('OJE')
+            if not target_stage:
+                target_stage = self._find_interview_target_stage('OJE', ilike=True)
+
+            if not target_stage:
+                raise exceptions.UserError("Không tìm thấy Stage 'OJE'!")
+
+            self.write({
+                'stage_id': target_stage.id,
+                'interview_fail_reason': False,
+            })
+        else:
+            target_stage = self._find_interview_target_stage('Reject', ilike=True)
+            if not target_stage:
+                raise exceptions.UserError("Không tìm thấy Stage 'Reject'!")
+
+            self.write({
+                'stage_id': target_stage.id,
+                'document_approval_status': 'refused',
+                'interview_fail_reason': self._build_interview_fail_reason(evaluation),
+            })
+
+        evaluation.sudo().write({'stage_applied': True})
+        return True
 
     # ==================== OJE EVALUATION ACTIONS ====================
 

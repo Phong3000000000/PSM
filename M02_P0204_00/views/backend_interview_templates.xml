@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="backend_interview_internal_page" name="Backend Interview Internal Page">
+        <t t-call="website.layout">
+            <div class="container oje-backend-page interview-backend-page py-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="mb-0">Pass Interview Evaluation</h2>
+                    <a href="/web" class="btn btn-outline-secondary">Quay lai Backend</a>
+                </div>
+
+                <div class="alert alert-success" role="alert" t-if="success_message">
+                    <t t-esc="success_message"/>
+                </div>
+                <div class="alert alert-danger" role="alert" t-if="error_message">
+                    <t t-esc="error_message"/>
+                </div>
+
+                <t t-if="evaluation">
+                    <t t-call="M02_P0204_00.backend_interview_form"/>
+                </t>
+            </div>
+        </t>
+    </template>
+
+    <template id="backend_interview_form" name="Backend Interview Form">
+        <form t-att-action="'/recruitment/interview/internal/%s/submit' % evaluation.id"
+              method="post"
+              class="interview-form"
+              data-interview-mode="edit">
+            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+            <div class="card mb-3">
+                <div class="card-body interview-sheet">
+                    <div class="interview-sheet-head mb-2">
+                        <div class="interview-brand-left">
+                            <strong><t t-esc="evaluation.applicant_id.company_id.name or 'Company'"/></strong>
+                        </div>
+                        <div class="interview-title">INTERVIEW EVALUATION</div>
+                        <div class="interview-brand-right">
+                            <strong><t t-esc="evaluation.job_id.company_id.name or evaluation.applicant_id.company_id.name or 'Brand'"/></strong>
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered interview-info-table mb-0">
+                        <tbody>
+                            <tr>
+                                <th style="width: 180px;">Candidate Name</th>
+                                <td><t t-esc="evaluation.applicant_id.partner_name or evaluation.applicant_id.name or ''"/></td>
+                            </tr>
+                            <tr>
+                                <th>Position</th>
+                                <td><t t-esc="evaluation.job_id.name or ''"/></td>
+                            </tr>
+                            <tr>
+                                <th>Interview Date</th>
+                                <td>
+                                    <input type="date"
+                                           name="interview_date"
+                                           class="form-control oje-line-input"
+                                           t-att-value="evaluation.interview_date or ''"
+                                           t-att-disabled="'disabled' if is_readonly else None"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Interviewer</th>
+                                <td>
+                                    <input type="text"
+                                           name="interviewer_name"
+                                           class="form-control oje-line-input"
+                                           t-att-value="evaluation.interviewer_name or evaluation.evaluator_user_id.name or ''"
+                                           t-att-disabled="'disabled' if is_readonly else None"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <table class="table table-bordered interview-main-table mb-0">
+                        <colgroup>
+                            <col class="interview-col-group"/>
+                            <col class="interview-col-question"/>
+                            <col class="interview-col-score"/>
+                            <col class="interview-col-score"/>
+                            <col class="interview-col-score"/>
+                            <col class="interview-col-score"/>
+                            <col class="interview-col-score"/>
+                            <col class="interview-col-note"/>
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th colspan="2">&#160;</th>
+                                <th class="text-center score-col score-1">1</th>
+                                <th class="text-center score-col score-2">2</th>
+                                <th class="text-center score-col score-3">3</th>
+                                <th class="text-center score-col score-4">4</th>
+                                <th class="text-center score-col score-5">5</th>
+                                <th>Notes to support your selection</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="prepared_sections" t-as="section">
+                                <tr class="interview-section-row">
+                                    <td class="interview-section-title" colspan="8"><t t-esc="section['name']"/></td>
+                                </tr>
+
+                                <t t-foreach="section['rows']" t-as="line">
+                                    <tr t-att-class="'interview-row-' + (line['display_type'] or 'question')">
+                                        <t t-if="line['display_type'] == 'question'">
+                                            <t t-if="line['skillset_group']">
+                                                <t t-if="line['skillset_show_left']">
+                                                    <td class="interview-skillset-group" t-att-rowspan="line['skillset_rowspan']">
+                                                        <t t-esc="line['skillset_left']"/>
+                                                    </td>
+                                                </t>
+                                                <td class="interview-skillset-question">
+                                                    <t t-esc="line['skillset_right']"/>
+                                                </td>
+                                            </t>
+                                            <t t-else="">
+                                                <td colspan="2" class="interview-question-text">
+                                                    <t t-esc="line['question_text']"/>
+                                                </td>
+                                            </t>
+
+                                            <td class="text-center score-col"><input type="radio" t-att-name="'line_%s_score' % line['line_id']" value="1" t-att-checked="'checked' if line['selected_score'] == 1 else None" t-att-disabled="'disabled' if is_readonly else None"/></td>
+                                            <td class="text-center score-col"><input type="radio" t-att-name="'line_%s_score' % line['line_id']" value="2" t-att-checked="'checked' if line['selected_score'] == 2 else None" t-att-disabled="'disabled' if is_readonly else None"/></td>
+                                            <td class="text-center score-col"><input type="radio" t-att-name="'line_%s_score' % line['line_id']" value="3" t-att-checked="'checked' if line['selected_score'] == 3 else None" t-att-disabled="'disabled' if is_readonly else None"/></td>
+                                            <td class="text-center score-col"><input type="radio" t-att-name="'line_%s_score' % line['line_id']" value="4" t-att-checked="'checked' if line['selected_score'] == 4 else None" t-att-disabled="'disabled' if is_readonly else None"/></td>
+                                            <td class="text-center score-col"><input type="radio" t-att-name="'line_%s_score' % line['line_id']" value="5" t-att-checked="'checked' if line['selected_score'] == 5 else None" t-att-disabled="'disabled' if is_readonly else None"/></td>
+                                            <td>
+                                                <input type="text"
+                                                       class="form-control form-control-sm oje-line-input"
+                                                       t-att-name="'line_%s_comment' % line['line_id']"
+                                                       t-att-value="line['line_comment'] or ''"
+                                                       t-att-disabled="'disabled' if is_readonly else None"/>
+                                            </td>
+                                        </t>
+                                        <t t-else="">
+                                            <td colspan="2" class="interview-subheader-text">
+                                                <strong><t t-esc="line['label'] or line['question_text'] or ''"/></strong>
+                                            </td>
+                                            <td class="score-col"></td>
+                                            <td class="score-col"></td>
+                                            <td class="score-col"></td>
+                                            <td class="score-col"></td>
+                                            <td class="score-col"></td>
+                                            <td></td>
+                                        </t>
+                                    </tr>
+                                </t>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <table class="table table-bordered interview-summary-table mb-3">
+                        <colgroup>
+                            <col class="interview-col-group"/>
+                            <col class="interview-col-question"/>
+                            <col class="interview-col-score"/>
+                            <col class="interview-col-score"/>
+                            <col class="interview-col-score"/>
+                            <col class="interview-col-score"/>
+                            <col class="interview-col-score"/>
+                            <col class="interview-col-note"/>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th colspan="2">Score totals</th>
+                                <td class="text-center"><input id="interview_count_1" type="text" readonly="readonly" class="form-control form-control-sm text-center" t-att-value="(evaluation.score_1_count or 0) * 1"/></td>
+                                <td class="text-center"><input id="interview_count_2" type="text" readonly="readonly" class="form-control form-control-sm text-center" t-att-value="(evaluation.score_2_count or 0) * 2"/></td>
+                                <td class="text-center"><input id="interview_count_3" type="text" readonly="readonly" class="form-control form-control-sm text-center" t-att-value="(evaluation.score_3_count or 0) * 3"/></td>
+                                <td class="text-center"><input id="interview_count_4" type="text" readonly="readonly" class="form-control form-control-sm text-center" t-att-value="(evaluation.score_4_count or 0) * 4"/></td>
+                                <td class="text-center"><input id="interview_count_5" type="text" readonly="readonly" class="form-control form-control-sm text-center" t-att-value="(evaluation.score_5_count or 0) * 5"/></td>
+                                <td class="text-end"><strong>Count</strong>: <span id="interview_weighted_total"><t t-esc="evaluation.rated_line_count or 0"/></span></td>
+                            </tr>
+                            <tr>
+                                <th colspan="2">Final Score</th>
+                                <td colspan="5"><input id="interview_final_score" type="text" readonly="readonly" class="form-control form-control-sm" t-att-value="'%.2f' % (evaluation.final_score or 0.0)"/></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th colspan="2">Final Result</th>
+                                <td colspan="5"><input id="interview_final_result" type="text" readonly="readonly" class="form-control form-control-sm" t-att-value="(evaluation.result or 'reject').upper()"/></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th colspan="2">Onboard Time</th>
+                                <td colspan="6">
+                                    <input type="text"
+                                           name="onboard_time"
+                                           class="form-control oje-line-input"
+                                           t-att-value="evaluation.onboard_time or ''"
+                                           t-att-disabled="'disabled' if is_readonly else None"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Overall note</label>
+                        <textarea name="overall_note" class="form-control" rows="3" t-att-disabled="'disabled' if is_readonly else None"><t t-esc="evaluation.overall_note or ''"/></textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a t-att-href="'/recruitment/interview/internal/%s' % evaluation.id" class="btn btn-secondary">Lam moi</a>
+                        <button type="submit" class="btn btn-primary" t-if="not is_readonly">Nop ket qua Interview</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </template>
+
+    <template id="backend_interview_preview_page" name="Backend Interview Preview Page">
+        <t t-call="website.layout">
+            <div class="container oje-backend-page interview-backend-page py-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="mb-0"><t t-esc="preview_title"/></h2>
+                    <a t-att-href="back_url" class="btn btn-outline-secondary">Quay lai cau hinh</a>
+                </div>
+
+                <div class="alert alert-info" role="alert">
+                    Day la man hinh xem truoc Interview form theo cau hinh hien tai. Preview la read-only va khong luu du lieu.
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-body interview-sheet preview-sheet">
+                        <div class="interview-sheet-head mb-2">
+                            <div class="interview-brand-left"><strong>Company</strong></div>
+                            <div class="interview-title">INTERVIEW EVALUATION (PREVIEW)</div>
+                            <div class="interview-brand-right"><strong>Brand</strong></div>
+                        </div>
+
+                        <table class="table table-bordered interview-info-table mb-0">
+                            <tbody>
+                                <tr><th style="width: 180px;">Candidate Name</th><td>Candidate Preview</td></tr>
+                                <tr><th>Position</th><td>Store Management Position</td></tr>
+                                <tr><th>Interview Date</th><td><input type="date" class="form-control oje-line-input" disabled="disabled"/></td></tr>
+                                <tr><th>Interviewer</th><td><input type="text" class="form-control oje-line-input" value="Interviewer Preview" disabled="disabled"/></td></tr>
+                            </tbody>
+                        </table>
+
+                        <div t-if="preview_intro_html" class="mb-2" t-raw="preview_intro_html"/>
+
+                        <table class="table table-bordered interview-main-table mb-0">
+                            <colgroup>
+                                <col class="interview-col-group"/>
+                                <col class="interview-col-question"/>
+                                <col class="interview-col-score"/>
+                                <col class="interview-col-score"/>
+                                <col class="interview-col-score"/>
+                                <col class="interview-col-score"/>
+                                <col class="interview-col-score"/>
+                                <col class="interview-col-note"/>
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th colspan="2">&#160;</th>
+                                    <th class="text-center score-col score-1">1</th>
+                                    <th class="text-center score-col score-2">2</th>
+                                    <th class="text-center score-col score-3">3</th>
+                                    <th class="text-center score-col score-4">4</th>
+                                    <th class="text-center score-col score-5">5</th>
+                                    <th>Notes to support your selection</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="prepared_sections" t-as="section">
+                                    <tr class="interview-section-row">
+                                        <td class="interview-section-title" colspan="8"><t t-esc="section['name']"/></td>
+                                    </tr>
+
+                                    <t t-foreach="section['rows']" t-as="line">
+                                        <tr t-att-class="'interview-row-' + (line['display_type'] or 'question')">
+                                            <t t-if="line['display_type'] == 'question'">
+                                                <t t-if="line['skillset_group']">
+                                                    <t t-if="line['skillset_show_left']">
+                                                        <td class="interview-skillset-group" t-att-rowspan="line['skillset_rowspan']">
+                                                            <t t-esc="line['skillset_left']"/>
+                                                        </td>
+                                                    </t>
+                                                    <td class="interview-skillset-question">
+                                                        <t t-esc="line['skillset_right']"/>
+                                                    </td>
+                                                </t>
+                                                <t t-else="">
+                                                    <td colspan="2" class="interview-question-text">
+                                                        <t t-esc="line['question_text']"/>
+                                                    </td>
+                                                </t>
+
+                                                <td class="text-center score-col"><input type="radio" disabled="disabled"/></td>
+                                                <td class="text-center score-col"><input type="radio" disabled="disabled"/></td>
+                                                <td class="text-center score-col"><input type="radio" disabled="disabled"/></td>
+                                                <td class="text-center score-col"><input type="radio" disabled="disabled"/></td>
+                                                <td class="text-center score-col"><input type="radio" disabled="disabled"/></td>
+                                                <td><input type="text" class="form-control form-control-sm oje-line-input" disabled="disabled"/></td>
+                                            </t>
+                                            <t t-else="">
+                                                <td colspan="2" class="interview-subheader-text">
+                                                    <strong><t t-esc="line['label'] or line['question_text'] or ''"/></strong>
+                                                </td>
+                                                <td class="score-col"></td>
+                                                <td class="score-col"></td>
+                                                <td class="score-col"></td>
+                                                <td class="score-col"></td>
+                                                <td class="score-col"></td>
+                                                <td></td>
+                                            </t>
+                                        </tr>
+                                    </t>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <table class="table table-bordered interview-summary-table mb-3">
+                            <colgroup>
+                                <col class="interview-col-group"/>
+                                <col class="interview-col-question"/>
+                                <col class="interview-col-score"/>
+                                <col class="interview-col-score"/>
+                                <col class="interview-col-score"/>
+                                <col class="interview-col-score"/>
+                                <col class="interview-col-score"/>
+                                <col class="interview-col-note"/>
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <th colspan="2">Score totals</th>
+                                    <td class="text-center"><input type="text" readonly="readonly" class="form-control form-control-sm text-center" value="0"/></td>
+                                    <td class="text-center"><input type="text" readonly="readonly" class="form-control form-control-sm text-center" value="0"/></td>
+                                    <td class="text-center"><input type="text" readonly="readonly" class="form-control form-control-sm text-center" value="0"/></td>
+                                    <td class="text-center"><input type="text" readonly="readonly" class="form-control form-control-sm text-center" value="0"/></td>
+                                    <td class="text-center"><input type="text" readonly="readonly" class="form-control form-control-sm text-center" value="0"/></td>
+                                    <td class="text-end"><strong>Count</strong>: 0</td>
+                                </tr>
+                                <tr>
+                                    <th colspan="2">Final Score</th>
+                                    <td colspan="5"><input type="text" readonly="readonly" class="form-control form-control-sm" value="0.00"/></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th colspan="2">Final Result</th>
+                                    <td colspan="5"><input type="text" readonly="readonly" class="form-control form-control-sm" value="REJECT"/></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th colspan="2">Onboard Time</th>
+                                    <td colspan="6"><input type="text" class="form-control oje-line-input" value="" disabled="disabled"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Overall note</label>
+                            <textarea class="form-control" rows="3" disabled="disabled"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

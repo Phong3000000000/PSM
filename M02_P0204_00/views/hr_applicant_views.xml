@@ -69,17 +69,26 @@
                         class="btn-info"
                         invisible="current_stage_name != 'Interview' or survey_state != 'done'"
                         icon="fa-link"/>
+
+                <button name="action_open_backend_interview_evaluation"
+                    string="Pass Interview"
+                    type="object"
+                    class="btn-primary"
+                    invisible="not can_backend_evaluate_interview"
+                    icon="fa-check-square-o"/>
                 
                 <!-- Chấp nhận PV: Interview → OJE -->
                 <button name="action_accept_interview"
                         string="Chấp nhận PV"
                         type="object"
                         class="btn-success"
-                        invisible="current_stage_name != 'Interview'"
+                    invisible="current_stage_name != 'Interview' or (recruitment_type == 'store' and position_level == 'management')"
                         icon="fa-check"/>
                 <field name="interview_invitation_sent" invisible="1"/>
                 <field name="current_stage_name" invisible="1"/>
               <field name="interview_confirmation_state" invisible="1"/>
+                <field name="interview_evaluation_id" invisible="1"/>
+                <field name="can_backend_evaluate_interview" invisible="1"/>
 
                 <!-- Chấp nhận button cho Offer (Management) -->
                 <button name="action_accept_stage" 
@@ -102,7 +111,7 @@
                 <!-- Các nút OJE đã được đưa vào Tab Đánh giá OJE và tự động hóa qua Portal -->
             </xpath>
 
-            <xpath expr="//header/button[@name='archive_applicant']" position="after">
+            <xpath expr="//header/button[@name='action_talent_pool_add_applicants']" position="after">
                 <button name="action_open_backend_oje_evaluation"
                         string="Pass OJE"
                         type="object"
@@ -163,6 +172,14 @@
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_text"><field name="oje_display_result"/></span>
                         <span class="o_stat_value"><field name="oje_display_text" readonly="1"/></span>
+                    </div>
+                </button>
+                <button name="action_open_interview_results"
+                        class="oe_stat_button" icon="fa-id-card-o"
+                        type="object" invisible="not interview_evaluation_id">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text"><field name="interview_display_result"/></span>
+                        <span class="o_stat_value"><field name="interview_display_text" readonly="1"/></span>
                     </div>
                 </button>
             </xpath>
@@ -241,6 +258,29 @@
                                    readonly="1"
                                    string="Trạng thái đặt lịch"/>
                         </group>
+                    </group>
+                </page>
+                <page string="Đánh giá Interview"
+                      name="interview_details"
+                      invisible="recruitment_type != 'store' or position_level != 'management'">
+                    <field name="can_backend_evaluate_interview" invisible="1"/>
+
+                    <group>
+                        <group string="Kết quả Interview">
+                            <field name="interview_evaluation_id" readonly="1"/>
+                            <field name="interview_evaluation_state"/>
+                            <field name="interview_result"/>
+                            <field name="interview_final_score"/>
+                        </group>
+                        <group string="Người đánh giá">
+                            <field name="interview_evaluator_user_id"/>
+                            <field name="interview_evaluated_by"/>
+                            <field name="interview_evaluated_at"/>
+                        </group>
+                    </group>
+
+                    <group string="Lý do không đạt" invisible="interview_result != 'reject'">
+                        <field name="interview_fail_reason" nolabel="1"/>
                     </group>
                 </page>
                 <page string="Đánh giá OJE" name="oje_details">

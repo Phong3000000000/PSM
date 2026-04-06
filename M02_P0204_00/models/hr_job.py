@@ -30,6 +30,7 @@ class HrJob(models.Model):
         Applies defaults for:
         - Application form fields
         - OJE template (store jobs only)
+        - Interview template (store + management only)
         - Refuse reasons
         - Email rules
         """
@@ -58,6 +59,12 @@ class HrJob(models.Model):
             except Exception as err:
                 _logger.warning('[JOB_BOOTSTRAP] Cannot load default OJE template for job %s: %s', job.id, err)
 
+            try:
+                if job._is_interview_template_supported() and not job.interview_config_section_ids:
+                    job.action_load_default_interview_template()
+            except Exception as err:
+                _logger.warning('[JOB_BOOTSTRAP] Cannot load default Interview template for job %s: %s', job.id, err)
+
     def write(self, vals):
         vals = dict(vals)
         scope_key_changed = any(k in vals for k in ('recruitment_type', 'position_level'))
@@ -72,6 +79,8 @@ class HrJob(models.Model):
         if scope_key_changed:
             for rec in self:
                 rec._archive_oje_master_records_other_scopes(rec._get_oje_template_scope())
+                if not rec._is_interview_template_supported():
+                    rec._archive_interview_master_records()
 
         return res
 
@@ -493,6 +502,199 @@ class HrJob(models.Model):
             line_archived += len(stale_scope_lines)
 
         self._archive_oje_master_records_other_scopes(scope)
+
+        return {
+            'section_created': section_created,
+            'section_updated': section_updated,
+            'section_archived': section_archived,
+            'line_created': line_created,
+            'line_updated': line_updated,
+            'line_archived': line_archived,
+        }
+
+    # ==================== INTERVIEW CONFIGURATION ====================
+
+    interview_evaluator_user_id = fields.Many2one(
+        'res.users',
+        string='Người đánh giá Interview',
+        help='User chịu trách nhiệm đánh giá Interview cho ứng viên Store + Management.',
+    )
+    interview_config_section_ids = fields.One2many(
+        'hr.job.interview.config.section',
+        'job_id',
+        string='Cấu hình Section Interview',
+    )
+    interview_config_line_ids = fields.One2many(
+        'hr.job.interview.config.line',
+        'job_id',
+        string='Cấu hình câu hỏi Interview',
+    )
+
+    def _is_interview_template_supported(self):
+        self.ensure_one()
+        return bool(self.recruitment_type == 'store' and self.position_level == 'management')
+
+    def _archive_interview_master_records(self):
+        self.ensure_one()
+
+        stale_sections = self.interview_config_section_ids.filtered(
+            lambda section: section.is_from_master and section.is_active
+        )
+        if stale_sections:
+            stale_sections.write({'is_active': False})
+
+        stale_lines = self.interview_config_line_ids.filtered(
+            lambda line: line.is_from_master and line.is_active
+        )
+        if stale_lines:
+            stale_lines.write({'is_active': False})
+
+    def _get_interview_config_signature(self):
+        self.ensure_one()
+
+        section_payloads = []
+        active_sections = self.interview_config_section_ids.filtered('is_active').sorted('sequence')
+        for section in active_sections:
+            line_payloads = []
+            active_lines = section.line_ids.filtered('is_active').sorted('sequence')
+            for line in active_lines:
+                line_payloads.append({
+                    'id': line.id,
+                    'sequence': line.sequence,
+                    'display_type': line.display_type,
+                    'label': line.label,
+                    'question_text': line.question_text,
+                    'is_required': line.is_required,
+                    'is_active': line.is_active,
+                    'source_template_line_id': line.source_template_line_id.id,
+                })
+
+            section_payloads.append({
+                'id': section.id,
+                'name': section.name,
+                'sequence': section.sequence,
+                'is_active': section.is_active,
+                'source_template_section_id': section.source_template_section_id.id,
+                'lines': line_payloads,
+            })
+
+        return json.dumps(section_payloads, sort_keys=True, ensure_ascii=False)
+
+    def action_preview_interview_form(self):
+        self.ensure_one()
+        if not self._is_interview_template_supported():
+            raise exceptions.UserError(_('Chỉ hỗ trợ preview Interview cho job Store + Management.'))
+        return {
+            'type': 'ir.actions.act_url',
+            'name': _('Preview Interview Form'),
+            'url': f'/recruitment/interview/job-preview/{self.id}',
+            'target': 'new',
+        }
+
+    def action_load_default_interview_template(self):
+        self.ensure_one()
+        if not self._is_interview_template_supported():
+            raise exceptions.UserError(_('Chỉ hỗ trợ tải mẫu Interview cho job Store + Management.'))
+
+        template = self.env['recruitment.interview.template'].search([
+            ('active', '=', True),
+        ], limit=1)
+        if not template:
+            raise exceptions.UserError(_('Chưa có mẫu Interview mặc định active.'))
+
+        stats = self._sync_default_interview_template(template)
+        message = (
+            f"Template: {template.name} | "
+            f"Section tạo mới {stats['section_created']}, cập nhật {stats['section_updated']}, archive {stats['section_archived']} | "
+            f"Line tạo mới {stats['line_created']}, cập nhật {stats['line_updated']}, archive {stats['line_archived']}"
+        )
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Đồng bộ Interview thành công',
+                'message': message,
+                'type': 'success',
+                'sticky': False,
+            },
+        }
+
+    def _sync_default_interview_template(self, template):
+        self.ensure_one()
+
+        section_created = section_updated = section_archived = 0
+        line_created = line_updated = line_archived = 0
+
+        existing_sections = self.interview_config_section_ids.filtered(
+            lambda section: section.is_from_master and section.source_template_section_id
+        )
+        section_map = {section.source_template_section_id.id: section for section in existing_sections}
+
+        kept_section_ids = set()
+        kept_line_ids = set()
+
+        active_template_sections = template.section_ids.filtered('is_active').sorted('sequence')
+        for template_section in active_template_sections:
+            section_vals = {
+                'job_id': self.id,
+                'name': template_section.name,
+                'sequence': template_section.sequence,
+                'is_active': True,
+                'is_from_master': True,
+                'source_template_section_id': template_section.id,
+            }
+
+            section = section_map.get(template_section.id)
+            if section:
+                section.write(section_vals)
+                section_updated += 1
+            else:
+                section = self.env['hr.job.interview.config.section'].create(section_vals)
+                section_created += 1
+
+            kept_section_ids.add(section.id)
+
+            existing_lines = section.line_ids.filtered(
+                lambda line: line.is_from_master and line.source_template_line_id
+            )
+            line_map = {line.source_template_line_id.id: line for line in existing_lines}
+
+            for template_line in template_section.line_ids.filtered('is_active').sorted('sequence'):
+                line_vals = {
+                    'job_id': self.id,
+                    'section_id': section.id,
+                    'sequence': template_line.sequence,
+                    'display_type': template_line.display_type,
+                    'label': template_line.label,
+                    'question_text': template_line.question_text,
+                    'is_required': template_line.is_required,
+                    'is_active': True,
+                    'is_from_master': True,
+                    'source_template_line_id': template_line.id,
+                }
+
+                line = line_map.get(template_line.id)
+                if line:
+                    line.write(line_vals)
+                    line_updated += 1
+                else:
+                    line = self.env['hr.job.interview.config.line'].create(line_vals)
+                    line_created += 1
+
+                kept_line_ids.add(line.id)
+
+        stale_sections = existing_sections.filtered(lambda section: section.id not in kept_section_ids and section.is_active)
+        if stale_sections:
+            stale_sections.write({'is_active': False})
+            section_archived += len(stale_sections)
+
+        stale_lines = self.interview_config_line_ids.filtered(
+            lambda line: line.is_from_master and line.id not in kept_line_ids and line.is_active
+        )
+        if stale_lines:
+            stale_lines.write({'is_active': False})
+            line_archived += len(stale_lines)
 
         return {
             'section_created': section_created,

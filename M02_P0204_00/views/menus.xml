@@ -39,4 +39,12 @@
         action="action_recruitment_oje_template"
         sequence="35"
         groups="hr_recruitment.group_hr_recruitment_manager"/>
+
+    <menuitem
+        id="menu_recruitment_interview_template"
+        name="Mẫu Interview mặc định"
+        parent="hr_recruitment.menu_hr_recruitment_configuration"
+        action="action_recruitment_interview_template"
+        sequence="36"
+        groups="hr_recruitment.group_hr_recruitment_manager"/>
 </odoo>

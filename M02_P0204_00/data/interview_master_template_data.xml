@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="interview_template_store_management" model="recruitment.interview.template">
+        <field name="name">Store Management - Interview Evaluation</field>
+        <field name="version">1.0</field>
+        <field name="active">True</field>
+        <field name="intro_html"><![CDATA[
+            <p>Use this interview evaluation form for Store Management candidates. Each question line must be rated from 1 to 5.</p>
+        ]]></field>
+    </record>
+
+    <record id="interview_template_section_functional" model="recruitment.interview.template.section">
+        <field name="template_id" ref="M02_P0204_00.interview_template_store_management"/>
+        <field name="name">A. FUNTIONAL SKILLS</field>
+        <field name="sequence">10</field>
+        <field name="is_active">True</field>
+    </record>
+
+    <record id="interview_template_line_functional_sub_1" model="recruitment.interview.template.line">
+        <field name="section_id" ref="M02_P0204_00.interview_template_section_functional"/>
+        <field name="sequence">10</field>
+        <field name="display_type">subheader</field>
+        <field name="label">1. Candidate Fit scale:</field>
+        <field name="is_active">True</field>
+        <field name="is_required">False</field>
+    </record>
+    <record id="interview_template_line_functional_q_1" model="recruitment.interview.template.line">
+        <field name="section_id" ref="M02_P0204_00.interview_template_section_functional"/>
+        <field name="sequence">20</field>
+        <field name="display_type">question</field>
+        <field name="question_text">Sales</field>
+        <field name="is_active">True</field>
+        <field name="is_required">True</field>
+    </record>
+    <record id="interview_template_line_functional_q_2" model="recruitment.interview.template.line">
+        <field name="section_id" ref="M02_P0204_00.interview_template_section_functional"/>
+        <field name="sequence">30</field>
+        <field name="display_type">question</field>
+        <field name="question_text">QSC</field>
+        <field name="is_active">True</field>
+        <field name="is_required">True</field>
+    </record>
+    <record id="interview_template_line_functional_q_3" model="recruitment.interview.template.line">
+        <field name="section_id" ref="M02_P0204_00.interview_template_section_functional"/>
+        <field name="sequence">40</field>
+        <field name="display_type">question</field>
+        <field name="question_text">People Management</field>
+        <field name="is_active">True</field>
+        <field name="is_required">True</field>
+    </record>
+    <record id="interview_template_line_functional_q_4" model="recruitment.interview.template.line">
+        <field name="section_id" ref="M02_P0204_00.interview_template_section_functional"/>
+        <field name="sequence">50</field>
+        <field name="display_type">question</field>
+        <field name="question_text">Profit</field>
+        <field name="is_active">True</field>
+        <field name="is_required">True</field>
+    </record>
+
+    <record id="interview_template_line_functional_sub_2" model="recruitment.interview.template.line">
+        <field name="section_id" ref="M02_P0204_00.interview_template_section_functional"/>
+        <field name="sequence">60</field>
+        <field name="display_type">subheader</field>
+        <field name="label">2. Skillset:</field>
+        <field name="is_active">True</field>
+        <field name="is_required">False</field>
+    </record>
+    <record id="interview_template_line_functional_q_5" model="recruitment.interview.template.line">
+        <field name="section_id" ref="M02_P0204_00.interview_template_section_functional"/>
+        <field name="sequence">70</field>
+        <field name="display_type">question</field>
+        <field name="question_text">Technical/Hard skills - Inventory Management</field>
+        <field name="is_active">True</field>
+        <field name="is_required">True</field>
+    </record>
+    <record id="interview_template_line_functional_q_6" model="recruitment.interview.template.line">
+        <field name="section_id" ref="M02_P0204_00.interview_template_section_functional"/>
+        <field name="sequence">80</field>
+        <field name="display_type">question</field>
+        <field name="question_text">Technical/Hard skills - System usage</field>
+        <field name="is_active">True</field>
+        <field name="is_required">True</field>
+    </record>
+
+    <record id="interview_template_section_leadership" model="recruitment.interview.template.section">
+        <field name="template_id" ref="M02_P0204_00.interview_template_store_management"/>
+        <field name="name">B. BEST LEADERSHIP</field>
+        <field name="sequence">20</field>
+        <field name="is_active">True</field>
+    </record>
+
+    <record id="interview_template_line_leadership_q_1" model="recruitment.interview.template.line">
+        <field name="section_id" ref="M02_P0204_00.interview_template_section_leadership"/>
+        <field name="sequence">10</field>
+        <field name="display_type">question</field>
+        <field name="question_text">Background &amp; Values (Culture fit Qs)</field>
+        <field name="is_active">True</field>
+        <field name="is_required">True</field>
+    </record>
+    <record id="interview_template_line_leadership_q_2" model="recruitment.interview.template.line">
+        <field name="section_id" ref="M02_P0204_00.interview_template_section_leadership"/>
+        <field name="sequence">20</field>
+        <field name="display_type">question</field>
+        <field name="question_text">Building Block</field>
+        <field name="is_active">True</field>
+        <field name="is_required">True</field>
+    </record>
+    <record id="interview_template_line_leadership_q_3" model="recruitment.interview.template.line">
+        <field name="section_id" ref="M02_P0204_00.interview_template_section_leadership"/>
+        <field name="sequence">30</field>
+        <field name="display_type">question</field>
+        <field name="question_text">Execution</field>
+        <field name="is_active">True</field>
+        <field name="is_required">True</field>
+    </record>
+    <record id="interview_template_line_leadership_q_4" model="recruitment.interview.template.line">
+        <field name="section_id" ref="M02_P0204_00.interview_template_section_leadership"/>
+        <field name="sequence">40</field>
+        <field name="display_type">question</field>
+        <field name="question_text">Strategy</field>
+        <field name="is_active">True</field>
+        <field name="is_required">True</field>
+    </record>
+    <record id="interview_template_line_leadership_q_5" model="recruitment.interview.template.line">
+        <field name="section_id" ref="M02_P0204_00.interview_template_section_leadership"/>
+        <field name="sequence">50</field>
+        <field name="display_type">question</field>
+        <field name="question_text">Talent</field>
+        <field name="is_active">True</field>
+        <field name="is_required">True</field>
+    </record>
+
+    <record id="interview_template_section_overall" model="recruitment.interview.template.section">
+        <field name="template_id" ref="M02_P0204_00.interview_template_store_management"/>
+        <field name="name">OVERALL</field>
+        <field name="sequence">30</field>
+        <field name="is_active">True</field>
+    </record>
+    <record id="interview_template_line_overall_q_1" model="recruitment.interview.template.line">
+        <field name="section_id" ref="M02_P0204_00.interview_template_section_overall"/>
+        <field name="sequence">10</field>
+        <field name="display_type">question</field>
+        <field name="question_text">What was your overall impression of the candidate?</field>
+        <field name="is_active">True</field>
+        <field name="is_required">True</field>
+    </record>
+</odoo>
