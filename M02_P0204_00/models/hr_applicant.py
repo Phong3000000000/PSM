@@ -8,10 +8,13 @@ from odoo import models, fields, api, exceptions, _, SUPERUSER_ID
 from odoo.exceptions import AccessError
 from odoo.modules.registry import Registry
 from datetime import timedelta
+import json
+import html
 import re
 import logging
 import base64
 import threading
+import unicodedata
 
 _logger = logging.getLogger(__name__)
 
@@ -149,7 +152,10 @@ class HrApplicant(models.Model):
     pre_interview_survey_id = fields.Many2one(
         "survey.survey",
         string="Khảo Sát",
-        domain=[("is_pre_interview", "=", True)],
+        domain=[
+            ("x_psm_survey_usage", "=", "pre_interview"),
+            ("x_psm_0204_is_runtime_isolated_copy", "=", False),
+        ],
         help="Khảo sát trước phỏng vấn gửi cho ứng viên",
     )
 
@@ -195,25 +201,194 @@ class HrApplicant(models.Model):
 
     # ==================== APPLICATION MATCH RESULT (NEW) ====================
     application_match_result = fields.Selection([
-        ('passed', 'Đạt yêu cầu'),
-        ('failed', 'Cần xem xét')
-    ], string="Kết quả biểu mẫu", compute="_compute_application_match_result", store=True)
+        ('passed', 'Đạt'),
+        ('review', 'Cần xem xét'),
+        ('reject', 'Reject ngay'),
+    ], string="Kết quả biểu mẫu", compute="_compute_application_match_result", store=False)
 
-    failed_mandatory_questions = fields.Html(string="Sai câu bắt buộc (Thông tin chung)", readonly=True)
-    
-    application_answer_line_ids = fields.One2many(
-        'hr.applicant.application.answer.line', 'applicant_id',
-        string='Lịch sử trả lời biểu mẫu', readonly=True
+    application_form_review_payload = fields.Text(
+        string="Chi tiết biểu mẫu ứng tuyển (JSON)",
+        copy=False,
+        readonly=True,
     )
 
-    @api.depends('failed_mandatory_questions')
+    application_form_review_html = fields.Html(
+        string="Chi tiết biểu mẫu ứng tuyển",
+        compute="_compute_application_form_review_html",
+        sanitize=False,
+    )
+
+    failed_mandatory_questions = fields.Html(string="Sai câu bắt buộc (Thông tin chung)", readonly=True)
+
+    def _x_psm_normalize_plain_text(self, value):
+        value = value or ''
+        value = unicodedata.normalize('NFD', value)
+        value = ''.join(ch for ch in value if unicodedata.category(ch) != 'Mn')
+        value = value.lower()
+        return re.sub(r'[^a-z0-9]+', ' ', value).strip()
+
+    def _x_psm_parse_application_form_review_payload(self):
+        self.ensure_one()
+        raw_payload = (self.application_form_review_payload or '').strip()
+        if not raw_payload:
+            return {}
+
+        try:
+            payload = json.loads(raw_payload)
+        except Exception as error_exc:
+            _logger.warning(
+                "[APPLICATION_FORM_REVIEW] Cannot parse payload for applicant %s: %s",
+                self.id,
+                error_exc,
+            )
+            return {}
+
+        if isinstance(payload, list):
+            return {'version': 1, 'lines': payload}
+        if isinstance(payload, dict):
+            return payload
+        return {}
+
+    def _x_psm_resolve_review_line_result(self, review_line):
+        if not isinstance(review_line, dict):
+            return 'passed'
+
+        result = review_line.get('result')
+        if result in ('passed', 'review', 'reject'):
+            return result
+
+        if review_line.get('is_correct') is False:
+            return 'reject' if review_line.get('reject_when_wrong') else 'review'
+        return 'passed'
+
+    @api.depends('application_form_review_payload', 'failed_mandatory_questions')
     def _compute_application_match_result(self):
         for rec in self:
-            # Chỉ check lỗi từ biểu mẫu ứng tuyển (Master fields)
-            if rec.failed_mandatory_questions and '<ul>' in str(rec.failed_mandatory_questions):
-                rec.application_match_result = 'failed'
+            payload = rec._x_psm_parse_application_form_review_payload()
+            review_lines = payload.get('lines') if isinstance(payload, dict) else []
+
+            has_reject = any(rec._x_psm_resolve_review_line_result(line) == 'reject' for line in review_lines or [])
+            has_review = any(rec._x_psm_resolve_review_line_result(line) == 'review' for line in review_lines or [])
+
+            if has_reject:
+                rec.application_match_result = 'reject'
+                continue
+            if has_review:
+                rec.application_match_result = 'review'
+                continue
+
+            legacy_failed_html = str(rec.failed_mandatory_questions or '')
+            legacy_has_failed = bool(legacy_failed_html and '<ul>' in legacy_failed_html)
+            if legacy_has_failed:
+                normalized_legacy = rec._x_psm_normalize_plain_text(re.sub(r'<[^>]+>', ' ', legacy_failed_html))
+                if 'loai khi sai' in normalized_legacy or 'reject ngay' in normalized_legacy:
+                    rec.application_match_result = 'reject'
+                else:
+                    rec.application_match_result = 'review'
             else:
                 rec.application_match_result = 'passed'
+
+    @api.depends('application_form_review_payload', 'failed_mandatory_questions', 'application_match_result')
+    def _compute_application_form_review_html(self):
+        status_label_map = {
+            'passed': 'Đạt',
+            'review': 'Cần xem xét',
+            'reject': 'Reject ngay',
+        }
+        status_badge_class_map = {
+            'passed': 'badge bg-success',
+            'review': 'badge bg-warning text-dark',
+            'reject': 'badge bg-danger',
+        }
+
+        for rec in self:
+            payload = rec._x_psm_parse_application_form_review_payload()
+            review_lines = payload.get('lines') if isinstance(payload, dict) else []
+            review_lines = [line for line in (review_lines or []) if isinstance(line, dict)]
+
+            if not review_lines:
+                rec.application_form_review_html = (
+                    rec.failed_mandatory_questions
+                    or '<p class="text-muted mb-0">Chưa có dữ liệu rà soát tự động cho biểu mẫu ứng tuyển.</p>'
+                )
+                continue
+
+            passed_count = 0
+            review_count = 0
+            reject_count = 0
+            row_html_parts = []
+
+            for index, line in enumerate(review_lines, start=1):
+                line_result = rec._x_psm_resolve_review_line_result(line)
+                if line_result == 'passed':
+                    passed_count += 1
+                elif line_result == 'review':
+                    review_count += 1
+                elif line_result == 'reject':
+                    reject_count += 1
+
+                question_label = html.escape(str(line.get('question_label') or line.get('field_name') or _('Câu hỏi %s') % index))
+                selected_answer = html.escape(str(line.get('selected_answer') or '-'))
+
+                correct_answers = [
+                    str(answer)
+                    for answer in (line.get('correct_answers') or [])
+                    if answer not in (None, '')
+                ]
+                correct_answer_text = html.escape(', '.join(correct_answers) if correct_answers else '-')
+
+                rule_labels = []
+                if line.get('mandatory_correct'):
+                    rule_labels.append('Phải đúng')
+                if line.get('reject_when_wrong'):
+                    rule_labels.append('Loại khi sai')
+                rule_text = html.escape(', '.join(rule_labels) if rule_labels else '-')
+
+                status_label = html.escape(status_label_map.get(line_result, 'Đạt'))
+                status_badge_class = status_badge_class_map.get(line_result, 'badge bg-success')
+
+                row_html_parts.append(
+                    (
+                        '<tr>'
+                        f'<td class="text-center">{index}</td>'
+                        f'<td>{question_label}</td>'
+                        f'<td>{selected_answer}</td>'
+                        f'<td>{correct_answer_text}</td>'
+                        f'<td>{rule_text}</td>'
+                        f'<td class="text-center"><span class="{status_badge_class}">{status_label}</span></td>'
+                        '</tr>'
+                    )
+                )
+
+            summary_html = (
+                '<div class="d-flex flex-wrap gap-2 mb-3">'
+                f'<span class="badge bg-success">Đạt: {passed_count}</span>'
+                f'<span class="badge bg-warning text-dark">Cần xem xét: {review_count}</span>'
+                f'<span class="badge bg-danger">Reject ngay: {reject_count}</span>'
+                '</div>'
+            )
+
+            table_html = (
+                '<div class="table-responsive w-100">'
+                '<table class="table table-sm table-bordered align-middle mb-0 w-100">'
+                '<thead class="table-light">'
+                '<tr>'
+                '<th class="text-center" style="width: 56px;">#</th>'
+                '<th>Câu hỏi</th>'
+                '<th>Ứng viên trả lời</th>'
+                '<th>Đáp án đúng</th>'
+                '<th>Rule</th>'
+                '<th class="text-center" style="width: 130px;">Kết quả</th>'
+                '</tr>'
+                '</thead>'
+                '<tbody>'
+                + ''.join(row_html_parts)
+                + '</tbody>'
+                '</table>'
+                '</div>'
+            )
+
+            rec.application_form_review_html = summary_html + table_html
 
     def action_show_failed_questions(self):
         self.ensure_one()
@@ -309,46 +484,50 @@ class HrApplicant(models.Model):
 
     def _get_interview_snapshot_source(self):
         self.ensure_one()
-        job_active_sections = self.job_id.interview_config_section_ids.filtered('is_active').sorted('sequence')
+        interview_survey = self.job_id._x_psm_get_interview_survey() if hasattr(self.job_id, '_x_psm_get_interview_survey') else False
+        if not interview_survey:
+            raise exceptions.UserError(_("Job chưa cấu hình Survey Interview."))
 
-        template_version = False
-        master_section = job_active_sections.filtered(lambda section: section.source_template_section_id)[:1]
-        if master_section and master_section.source_template_section_id.template_id:
-            template_version = master_section.source_template_section_id.template_id.version
-        if not template_version:
-            template_version = '1.0'
+        snapshot_sections = self.job_id._x_psm_prepare_interview_snapshot_sections() if hasattr(self.job_id, '_x_psm_prepare_interview_snapshot_sections') else []
+        if not snapshot_sections:
+            raise exceptions.UserError(_("Survey Interview chưa có câu hỏi để sinh phiếu đánh giá."))
 
-        if hasattr(self.job_id, '_get_interview_config_signature'):
-            config_signature = self.job_id._get_interview_config_signature()
-        else:
-            config_signature = False
+        raw_version = interview_survey.write_date or interview_survey.create_date
+        template_version = fields.Datetime.to_string(raw_version) if raw_version else '1.0'
+        config_signature = self.job_id._get_interview_config_signature() if hasattr(self.job_id, '_get_interview_config_signature') else False
 
-        return template_version, config_signature, job_active_sections
+        return template_version, config_signature, snapshot_sections
 
-    def _populate_interview_evaluation_snapshot(self, evaluation, job_active_sections):
+    def _populate_interview_evaluation_snapshot(self, evaluation, snapshot_sections):
         self.ensure_one()
         line_vals = []
 
-        for config_section in job_active_sections:
+        for section_data in snapshot_sections:
             eval_section = self.env['hr.applicant.interview.evaluation.section'].create({
                 'evaluation_id': evaluation.id,
-                'source_config_section_id': config_section.id,
-                'sequence': config_section.sequence,
-                'name': config_section.name,
-                'is_active': config_section.is_active,
+                'source_config_section_id': section_data.get('source_question_id') or False,
+                'sequence': section_data.get('sequence', 10),
+                'name': section_data.get('name') or _('Interview Section'),
+                'is_active': section_data.get('is_active', True),
             })
 
-            for config_line in config_section.line_ids.filtered('is_active').sorted('sequence'):
+            for line_data in section_data.get('lines', []):
+                display_type = line_data.get('display_type') or 'question'
+                group_kind = line_data.get('x_psm_interview_group_kind') or (
+                    'subheader' if display_type in ('section', 'subheader') else 'question'
+                )
                 line_vals.append({
                     'evaluation_id': evaluation.id,
                     'section_id': eval_section.id,
-                    'template_line_id': config_line.id,
-                    'sequence': config_line.sequence,
-                    'display_type': config_line.display_type,
-                    'label': config_line.label,
-                    'question_text': config_line.question_text,
-                    'is_required': config_line.is_required,
-                    'is_active': config_line.is_active,
+                    'template_line_id': line_data.get('source_question_id') or False,
+                    'sequence': line_data.get('sequence', 10),
+                    'display_type': display_type,
+                    'label': line_data.get('label') or False,
+                    'question_text': line_data.get('question_text') or False,
+                    'x_psm_interview_group_kind': group_kind,
+                    'x_psm_interview_group_label': line_data.get('x_psm_interview_group_label') or False,
+                    'is_required': line_data.get('is_required', True) if display_type == 'question' else False,
+                    'is_active': line_data.get('is_active', True),
                 })
 
         if line_vals:
@@ -363,11 +542,11 @@ class HrApplicant(models.Model):
         if not (self.recruitment_type == 'store' and self.position_level == 'management'):
             raise exceptions.UserError(_("Chỉ hỗ trợ đánh giá Interview cho scope Store + Management."))
 
-        if not self.job_id.interview_config_line_ids and not self.job_id.interview_config_section_ids:
-            raise exceptions.UserError(_("Job chưa có cấu hình Interview."))
+        if not self.job_id.x_psm_interview_survey_id:
+            raise exceptions.UserError(_("Job chưa cấu hình Survey Interview."))
 
         evaluator = evaluator_user or self.interview_evaluator_user_id or self.job_id.interview_evaluator_user_id or self.env.user
-        template_version, config_signature, job_active_sections = self._get_interview_snapshot_source()
+        template_version, config_signature, snapshot_sections = self._get_interview_snapshot_source()
 
         if self.interview_evaluation_id:
             evaluation = self.interview_evaluation_id
@@ -393,7 +572,7 @@ class HrApplicant(models.Model):
                         'interviewer_name': evaluation.interviewer_name or evaluator.name,
                         'state': 'in_progress',
                     })
-                    self._populate_interview_evaluation_snapshot(evaluation, job_active_sections)
+                    self._populate_interview_evaluation_snapshot(evaluation, snapshot_sections)
                 elif not evaluation.evaluator_user_id:
                     evaluation.write({'evaluator_user_id': evaluator.id})
 
@@ -411,7 +590,7 @@ class HrApplicant(models.Model):
             'interview_date': fields.Date.today(),
             'interviewer_name': evaluator.name,
         })
-        self._populate_interview_evaluation_snapshot(evaluation, job_active_sections)
+        self._populate_interview_evaluation_snapshot(evaluation, snapshot_sections)
 
         self.write({
             'interview_evaluation_id': evaluation.id,
@@ -546,78 +725,61 @@ class HrApplicant(models.Model):
 
     def _get_oje_snapshot_source(self):
         self.ensure_one()
-        template_scope = 'legacy'
-        if hasattr(self.job_id, '_get_oje_template_scope'):
-            template_scope = self.job_id._get_oje_template_scope() or 'legacy'
+        template_scope = self.job_id._get_oje_template_scope() if hasattr(self.job_id, '_get_oje_template_scope') else False
+        template_scope = template_scope or 'legacy'
 
-        job_active_sections = self.job_id.oje_config_section_ids.filtered(
-            lambda s: s.is_active and (not s.scope or s.scope == template_scope)
-        ).sorted('sequence')
+        if template_scope not in ('store_staff', 'store_management'):
+            raise exceptions.UserError(_("Chỉ hỗ trợ đánh giá OJE cho job thuộc khối Cửa hàng."))
 
-        template_version = False
-        master_section = job_active_sections.filtered(lambda s: s.source_template_section_id)[:1]
-        if master_section and master_section.source_template_section_id.template_id:
-            template_version = master_section.source_template_section_id.template_id.version
+        oje_survey = self.job_id._x_psm_get_oje_survey() if hasattr(self.job_id, '_x_psm_get_oje_survey') else False
+        if not oje_survey:
+            raise exceptions.UserError(_("Job chưa cấu hình Survey OJE."))
 
-        if not template_version:
-            template_version = '1.0'
+        snapshot_sections = self.job_id._x_psm_prepare_oje_snapshot_sections() if hasattr(self.job_id, '_x_psm_prepare_oje_snapshot_sections') else []
+        if not snapshot_sections:
+            raise exceptions.UserError(_("Survey OJE chưa có câu hỏi để sinh phiếu đánh giá."))
 
-        return template_scope, template_version, job_active_sections
+        raw_version = oje_survey.write_date or oje_survey.create_date
+        template_version = fields.Datetime.to_string(raw_version) if raw_version else '1.0'
+        config_signature = self.job_id._x_psm_get_oje_config_signature() if hasattr(self.job_id, '_x_psm_get_oje_config_signature') else False
 
-    def _populate_oje_evaluation_snapshot(self, evaluation, template_scope, job_active_sections):
+        return template_scope, template_version, config_signature, snapshot_sections
+
+    def _populate_oje_evaluation_snapshot(self, evaluation, template_scope, snapshot_sections):
         self.ensure_one()
         line_vals = []
 
-        if job_active_sections and template_scope in ('store_staff', 'store_management'):
-            for config_section in job_active_sections:
-                eval_section = self.env['hr.applicant.oje.evaluation.section'].create({
-                    'evaluation_id': evaluation.id,
-                    'source_config_section_id': config_section.id,
-                    'sequence': config_section.sequence,
-                    'name': config_section.name,
-                    'section_kind': config_section.section_kind,
-                    'scope': config_section.scope,
-                    'rating_mode': config_section.rating_mode,
-                    'objective_text': config_section.objective_text,
-                    'hint_html': config_section.hint_html,
-                    'behavior_html': config_section.behavior_html,
-                    'is_active': config_section.is_active,
-                })
+        for section_data in snapshot_sections:
+            eval_section = self.env['hr.applicant.oje.evaluation.section'].create({
+                'evaluation_id': evaluation.id,
+                'source_config_section_id': section_data.get('source_question_id') or False,
+                'sequence': section_data.get('sequence', 10),
+                'name': section_data.get('name') or _('OJE Section'),
+                'section_kind': section_data.get('section_kind') or 'legacy',
+                'scope': section_data.get('scope') or template_scope,
+                'rating_mode': section_data.get('rating_mode') or 'legacy_generic',
+                'objective_text': section_data.get('objective_text') or False,
+                'hint_html': section_data.get('hint_html') or False,
+                'behavior_html': section_data.get('behavior_html') or False,
+                'is_active': section_data.get('is_active', True),
+            })
 
-                for config_line in config_section.line_ids.filtered('is_active').sorted('sequence'):
-                    line_vals.append({
-                        'evaluation_id': evaluation.id,
-                        'section_id': eval_section.id,
-                        'template_line_id': config_line.id,
-                        'sequence': config_line.sequence,
-                        'name': config_line.name or config_line.question_text,
-                        'question_text': config_line.question_text or config_line.name,
-                        'line_kind': config_line.line_kind or 'legacy',
-                        'scope': config_line.scope,
-                        'rating_mode': config_line.rating_mode,
-                        'is_required': config_line.is_required,
-                        'is_active': config_line.is_active,
-                        'field_type': config_line.field_type,
-                        'text_max_score': config_line.text_max_score,
-                        'checkbox_score': config_line.checkbox_score,
-                    })
-        else:
-            legacy_lines = self.job_id.oje_config_line_ids.filtered('is_active').sorted('sequence')
-            for config_line in legacy_lines:
+            for line_data in section_data.get('lines', []):
                 line_vals.append({
                     'evaluation_id': evaluation.id,
-                    'template_line_id': config_line.id,
-                    'name': config_line.name,
-                    'question_text': config_line.question_text or config_line.name,
-                    'line_kind': config_line.line_kind or 'legacy',
-                    'scope': config_line.scope,
-                    'rating_mode': config_line.rating_mode,
-                    'is_required': config_line.is_required,
-                    'is_active': config_line.is_active,
-                    'field_type': config_line.field_type,
-                    'text_max_score': config_line.text_max_score,
-                    'checkbox_score': config_line.checkbox_score,
-                    'sequence': config_line.sequence,
+                    'section_id': eval_section.id,
+                    'template_line_id': line_data.get('source_question_id') or False,
+                    'sequence': line_data.get('sequence', 10),
+                    'name': line_data.get('name') or line_data.get('question_text') or _('OJE Line'),
+                    'question_text': line_data.get('question_text') or line_data.get('name') or False,
+                    'line_kind': line_data.get('line_kind') or 'legacy',
+                    'scope': line_data.get('scope') or template_scope,
+                    'rating_mode': line_data.get('rating_mode') or 'legacy_generic',
+                    'is_required': line_data.get('is_required', True),
+                    'is_active': line_data.get('is_active', True),
+                    'field_type': line_data.get('field_type') or 'text',
+                    'text_max_score': line_data.get('text_max_score', 0.0),
+                    'checkbox_score': line_data.get('checkbox_score', 0.0),
                 })
 
         if line_vals:
@@ -629,12 +791,9 @@ class HrApplicant(models.Model):
         if not self.job_id:
             raise exceptions.UserError(_("Ứng viên chưa có Job Position."))
 
-        if not self.job_id.oje_config_line_ids and not self.job_id.oje_config_section_ids:
-            raise exceptions.UserError(_("Job chưa có cấu hình OJE."))
-
         evaluator = evaluator_user or self.oje_evaluator_user_id or self.env.user
 
-        template_scope, template_version, job_active_sections = self._get_oje_snapshot_source()
+        template_scope, template_version, config_signature, snapshot_sections = self._get_oje_snapshot_source()
 
         if self.oje_evaluation_id:
             evaluation = self.oje_evaluation_id
@@ -649,6 +808,8 @@ class HrApplicant(models.Model):
 
                 needs_refresh = bool(
                     evaluation.template_scope != template_scope
+                    or evaluation.template_version != template_version
+                    or (evaluation.x_psm_config_signature or '') != (config_signature or '')
                     or not has_scope_sections
                     or not has_scope_lines
                 )
@@ -664,8 +825,9 @@ class HrApplicant(models.Model):
                         'trial_date': evaluation.trial_date or fields.Date.today(),
                         'restaurant_name': evaluation.restaurant_name or self.department_id.name or self.job_id.department_id.name,
                         'operation_consultant_name': evaluation.operation_consultant_name or evaluator.name,
+                        'x_psm_config_signature': config_signature or False,
                     })
-                    self._populate_oje_evaluation_snapshot(evaluation, template_scope, job_active_sections)
+                    self._populate_oje_evaluation_snapshot(evaluation, template_scope, snapshot_sections)
 
             return evaluation
 
@@ -680,10 +842,11 @@ class HrApplicant(models.Model):
             'trial_date': fields.Date.today(),
             'restaurant_name': self.department_id.name or self.job_id.department_id.name,
             'operation_consultant_name': evaluator.name,
+            'x_psm_config_signature': config_signature or False,
         })
-        self._populate_oje_evaluation_snapshot(evaluation, template_scope, job_active_sections)
+        self._populate_oje_evaluation_snapshot(evaluation, template_scope, snapshot_sections)
 
-        self.write({'oje_evaluation_id': evaluation.id})
+        self.write({'oje_evaluation_id': evaluation.id, 'oje_evaluator_user_id': evaluator.id})
         return evaluation
 
     def action_open_backend_oje_evaluation(self):
@@ -789,51 +952,16 @@ class HrApplicant(models.Model):
         store=True,
     )
 
-    oje_management_overall_rating = fields.Integer(
+    oje_management_overall_rating = fields.Float(
         related="oje_evaluation_id.management_overall_rating",
         string="Overall Rating",
         store=True,
+        digits=(16, 2),
     )
 
     oje_fail_reason = fields.Text(
         string="Lý do không đạt OJE",
         copy=False,
-    )
-
-    # Legacy OJE Survey Fields
-    oje_survey_id = fields.Many2one(
-        "survey.survey",
-        string="Phiếu Đánh Giá OJE (Legacy)",
-    )
-
-    oje_survey_user_input_id = fields.Many2one(
-        "survey.user_input",
-        string="OJE Survey Input (Legacy)",
-        copy=False,
-        readonly=True,
-    )
-
-    oje_survey_url = fields.Char(
-        string="Link Đánh Giá OJE (Legacy)",
-        copy=False,
-    )
-
-    oje_survey_state = fields.Selection(
-        related="oje_survey_user_input_id.state",
-        string="Trạng Thái OJE (Legacy)",
-        readonly=True,
-    )
-
-    oje_survey_scoring_percentage = fields.Float(
-        related="oje_survey_user_input_id.scoring_percentage",
-        string="Điểm OJE (%) (Legacy)",
-        readonly=True,
-    )
-
-    oje_survey_scoring_success = fields.Boolean(
-        related="oje_survey_user_input_id.scoring_success",
-        string="Đạt OJE (Legacy)",
-        readonly=True,
     )
 
     # ==================== SURVEY STAT BUTTONS ====================
@@ -866,21 +994,7 @@ class HrApplicant(models.Model):
         for rec in self:
             rec.oje_display_result = "Đánh giá OJE"
             if not rec.oje_evaluation_id:
-                # Fallback legacy
-                if rec.oje_survey_user_input_id:
-                    state = rec.oje_survey_state
-                    if state == "new":
-                        rec.oje_display_text = "Chưa làm (Old)"
-                    elif state == "in_progress":
-                        rec.oje_display_text = "Đang làm (Old)"
-                    elif state == "done":
-                        score = int(rec.oje_survey_scoring_percentage)
-                        success = "✓" if rec.oje_survey_scoring_success else "✗"
-                        rec.oje_display_text = f"{score}% {success} (Old)"
-                    else:
-                        rec.oje_display_text = "N/A"
-                else:
-                    rec.oje_display_text = "Chưa có"
+                rec.oje_display_text = "Chưa có"
                 continue
 
             state = rec.oje_evaluation_state
@@ -896,7 +1010,7 @@ class HrApplicant(models.Model):
                         f"EX:{rec.oje_staff_ex_count} OS:{rec.oje_staff_os_count} {success}"
                     )
                 elif rec.oje_template_scope == 'store_management':
-                    rec.oje_display_text = f"Overall {rec.oje_management_overall_rating or 0}/5 {success}"
+                    rec.oje_display_text = f"Overall {(rec.oje_management_overall_rating or 0.0):.2f}/5 {success}"
                 else:
                     score = int(rec.oje_total_score)
                     rec.oje_display_text = f"{score}/{int(rec.oje_pass_score_snapshot)} {success}"
@@ -937,16 +1051,6 @@ class HrApplicant(models.Model):
     def action_open_oje_results(self):
         self.ensure_one()
         if not self.oje_evaluation_id:
-            # Fallback legacy
-            if self.oje_survey_user_input_id:
-                return {
-                    "type": "ir.actions.act_window",
-                    "name": "Kết quả Đánh giá OJE (Legacy)",
-                    "res_model": "survey.user_input",
-                    "res_id": self.oje_survey_user_input_id.id,
-                    "view_mode": "form",
-                    "target": "current",
-                }
             return False
 
         if self.oje_evaluation_id.template_scope in ('store_staff', 'store_management'):
@@ -1166,8 +1270,6 @@ class HrApplicant(models.Model):
             ], order="week_start_date desc, id desc", limit=1)
         return schedule
 
-    oje_survey_url = fields.Char(string="Link Đánh Giá OJE", readonly=True)
-
     # Website Custom Form Fields
     x_birthday = fields.Date(string="Ngày sinh")
     x_current_job = fields.Char(string="Công việc hiện tại")
@@ -1177,7 +1279,11 @@ class HrApplicant(models.Model):
         ('female', 'Nữ'),
         ('not_display', 'Không hiển thị')
     ], string="Giới tính")
-    x_id_number = fields.Char(string="Số CMT/CCCD/Hộ chiếu")
+    x_id_document_type = fields.Selection([
+        ('citizen_id', 'CCCD'),
+        ('passport', 'Hộ chiếu'),
+    ], string="Loại giấy tờ tùy thân", default='citizen_id')
+    x_id_number = fields.Char(string="Số giấy tờ tùy thân")
     x_education_level = fields.Selection([
         ('no_degree', 'Chưa tốt nghiệp'),
         ('high_school', 'Phổ thông'),
@@ -1205,8 +1311,8 @@ class HrApplicant(models.Model):
     # Các trường mở rộng thêm cho phần "Các thông tin khác"
     x_application_content = fields.Text(string="Nội dung")
     x_salutation = fields.Char(string="Danh xưng")
-    x_id_issue_date = fields.Date(string="Ngày cấp CMT/CCCD/Hộ chiếu")
-    x_id_issue_place = fields.Char(string="Nơi cấp CMT/CCCD/Hộ chiếu")
+    x_id_issue_date = fields.Date(string="Ngày cấp giấy tờ tùy thân")
+    x_id_issue_place = fields.Char(string="Nơi cấp giấy tờ tùy thân")
     x_permanent_address = fields.Char(string="Địa chỉ thường trú")
     x_hometown = fields.Char(string="Nguyên quán")
     x_years_experience = fields.Integer(string="Số năm kinh nghiệm")
@@ -1215,50 +1321,37 @@ class HrApplicant(models.Model):
     x_nationality = fields.Char(string="Quốc tịch")
 
     def _get_auto_pre_interview_survey(self, job):
-        """Tự chọn survey theo cấp bậc + employment type của position."""
+        """Tự chọn survey tiền phỏng vấn (biểu mẫu ứng tuyển) cho ứng viên."""
         self.ensure_one()
         Survey = self.env["survey.survey"].sudo()
 
-        position_level = (job.position_level or "").strip().lower() if job else ""
-        # level_id là Many2one('hr.job.level') từ M02_P0200_00; fallback nếu field cũ 'level' không tồn tại
-        level_id = getattr(job, "level_id", False) if job else False
-        raw_level_code = ((level_id.code if level_id else "") or "").strip().lower()
-        raw_level_name = ((level_id.name if level_id else "") or "").strip().lower()
-        job_name = (job.name or "").strip().lower() if job else ""
+        # ƯU TIÊN: Survey đã cấu hình trực tiếp trên Job Position (core Odoo)
+        if (
+            job
+            and "survey_id" in job._fields
+            and job.survey_id
+            and not job.survey_id.x_psm_0204_is_runtime_isolated_copy
+        ):
+            return job.survey_id
 
-        is_management = bool(
-            position_level == "management"
-            or "manager" in raw_level_code
-            or "manager" in raw_level_name
-            or "quản lý" in raw_level_name
-            or "quản lý" in job_name
-            or "manager" in job_name
+        # ƯU TIÊN: Survey biểu mẫu ứng tuyển chung đã seed trong module.
+        survey = self.env.ref("M02_P0204_00.survey_fulltime", raise_if_not_found=False)
+        if survey and not survey.x_psm_0204_is_runtime_isolated_copy:
+            return survey
+
+        # Fallback cuối: lấy survey usage=pre_interview đầu tiên.
+        survey = Survey.search(
+            [
+                ("x_psm_survey_usage", "=", "pre_interview"),
+                ("x_psm_0204_is_runtime_isolated_copy", "=", False),
+            ],
+            order="id asc",
+            limit=1,
         )
+        if survey:
+            return survey
 
-        # Rule nghiệp vụ: cấp bậc quản lý luôn dùng survey quản lý cửa hàng,
-        # bỏ qua part-time/full-time.
-        if is_management:
-            survey = self.env.ref("M02_P0204_00.survey_manager", raise_if_not_found=False)
-            if survey:
-                return survey
-
-        # ƯU TIÊN: Survey Template đã cấu hình trên Job Position
-        if job and job.generated_survey_template_id:
-            return job.generated_survey_template_id
-
-        contract_name = ((job.contract_type_id.name if job and "contract_type_id" in job._fields else "") or "").lower()
-        is_part_time = "part" in contract_name
-
-        if is_part_time:
-            survey = self.env.ref("M02_P0204_00.survey_parttime", raise_if_not_found=False)
-            if survey:
-                return survey
-        else:
-            survey = self.env.ref("M02_P0204_00.survey_fulltime", raise_if_not_found=False)
-            if survey:
-                return survey
-
-        return job.survey_id if job and "survey_id" in job._fields else Survey
+        return False
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -1587,8 +1680,11 @@ class HrApplicant(models.Model):
         copy_title = f"{base_survey.title} | {email_tag} | {time_label}"
         isolated_survey = base_survey.copy({
             'title': copy_title,
-            # Tránh xuất hiện trong danh sách survey template để HR chọn nhầm.
-            'is_pre_interview': False,
+            # Đánh dấu survey runtime riêng theo applicant và tách khỏi master/custom của Job.
+            'x_psm_0204_is_runtime_isolated_copy': True,
+            'x_psm_default_template_for': False,
+            'x_psm_0204_owner_job_id': False,
+            'x_psm_0204_owner_department_id': False,
         })
         # Ép lại title theo email ứng viên để dễ nhận diện trong danh sách Surveys.
         isolated_survey.sudo().write({'title': copy_title})
@@ -2080,14 +2176,35 @@ class HrApplicant(models.Model):
 
     def _send_congrats_email(self, applicant):
         """Gửi email chúc mừng cho ứng viên"""
+        part_time_contract = self.env.ref("hr.contract_type_part_time", raise_if_not_found=False)
+        job_is_part_time = bool(
+            applicant.job_id
+            and "contract_type_id" in applicant.job_id._fields
+            and applicant.job_id.contract_type_id
+            and part_time_contract
+            and applicant.job_id.contract_type_id.id == part_time_contract.id
+        )
+        is_staff_part_time = bool(applicant.position_level == "staff" and job_is_part_time)
+
+        event_code = "hired_part_time" if is_staff_part_time else "hired"
+        fallback_xml_id = (
+            "M02_P0204_00.email_congratulations_part_time"
+            if is_staff_part_time
+            else "M02_P0204_00.email_congratulations"
+        )
+
         template = applicant._get_email_template_resolution(
-            event_code="hired",
-            fallback_xml_id="M02_P0204_00.email_congratulations"
+            event_code=event_code,
+            fallback_xml_id=fallback_xml_id,
         )
         if template and applicant.email_from:
             try:
                 self._send_mail_async(template, applicant.id)
-                _logger.info("[EVAL_AUTO] Queued async congrats email to %s", applicant.email_from)
+                _logger.info(
+                    "[EVAL_AUTO] Queued async congrats email (%s) to %s",
+                    event_code,
+                    applicant.email_from,
+                )
             except Exception as e:
                 _logger.error("[EVAL_AUTO] Failed to send congrats to %s: %s", applicant.email_from, str(e))
 
@@ -2195,7 +2312,7 @@ class HrApplicant(models.Model):
     # ==================== SURVEY UNDER REVIEW ACTIONS ====================
 
     def action_approve_survey_review(self):
-        """HR xem xét xong → tiếp tục pipeline sau Survey (Interview hoặc Survey Passed)"""
+        """HR xem xét xong → tiếp tục pipeline sau Survey theo flow hiện tại."""
         for rec in self:
             stage_type = rec._get_pipeline_stage_type()
             # Route giống survey pass: staff → Interview & OJE, management → Interview
@@ -2204,21 +2321,45 @@ class HrApplicant(models.Model):
             elif rec.recruitment_type == 'store' and rec.position_level == 'management':
                 target_name = "Interview"
             else:
-                target_name = "Survey Passed"
+                target_name = "Screening"
             domain = [("name", "=", target_name)]
             if stage_type:
                 domain.append(("recruitment_type", "in", [stage_type, "both"]))
             target_stage = self.env["hr.recruitment.stage"].search(domain, limit=1)
             if not target_stage:
-                target_stage = self.env["hr.recruitment.stage"].search([("name", "=", target_name)], limit=1)
+                if target_name == "Screening":
+                    target_stage = self.env.ref('M02_P0205_00.stage_office_screening', raise_if_not_found=False)
+                if not target_stage:
+                    target_stage = self.env["hr.recruitment.stage"].search([("name", "=", target_name)], limit=1)
             if target_stage:
                 rec.stage_id = target_stage
                 rec.survey_under_review_date = False
+
+                # Đồng bộ luồng với case pass biểu mẫu: khi về stage Interview thì auto-book lịch.
+                if rec.recruitment_type == 'store' and 'interview' in (target_stage.name or '').lower():
+                    if not rec.interview_schedule_id and rec.department_id:
+                        fallback_schedule = rec._find_department_interview_schedule(rec.department_id)
+                        if fallback_schedule:
+                            rec.interview_schedule_id = fallback_schedule.id
+
+                    try:
+                        booking_result = rec.action_auto_book_interview_from_survey()
+                        _logger.info(
+                            "[SURVEY_REVIEW] Auto-book after approve for applicant %s: %s",
+                            rec.id,
+                            booking_result,
+                        )
+                    except Exception as booking_err:
+                        _logger.error(
+                            "[SURVEY_REVIEW] Auto-book failed after approve for applicant %s: %s",
+                            rec.id,
+                            booking_err,
+                        )
             else:
                 _logger.warning("[SURVEY_REVIEW] Không tìm thấy stage '%s' pipeline '%s'", target_name, stage_type)
 
     def action_move_to_store_interview(self):
-        """Chuyển ứng viên từ Survey Passed → Interview & OJE (staff) hoặc Interview (management).
+        """Chuyển ứng viên store sang Interview & OJE (staff) hoặc Interview (management).
         Chỉ có tác dụng với store jobs. Được gọi bằng nút trên form header.
         """
         for rec in self:
@@ -2357,7 +2498,7 @@ class HrApplicant(models.Model):
 
     def _build_store_management_fail_reason(self, evaluation):
         self.ensure_one()
-        return _("Overall rating dưới ngưỡng đạt (>= 3): %s/5.") % (evaluation.management_overall_rating or 0)
+        return _("Overall rating dưới ngưỡng đạt (>= 3): %.2f/5.") % (evaluation.management_overall_rating or 0.0)
 
     def _build_legacy_oje_fail_reason(self, evaluation):
         self.ensure_one()
@@ -2373,9 +2514,9 @@ class HrApplicant(models.Model):
                 if not line.checkbox_value:
                     fail_reasons.append(f"- {line.name}: Không đạt (0/{line.checkbox_score} điểm)")
             elif line.field_type == 'radio':
-                max_opt_score = max(line.template_line_id.option_ids.mapped('score'), default=0)
+                max_opt_score = max(line.template_line_id.suggested_answer_ids.mapped('answer_score'), default=0)
                 if line.selected_option_score < max_opt_score:
-                    selected_name = line.selected_option_id.name if line.selected_option_id else 'N/A'
+                    selected_name = line.selected_option_id.value if line.selected_option_id else 'N/A'
                     fail_reasons.append(
                         f"- {line.name}: {selected_name} ({line.selected_option_score}/{max_opt_score} điểm)"
                     )
@@ -2462,14 +2603,6 @@ class HrApplicant(models.Model):
             })
 
             self._send_oje_rejection_email(self)
-
-    # Legacy action (can be removed later)
-    def action_check_oje_result(self):
-        return self.action_apply_oje_evaluation_result()
-
-    def action_create_oje_survey(self):
-        """Legacy action: deprecated. See portal logic for new evaluation creation."""
-        raise exceptions.UserError("Hệ thống đã chuyển sang mẫu đánh giá động. Vui lòng thực hiện trên Portal.")
 
     @api.model
     def action_auto_reject_stale_survey_reviews(self):

@@ -1,0 +1,133 @@
+.psm-office-apply {
+    .psm-office-apply-form .form-control,
+    .psm-office-apply-form .form-select,
+    .psm-office-apply-form textarea,
+    .psm-office-apply-form input[type='file'] {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .psm-office-question-card {
+        overflow: hidden;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .psm-office-apply {
+        .psm-office-apply-container {
+            padding-left: 0.9rem;
+            padding-right: 0.9rem;
+        }
+
+        .psm-office-apply-title {
+            font-size: 1.9rem !important;
+            line-height: 1.2 !important;
+            overflow-wrap: anywhere;
+        }
+
+        .psm-office-apply-subtitle {
+            font-size: 1rem;
+        }
+
+        .psm-office-hero-grid > [class*='col-'],
+        .psm-office-metrics > [class*='col-'],
+        .psm-office-field-grid > [class*='col-'],
+        .psm-office-field-col {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+
+        .psm-office-hero-card .card-body,
+        .survey-card .card-body {
+            padding: 1rem 1.05rem !important;
+        }
+
+        .psm-office-source-context {
+            margin-top: 1rem !important;
+        }
+
+        .psm-office-question-card {
+            padding: 1rem !important;
+        }
+    }
+}
+
+@media (max-width: 767.98px) {
+    .psm-office-apply {
+        .psm-office-apply-section {
+            padding-top: 1.2rem !important;
+            padding-bottom: 1.2rem !important;
+        }
+
+        .psm-office-apply-title {
+            font-size: 1.55rem !important;
+            margin-bottom: 0.75rem !important;
+        }
+
+        .psm-office-apply-subtitle {
+            font-size: 0.95rem;
+        }
+
+        .psm-office-hero-card .card-body,
+        .survey-card .card-body {
+            padding: 0.9rem !important;
+        }
+
+        .psm-office-question-card .d-flex.flex-wrap.align-items-start.justify-content-between {
+            flex-direction: column;
+            align-items: flex-start !important;
+            gap: 0.5rem !important;
+        }
+
+        .psm-office-apply-form .form-control,
+        .psm-office-apply-form .form-select,
+        .psm-office-apply-form textarea,
+        .psm-office-apply-form input[type='file'] {
+            min-height: 44px;
+        }
+
+        .psm-office-apply-form textarea {
+            min-height: 96px;
+        }
+
+        .psm-office-apply-actions {
+            text-align: initial;
+        }
+
+        .psm-office-submit-btn,
+        .theme-submit-btn {
+            width: 100% !important;
+            min-width: 0 !important;
+        }
+    }
+}
+
+@media (max-width: 575.98px) {
+    .psm-office-apply {
+        .psm-office-apply-container {
+            padding-left: 0.65rem;
+            padding-right: 0.65rem;
+        }
+
+        .psm-office-apply-title {
+            font-size: 1.35rem !important;
+        }
+
+        .psm-office-apply-subtitle {
+            font-size: 0.9rem;
+        }
+
+        .psm-office-hero-card .card-body,
+        .survey-card .card-body,
+        .psm-office-question-card {
+            padding: 0.75rem !important;
+        }
+
+        .psm-office-question-card .rounded-circle {
+            width: 34px !important;
+            height: 34px !important;
+            font-size: 0.9rem;
+        }
+    }
+}

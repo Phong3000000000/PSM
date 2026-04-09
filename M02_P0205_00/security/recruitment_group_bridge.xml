@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="M02_P0200_00.GDH_RST_HR_RECRUITMENT_S" model="res.groups">
+            <field name="implied_ids"
+                eval="[(4, ref('hr_recruitment.group_hr_recruitment_user'))]" />
+        </record>
+
+        <record id="M02_P0200_00.GDH_RST_HR_RECRUITMENT_M" model="res.groups">
+            <field name="implied_ids"
+                eval="[(4, ref('hr_recruitment.group_hr_recruitment_manager'))]" />
+        </record>
+    </data>
+</odoo>

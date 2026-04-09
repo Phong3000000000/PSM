@@ -130,8 +130,8 @@ class HrApplicantInterviewEvaluationSection(models.Model):
         ondelete="cascade",
     )
     source_config_section_id = fields.Many2one(
-        "hr.job.interview.config.section",
-        string="Source Job Section",
+        "survey.question",
+        string="Source Survey Page",
         ondelete="set null",
     )
 
@@ -163,8 +163,8 @@ class HrApplicantInterviewEvaluationLine(models.Model):
         ondelete="cascade",
     )
     template_line_id = fields.Many2one(
-        "hr.job.interview.config.line",
-        string="Template Line",
+        "survey.question",
+        string="Source Survey Question",
         ondelete="set null",
     )
 
@@ -181,6 +181,17 @@ class HrApplicantInterviewEvaluationLine(models.Model):
     )
     label = fields.Char(string="Label")
     question_text = fields.Text(string="Question")
+    x_psm_interview_group_kind = fields.Selection(
+        [
+            ("none", "None"),
+            ("question", "Question"),
+            ("subheader", "Sub Header"),
+            ("skillset_child", "Skillset Child"),
+        ],
+        string="Interview Group Kind",
+        default="none",
+    )
+    x_psm_interview_group_label = fields.Char(string="Interview Group Label")
     is_active = fields.Boolean(default=True)
     is_required = fields.Boolean(default=True)
 

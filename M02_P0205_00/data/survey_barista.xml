@@ -14,7 +14,7 @@
             <field name="title">Khảo Sát Năng Lực - Barista</field>
             <field name="scoring_type">scoring_with_answers</field>
             <field name="scoring_success_min">80</field>
-            <field name="is_pre_interview">True</field>
+            <field name="x_psm_0205_is_pre_interview">True</field>
             <field name="users_login_required">False</field>
             <field name="description"><![CDATA[
                 <p>Xin chào! Chúng tôi rất vui vì bạn quan tâm đến vị trí <strong>Barista</strong> tại công ty.</p>
@@ -50,21 +50,21 @@
             <field name="question_id" ref="sq_barista_q1" />
             <field name="value">Chưa có kinh nghiệm (sẵn sàng học)</field>
             <field name="answer_score">0</field>
-            <field name="is_must_have">False</field>
+            <field name="x_psm_0205_is_must_have">False</field>
             <field name="sequence">1</field>
         </record>
         <record id="sq_barista_q1_a2" model="survey.question.answer">
             <field name="question_id" ref="sq_barista_q1" />
             <field name="value">Dưới 6 tháng</field>
             <field name="answer_score">5</field>
-            <field name="is_must_have">False</field>
+            <field name="x_psm_0205_is_must_have">False</field>
             <field name="sequence">2</field>
         </record>
         <record id="sq_barista_q1_a3" model="survey.question.answer">
             <field name="question_id" ref="sq_barista_q1" />
             <field name="value">6 tháng – 1 năm</field>
             <field name="answer_score">8</field>
-            <field name="is_must_have">True</field>
+            <field name="x_psm_0205_is_must_have">True</field>
             <field name="is_correct">True</field>
             <field name="sequence">3</field>
         </record>
@@ -72,7 +72,7 @@
             <field name="question_id" ref="sq_barista_q1" />
             <field name="value">Trên 1 năm</field>
             <field name="answer_score">10</field>
-            <field name="is_must_have">True</field>
+            <field name="x_psm_0205_is_must_have">True</field>
             <field name="is_correct">True</field>
             <field name="sequence">4</field>
         </record>
@@ -90,7 +90,7 @@
             <field name="question_id" ref="sq_barista_q2" />
             <field name="value">Cà phê espresso cơ bản (Americano, Latte, Cappuccino)</field>
             <field name="answer_score">8</field>
-            <field name="is_must_have">True</field>
+            <field name="x_psm_0205_is_must_have">True</field>
             <field name="is_correct">True</field>
             <field name="sequence">1</field>
         </record>
@@ -98,24 +98,24 @@
             <field name="question_id" ref="sq_barista_q2" />
             <field name="value">Đồ uống đá xay / Frappuccino</field>
             <field name="answer_score">5</field>
-            <field name="is_must_have">False</field>
-            <field name="is_nice_to_have">True</field>
+            <field name="x_psm_0205_is_must_have">False</field>
+            <field name="x_psm_0205_is_nice_to_have">True</field>
             <field name="sequence">2</field>
         </record>
         <record id="sq_barista_q2_a3" model="survey.question.answer">
             <field name="question_id" ref="sq_barista_q2" />
             <field name="value">Trà / Trà sữa</field>
             <field name="answer_score">4</field>
-            <field name="is_must_have">False</field>
-            <field name="is_nice_to_have">True</field>
+            <field name="x_psm_0205_is_must_have">False</field>
+            <field name="x_psm_0205_is_nice_to_have">True</field>
             <field name="sequence">3</field>
         </record>
         <record id="sq_barista_q2_a4" model="survey.question.answer">
             <field name="question_id" ref="sq_barista_q2" />
             <field name="value">Cocktail / Mocktail</field>
             <field name="answer_score">3</field>
-            <field name="is_must_have">False</field>
-            <field name="is_nice_to_have">True</field>
+            <field name="x_psm_0205_is_must_have">False</field>
+            <field name="x_psm_0205_is_nice_to_have">True</field>
             <field name="sequence">4</field>
         </record>
         <record id="sq_barista_q2_a5" model="survey.question.answer">
@@ -153,7 +153,7 @@
             <field name="question_id" ref="sq_barista_q3" />
             <field name="value">Biết cơ bản (rửa tay, vệ sinh dụng cụ)</field>
             <field name="answer_score">6</field>
-            <field name="is_must_have">True</field>
+            <field name="x_psm_0205_is_must_have">True</field>
             <field name="is_correct">True</field>
             <field name="sequence">2</field>
         </record>
@@ -161,7 +161,7 @@
             <field name="question_id" ref="sq_barista_q3" />
             <field name="value">Nắm rõ quy trình và thực hành hàng ngày</field>
             <field name="answer_score">10</field>
-            <field name="is_must_have">True</field>
+            <field name="x_psm_0205_is_must_have">True</field>
             <field name="is_correct">True</field>
             <field name="sequence">3</field>
         </record>
@@ -185,7 +185,7 @@
             <field name="question_id" ref="sq_barista_q4" />
             <field name="value">Xin lỗi và hỏi quản lý quyết định</field>
             <field name="answer_score">6</field>
-            <field name="is_must_have">True</field>
+            <field name="x_psm_0205_is_must_have">True</field>
             <field name="is_correct">True</field>
             <field name="sequence">2</field>
         </record>
@@ -194,7 +194,7 @@
             <field name="value">Xin lỗi chân thành, đề nghị làm lại hoặc đổi sản phẩm phù hợp cho
                 khách</field>
             <field name="answer_score">10</field>
-            <field name="is_must_have">True</field>
+            <field name="x_psm_0205_is_must_have">True</field>
             <field name="is_correct">True</field>
             <field name="sequence">3</field>
         </record>
@@ -230,7 +230,7 @@
             <field name="question_id" ref="sq_barista_q5" />
             <field name="value">Tôi ưu tiên theo thứ tự, giữ bình tĩnh và đảm bảo chất lượng</field>
             <field name="answer_score">10</field>
-            <field name="is_must_have">True</field>
+            <field name="x_psm_0205_is_must_have">True</field>
             <field name="is_correct">True</field>
             <field name="sequence">3</field>
         </record>
@@ -256,7 +256,7 @@
             <field name="question_id" ref="sq_barista_q6" />
             <field name="value">Ca sáng (6:00 – 14:00)</field>
             <field name="answer_score">8</field>
-            <field name="is_must_have">True</field>
+            <field name="x_psm_0205_is_must_have">True</field>
             <field name="is_correct">True</field>
             <field name="sequence">1</field>
         </record>
@@ -264,7 +264,7 @@
             <field name="question_id" ref="sq_barista_q6" />
             <field name="value">Ca chiều (14:00 – 22:00)</field>
             <field name="answer_score">8</field>
-            <field name="is_must_have">True</field>
+            <field name="x_psm_0205_is_must_have">True</field>
             <field name="is_correct">True</field>
             <field name="sequence">2</field>
         </record>
@@ -272,14 +272,14 @@
             <field name="question_id" ref="sq_barista_q6" />
             <field name="value">Cuối tuần &amp; ngày lễ</field>
             <field name="answer_score">5</field>
-            <field name="is_nice_to_have">True</field>
+            <field name="x_psm_0205_is_nice_to_have">True</field>
             <field name="sequence">3</field>
         </record>
         <record id="sq_barista_q6_a4" model="survey.question.answer">
             <field name="question_id" ref="sq_barista_q6" />
             <field name="value">Linh hoạt theo yêu cầu</field>
             <field name="answer_score">10</field>
-            <field name="is_nice_to_have">True</field>
+            <field name="x_psm_0205_is_nice_to_have">True</field>
             <field name="sequence">4</field>
         </record>
 
@@ -302,7 +302,7 @@
             <field name="question_id" ref="sq_barista_q7" />
             <field name="value">Trong vòng 2 tuần</field>
             <field name="answer_score">7</field>
-            <field name="is_must_have">True</field>
+            <field name="x_psm_0205_is_must_have">True</field>
             <field name="is_correct">True</field>
             <field name="sequence">2</field>
         </record>
@@ -310,8 +310,8 @@
             <field name="question_id" ref="sq_barista_q7" />
             <field name="value">Ngay lập tức / trong vòng 1 tuần</field>
             <field name="answer_score">10</field>
-            <field name="is_must_have">True</field>
-            <field name="is_nice_to_have">True</field>
+            <field name="x_psm_0205_is_must_have">True</field>
+            <field name="x_psm_0205_is_nice_to_have">True</field>
             <field name="is_correct">True</field>
             <field name="sequence">3</field>
         </record>
@@ -342,14 +342,14 @@
             <field name="question_id" ref="sq_barista_q8" />
             <field name="value">Biết cơ bản (trái tim, lá)</field>
             <field name="answer_score">5</field>
-            <field name="is_nice_to_have">True</field>
+            <field name="x_psm_0205_is_nice_to_have">True</field>
             <field name="sequence">2</field>
         </record>
         <record id="sq_barista_q8_a3" model="survey.question.answer">
             <field name="question_id" ref="sq_barista_q8" />
             <field name="value">Thành thạo nhiều mẫu phức tạp</field>
             <field name="answer_score">10</field>
-            <field name="is_nice_to_have">True</field>
+            <field name="x_psm_0205_is_nice_to_have">True</field>
             <field name="is_correct">True</field>
             <field name="sequence">3</field>
         </record>

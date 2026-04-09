@@ -6,9 +6,9 @@
         <!-- ============================== -->
 
         <!-- Tree View -->
-        <record id="view_recruitment_plan_tree" model="ir.ui.view">
-            <field name="name">recruitment.plan.tree</field>
-            <field name="model">recruitment.plan</field>
+        <record id="view_psm_recruitment_plan_tree" model="ir.ui.view">
+            <field name="name">x_psm_recruitment_plan.tree</field>
+            <field name="model">x_psm_recruitment_plan</field>
             <field name="arch" type="xml">
                 <list string="Kế Hoạch Tuyển Dụng" multi_edit="1" default_order="create_date desc">
                     <field name="name" />
@@ -28,9 +28,9 @@
         </record>
 
         <!-- Form View -->
-        <record id="view_recruitment_plan_form" model="ir.ui.view">
-            <field name="name">recruitment.plan.form</field>
-            <field name="model">recruitment.plan</field>
+        <record id="view_psm_recruitment_plan_form" model="ir.ui.view">
+            <field name="name">x_psm_recruitment_plan.form</field>
+            <field name="model">x_psm_recruitment_plan</field>
             <field name="arch" type="xml">
                 <form string="Kế Hoạch Tuyển Dụng">
                     <header>
@@ -107,7 +107,7 @@
                                 <field name="line_ids">
                                     <list string="Chi tiết" editable="bottom">
                                         <field name="department_id"
-                                            domain="[('block_id.name', 'ilike', 'Văn phòng')]" />
+                                            domain="[('block_id.code', '=', 'RST')]" />
                                         <field name="job_id"
                                             domain="[('department_id', '=', department_id)]" />
                                         <field name="quantity" />
@@ -133,9 +133,9 @@
         </record>
 
         <!-- Search View -->
-        <record id="view_recruitment_plan_search" model="ir.ui.view">
-            <field name="name">recruitment.plan.search</field>
-            <field name="model">recruitment.plan</field>
+        <record id="view_psm_recruitment_plan_search" model="ir.ui.view">
+            <field name="name">x_psm_recruitment_plan.search</field>
+            <field name="model">x_psm_recruitment_plan</field>
             <field name="arch" type="xml">
                 <search string="Tìm kiếm Kế Hoạch">
                     <field name="name" />
@@ -145,9 +145,9 @@
         </record>
 
         <!-- Action for Parent Plans -->
-        <record id="action_recruitment_plan" model="ir.actions.act_window">
+        <record id="action_psm_recruitment_plan" model="ir.actions.act_window">
             <field name="name">Kế Hoạch Tuyển Dụng</field>
-            <field name="res_model">recruitment.plan</field>
+            <field name="res_model">x_psm_recruitment_plan</field>
             <field name="view_mode">list,form</field>
             <field name="domain">[('is_sub_plan', '=', False)]</field>
             <field name="help" type="html">
@@ -163,9 +163,9 @@
         </record>
 
         <!-- Action for Sub Plans -->
-        <record id="action_recruitment_plan_sub" model="ir.actions.act_window">
+        <record id="action_psm_recruitment_sub_plan" model="ir.actions.act_window">
             <field name="name">Kế Hoạch Tuyển Dụng Con</field>
-            <field name="res_model">recruitment.plan</field>
+            <field name="res_model">x_psm_recruitment_plan</field>
             <field name="view_mode">list,form</field>
             <field name="domain">[('is_sub_plan', '=', True)]</field>
             <field name="context">{'default_is_sub_plan': True}</field>
@@ -181,9 +181,9 @@
         <!-- ============================== -->
 
         <!-- Tree View for Batch -->
-        <record id="view_recruitment_batch_tree" model="ir.ui.view">
-            <field name="name">recruitment.batch.tree</field>
-            <field name="model">recruitment.batch</field>
+        <record id="view_psm_recruitment_batch_tree" model="ir.ui.view">
+            <field name="name">x_psm_recruitment_batch.tree</field>
+            <field name="model">x_psm_recruitment_batch</field>
             <field name="arch" type="xml">
                 <list string="Đợt Tuyển Dụng" default_order="create_date desc">
                     <field name="name" string="Mã đợt" />
@@ -198,9 +198,9 @@
         </record>
 
         <!-- Form View for Batch -->
-        <record id="view_recruitment_batch_form" model="ir.ui.view">
-            <field name="name">recruitment.batch.form</field>
-            <field name="model">recruitment.batch</field>
+        <record id="view_psm_recruitment_batch_form" model="ir.ui.view">
+            <field name="name">x_psm_recruitment_batch.form</field>
+            <field name="model">x_psm_recruitment_batch</field>
             <field name="arch" type="xml">
                 <form string="Đợt Tuyển Dụng">
                     <header>
@@ -272,9 +272,9 @@
         </record>
 
         <!-- Action for Batch -->
-        <record id="action_recruitment_batch" model="ir.actions.act_window">
+        <record id="action_psm_recruitment_batch" model="ir.actions.act_window">
             <field name="name">Đợt Tuyển Dụng</field>
-            <field name="res_model">recruitment.batch</field>
+            <field name="res_model">x_psm_recruitment_batch</field>
             <field name="view_mode">list,form</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
@@ -287,39 +287,52 @@
         </record>
 
         <!-- Root Menu (defined here because this file loads first) -->
-        <menuitem id="menu_office_recruitment_root"
+        <menuitem id="menu_psm_office_recruitment_root"
             name="Tuyển Dụng VP"
             web_icon="hr_recruitment,static/description/icon.png"
             sequence="10" />
 
         <!-- Menu -->
-        <menuitem id="menu_recruitment_plan"
+        <menuitem id="menu_psm_recruitment_plan"
             name="Kế Hoạch Tuyển Dụng"
-            parent="menu_office_recruitment_root"
-            action="action_recruitment_plan"
+            parent="menu_psm_office_recruitment_root"
+            action="action_psm_recruitment_plan"
             sequence="2" />
 
-        <menuitem id="menu_recruitment_plan_sub"
+        <menuitem id="menu_psm_recruitment_sub_plan"
             name="Kế Hoạch Con"
-            parent="menu_office_recruitment_root"
-            action="action_recruitment_plan_sub"
+            parent="menu_psm_office_recruitment_root"
+            action="action_psm_recruitment_sub_plan"
             sequence="3" />
 
-        <menuitem id="menu_recruitment_batch"
+        <menuitem id="menu_psm_recruitment_batch"
             name="Đợt Tuyển Dụng"
-            parent="menu_office_recruitment_root"
-            action="action_recruitment_batch"
+            parent="menu_psm_office_recruitment_root"
+            action="action_psm_recruitment_batch"
             sequence="0" />
-        <menuitem id="menu_recruitment_plan_hr"
+        <menuitem id="menu_psm_recruitment_plan_hr"
             name="Kế hoạch tuyển dụng"
             parent="hr_recruitment.menu_hr_recruitment_root"
-            action="action_recruitment_plan"
+            action="action_psm_recruitment_plan"
             sequence="20" />
 
-        <menuitem id="menu_recruitment_plan_sub_hr"
+        <menuitem id="menu_psm_recruitment_sub_plan_hr"
             name="Kế hoạch con"
             parent="hr_recruitment.menu_hr_recruitment_root"
-            action="action_recruitment_plan_sub"
+            action="action_psm_recruitment_sub_plan"
             sequence="21" />
+        <!-- Hide the retired standalone Office Recruitment app shell. -->
+        <record id="menu_psm_office_recruitment_root" model="ir.ui.menu">
+            <field name="active" eval="False" />
+        </record>
+
+        <!-- Temporary hide in Recruitment app root (keep actions/models for direct access). -->
+        <record id="menu_psm_recruitment_plan_hr" model="ir.ui.menu">
+            <field name="active" eval="False" />
+        </record>
+
+        <record id="menu_psm_recruitment_sub_plan_hr" model="ir.ui.menu">
+            <field name="active" eval="False" />
+        </record>
     </data>
 </odoo>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="thankyou_recruiter_name_wrap"
+    <template id="psm_thankyou_recruiter_name_wrap"
               inherit_id="website_hr_recruitment.thankyou"
               name="Thankyou: wrap recruiter name">
         <!-- Shrink h2 → h5 and remove text-truncate so long names wrap by word -->

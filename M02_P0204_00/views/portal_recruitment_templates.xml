@@ -9,8 +9,8 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
                     <a href="/my/recruitment" class="card o_portal_doc_card h-100 text-decoration-none">
                         <div class="card-body">
-                            <h3 class="card-title">Vị trí tuyển dụng</h3>
-                            <p class="card-text text-muted">Tạo và quản lý vị trí cần tuyển dụng</p>
+                            <h3 class="card-title">Yêu cầu tuyển dụng</h3>
+                            <p class="card-text text-muted">Tạo và theo dõi yêu cầu tuyển dụng nhiều vị trí</p>
                         </div>
                     </a>
                 </div>
@@ -45,7 +45,7 @@
                     <div class="app-icon-wrapper me-3" style="background: #fff3cd; color: #b45309;">
                         <i class="fa fa-briefcase"/>
                     </div>
-                    <span>Tạo vị trí tuyển dụng</span>
+                    <span>Tạo yêu cầu tuyển dụng</span>
                 </a>
 
                 <a href="/my/interview-schedule" class="sidebar-link">
@@ -92,113 +92,148 @@
     </template>
 
     <!-- ========================================== -->
-    <!-- TRANG: Vị trí tuyển dụng                   -->
+    <!-- TRANG: Yêu cầu tuyển dụng                  -->
     <!-- ========================================== -->
-    <template id="portal_my_recruitment" name="Portal: Vị trí tuyển dụng">
+    <template id="portal_my_recruitment" name="Portal: Yêu cầu tuyển dụng">
         <t t-call="portal.portal_layout">
             <t t-set="breadcrumbs_searchbar" t-value="True"/>
             <t t-call="portal.portal_searchbar">
-                <t t-set="title">Vị trí tuyển dụng</t>
+                <t t-set="title">Yêu cầu tuyển dụng</t>
             </t>
 
-            <!-- Form tạo vị trí mới -->
-            <div class="card mb-4">
+            <t t-if="submit_status == 'error' and submit_message">
+                <div class="alert alert-danger" role="alert">
+                    <strong>Gửi duyệt thất bại:</strong>
+                    <span t-esc="submit_message"/>
+                    <t t-if="submit_request_id">
+                        <div class="mt-2 small text-muted">Mã yêu cầu: <span t-esc="submit_request_id"/></div>
+                    </t>
+                </div>
+            </t>
+
+            <t t-if="submit_status == 'ok' and submit_request_id">
+                <div class="alert alert-success" role="alert">
+                    Yêu cầu tuyển dụng đã được gửi duyệt thành công.
+                    <div class="mt-2 small text-muted">
+                        Mã yêu cầu:
+                        <t t-if="submit_request_name">
+                            <span t-esc="submit_request_name"/>
+                        </t>
+                        <t t-else="">
+                            <span t-esc="submit_request_id"/>
+                        </t>
+                    </div>
+                </div>
+            </t>
+
+            <t t-if="locked_department_error">
+                <div class="alert alert-danger" role="alert">
+                    <strong>Không thể tạo yêu cầu:</strong>
+                    <span t-esc="locked_department_error"/>
+                </div>
+            </t>
+
+            <!-- Form tạo yêu cầu tuyển dụng -->
+            <div class="card mb-4" t-if="locked_department">
                 <div class="card-header bg-primary text-white">
-                    <strong>Tạo vị trí tuyển dụng mới</strong>
+                    <strong>Tạo yêu cầu tuyển dụng mới</strong>
                 </div>
                 <div class="card-body">
-                    <form action="/my/recruitment/create" method="post">
+                    <form action="/my/recruitment/create" method="post" id="portal_recruitment_request_form" class="portal-recruitment-form">
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" name="recruitment_block" value="store"/>
+                        <input type="hidden" id="portal_locked_department_id" name="locked_department_id" t-att-value="locked_department.id"/>
                         <div class="row g-3">
-
-                            <!-- Vị trí -->
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Vị trí <span class="text-danger">*</span></label>
-                                <select name="name" class="form-select" required="required" id="portal_job_name_select">
-                                    <option value="">-- Chọn vị trí --</option>
-                                    <t t-foreach="job_templates" t-as="tmpl">
-                                        <option t-att-value="tmpl.name"
-                                                data-template="1"
-                                                t-att-data-department-id="tmpl.department_id.id"
-                                                t-att-data-recruitment-type="tmpl.recruitment_type or ''"
-                                                t-att-data-position-level="tmpl.position_level or ''">
-                                            <t t-esc="tmpl.name"/>
-                                        </option>
-                                    </t>
-                                </select>
+                            <!-- Lý do tổng -->
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold">Lý do tuyển dụng</label>
+                                <textarea name="request_reason" class="form-control" rows="1"
+                                          placeholder="Ví dụ: Bổ sung nhân sự cho cửa hàng trong tháng cao điểm"></textarea>
                             </div>
 
-                            <!-- Khối tuyển dụng -->
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Khối tuyển dụng <span class="text-danger">*</span></label>
-                                <div class="d-flex gap-3 mt-2">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="recruitment_type"
-                                               id="type_store" value="store" checked="checked" required="required"/>
-                                        <label class="form-check-label" for="type_store">Khối Cửa Hàng</label>
-                                    </div>
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label fw-bold mb-0">Danh sách dòng yêu cầu</label>
+                                    <button type="button" id="add_request_line_btn" class="btn btn-sm btn-outline-primary"
+                                            t-att-disabled="not job_templates and 'disabled' or None">
+                                        <i class="fa fa-plus me-1"/>Thêm dòng
+                                    </button>
+                                </div>
+                                <small class="text-muted">Mỗi dòng chỉ được chọn vị trí đã được cấu hình sẵn theo phòng ban.</small>
+                                <div id="portal_no_job_warning"
+                                     t-attf-class="alert alert-warning mt-2 mb-0 #{'d-none' if job_templates else ''}"
+                                     role="alert">
+                                    Phòng ban hiện tại chưa có vị trí tuyển dụng được cấu hình. Vui lòng cấu hình vị trí trước khi tạo yêu cầu.
                                 </div>
                             </div>
 
-                            <!-- Cấp bậc -->
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Cấp bậc <span class="text-danger">*</span></label>
-                                <div class="d-flex gap-3 mt-2">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="position_level"
-                                               id="level_mgmt" value="management" required="required"/>
-                                        <label class="form-check-label" for="level_mgmt">Quản Lý</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="position_level"
-                                               id="level_staff" value="staff"/>
-                                        <label class="form-check-label" for="level_staff">Nhân Viên</label>
+                            <div class="col-12 portal-request-lines" id="portal_request_line_container">
+                                <div class="border rounded p-3 portal-request-line" data-line-index="1">
+                                    <div class="row g-3">
+                                        <div class="col-md-8">
+                                            <label class="form-label">Vị trí có sẵn</label>
+                                            <select name="line_job_id[]" class="form-select portal_line_job_select"
+                                                    required="required"
+                                                    t-att-disabled="not job_templates and 'disabled' or None">
+                                                <option value="">-- Chọn vị trí có sẵn --</option>
+                                                <t t-foreach="job_templates" t-as="tmpl">
+                                                    <option t-att-value="tmpl.id"
+                                                            t-att-data-position-level="tmpl.position_level or ''"
+                                                            t-att-data-work-location-id="(tmpl.work_location_id.id if 'work_location_id' in tmpl._fields and tmpl.work_location_id else '')">
+                                                        <t t-esc="tmpl.name"/>
+                                                    </option>
+                                                </t>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            <label class="form-label">Cấp bậc</label>
+                                            <select name="line_position_level[]" class="form-select portal_line_position_level">
+                                                <option value="">-- Chọn --</option>
+                                                <option value="management">Quản Lý</option>
+                                                <option value="staff">Nhân Viên</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            <label class="form-label">Số lượng</label>
+                                            <input type="number" name="line_quantity[]" class="form-control" value="1" min="1" max="100"/>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label">Job Location</label>
+                                            <select name="line_work_location_id[]" class="form-select">
+                                                <option value="">-- Chọn địa điểm --</option>
+                                                <t t-foreach="work_locations" t-as="loc">
+                                                    <option t-att-value="loc.id">
+                                                        <t t-esc="loc.name"/>
+                                                    </option>
+                                                </t>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-7">
+                                            <label class="form-label">Ghi chú dòng</label>
+                                            <input type="text" name="line_reason[]" class="form-control"
+                                                   placeholder="Ví dụ: Bổ sung nhân sự cho ca tối"/>
+                                        </div>
+
+                                        <div class="col-md-1 d-flex align-items-end">
+                                            <button type="button" class="btn btn-outline-danger w-100 remove-request-line-btn" title="Xóa dòng">
+                                                <i class="fa fa-trash"/>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-
-
-
-                            <!-- Phòng ban -->
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Phòng ban (Cửa hàng)</label>
-                                <select name="department_id" class="form-select" id="portal_department_select" required="required">
-                                    <option value="">-- Chọn phòng ban --</option>
-                                    <t t-foreach="departments" t-as="dept">
-                                        <option t-att-value="dept.id">
-                                            <t t-esc="dept.name"/>
-                                        </option>
-                                    </t>
-                                </select>
-                            </div>
-
-                            <!-- Job Location -->
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Job Location</label>
-                                <select name="work_location_id" class="form-select">
-                                    <option value="">-- Chọn địa điểm --</option>
-                                    <t t-foreach="work_locations" t-as="loc">
-                                        <option t-att-value="loc.id">
-                                            <t t-esc="loc.name"/>
-                                        </option>
-                                    </t>
-                                </select>
-                            </div>
-
-                            <!-- Số lượng -->
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Số lượng cần tuyển</label>
-                                <input type="number" name="no_of_recruitment" class="form-control"
-                                       value="1" min="1" max="100"/>
                             </div>
 
                             <!-- Submit -->
-                            <div class="col-md-4 d-flex align-items-end">
-                                <button type="submit" class="btn btn-primary w-100">
-                                    Tạo vị trí
+                            <div class="col-12 d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary"
+                                        t-att-disabled="not job_templates and 'disabled' or None">
+                                    Tạo yêu cầu tuyển dụng
                                 </button>
                             </div>
-
                         </div>
                     </form>
                 </div>
@@ -206,185 +241,716 @@
 
             <script>
             (function() {
-                function getCheckedValue(name) {
-                    var checked = document.querySelector('input[name="' + name + '"]:checked');
-                    return checked ? checked.value : '';
-                }
-
-                function syncPositionLevelWithSelectedJob() {
-                    var jobSelect = document.getElementById('portal_job_name_select');
-                    var mgmtRadio = document.getElementById('level_mgmt');
-                    var staffRadio = document.getElementById('level_staff');
-                    if (!jobSelect || !mgmtRadio || !staffRadio) {
+                function syncLineLevel(lineEl) {
+                    var jobSelect = lineEl.querySelector('.portal_line_job_select');
+                    var levelSelect = lineEl.querySelector('.portal_line_position_level');
+                    if (!jobSelect || !levelSelect) {
                         return;
                     }
-
                     var selectedOption = jobSelect.options[jobSelect.selectedIndex];
                     var selectedLevel = selectedOption ? (selectedOption.dataset.positionLevel || '') : '';
-
                     if (selectedLevel) {
-                        mgmtRadio.checked = selectedLevel === 'management';
-                        staffRadio.checked = selectedLevel === 'staff';
-                        mgmtRadio.disabled = true;
-                        staffRadio.disabled = true;
+                        levelSelect.value = selectedLevel;
+                        levelSelect.disabled = true;
                     } else {
-                        mgmtRadio.disabled = false;
-                        staffRadio.disabled = false;
+                        levelSelect.disabled = false;
                     }
                 }
 
-                function filterPositionOptions() {
-                    var jobSelect = document.getElementById('portal_job_name_select');
-                    var deptSelect = document.getElementById('portal_department_select');
-                    if (!jobSelect || !deptSelect) {
+                function syncLineLocation(lineEl) {
+                    var jobSelect = lineEl.querySelector('.portal_line_job_select');
+                    var locationSelect = lineEl.querySelector('select[name="line_work_location_id[]"]');
+                    if (!jobSelect || !locationSelect) {
                         return;
                     }
-
-                    var deptVal = deptSelect.value || '';
-                    var recruitmentType = getCheckedValue('recruitment_type') || 'store';
-                    var seen = {};
-                    var hasDeptTemplates = false;
-
-                    // Bước 1: Hiện/Ẩn các option theo Department cụ thể
-                    var deptOptions = jobSelect.querySelectorAll('option[data-template="1"]');
-                    deptOptions.forEach(function(opt) {
-                        var sameDept = opt.dataset.departmentId === deptVal;
-                        var sameType = !recruitmentType || opt.dataset.recruitmentType === recruitmentType;
-                        
-                        if (sameDept &amp;&amp; sameType) {
-                            opt.hidden = false;
-                            opt.disabled = false;
-                            seen[opt.value] = true;
-                            hasDeptTemplates = true;
-                        } else {
-                            opt.hidden = true;
-                            opt.disabled = true;
-                        }
-                    });
-
-                    // Bước 2: Xử lý Master Options (Chỉ hiện khi Department chưa có template riêng hoặc tên không trùng)
-                    var masterOptions = jobSelect.querySelectorAll('option[data-master="1"]');
-                    masterOptions.forEach(function(opt) {
-                        var key = opt.value;
-                        // Nếu đã có template thật cho dept này rồi thì ẩn master đi cho gọn,
-                        // TRỪ KHI dept đó chưa có gì thì hiện master để user chọn.
-                        if (!hasDeptTemplates &amp;&amp; !seen[key]) {
-                            opt.hidden = false;
-                            opt.disabled = false;
-                        } else {
-                            opt.hidden = true;
-                            opt.disabled = true;
-                        }
-                    });
-
-                    if (jobSelect.selectedIndex > 0) {
-                        var selected = jobSelect.options[jobSelect.selectedIndex];
-                        if (selected &amp;&amp; (selected.hidden || selected.disabled)) {
-                            jobSelect.value = '';
-                        }
+                    var selectedOption = jobSelect.options[jobSelect.selectedIndex];
+                    var selectedLocationId = selectedOption ? (selectedOption.dataset.workLocationId || '') : '';
+                    if (selectedLocationId) {
+                        locationSelect.value = selectedLocationId;
                     }
-
-                    syncPositionLevelWithSelectedJob();
                 }
 
-                document.addEventListener('change', function(ev) {
-                    var target = ev.target;
-                    if (!target) {
+                function updatePortalJobWarning() {
+                    var container = document.getElementById('portal_request_line_container');
+                    var warning = document.getElementById('portal_no_job_warning');
+                    var addBtn = document.getElementById('add_request_line_btn');
+                    var form = document.getElementById('portal_recruitment_request_form');
+                    var submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+                    if (!container) {
                         return;
                     }
-                    if (
-                        target.id === 'portal_department_select' ||
-                        target.name === 'recruitment_type' ||
-                        target.id === 'portal_job_name_select'
-                    ) {
-                        filterPositionOptions();
-                    }
-                });
 
-                document.addEventListener('DOMContentLoaded', filterPositionOptions);
-                filterPositionOptions();
+                    var firstSelect = container.querySelector('.portal_line_job_select');
+                    var hasAnyValidJob = false;
+                    if (firstSelect) {
+                        Array.prototype.forEach.call(firstSelect.options || [], function(opt) {
+                            if (opt.value) {
+                                hasAnyValidJob = true;
+                            }
+                        });
+                    }
+
+                    container.querySelectorAll('.portal_line_job_select').forEach(function(selectEl) {
+                        selectEl.disabled = !hasAnyValidJob;
+                        if (!hasAnyValidJob) {
+                            selectEl.value = '';
+                        }
+                    });
+
+                    var showWarning = !hasAnyValidJob;
+                    if (warning) {
+                        warning.classList.toggle('d-none', !showWarning);
+                    }
+                    if (addBtn) {
+                        addBtn.disabled = showWarning;
+                    }
+                    if (submitBtn) {
+                        submitBtn.disabled = showWarning;
+                    }
+                }
+
+                function bindLineEvents(lineEl) {
+                    var jobSelect = lineEl.querySelector('.portal_line_job_select');
+                    if (jobSelect) {
+                        jobSelect.addEventListener('change', function() {
+                            syncLineLevel(lineEl);
+                            syncLineLocation(lineEl);
+                        });
+                    }
+
+                    var removeBtn = lineEl.querySelector('.remove-request-line-btn');
+                    if (removeBtn) {
+                        removeBtn.addEventListener('click', function() {
+                            var container = document.getElementById('portal_request_line_container');
+                            if (!container) {
+                                return;
+                            }
+                            var lines = container.querySelectorAll('.portal-request-line');
+                            if (lines.length &lt;= 1) {
+                                lineEl.querySelectorAll('input').forEach(function(input) {
+                                    if (input.type === 'number') {
+                                        input.value = '1';
+                                    } else {
+                                        input.value = '';
+                                    }
+                                });
+                                lineEl.querySelectorAll('select').forEach(function(selectEl) {
+                                    selectEl.value = '';
+                                    if (selectEl.classList.contains('portal_line_job_select')) {
+                                        selectEl.disabled = false;
+                                    }
+                                    if (selectEl.classList.contains('portal_line_position_level')) {
+                                        selectEl.disabled = false;
+                                    }
+                                });
+                                syncLineLevel(lineEl);
+                                syncLineLocation(lineEl);
+                                updatePortalJobWarning();
+                                return;
+                            }
+                            lineEl.remove();
+                            updatePortalJobWarning();
+                        });
+                    }
+                }
+
+                function addNewLine() {
+                    var container = document.getElementById('portal_request_line_container');
+                    if (!container) {
+                        return;
+                    }
+                    var firstLine = container.querySelector('.portal-request-line');
+                    if (!firstLine) {
+                        return;
+                    }
+                    var clone = firstLine.cloneNode(true);
+                    clone.querySelectorAll('input').forEach(function(input) {
+                        if (input.type === 'number') {
+                            input.value = '1';
+                        } else {
+                            input.value = '';
+                        }
+                    });
+                    clone.querySelectorAll('select').forEach(function(selectEl) {
+                        selectEl.value = '';
+                        if (selectEl.classList.contains('portal_line_job_select')) {
+                            selectEl.disabled = false;
+                        }
+                        if (selectEl.classList.contains('portal_line_position_level')) {
+                            selectEl.disabled = false;
+                        }
+                    });
+                    container.appendChild(clone);
+                    bindLineEvents(clone);
+                    syncLineLevel(clone);
+                    syncLineLocation(clone);
+                    updatePortalJobWarning();
+                }
+
+                function initRequestLineUI() {
+                    var container = document.getElementById('portal_request_line_container');
+                    var addBtn = document.getElementById('add_request_line_btn');
+                    if (!container || !addBtn) {
+                        return;
+                    }
+
+                    container.querySelectorAll('.portal-request-line').forEach(function(lineEl) {
+                        bindLineEvents(lineEl);
+                        syncLineLevel(lineEl);
+                        syncLineLocation(lineEl);
+                    });
+
+                    addBtn.addEventListener('click', addNewLine);
+                    updatePortalJobWarning();
+                }
+
+                document.addEventListener('DOMContentLoaded', initRequestLineUI);
+                initRequestLineUI();
             })();
             </script>
 
-            <!-- Danh sách vị trí hiện có -->
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <strong>Danh sách vị trí tuyển dụng</strong>
-                </div>
-                <!-- Bộ lọc tìm kiếm -->
-                <div class="card-body border-bottom pb-3 pt-3">
-                    <form method="get" action="/my/recruitment" class="row g-2 align-items-end">
-                        <div class="col-md-5">
-                            <label class="form-label mb-1 small fw-bold">Tìm theo tên vị trí</label>
-                            <input type="text" name="search" class="form-control form-control-sm"
-                                   placeholder="Nhập tên..."
-                                   t-att-value="search or ''"/>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label mb-1 small fw-bold">Phòng ban</label>
-                            <select name="department_id" class="form-select form-select-sm">
-                                <option value="0">-- Tất cả --</option>
-                                <t t-foreach="departments" t-as="dept">
-                                    <option t-att-value="dept.id" t-att-selected="dept.id == department_id">
-                                        <t t-esc="dept.name"/>
-                                    </option>
-                                </t>
-                            </select>
-                        </div>
-                        <div class="col-md-3 d-flex gap-2">
-                            <button type="submit" class="btn btn-sm btn-primary w-100">Lọc</button>
-                            <a href="/my/recruitment" class="btn btn-sm btn-outline-secondary w-100">Xóa lọc</a>
-                        </div>
-                    </form>
+            <t t-set="show_history_tab" t-value="active_tab == 'history'"/>
+            <div class="card mb-4 portal-recruitment-tabs-card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs portal-recruitment-tabs-nav" id="portal_recruitment_tabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button id="portal_jobs_tab"
+                                    type="button"
+                                    role="tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#portal_jobs_pane"
+                                    aria-controls="portal_jobs_pane"
+                                    t-att-aria-selected="'false' if show_history_tab else 'true'"
+                                    t-attf-class="nav-link #{'active' if not show_history_tab else ''}">
+                                Danh sách vị trí tuyển dụng
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button id="portal_request_history_tab"
+                                    type="button"
+                                    role="tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#portal_request_history_pane"
+                                    aria-controls="portal_request_history_pane"
+                                    t-att-aria-selected="'true' if show_history_tab else 'false'"
+                                    t-attf-class="nav-link #{'active' if show_history_tab else ''}">
+                                Lịch sử yêu cầu tuyển dụng
+                            </button>
+                        </li>
+                    </ul>
                 </div>
                 <div class="card-body p-0">
-                    <t t-if="jobs">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Vị trí</th>
-                                    <th>Khối</th>
-                                    <th>Cấp bậc</th>
-                                    <th>Phòng ban</th>
-                                    <th>Cần tuyển</th>
-                                    <th>Trạng thái</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <t t-foreach="jobs" t-as="job">
-                                    <tr>
-                                        <td><t t-esc="job.name"/></td>
-                                        <td>
-                                            <t t-if="job.recruitment_type == 'store'">Cửa Hàng</t>
-                                            <t t-elif="job.recruitment_type == 'office'">Văn Phòng</t>
-                                            <t t-else="">—</t>
-                                        </td>
-                                        <td>
-                                            <t t-if="job.position_level == 'management'">Quản Lý</t>
-                                            <t t-elif="job.position_level == 'staff'">Nhân Viên</t>
-                                            <t t-else="">—</t>
-                                        </td>
-                                        <td><t t-esc="job.department_id.name or '—'"/></td>
-                                        <td><t t-esc="job.no_of_recruitment"/></td>
-                                        <td>
-                                            <span t-if="job.no_of_recruitment == 0" class="badge bg-secondary">Không Tuyển</span>
-                                            <span t-if="job.no_of_recruitment > 0" class="badge bg-success">Đang Tuyển</span>
-                                        </td>
-                                    </tr>
+                    <div class="tab-content portal-recruitment-tabs-content" id="portal_recruitment_tabs_content">
+                        <div id="portal_jobs_pane"
+                             role="tabpanel"
+                             aria-labelledby="portal_jobs_tab"
+                             t-attf-class="tab-pane fade #{'show active' if not show_history_tab else ''}">
+                            <div class="border-bottom px-3 py-3 portal-recruitment-filter-toolbar-wrap">
+                                <form method="get" action="/my/recruitment"
+                                      class="row g-2 align-items-end portal-recruitment-filter-toolbar portal-recruitment-smart-filter"
+                                      data-filter-scope="jobs">
+                                    <input type="hidden" name="active_tab" value="jobs"/>
+                                    <input type="hidden" name="job_page" value="1" data-page-param="job_page"/>
+
+                                    <input type="hidden" name="history_search" t-att-value="history_search or ''"/>
+                                    <input type="hidden" name="history_request_state" t-att-value="history_request_state or ''"/>
+                                    <input type="hidden" name="history_approval_state" t-att-value="history_approval_state or ''"/>
+                                    <input type="hidden" name="history_sort" t-att-value="history_sort or ''"/>
+                                    <input type="hidden" name="history_page" t-att-value="history_pager.get('page') if history_pager else 1"/>
+                                    <input type="hidden" name="expanded_request_id" t-att-value="expanded_request_id or ''"/>
+
+                                    <div class="col-xl-4 col-lg-6">
+                                        <label class="form-label mb-1 small fw-bold">Tìm theo tên vị trí</label>
+                                        <input type="text"
+                                               name="job_search"
+                                               class="form-control portal-recruitment-filter-control"
+                                               placeholder="Nhập tên vị trí..."
+                                               data-filter-control="1"
+                                               data-filter-type="search"
+                                               data-default-value=""
+                                               t-att-value="job_search or ''"/>
+                                    </div>
+
+                                    <div class="col-xl-2 col-lg-3 col-md-4">
+                                        <label class="form-label mb-1 small fw-bold">Cấp bậc</label>
+                                        <select name="job_position_level"
+                                                class="form-select portal-recruitment-filter-control"
+                                                data-filter-control="1"
+                                                data-filter-type="select"
+                                                data-default-value="">
+                                            <option value="">Tất cả</option>
+                                            <t t-foreach="job_position_level_labels.items()" t-as="job_level_opt">
+                                                <option t-att-value="job_level_opt[0]"
+                                                        t-att-selected="job_level_opt[0] == job_position_level">
+                                                    <t t-esc="job_level_opt[1]"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-xl-2 col-lg-3 col-md-4">
+                                        <label class="form-label mb-1 small fw-bold">Trạng thái</label>
+                                        <select name="job_status"
+                                                class="form-select portal-recruitment-filter-control"
+                                                data-filter-control="1"
+                                                data-filter-type="select"
+                                                data-default-value="">
+                                            <option value="">Tất cả</option>
+                                            <t t-foreach="job_status_labels.items()" t-as="job_status_opt">
+                                                <option t-att-value="job_status_opt[0]"
+                                                        t-att-selected="job_status_opt[0] == job_status">
+                                                    <t t-esc="job_status_opt[1]"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-xl-2 col-lg-3 col-md-4">
+                                        <label class="form-label mb-1 small fw-bold">Sắp xếp</label>
+                                        <select name="job_sort"
+                                                class="form-select portal-recruitment-filter-control"
+                                                data-filter-control="1"
+                                                data-filter-type="select"
+                                                data-default-value="az">
+                                            <t t-foreach="job_sort_labels.items()" t-as="job_sort_opt">
+                                                <option t-att-value="job_sort_opt[0]"
+                                                        t-att-selected="job_sort_opt[0] == job_sort">
+                                                    <t t-esc="job_sort_opt[1]"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-xl-2 col-lg-3 col-md-4">
+                                        <button type="button"
+                                                class="btn portal-recruitment-clear-btn w-100"
+                                                data-clear-filters="jobs">
+                                            Xóa bộ lọc
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <t t-if="jobs">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Vị trí</th>
+                                                <th>Khối</th>
+                                                <th>Cấp bậc</th>
+                                                <th>Phòng ban</th>
+                                                <th>Cần tuyển</th>
+                                                <th>Trạng thái</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="jobs" t-as="job">
+                                                <tr>
+                                                    <td><t t-esc="job.name"/></td>
+                                                    <td>
+                                                        <t t-if="job.recruitment_type == 'store'">Cửa Hàng</t>
+                                                        <t t-elif="job.recruitment_type == 'office'">Văn Phòng</t>
+                                                        <t t-else="">—</t>
+                                                    </td>
+                                                    <td>
+                                                        <t t-if="job.position_level == 'management'">Quản Lý</t>
+                                                        <t t-elif="job.position_level == 'staff'">Nhân Viên</t>
+                                                        <t t-else="">—</t>
+                                                    </td>
+                                                    <td><t t-esc="job.department_id.name or '—'"/></td>
+                                                    <td><t t-esc="job.no_of_recruitment"/></td>
+                                                    <td>
+                                                        <span t-if="job.no_of_recruitment &lt;= 0" class="badge portal-recruitment-status-chip portal-recruitment-status-chip--muted">Không tuyển</span>
+                                                        <span t-if="job.no_of_recruitment &gt; 0" class="badge portal-recruitment-status-chip portal-recruitment-status-chip--success">Đang tuyển</span>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <p class="text-muted p-3 text-center mb-0">Không có vị trí nào phù hợp.</p>
+                            </t>
+                            <t t-if="jobs_pager and jobs_pager.get('page_count', 0) &gt; 1">
+                                <div class="border-top d-flex justify-content-center p-3 portal-recruitment-pager-wrap">
+                                    <nav aria-label="Phân trang danh sách vị trí tuyển dụng">
+                                        <ul class="pagination portal-recruitment-tab-pager mb-0">
+                                            <li t-attf-class="page-item #{'' if jobs_pager.get('has_previous') else 'disabled'}">
+                                                <a class="page-link" t-att-href="jobs_pager.get('previous_url') or '#'" aria-label="Trang trước">&#171;</a>
+                                            </li>
+                                            <t t-foreach="jobs_pager.get('pages', [])" t-as="page_item">
+                                                <li t-attf-class="page-item #{'active' if page_item.get('is_current') else ''}">
+                                                    <a class="page-link" t-att-href="page_item.get('url')">
+                                                        <t t-esc="page_item.get('number')"/>
+                                                    </a>
+                                                </li>
+                                            </t>
+                                            <li t-attf-class="page-item #{'' if jobs_pager.get('has_next') else 'disabled'}">
+                                                <a class="page-link" t-att-href="jobs_pager.get('next_url') or '#'" aria-label="Trang sau">&#187;</a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </t>
+                        </div>
+                        <div id="portal_request_history_pane"
+                             role="tabpanel"
+                             aria-labelledby="portal_request_history_tab"
+                             t-attf-class="tab-pane fade #{'show active' if show_history_tab else ''}">
+                            <div class="border-bottom px-3 py-3 portal-recruitment-filter-toolbar-wrap">
+                                <form method="get" action="/my/recruitment"
+                                      class="row g-2 align-items-end portal-recruitment-filter-toolbar portal-recruitment-smart-filter"
+                                      data-filter-scope="history">
+                                    <input type="hidden" name="active_tab" value="history"/>
+                                    <input type="hidden" name="history_page" value="1" data-page-param="history_page"/>
+
+                                    <input type="hidden" name="job_search" t-att-value="job_search or ''"/>
+                                    <input type="hidden" name="job_position_level" t-att-value="job_position_level or ''"/>
+                                    <input type="hidden" name="job_status" t-att-value="job_status or ''"/>
+                                    <input type="hidden" name="job_sort" t-att-value="job_sort or ''"/>
+                                    <input type="hidden" name="job_page" t-att-value="jobs_pager.get('page') if jobs_pager else 1"/>
+                                    <input type="hidden" name="expanded_request_id" t-att-value="expanded_request_id or ''"/>
+
+                                    <div class="col-xl-4 col-lg-6">
+                                        <label class="form-label mb-1 small fw-bold">Tìm kiếm lịch sử</label>
+                                        <input type="text"
+                                               name="history_search"
+                                               class="form-control portal-recruitment-filter-control"
+                                               placeholder="Mã yêu cầu, lý do, vị trí..."
+                                               data-filter-control="1"
+                                               data-filter-type="search"
+                                               data-default-value=""
+                                               t-att-value="history_search or ''"/>
+                                    </div>
+
+                                    <div class="col-xl-2 col-lg-3 col-md-4">
+                                        <label class="form-label mb-1 small fw-bold">Trạng thái yêu cầu</label>
+                                        <select name="history_request_state"
+                                                class="form-select portal-recruitment-filter-control"
+                                                data-filter-control="1"
+                                                data-filter-type="select"
+                                                data-default-value="">
+                                            <option value="">Tất cả</option>
+                                            <t t-foreach="request_state_labels.items()" t-as="request_state_opt">
+                                                <option t-att-value="request_state_opt[0]"
+                                                        t-att-selected="request_state_opt[0] == history_request_state">
+                                                    <t t-esc="request_state_opt[1]"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-xl-2 col-lg-3 col-md-4">
+                                        <label class="form-label mb-1 small fw-bold">Trạng thái duyệt</label>
+                                        <select name="history_approval_state"
+                                                class="form-select portal-recruitment-filter-control"
+                                                data-filter-control="1"
+                                                data-filter-type="select"
+                                                data-default-value="">
+                                            <option value="">Tất cả</option>
+                                            <t t-foreach="approval_status_labels.items()" t-as="approval_state_opt">
+                                                <option t-att-value="approval_state_opt[0]"
+                                                        t-att-selected="approval_state_opt[0] == history_approval_state">
+                                                    <t t-esc="approval_state_opt[1]"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-xl-2 col-lg-3 col-md-4">
+                                        <label class="form-label mb-1 small fw-bold">Sắp xếp</label>
+                                        <select name="history_sort"
+                                                class="form-select portal-recruitment-filter-control"
+                                                data-filter-control="1"
+                                                data-filter-type="select"
+                                                data-default-value="newest">
+                                            <t t-foreach="history_sort_labels.items()" t-as="history_sort_opt">
+                                                <option t-att-value="history_sort_opt[0]"
+                                                        t-att-selected="history_sort_opt[0] == history_sort">
+                                                    <t t-esc="history_sort_opt[1]"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-xl-2 col-lg-3 col-md-4">
+                                        <button type="button"
+                                                class="btn portal-recruitment-clear-btn w-100"
+                                                data-clear-filters="history">
+                                            Xóa bộ lọc
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <div class="d-flex justify-content-end mt-2">
+                                    <span class="small text-muted">Chỉ hiển thị yêu cầu do bạn tạo</span>
+                                </div>
+                            </div>
+                            <t t-if="recruitment_requests">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0 portal-recruitment-history-table"
+                                           t-att-data-expanded-request-id="expanded_request_id or ''">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Mã yêu cầu</th>
+                                                <th>Người tạo</th>
+                                                <th>Thời gian tạo</th>
+                                                <th>Trạng thái yêu cầu</th>
+                                                <th>Trạng thái duyệt</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="recruitment_requests" t-as="req">
+                                                <t t-set="approval_req" t-value="req.x_psm_approval_request_id"/>
+                                                <t t-set="total_quantity" t-value="sum(req.line_ids.mapped('quantity')) if req.line_ids else (req.quantity or 0)"/>
+                                                <t t-set="pending_approvers" t-value="[a for a in (approval_req.approver_ids if approval_req else []) if a.status == 'pending']"/>
+                                                <t t-set="approved_approvers" t-value="[a for a in (approval_req.approver_ids if approval_req else []) if a.status == 'approved']"/>
+                                                <t t-set="waiting_approvers" t-value="[a for a in (approval_req.approver_ids if approval_req else []) if a.status in ('new', 'waiting')]"/>
+                                                <t t-set="rejected_approvers" t-value="[a for a in (approval_req.approver_ids if approval_req else []) if a.status in ('refused', 'cancel', 'rejected')]"/>
+
+                                                <tr class="portal-recruitment-history-row"
+                                                    role="button"
+                                                    tabindex="0"
+                                                    aria-expanded="false"
+                                                    t-att-data-request-id="req.id"
+                                                    t-att-aria-controls="'portal_request_detail_%s' % req.id">
+                                                    <td><strong t-esc="req.name or ('REQ-%s' % req.id)"/></td>
+                                                    <td><span t-esc="req.user_id.name or '—'"/></td>
+                                                    <td>
+                                                        <t t-if="req.create_date">
+                                                            <span t-esc="req.create_date.strftime('%d/%m/%Y %H:%M')"/>
+                                                        </t>
+                                                        <t t-else="">—</t>
+                                                    </td>
+                                                    <td>
+                                                        <span t-attf-class="badge portal-recruitment-status-chip #{req.state == 'done' and 'portal-recruitment-status-chip--success' or req.state == 'cancel' and 'portal-recruitment-status-chip--danger' or 'portal-recruitment-status-chip--muted'}">
+                                                            <t t-esc="request_state_labels.get(req.state, req.state or '-')"/>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span t-attf-class="badge portal-recruitment-status-chip #{req.x_psm_approval_status == 'approved' and 'portal-recruitment-status-chip--success' or req.x_psm_approval_status in ('refused', 'cancel') and 'portal-recruitment-status-chip--danger' or req.x_psm_approval_status in ('pending', 'new') and 'portal-recruitment-status-chip--warning' or 'portal-recruitment-status-chip--muted'}">
+                                                            <t t-esc="approval_status_labels.get(req.x_psm_approval_status, req.x_psm_approval_status or '-')"/>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+
+                                                <tr class="portal-recruitment-history-detail-row d-none"
+                                                    t-att-data-detail-request-id="req.id"
+                                                    aria-hidden="true">
+                                                    <td colspan="5">
+                                                        <div class="portal-recruitment-history-detail" t-att-id="'portal_request_detail_%s' % req.id">
+                                                            <div class="portal-recruitment-history-detail-header">
+                                                                <div>
+                                                                    <strong t-esc="req.name or ('REQ-%s' % req.id)"/>
+                                                                    <span class="portal-recruitment-history-detail-subtitle">Chi tiết yêu cầu tuyển dụng</span>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="portal-recruitment-history-detail-body">
+                                                                <div class="row g-3">
+                                                                    <div class="col-lg-7">
+                                                                        <div class="portal-recruitment-history-detail-card">
+                                                                            <h6 class="portal-recruitment-history-card-title">Tổng quan</h6>
+                                                                            <div class="portal-recruitment-history-meta-grid">
+                                                                                <div class="portal-recruitment-history-meta-item">
+                                                                                    <span class="portal-recruitment-history-meta-label">Mã yêu cầu</span>
+                                                                                    <span class="portal-recruitment-history-meta-value" t-esc="req.name or ('REQ-%s' % req.id)"/>
+                                                                                </div>
+                                                                                <div class="portal-recruitment-history-meta-item">
+                                                                                    <span class="portal-recruitment-history-meta-label">Người tạo</span>
+                                                                                    <span class="portal-recruitment-history-meta-value" t-esc="req.user_id.name or '—'"/>
+                                                                                </div>
+                                                                                <div class="portal-recruitment-history-meta-item">
+                                                                                    <span class="portal-recruitment-history-meta-label">Thời gian tạo</span>
+                                                                                    <span class="portal-recruitment-history-meta-value" t-esc="req.create_date and req.create_date.strftime('%d/%m/%Y %H:%M') or '—'"/>
+                                                                                </div>
+                                                                                <div class="portal-recruitment-history-meta-item">
+                                                                                    <span class="portal-recruitment-history-meta-label">Thời gian submit duyệt</span>
+                                                                                    <span class="portal-recruitment-history-meta-value" t-esc="(approval_req and approval_req.date_confirmed and approval_req.date_confirmed.strftime('%d/%m/%Y %H:%M')) or '—'"/>
+                                                                                </div>
+                                                                                <div class="portal-recruitment-history-meta-item">
+                                                                                    <span class="portal-recruitment-history-meta-label">Phòng ban</span>
+                                                                                    <span class="portal-recruitment-history-meta-value" t-esc="req.department_id.name or '—'"/>
+                                                                                </div>
+                                                                                <div class="portal-recruitment-history-meta-item">
+                                                                                    <span class="portal-recruitment-history-meta-label">Khối tuyển dụng</span>
+                                                                                    <span class="portal-recruitment-history-meta-value" t-esc="recruitment_block_labels.get(req.recruitment_block, req.recruitment_block or '-')"/>
+                                                                                </div>
+                                                                                <div class="portal-recruitment-history-meta-item">
+                                                                                    <span class="portal-recruitment-history-meta-label">Tổng số lượng</span>
+                                                                                    <span class="portal-recruitment-history-meta-value" t-esc="total_quantity"/>
+                                                                                </div>
+                                                                                <div class="portal-recruitment-history-meta-item">
+                                                                                    <span class="portal-recruitment-history-meta-label">Trạng thái yêu cầu</span>
+                                                                                    <span t-attf-class="badge portal-recruitment-status-chip #{req.state == 'done' and 'portal-recruitment-status-chip--success' or req.state == 'cancel' and 'portal-recruitment-status-chip--danger' or 'portal-recruitment-status-chip--muted'}">
+                                                                                        <t t-esc="request_state_labels.get(req.state, req.state or '-')"/>
+                                                                                    </span>
+                                                                                </div>
+                                                                                <div class="portal-recruitment-history-meta-item">
+                                                                                    <span class="portal-recruitment-history-meta-label">Trạng thái duyệt</span>
+                                                                                    <span t-attf-class="badge portal-recruitment-status-chip #{req.x_psm_approval_status == 'approved' and 'portal-recruitment-status-chip--success' or req.x_psm_approval_status in ('refused', 'cancel') and 'portal-recruitment-status-chip--danger' or req.x_psm_approval_status in ('pending', 'new') and 'portal-recruitment-status-chip--warning' or 'portal-recruitment-status-chip--muted'}">
+                                                                                        <t t-esc="approval_status_labels.get(req.x_psm_approval_status, req.x_psm_approval_status or '-')"/>
+                                                                                    </span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-lg-5">
+                                                                        <div class="portal-recruitment-history-detail-card">
+                                                                            <h6 class="portal-recruitment-history-card-title">Luồng duyệt</h6>
+
+                                                                            <div class="portal-recruitment-flow-row">
+                                                                                <span class="portal-recruitment-flow-label">Người gửi</span>
+                                                                                <div class="portal-recruitment-flow-value">
+                                                                                    <span t-esc="(approval_req and 'request_owner_id' in approval_req._fields and approval_req.request_owner_id.name) or req.user_id.name or '—'"/>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div class="portal-recruitment-flow-row">
+                                                                                <span class="portal-recruitment-flow-label">Người đang chờ duyệt</span>
+                                                                                <div class="portal-recruitment-flow-value">
+                                                                                    <t t-if="pending_approvers">
+                                                                                        <t t-foreach="pending_approvers" t-as="approver">
+                                                                                            <span class="badge portal-recruitment-approver-chip portal-recruitment-approver-chip--pending">
+                                                                                                <t t-esc="'%s (%s)' % ((approver.user_id.name or '—'), approval_approver_status_labels.get(approver.status, approver.status or '-'))"/>
+                                                                                            </span>
+                                                                                        </t>
+                                                                                    </t>
+                                                                                    <t t-else=""><span class="text-muted">—</span></t>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div class="portal-recruitment-flow-row">
+                                                                                <span class="portal-recruitment-flow-label">Người đã duyệt</span>
+                                                                                <div class="portal-recruitment-flow-value">
+                                                                                    <t t-if="approved_approvers">
+                                                                                        <t t-foreach="approved_approvers" t-as="approver">
+                                                                                            <span class="badge portal-recruitment-approver-chip portal-recruitment-approver-chip--approved">
+                                                                                                <t t-esc="'%s (%s)' % ((approver.user_id.name or '—'), approval_approver_status_labels.get(approver.status, approver.status or '-'))"/>
+                                                                                            </span>
+                                                                                        </t>
+                                                                                    </t>
+                                                                                    <t t-else=""><span class="text-muted">—</span></t>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div class="portal-recruitment-flow-row">
+                                                                                <span class="portal-recruitment-flow-label">Người còn chờ bước sau</span>
+                                                                                <div class="portal-recruitment-flow-value">
+                                                                                    <t t-if="waiting_approvers">
+                                                                                        <t t-foreach="waiting_approvers" t-as="approver">
+                                                                                            <span class="badge portal-recruitment-approver-chip portal-recruitment-approver-chip--waiting">
+                                                                                                <t t-esc="'%s (%s)' % ((approver.user_id.name or '—'), approval_approver_status_labels.get(approver.status, approver.status or '-'))"/>
+                                                                                            </span>
+                                                                                        </t>
+                                                                                    </t>
+                                                                                    <t t-else=""><span class="text-muted">—</span></t>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div class="portal-recruitment-flow-row">
+                                                                                <span class="portal-recruitment-flow-label">Từ chối/Hủy</span>
+                                                                                <div class="portal-recruitment-flow-value">
+                                                                                    <t t-if="rejected_approvers">
+                                                                                        <t t-foreach="rejected_approvers" t-as="approver">
+                                                                                            <span class="badge portal-recruitment-approver-chip portal-recruitment-approver-chip--rejected">
+                                                                                                <t t-esc="'%s (%s)' % ((approver.user_id.name or '—'), approval_approver_status_labels.get(approver.status, approver.status or '-'))"/>
+                                                                                            </span>
+                                                                                        </t>
+                                                                                    </t>
+                                                                                    <t t-else=""><span class="text-muted">—</span></t>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-12">
+                                                                        <div class="portal-recruitment-history-detail-card">
+                                                                            <h6 class="portal-recruitment-history-card-title">Chi tiết vị trí</h6>
+                                                                            <div class="table-responsive portal-recruitment-detail-lines-table">
+                                                                                <table class="table table-sm table-hover mb-0">
+                                                                                    <thead class="table-light">
+                                                                                        <tr>
+                                                                                            <th>Vị trí</th>
+                                                                                            <th>Cấp bậc</th>
+                                                                                            <th>Phòng ban</th>
+                                                                                            <th>Job Location</th>
+                                                                                            <th>Số lượng</th>
+                                                                                            <th>Ghi chú dòng</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        <t t-if="req.line_ids">
+                                                                                            <t t-foreach="req.line_ids" t-as="line">
+                                                                                                <tr>
+                                                                                                    <td><t t-esc="line.display_position_name or line.position_name or '-'"/></td>
+                                                                                                    <td><t t-esc="position_level_labels.get(line.position_level, line.position_level or '-')"/></td>
+                                                                                                    <td><t t-esc="line.department_id.name or req.department_id.name or '-'"/></td>
+                                                                                                    <td><t t-esc="line.work_location_id.name or '-'"/></td>
+                                                                                                    <td><t t-esc="line.quantity or 0"/></td>
+                                                                                                    <td><t t-esc="line.reason or '-'"/></td>
+                                                                                                </tr>
+                                                                                            </t>
+                                                                                        </t>
+                                                                                        <t t-else="">
+                                                                                            <t t-set="fallback_position_level" t-value="req.job_id.position_level if req.job_id and 'position_level' in req.job_id._fields else False"/>
+                                                                                            <t t-set="fallback_work_location" t-value="req.job_id.work_location_id.name if req.job_id and 'work_location_id' in req.job_id._fields and req.job_id.work_location_id else '-'"/>
+                                                                                            <tr>
+                                                                                                <td><t t-esc="req.job_id.display_name or '-'"/></td>
+                                                                                                <td><t t-esc="position_level_labels.get(fallback_position_level, fallback_position_level or '-')"/></td>
+                                                                                                <td><t t-esc="req.department_id.name or '-'"/></td>
+                                                                                                <td><t t-esc="fallback_work_location"/></td>
+                                                                                                <td><t t-esc="req.quantity or 0"/></td>
+                                                                                                <td><t t-esc="req.reason or '-'"/></td>
+                                                                                            </tr>
+                                                                                        </t>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <t t-if="history_pager and history_pager.get('page_count', 0) &gt; 1">
+                                    <div class="border-top d-flex justify-content-center p-3 portal-recruitment-pager-wrap">
+                                        <nav aria-label="Phân trang lịch sử yêu cầu tuyển dụng">
+                                            <ul class="pagination portal-recruitment-tab-pager mb-0">
+                                                <li t-attf-class="page-item #{'' if history_pager.get('has_previous') else 'disabled'}">
+                                                    <a class="page-link" t-att-href="history_pager.get('previous_url') or '#'" aria-label="Trang trước">&#171;</a>
+                                                </li>
+                                                <t t-foreach="history_pager.get('pages', [])" t-as="page_item">
+                                                    <li t-attf-class="page-item #{'active' if page_item.get('is_current') else ''}">
+                                                        <a class="page-link" t-att-href="page_item.get('url')">
+                                                            <t t-esc="page_item.get('number')"/>
+                                                        </a>
+                                                    </li>
+                                                </t>
+                                                <li t-attf-class="page-item #{'' if history_pager.get('has_next') else 'disabled'}">
+                                                    <a class="page-link" t-att-href="history_pager.get('next_url') or '#'" aria-label="Trang sau">&#187;</a>
+                                                </li>
+                                            </ul>
+                                        </nav>
+                                    </div>
                                 </t>
-                            </tbody>
-                        </table>
-                    </t>
-                    <t t-else="">
-                        <p class="text-muted p-3 text-center">Không có vị trí nào phù hợp.</p>
-                    </t>
-                </div>
-                <!-- Pager -->
-                <t t-if="pager and pager.get('page_count', 0) &gt; 1">
-                    <div class="card-footer d-flex justify-content-center">
-                        <t t-call="portal.pager"/>
+                            </t>
+                            <t t-else="">
+                                <p class="text-muted p-3 text-center mb-0">
+                                    <t t-if="history_search or history_request_state or history_approval_state">Không có yêu cầu nào phù hợp.</t>
+                                    <t t-else="">Chưa có yêu cầu tuyển dụng nào do bạn tạo.</t>
+                                </p>
+                            </t>
+                        </div>
                     </div>
-                </t>
+                </div>
             </div>
         </t>
     </template>
@@ -394,6 +960,7 @@
     <!-- ========================================== -->
     <template id="portal_my_interview_schedule" name="Portal: Lịch phỏng vấn">
         <t t-call="portal.portal_layout">
+            <div class="psm-portal-page psm-portal-schedule">
             <!-- <t t-call="portal.portal_searchbar">
                 <t t-set="title">Lịch phỏng vấn dự kiến</t>
             </t> -->
@@ -403,11 +970,11 @@
             <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
             <!-- Form tạo lịch mới -->
-            <div class="card mb-4">
-                <div class="card-header bg-success text-white">
+            <div class="card mb-4 psm-portal-card psm-portal-section-card">
+                <div class="card-header bg-primary psm-portal-card-header">
                     <strong>Cập nhật lịch phỏng vấn dự kiến</strong>
                 </div>
-                <div class="card-body">
+                <div class="card-body psm-portal-card-body">
                     <form action="/my/interview-schedule/create" method="post" id="form_interview_schedule">
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                         <input type="hidden" name="schedule_id" id="selected_schedule_id" value=""/>
@@ -434,7 +1001,7 @@
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="date" name="week_start_date" id="week_start_date"
                                            class="form-control" required="required" style="max-width:180px"/>
-                                    <span id="week_range_display" class="badge bg-secondary fs-6 px-3 py-2"></span>
+                                    <span id="week_range_display" class="badge psm-portal-chip psm-portal-chip--week fs-6 px-3 py-2"></span>
                                 </div>
                                 <!-- <small class="text-muted">Chọn ngày Thứ Hai — tuần tự tính (T2 → CN)</small> -->
                             </div>
@@ -482,7 +1049,7 @@
                                 <div class="small text-muted" id="selected_schedule_info">Chưa chọn lịch cụ thể. Hệ thống sẽ cập nhật theo phòng ban + tuần.</div>
                             </div> -->
                             <div class="col-md-4">
-                                <button type="submit" class="btn btn-success w-100">Tạo lịch</button>
+                                <button type="submit" class="btn btn-primary psm-portal-action-btn w-100">Tạo lịch</button>
                             </div>
 
                         </div>
@@ -699,13 +1266,13 @@
 
 
             <!-- Danh sách lịch -->
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
+            <div class="card psm-portal-section-card">
+                <div class="card-header bg-primary psm-portal-card-header d-flex justify-content-between align-items-center">
                     <strong>Danh sách lịch phỏng vấn</strong>
                 </div>
                 <!-- Bộ lọc -->
-                <div class="card-body border-bottom pb-3 pt-3">
-                    <form method="get" action="/my/interview-schedule" class="row g-2 align-items-end">
+                <div class="card-body border-bottom pb-3 pt-3 psm-portal-filter-card">
+                    <form method="get" action="/my/interview-schedule" class="row g-2 align-items-end psm-portal-filter-form">
                         <div class="col-md-4">
                             <label class="form-label mb-1 small fw-bold">Phòng ban</label>
                             <select name="department_id" class="form-select form-select-sm">
@@ -726,14 +1293,14 @@
                             </select>
                         </div>
                         <div class="col-md-4 d-flex gap-2">
-                            <button type="submit" class="btn btn-sm btn-primary w-100">Lọc</button>
-                            <a href="/my/interview-schedule" class="btn btn-sm btn-outline-secondary w-100">Xóa lọc</a>
+                            <button type="submit" class="btn btn-sm btn-primary psm-portal-action-btn w-100">Lọc</button>
+                            <a href="/my/interview-schedule" class="btn btn-sm btn-outline-primary psm-portal-action-btn w-100">Xóa lọc</a>
                         </div>
                     </form>
                 </div>
                 <div class="card-body p-0">
                     <t t-if="schedules">
-                        <table class="table table-hover mb-0">
+                        <table class="table table-hover mb-0 psm-portal-table">
                             <thead class="table-light">
                                 <tr>
 
@@ -769,14 +1336,14 @@
                                         <td><t t-esc="sc.interview_date_3_vn or '—'"/></td>
                                         <td><t t-esc="sc.applicant_count"/> ứng viên</td>
                                         <td>
-                                            <span t-attf-class="badge #{sc.state == 'confirmed' and 'bg-success' or 'bg-warning'}">
+                                            <span t-attf-class="badge psm-portal-chip #{sc.state == 'confirmed' and 'psm-portal-chip--success' or 'psm-portal-chip--warning'}">
                                                 <t t-esc="sc.state == 'confirmed' and 'Đã xác nhận' or 'Nháp'"/>
                                             </span>
                                         </td>
-                                        <td>
+                                        <td class="psm-portal-action-cell">
                                             <t t-if="sc.state == 'draft'">
                                                 <a t-attf-href="/my/interview-schedule/#{sc.id}/confirm"
-                                                   class="btn btn-sm btn-outline-success">Xác nhận</a>
+                                                   class="btn btn-sm btn-outline-primary psm-portal-action-btn">Xác nhận</a>
                                             </t>
                                         </td>
                                     </tr>
@@ -795,6 +1362,7 @@
                     </div>
                 </t>
             </div>
+            </div>
         </t>
     </template>
 
@@ -803,14 +1371,15 @@
     <!-- ========================================== -->
     <template id="portal_my_oje_evaluation" name="Portal: Đánh Giá OJE">
         <t t-call="portal.portal_layout">
+            <div class="psm-portal-page psm-portal-oje">
             <t t-call="portal.portal_searchbar">
                 <t t-set="title">Đánh Giá OJE - Ứng Viên Phòng Ban</t>
             </t>
 
             <!-- Bộ lọc kết hợp tìm kiếm -->
-            <div class="card mb-3">
+            <div class="card mb-3 psm-portal-section-card psm-portal-filter-card">
                 <div class="card-body pb-2 pt-3">
-                    <form method="get" action="/my/oje-evaluation" class="row g-2 align-items-end">
+                    <form method="get" action="/my/oje-evaluation" class="row g-2 align-items-end psm-portal-filter-form">
                         <div class="col-md-4">
                             <label class="form-label mb-1 small fw-bold">Tìm theo tên ứng viên</label>
                             <input type="text" name="search" class="form-control form-control-sm"
@@ -831,14 +1400,14 @@
                             <label class="form-label mb-1 small fw-bold">Kết quả OJE</label>
                             <select name="result" class="form-select form-select-sm">
                                 <option value="">-- Tất cả --</option>
-                                <option value="pass" t-att-selected="result == 'pass'">✅ Đạt</option>
-                                <option value="fail" t-att-selected="result == 'fail'">❌ Rớt</option>
+                                <option value="pass" t-att-selected="result == 'pass'">Đạt</option>
+                                <option value="fail" t-att-selected="result == 'fail'">Rớt</option>
                                 <option value="pending" t-att-selected="result == 'pending'">Chưa đánh giá</option>
                             </select>
                         </div>
                         <div class="col-md-2 d-flex gap-2">
-                            <button type="submit" class="btn btn-sm btn-primary w-100">Lọc</button>
-                            <a href="/my/oje-evaluation" class="btn btn-sm btn-outline-secondary w-100">Xóa</a>
+                            <button type="submit" class="btn btn-sm btn-primary psm-portal-action-btn w-100">Lọc</button>
+                            <a href="/my/oje-evaluation" class="btn btn-sm btn-outline-primary psm-portal-action-btn w-100">Xóa</a>
                         </div>
                     </form>
                 </div>
@@ -851,23 +1420,22 @@
             </t>
 
             <t t-if="applicants">
-                <div class="card">
-                    <div class="card-header bg-warning text-dark">
+                <div class="card psm-portal-section-card">
+                    <div class="card-header bg-primary psm-portal-card-header">
                         <strong>Danh sách ứng viên cần đánh giá OJE</strong>
                     </div>
                     <div class="card-body p-0">
-                        <table class="table table-hover mb-0" style="cursor:pointer">
+                        <table class="table table-hover mb-0 psm-portal-table" style="cursor:pointer">
                             <thead class="table-light">
                                 <tr>
                                     <th>Ứng viên</th>
                                     <th>Vị trí</th>
                                     <th>Phòng ban</th>
                                     <th>Gmail</th>
-                                    <th>Số ĐT</th>
                                     <th>Ngày tạo</th>
                                     <th>Trạng thái đánh giá</th>
-                                    <th>Kết quả</th>
-                                    <th>Hành động</th>
+                                    <th class="psm-portal-result-head">Kết quả</th>
+                                    <th class="psm-portal-action-head">Hành động</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -879,47 +1447,46 @@
                                         <td><t t-esc="app.job_id.name or '—'"/></td>
                                         <td><t t-esc="app.department_id.name or '—'"/></td>
                                         <td><t t-esc="app.email_from or '—'"/></td>
-                                        <td><t t-esc="app.partner_phone or '—'"/></td>
                                         <td><t t-esc="app.create_date and app.create_date.strftime('%d/%m/%Y') or '—'"/></td>
                                         <!-- Cột Trạng thái đánh giá -->
                                         <td>
                                             <t t-if="app.oje_evaluation_state == 'done'">
-                                                <span class="badge bg-success">Đã đánh giá</span>
+                                                <span class="badge psm-portal-chip psm-portal-chip--success">Đã đánh giá</span>
                                             </t>
                                             <t t-elif="app.oje_evaluation_state == 'in_progress'">
-                                                <span class="badge bg-warning text-dark">Đang điền</span>
+                                                <span class="badge psm-portal-chip psm-portal-chip--warning">Đang điền</span>
                                             </t>
                                             <t t-else="">
-                                                <span class="badge bg-secondary">Chưa có phiếu</span>
+                                                <span class="badge psm-portal-chip psm-portal-chip--muted">Chưa có phiếu</span>
                                             </t>
                                         </td>
                                         <!-- Cột Kết quả Pass/Fail -->
-                                        <td>
+                                        <td class="psm-portal-result-cell">
                                             <t t-if="app.oje_evaluation_state == 'done'">
                                                 <t t-if="app.oje_result == 'pass'">
-                                                    <span class="badge bg-success">✅ Đạt</span>
+                                                    <span class="badge psm-portal-chip psm-portal-chip--success">Đạt</span>
                                                 </t>
                                                 <t t-else="">
-                                                    <span class="badge bg-danger">❌ Rớt</span>
+                                                    <span class="badge psm-portal-chip psm-portal-chip--danger">Rớt</span>
                                                 </t>
                                             </t>
                                             <t t-else="">
-                                                <span class="text-muted">—</span>
+                                                <span class="psm-portal-result-empty">-</span>
                                             </t>
                                         </td>
                                         <!-- Cột hành động: chỉ hiện form khi chưa xong -->
-                                        <td onclick="event.stopPropagation()">
+                                        <td class="psm-portal-action-cell" onclick="event.stopPropagation()">
 
                                             <t t-if="app.oje_evaluation_state == 'done'">
                                                 <!-- Done: No action button -->
                                             </t>
                                             <t t-elif="app.oje_evaluation_state == 'in_progress'">
                                                 <a t-attf-href="/my/oje-evaluation/start/#{app.id}"
-                                                   class="btn btn-sm btn-outline-warning">Tiếp tục đánh giá</a>
+                                                   class="btn btn-sm btn-outline-primary psm-portal-action-btn">Tiếp tục đánh giá</a>
                                             </t>
                                             <t t-else="">
                                                 <a t-attf-href="/my/oje-evaluation/start/#{app.id}"
-                                                   class="btn btn-sm btn-primary">Bắt đầu đánh giá</a>
+                                                   class="btn btn-sm btn-primary psm-portal-action-btn">Bắt đầu đánh giá</a>
                                             </t>
                                         </td>
                                     </tr>
@@ -936,6 +1503,7 @@
                     </div>
                 </t>
             </t>
+            </div>
         </t>
     </template>
 

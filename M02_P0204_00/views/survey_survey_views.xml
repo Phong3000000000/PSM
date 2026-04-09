@@ -6,8 +6,50 @@
         <field name="inherit_id" ref="survey.survey_survey_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='user_id']" position="after">
-                <field name="is_pre_interview" widget="boolean_toggle"/>
-                <field name="is_oje_evaluation" widget="boolean_toggle"/>
+                <field name="x_psm_survey_usage"/>
+                <field name="x_psm_oje_scope" invisible="x_psm_survey_usage != 'oje'"/>
+                <field name="x_psm_0204_owner_job_id" readonly="x_psm_0204_owner_job_id"/>
+                <field name="x_psm_0204_owner_department_id" readonly="x_psm_0204_owner_job_id or x_psm_0204_owner_department_id"/>
+                <field name="x_psm_0204_default_template_for" string="Master Template For" invisible="x_psm_0204_owner_job_id or x_psm_0204_owner_department_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="survey_survey_form_inherit_question_flag_columns" model="ir.ui.view">
+        <field name="name">survey.survey.form.inherit.question.flag.columns</field>
+        <field name="model">survey.survey</field>
+        <field name="inherit_id" ref="survey.survey_survey_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='question_and_page_ids']/list/field[@name='question_type']" position="after">
+                <field name="x_psm_parent_survey_usage" column_invisible="True"/>
+                <field name="is_scored_question" column_invisible="True"/>
+                <field name="x_psm_show_on_webform"
+                    string="Bật/tắt"
+                    widget="boolean_toggle"
+                    optional="show"
+                    invisible="is_page or x_psm_parent_survey_usage != 'pre_interview'"/>
+                <field name="x_psm_0204_is_mandatory_correct"
+                    string="Phải đúng"
+                    widget="boolean_toggle"
+                    optional="show"
+                    invisible="is_page or not is_scored_question"/>
+                <field name="x_psm_0204_is_reject_when_wrong"
+                    string="Loại khi sai"
+                    widget="boolean_toggle"
+                    optional="show"
+                    invisible="is_page or not is_scored_question or not x_psm_0204_is_mandatory_correct"/>
+            </xpath>
+
+            <xpath expr="//field[@name='question_and_page_ids']/list/field[@name='constr_mandatory']" position="attributes">
+                <attribute name="string">Bắt buộc</attribute>
+                <attribute name="widget">boolean_toggle</attribute>
+                <attribute name="optional">show</attribute>
+                <attribute name="invisible">is_page</attribute>
+            </xpath>
+
+            <!-- Reorder base constr_mandatory right after Bật/tắt without duplicating field. -->
+            <xpath expr="//field[@name='question_and_page_ids']/list/field[@name='x_psm_show_on_webform']" position="after">
+                <field name="constr_mandatory" position="move"/>
             </xpath>
         </field>
     </record>

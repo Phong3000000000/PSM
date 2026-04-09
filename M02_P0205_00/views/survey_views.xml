@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Thêm trường Must Have/Nice to Have vào form Câu hỏi Khảo sát -->
-        <record id="survey_question_view_form_inherit_must_have" model="ir.ui.view">
+        <record id="view_psm_survey_question_form_must_have" model="ir.ui.view">
             <field name="name">survey.question.view.form.inherit.must.have</field>
             <field name="model">survey.question</field>
-            <field name="inherit_id" ref="survey.survey_question_form"/>
+            <field name="inherit_id" ref="survey.survey_question_form" />
             <field name="arch" type="xml">
-                <!-- Thêm vào cột của danh sách câu trả lời -->
-                <xpath expr="//field[@name='suggested_answer_ids']/list/field[@name='value']" position="after">
-                    <field name="is_must_have" string="Must Have" optional="show"/>
-                    <field name="is_nice_to_have" string="Nice to Have" optional="show"/>
+                <xpath expr="//field[@name='suggested_answer_ids']/list/field[@name='value']"
+                    position="after">
+                    <field name="x_psm_0205_is_must_have" string="Must Have" optional="show" />
+                    <field name="x_psm_0205_is_nice_to_have" string="Nice to Have" optional="show" />
                 </xpath>
             </field>
         </record>

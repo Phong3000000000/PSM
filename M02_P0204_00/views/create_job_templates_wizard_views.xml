@@ -27,12 +27,21 @@
         <field name="target">new</field>
     </record>
 
+    <!-- XML ID alias: action chuẩn hóa theo quy ước mới, giữ nguyên record gốc -->
+    <record id="alias_action_psm_create_job_templates_wizard" model="ir.model.data">
+        <field name="module">M02_P0204_00</field>
+        <field name="name">action_psm_create_job_templates_wizard</field>
+        <field name="model">ir.actions.act_window</field>
+        <field name="res_id" eval="ref('action_create_job_templates_wizard')"/>
+        <field name="noupdate" eval="1"/>
+    </record>
+
     <!-- Menu Item -->
     <menuitem
         id="menu_create_job_templates_wizard"
         name="Tạo Job Templates"
         parent="hr_recruitment.menu_hr_recruitment_root"
-        action="action_create_job_templates_wizard"
+        action="action_psm_create_job_templates_wizard"
         sequence="5"
         groups="hr_recruitment.group_hr_recruitment_manager"/>
 </odoo>

@@ -1,9 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <template id="psm_job_portal_theme_assets" name="Job Portal Theme Assets">
+        <style>
+            .psm-job-portal {
+                color: var(--foreground);
+            }
+
+            .psm-job-portal section {
+                background: var(--background) !important;
+            }
+
+            .psm-job-portal .card,
+            .psm-job-portal .alert {
+                background: var(--card) !important;
+                color: var(--card-foreground) !important;
+                border: 1px solid var(--border) !important;
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+            }
+
+            .psm-job-portal .card-header {
+                background: linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--primary) 70%, var(--secondary) 30%)) !important;
+                color: var(--primary-foreground) !important;
+            }
+
+            .psm-job-portal .card-body,
+            .psm-job-portal .card-footer {
+                background: var(--card) !important;
+                color: var(--card-foreground) !important;
+            }
+
+            .psm-job-portal .text-dark,
+            .psm-job-portal h1,
+            .psm-job-portal h2,
+            .psm-job-portal h3,
+            .psm-job-portal h4 {
+                color: var(--foreground) !important;
+            }
+
+            .psm-job-portal .text-muted,
+            .psm-job-portal .form-text {
+                color: var(--muted-foreground) !important;
+            }
+
+            .psm-job-portal .form-control,
+            .psm-job-portal .input-group-text {
+                background: var(--muted) !important;
+                color: var(--foreground) !important;
+                border-color: var(--border) !important;
+            }
+
+            .psm-job-portal .form-control:focus {
+                background: var(--card) !important;
+                border-color: var(--primary) !important;
+                box-shadow: 0 0 0 0.25rem var(--ring) !important;
+            }
+
+            .psm-job-portal .btn-theme-primary,
+            .psm-job-portal .btn-primary {
+                background: var(--primary) !important;
+                border-color: var(--primary) !important;
+                color: var(--primary-foreground) !important;
+            }
+
+            .psm-job-portal .theme-badge {
+                background: var(--primary) !important;
+                color: var(--primary-foreground) !important;
+            }
+
+            .psm-job-portal .text-bg-light,
+            .psm-job-portal .text-bg-secondary {
+                background: var(--muted) !important;
+                color: var(--foreground) !important;
+                border-color: var(--border) !important;
+            }
+
+            .psm-job-portal .text-bg-danger,
+            .psm-job-portal .bg-success {
+                background: var(--primary) !important;
+                color: var(--primary-foreground) !important;
+            }
+
+            html[data-theme='dark'] .psm-job-portal .card,
+            html[data-theme='dark'] .psm-job-portal .alert,
+            html[data-theme='dark'] .psm-job-portal .card-body,
+            html[data-theme='dark'] .psm-job-portal .card-footer {
+                box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+            }
+
+            .psm-job-portal a[style*="#004a99"],
+            .psm-job-portal a[style*="#b42318"],
+            .psm-job-portal a[style*="#495057"],
+            .psm-job-portal button[style*="#004a99"] {
+                background: var(--primary) !important;
+                color: var(--primary-foreground) !important;
+                border-color: var(--primary) !important;
+            }
+
+            .psm-job-portal span[style*="#004a99"] {
+                background: var(--primary) !important;
+                color: var(--primary-foreground) !important;
+            }
+        </style>
+    </template>
+
     <!-- Job Application Form (Public) -->
-    <template id="job_apply_template" name="Ứng tuyển công việc">
+    <template id="psm_job_apply_template" name="Ứng tuyển công việc">
         <t t-call="website.layout">
-            <div id="wrap" class="oe_structure oe_empty">
+            <div id="wrap" class="oe_structure oe_empty psm-job-portal">
+                <t t-call="M02_P0205_00.psm_job_portal_theme_assets"/>
                 <section class="py-5" style="background-color: #f8f9fa;">
                     <div class="container">
                         <div class="row justify-content-center">
@@ -104,7 +209,7 @@
                                                 </div>
                                                 
                                                 <div class="col-12 mt-5">
-                                                    <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm py-3 transition hover-translate-y" style="background-color: #004a99; border: none; border-radius: 8px;">
+                                                    <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm py-3 transition hover-translate-y" style="border: none; border-radius: 8px;">
                                                         GỬI HỒ SƠ ỨNG TUYỂN
                                                     </button>
                                                 </div>
@@ -130,12 +235,12 @@
                         transition: all 0.3s ease;
                     }
                     .form-control:focus {
-                        background-color: #fff !important;
-                        border-color: #004a99;
-                        box-shadow: 0 0 0 0.25rem rgba(0, 74, 153, 0.1);
+                        background-color: var(--card) !important;
+                        border-color: var(--primary);
+                        box-shadow: 0 0 0 0.25rem var(--ring);
                     }
                     .input-group-text {
-                        color: #6c757d;
+                        color: var(--muted-foreground);
                     }
                 </style>
             </div>
@@ -143,9 +248,10 @@
     </template>
     
     <!-- Thank You Page -->
-    <template id="job_thankyou_template" name="Cảm ơn ứng tuyển">
+    <template id="psm_job_thankyou_template" name="Cảm ơn ứng tuyển">
         <t t-call="website.layout">
-            <div id="wrap" class="oe_structure oe_empty">
+            <div id="wrap" class="oe_structure oe_empty psm-job-portal">
+                <t t-call="M02_P0205_00.psm_job_portal_theme_assets"/>
                 <section class="py-5 bg-white" style="min-height: 60vh; display: flex; align-items: center;">
                     <div class="container">
                         <div class="row justify-content-center">
@@ -166,6 +272,201 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+    <template id="psm_office_job_public_list" name="Office Jobs Public List">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure oe_empty psm-job-portal">
+                <t t-call="M02_P0205_00.psm_job_portal_theme_assets"/>
+                <section class="py-5" style="background: linear-gradient(180deg, #f7f9fc 0%, #eef3f8 100%);">
+                    <div class="container">
+                        <div class="row justify-content-center mb-4">
+                            <div class="col-xl-9 text-center">
+                                <span class="badge rounded-pill text-bg-light border px-3 py-2 mb-3">Office Recruitment</span>
+                                <h1 class="display-5 fw-bold text-dark mb-3">Cơ Hội Nghề Nghiệp Khối Văn Phòng</h1>
+                                <p class="lead text-muted mb-0">
+                                    Danh sách các vị trí office đang mở tuyển và đã sẵn sàng nhận hồ sơ ứng tuyển.
+                                </p>
+                            </div>
+                        </div>
+
+                        <t t-if="not batches and not no_batch_lines and not unplanned_requests">
+                            <div class="alert alert-info border-0 shadow-sm text-center" role="alert">
+                                Hiện chưa có vị trí office nào đang mở tuyển công khai.
+                            </div>
+                        </t>
+
+                        <t t-foreach="batches" t-as="batch_group">
+                            <div class="mb-5">
+                                <div class="d-flex flex-wrap align-items-center gap-2 mb-3 pb-2 border-bottom">
+                                    <span class="badge rounded-pill" style="background-color: #004a99;">Đợt tuyển dụng</span>
+                                    <h3 class="mb-0 fw-bold text-dark">
+                                        <t t-esc="batch_group['batch'].name"/>
+                                    </h3>
+                                    <span class="text-muted">
+                                        <t t-esc="len(batch_group['lines'])"/> vị trí
+                                    </span>
+                                </div>
+                                <div class="row g-4">
+                                    <t t-foreach="batch_group['lines']" t-as="line">
+                                        <div class="col-md-6 col-xl-4">
+                                            <div class="card border-0 shadow-sm h-100" style="border-radius: 18px;">
+                                                <div class="card-body d-flex flex-column p-4">
+                                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                                        <h4 class="h5 fw-bold text-dark mb-0">
+                                                            <t t-esc="line.job_id.name"/>
+                                                        </h4>
+                                                        <span class="badge rounded-pill text-bg-light border">
+                                                            <t t-esc="line.quantity"/> vị trí
+                                                        </span>
+                                                    </div>
+                                                    <p class="text-muted mb-2" t-if="line.job_id.company_id">
+                                                        <i class="fa fa-building-o me-1"/>
+                                                        <t t-esc="line.job_id.company_id.name"/>
+                                                    </p>
+                                                    <p class="text-muted mb-2" t-if="line.department_id">
+                                                        <i class="fa fa-sitemap me-1"/>
+                                                        <t t-esc="line.department_id.name"/>
+                                                    </p>
+                                                    <p class="text-muted mb-2" t-if="line.job_id.address_id">
+                                                        <i class="fa fa-map-marker me-1"/>
+                                                        <t t-esc="line.job_id.address_id.display_name"/>
+                                                    </p>
+                                                    <p class="text-muted mb-3" t-if="line.job_id.contract_type_id">
+                                                        <i class="fa fa-id-badge me-1"/>
+                                                        <t t-esc="line.job_id.contract_type_id.name"/>
+                                                    </p>
+                                                    <p class="text-muted small mb-3" t-if="line.job_id.x_psm_0205_job_intro or line.job_id.description">
+                                                        <t t-esc="(line.job_id.x_psm_0205_job_intro or line.job_id.description or '').strip()[:160]"/>
+                                                        <t t-if="len((line.job_id.x_psm_0205_job_intro or line.job_id.description or '').strip()) &gt; 160">...</t>
+                                                    </p>
+                                                    <p class="text-muted mb-3" t-if="line.planned_date">
+                                                        <i class="fa fa-calendar me-1"/>
+                                                        Thời gian dự kiến: <t t-esc="line.planned_date"/>
+                                                    </p>
+                                                    <div class="mt-auto">
+                                                        <a t-attf-href="/jobs/detail/#{line.id}" class="btn w-100 text-white fw-semibold" style="background-color: #004a99; border-radius: 10px;">
+                                                            Xem chi tiết và ứng tuyển
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
+
+                        <t t-if="unplanned_requests">
+                            <div class="mb-5">
+                                <div class="d-flex flex-wrap align-items-center gap-2 mb-3 pb-2 border-bottom">
+                                    <span class="badge rounded-pill text-bg-danger">Đột xuất</span>
+                                    <h3 class="mb-0 fw-bold text-dark">Tuyển dụng office đột xuất</h3>
+                                </div>
+                                <div class="row g-4">
+                                    <t t-foreach="unplanned_requests" t-as="req">
+                                        <div class="col-md-6 col-xl-4">
+                                            <div class="card border-0 shadow-sm h-100" style="border-radius: 18px;">
+                                                <div class="card-body d-flex flex-column p-4">
+                                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                                        <h4 class="h5 fw-bold text-dark mb-0">
+                                                            <t t-esc="req.job_id.name"/>
+                                                        </h4>
+                                                        <span class="badge rounded-pill text-bg-danger">
+                                                            <t t-esc="req.quantity"/> vị trí
+                                                        </span>
+                                                    </div>
+                                                    <p class="text-muted mb-2" t-if="req.job_id.company_id">
+                                                        <i class="fa fa-building-o me-1"/>
+                                                        <t t-esc="req.job_id.company_id.name"/>
+                                                    </p>
+                                                    <p class="text-muted mb-3" t-if="req.department_id">
+                                                        <i class="fa fa-sitemap me-1"/>
+                                                        <t t-esc="req.department_id.name"/>
+                                                    </p>
+                                                    <p class="text-muted mb-2" t-if="req.job_id.address_id">
+                                                        <i class="fa fa-map-marker me-1"/>
+                                                        <t t-esc="req.job_id.address_id.display_name"/>
+                                                    </p>
+                                                    <p class="text-muted mb-3" t-if="req.job_id.contract_type_id">
+                                                        <i class="fa fa-id-badge me-1"/>
+                                                        <t t-esc="req.job_id.contract_type_id.name"/>
+                                                    </p>
+                                                    <p class="text-muted small mb-3" t-if="req.job_id.x_psm_0205_job_intro or req.job_id.description">
+                                                        <t t-esc="(req.job_id.x_psm_0205_job_intro or req.job_id.description or '').strip()[:160]"/>
+                                                        <t t-if="len((req.job_id.x_psm_0205_job_intro or req.job_id.description or '').strip()) &gt; 160">...</t>
+                                                    </p>
+                                                    <div class="mt-auto">
+                                                        <a t-attf-href="/jobs/request/detail/#{req.id}" class="btn w-100 text-white fw-semibold" style="background-color: #b42318; border-radius: 10px;">
+                                                            Xem chi tiết và ứng tuyển
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
+
+                        <t t-if="no_batch_lines">
+                            <div class="mb-5">
+                                <div class="d-flex flex-wrap align-items-center gap-2 mb-3 pb-2 border-bottom">
+                                    <span class="badge rounded-pill text-bg-secondary">Thường xuyên</span>
+                                    <h3 class="mb-0 fw-bold text-dark">Tuyển dụng office theo kế hoạch</h3>
+                                </div>
+                                <div class="row g-4">
+                                    <t t-foreach="no_batch_lines" t-as="line">
+                                        <div class="col-md-6 col-xl-4">
+                                            <div class="card border-0 shadow-sm h-100" style="border-radius: 18px;">
+                                                <div class="card-body d-flex flex-column p-4">
+                                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                                        <h4 class="h5 fw-bold text-dark mb-0">
+                                                            <t t-esc="line.job_id.name"/>
+                                                        </h4>
+                                                        <span class="badge rounded-pill text-bg-light border">
+                                                            <t t-esc="line.quantity"/> vị trí
+                                                        </span>
+                                                    </div>
+                                                    <p class="text-muted mb-2" t-if="line.job_id.company_id">
+                                                        <i class="fa fa-building-o me-1"/>
+                                                        <t t-esc="line.job_id.company_id.name"/>
+                                                    </p>
+                                                    <p class="text-muted mb-3" t-if="line.department_id">
+                                                        <i class="fa fa-sitemap me-1"/>
+                                                        <t t-esc="line.department_id.name"/>
+                                                    </p>
+                                                    <p class="text-muted mb-2" t-if="line.job_id.address_id">
+                                                        <i class="fa fa-map-marker me-1"/>
+                                                        <t t-esc="line.job_id.address_id.display_name"/>
+                                                    </p>
+                                                    <p class="text-muted mb-3" t-if="line.job_id.contract_type_id">
+                                                        <i class="fa fa-id-badge me-1"/>
+                                                        <t t-esc="line.job_id.contract_type_id.name"/>
+                                                    </p>
+                                                    <p class="text-muted small mb-3" t-if="line.job_id.x_psm_0205_job_intro or line.job_id.description">
+                                                        <t t-esc="(line.job_id.x_psm_0205_job_intro or line.job_id.description or '').strip()[:160]"/>
+                                                        <t t-if="len((line.job_id.x_psm_0205_job_intro or line.job_id.description or '').strip()) &gt; 160">...</t>
+                                                    </p>
+                                                    <p class="text-muted mb-3" t-if="line.planned_date">
+                                                        <i class="fa fa-calendar me-1"/>
+                                                        Thời gian dự kiến: <t t-esc="line.planned_date"/>
+                                                    </p>
+                                                    <div class="mt-auto">
+                                                        <a t-attf-href="/jobs/detail/#{line.id}" class="btn w-100 text-white fw-semibold" style="background-color: #495057; border-radius: 10px;">
+                                                            Xem chi tiết và ứng tuyển
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
                     </div>
                 </section>
             </div>

@@ -522,22 +522,12 @@ class InterviewSchedule(models.Model):
         Format: "Ngày PV 1: Thứ X, DD/MM/YYYY HH:MM"
         """
         self.ensure_one()
-        # Mapping XML ID → (ans1, ans2, ans3)
+        # Đồng bộ nhãn slot trên survey biểu mẫu ứng tuyển chung.
         Q14_MAP = [
             (
                 'M02_P0204_00.ft_q14_ans1',
                 'M02_P0204_00.ft_q14_ans2',
                 'M02_P0204_00.ft_q14_ans3',
-            ),
-            (
-                'M02_P0204_00.pt_q14_ans1',
-                'M02_P0204_00.pt_q14_ans2',
-                'M02_P0204_00.pt_q14_ans3',
-            ),
-            (
-                'M02_P0204_00.mg_q14_ans1',
-                'M02_P0204_00.mg_q14_ans2',
-                'M02_P0204_00.mg_q14_ans3',
             ),
         ]
         VN_TZ = timezone('Asia/Ho_Chi_Minh')

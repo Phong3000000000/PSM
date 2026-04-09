@@ -2,9 +2,9 @@
 <odoo>
     <data>
         <!-- Tree View -->
-        <record id="view_recruitment_request_approver_tree" model="ir.ui.view">
-            <field name="name">recruitment.request.approver.tree</field>
-            <field name="model">recruitment.request.approver</field>
+        <record id="view_psm_recruitment_request_approver_tree" model="ir.ui.view">
+            <field name="name">x_psm_recruitment_request_approver.tree</field>
+            <field name="model">x_psm_recruitment_request_approver</field>
             <field name="arch" type="xml">
                 <list string="Manager Duyệt">
                     <field name="request_id" readonly="1"/>
@@ -18,9 +18,9 @@
         </record>
 
         <!-- Form View -->
-        <record id="view_recruitment_request_approver_form" model="ir.ui.view">
-            <field name="name">recruitment.request.approver.form</field>
-            <field name="model">recruitment.request.approver</field>
+        <record id="view_psm_recruitment_request_approver_form" model="ir.ui.view">
+            <field name="name">x_psm_recruitment_request_approver.form</field>
+            <field name="model">x_psm_recruitment_request_approver</field>
             <field name="arch" type="xml">
                 <form string="Manager Duyệt">
                     <group>
@@ -43,9 +43,9 @@
         </record>
 
         <!-- Action View -->
-        <record id="action_recruitment_request_approver" model="ir.actions.act_window">
+        <record id="action_psm_recruitment_request_approver" model="ir.actions.act_window">
             <field name="name">Manager Duyệt</field>
-            <field name="res_model">recruitment.request.approver</field>
+            <field name="res_model">x_psm_recruitment_request_approver</field>
             <field name="view_mode">tree,form</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">

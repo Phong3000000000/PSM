@@ -98,10 +98,26 @@ class ResignationRequest(models.Model):
 
     def action_send_social_insurance(self):
         self.ensure_one()
+        rst_category = self.env.ref(
+            "M02_P0214_00.approval_category_resignation",
+            raise_if_not_found=False,
+        )
+
+        # Non-RST requests must keep the OPS 0213 behavior.
+        if not rst_category or self.category_id != rst_category:
+            return super(ResignationRequest, self).action_send_social_insurance()
         
         # KIỂM TRA: Nếu đã gửi email BHXH rồi thì skip (tránh gửi lặp lại)
         if self.social_insurance_email_sent:
-            return
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": "Thông báo",
+                    "message": "Email BHXH đã được gửi trước đó.",
+                    "type": "warning",
+                },
+            }
         
         # Validation: Kiểm tra đã hoàn thành khảo sát và tất cả công việc
         if not self.exit_survey_completed:
@@ -126,7 +142,7 @@ class ResignationRequest(models.Model):
             
             # Log lại vào chatter của Đơn phê duyệt để HR biết email đã được gửi tự động
             self.sudo().message_post(
-                body=_("✅ Hệ thống: Đã tự động gửi Email hướng dẫn nhận BHXH/QĐNV đến %s. Đơn vẫn ở trạng thái Approved để HR rà soát trước khi Hoàn tất.") % self.employee_id.name
+                body=_("Email hướng dẫn nhận BHXH/QĐNV đã được gửi đến %s. Đơn vẫn ở trạng thái Approved để HR rà soát trước khi Hoàn tất.") % self.employee_id.name
             )
             
             return {
@@ -154,7 +170,8 @@ class ResignationRequest(models.Model):
         """Check if request_owner has completed exit interview survey"""
         survey = self.env.ref(
             "M02_P0214_00.survey_exit_interview", raise_if_not_found=False
-        ).sudo()
+        )
+        survey = survey.sudo() if survey else self.env["survey.survey"]
         for request in self:
             completed = False
             if survey and request.request_owner_id:
@@ -177,10 +194,10 @@ class ResignationRequest(models.Model):
         Open the survey.user_input form for the completed exit survey.
         """
         self.ensure_one()
-        survey = (
-            self.env.ref("M02_P0214_00.survey_exit_interview", raise_if_not_found=False)
-            .sudo()
+        survey = self.env.ref(
+            "M02_P0214_00.survey_exit_interview", raise_if_not_found=False
         )
+        survey = survey.sudo() if survey else self.env["survey.survey"]
         if not survey:
             return
 
@@ -351,16 +368,37 @@ class ResignationRequest(models.Model):
             request.employee_id = employee.id if employee else False
 
     def action_done(self):
+        rst_category = self.env.ref(
+            "M02_P0214_00.approval_category_resignation",
+            raise_if_not_found=False,
+        )
+
+        # Keep the existing OPS 0213 logic for non-RST categories.
+        non_rst_requests = self.filtered(
+            lambda request: not rst_category or request.category_id != rst_category
+        )
+        if non_rst_requests:
+            super(ResignationRequest, non_rst_requests).action_done()
+
+        rst_requests = self.filtered(
+            lambda request: rst_category and request.category_id == rst_category
+        )
+        if not rst_requests:
+            return
+
         # Validation: Kiểm tra đã hoàn thành khảo sát và tất cả công việc trước khi Mark Done
-        for request in self:
+        for request in rst_requests:
             if not request.exit_survey_completed:
                 raise UserError(_("Vui lòng hoàn thành khảo sát Nghỉ việc trước khi Hoàn tất quy trình."))
             if not request.all_activities_completed:
                 raise UserError(_("Vui lòng hoàn thành tất cả công việc Offboarding trước khi Hoàn tất quy trình."))
         
-        self.sudo().write({"request_status": "done"})
+            if not request.social_insurance_email_sent:
+                raise UserError(_("Vui lòng gửi Email hướng dẫn BHXH trước khi Hoàn tất quy trình."))
+
+        rst_requests.sudo().write({"request_status": "done"})
         
-        for request in self:
+        for request in rst_requests:
             # --- AUTOMATION STEP 21: Deactivate Portal User ---
             # Sử dụng sudo() để truy cập thông tin User và Employee 
             # vì các trường này có thể bị giới hạn quyền đối với user thông thường
@@ -473,6 +511,8 @@ class ResignationRequest(models.Model):
                 "email": partner.email,
             }
         )
+        if not self.exit_survey_user_input_id:
+            self.sudo().write({"exit_survey_user_input_id": user_input.id})
 
         # Lấy link survey
         survey_url = user_input.get_start_url()
@@ -587,15 +627,14 @@ class ResignationRequest(models.Model):
     def action_checklist_completed(self):
         """
         Called when all offboarding activities are completed.
-        Automatically send Social Insurance instructions ONLY if survey is also completed.
+        Keep the request ready for HR to send Social Insurance instructions manually.
         """
-        rst_category = self.env.ref("M02_P0214_00.approval_category_resignation", raise_if_not_found=False)
         for request in self:
             message = _("✅ TOÀN BỘ CHECKLIST OFFBOARDING ĐÃ HOÀN THÀNH.")
-            
-            # Tính toán lại các điều kiện (không dùng invalidate_cache vì nó không tồn tại)
-            # 1. Kiểm tra khảo sát Exit Interview hoàn thành?
-            exit_survey = self.env.ref("M02_P0214_00.survey_exit_interview", raise_if_not_found=False).sudo()
+
+            exit_survey = self.env.ref(
+                "M02_P0214_00.survey_exit_interview", raise_if_not_found=False
+            ).sudo()
             survey_completed = False
             if exit_survey and request.request_owner_id:
                 user_input = self.env["survey.user_input"].sudo().search(
@@ -606,34 +645,31 @@ class ResignationRequest(models.Model):
                         ("email", "=", request.request_owner_id.email),
                         ("partner_id", "=", request.request_owner_id.partner_id.id),
                     ],
-                    limit=1
+                    limit=1,
                 )
                 survey_completed = bool(user_input)
-            
-            # 2. Kiểm tra tất cả công việc Offboarding hoàn thành?
-            # Count activities still active (pending)
-            pending_count = self.env['mail.activity'].search_count([
-                ('active', '=', True),
-                '|',
-                '&', ('res_model', '=', 'approval.request'), ('res_id', '=', request.id),
-                '&', ('res_model', '=', 'hr.employee'), ('res_id', '=', request.employee_id.id if request.employee_id else 0),
-            ])
-            activities_completed = (pending_count == 0)
-            
-            # Kiểm tra cả 2 điều kiện trước khi gửi email BHXH
+
+            pending_count = self.env["mail.activity"].search_count(
+                [
+                    ("active", "=", True),
+                    "|",
+                    "&",
+                    ("res_model", "=", "approval.request"),
+                    ("res_id", "=", request.id),
+                    "&",
+                    ("res_model", "=", "hr.employee"),
+                    ("res_id", "=", request.employee_id.id if request.employee_id else 0),
+                ]
+            )
+            activities_completed = pending_count == 0
+
             if survey_completed and activities_completed:
-                message += _(" Hệ thống đang tự động gửi hướng dẫn BHXH.")
+                if request.social_insurance_email_sent:
+                    message += _(" Email BHXH đã được gửi.")
+                else:
+                    message += _(" HR có thể gửi hướng dẫn BHXH từ nút trên form.")
                 request.message_post(body=message)
-                
-                # Gửi email BHXH
-                if rst_category and request.category_id == rst_category:
-                    try:
-                        request.action_send_social_insurance()
-                    except Exception as e:
-                        _logger.error(f"OFFBOARDING AUTO: Failed to send Social Insurance email for request {request.id}: {str(e)}")
-                        request.message_post(body=f"❌ Lỗi tự động gửi email BHXH: {str(e)}")
             else:
-                # Chưa đủ điều kiện
                 missing = []
                 if not survey_completed:
                     missing.append("Exit Interview")
@@ -647,10 +683,10 @@ class ResignationRequest(models.Model):
         """
         RST Reminders & Automatic Deadline Extensions:
         1. Tìm các đơn RST trạng thái 'Approved'.
-        2. Tìm các công việc (mail.activity) của đơn đó bị trễ hạn hơn 3 ngày.
-        3. Phân loại người phụ trách:
-           - Nếu là Nhân viên (Owner): Gửi template Employee.
-           - Nếu là IT/Admin/HR/Manager: Gửi template Dept.
+        2. Tìm các công việc (`mail.activity`) của đơn đó đã quá hạn.
+        3. Phân loại theo người phụ trách:
+           - Nếu là Nhân viên (Owner): gửi template Employee.
+           - Nếu là IT/Admin/HR/Manager: gửi template Dept.
         4. Tự động cộng thêm 4 ngày vào Due Date cho các công việc này.
         """
         rst_category = self.env.ref("M02_P0214_00.approval_category_resignation", raise_if_not_found=False)
@@ -665,7 +701,7 @@ class ResignationRequest(models.Model):
             ("request_status", "=", "approved"),
         ])
         
-        # Ngưỡng trễ hạn: Bất cứ công việc nào có hạn nhỏ hơn ngày hôm nay
+        # Ngưỡng trễ hạn: bất kỳ công việc nào có hạn nhỏ hơn ngày hôm nay
         today = fields.Date.today()
 
         for req in requests:
@@ -694,7 +730,7 @@ class ResignationRequest(models.Model):
 
                 try:
                     if user == req.request_owner_id:
-                        # Nhắc nhở Nhân viên (áp dụng tương tự)
+                        # Nhắc nhở Nhân viên
                         if emp_template:
                             emp_template.send_mail(req.id, force_send=True)
                     else:
@@ -702,7 +738,7 @@ class ResignationRequest(models.Model):
                         if dept_template:
                             dept_template.send_mail(req.id, force_send=True, email_values={'email_to': email_to})
                     
-                    # 5. Logic gia hạn: Cộng thêm 4 ngày cho Due Date của các task này
+                    # Logic gia hạn: cộng thêm 4 ngày cho Due Date của các task này
                     for act in user_acts:
                         old_date = act.date_deadline
                         new_date = old_date + timedelta(days=4)
@@ -712,7 +748,7 @@ class ResignationRequest(models.Model):
                     _logger.error(f"OFFBOARDING CRON ERROR: Lỗi xử lý cho {user.name}: {str(e)}")
 
     def action_manual_reminder_extension(self):
-        """Kích hoạt thủ công việc nhắc nhở và gia hạn cho ĐƠN NÀY"""
+        """Kích hoạt thủ công việc nhắc nhở và gia hạn cho đơn này."""
         self.ensure_one()
         if self.request_status != 'approved':
             raise UserError(_("Chỉ có thể nhắc nhở các đơn đang ở trạng thái Approved."))
@@ -856,6 +892,8 @@ class ResignationRequest(models.Model):
                 'search_default_groupby_reason': 1,
             },
         }
+
+
 
 
 

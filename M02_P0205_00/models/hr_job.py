@@ -7,61 +7,82 @@ class HrJob(models.Model):
 
     # recruitment_type is now owned by M02_P0204_00 (computed from department.block)
     # No re-declaration needed here.
+    x_psm_0205_max_interview_round = fields.Integer(
+        related='level_id.x_psm_0205_max_interview_round',
+        string='So vong phong van',
+        readonly=True,
+    )
 
-    current_employee_count = fields.Integer(
+    x_psm_0205_current_employee_count = fields.Integer(
         string="Current Employees",
         compute="_compute_current_employee_count",
         help="Số lượng nhân sự hiện đang giữ vị trí này.",
     )
 
-    needed_recruitment = fields.Integer(
+    x_psm_0205_needed_recruitment = fields.Integer(
         string="Needed Recruitment",
         compute="_compute_needed_recruitment",
         help="Số lượng cần tuyển = target - số đang có (ít nhất 0).",
+    )
+
+    x_psm_0205_is_office_job = fields.Boolean(
+        string="Is Office Job",
+        compute="_compute_is_office_job",
+        store=True,
+        compute_sudo=True,
+        index=True,
+        help="Cờ lưu sẵn để nhận diện job thuộc khối văn phòng.",
     )
 
     # ==================== SURVEY ====================
     survey_id = fields.Many2one(
         'survey.survey',
         string='Khảo Sát Năng Lực',
-        domain=[('is_pre_interview', '=', True)],
+        domain=[('x_psm_0205_is_pre_interview', '=', True)],
         help='Bài khảo sát năng lực dành riêng cho vị trí này. '
              'Ứng viên sẽ được yêu cầu làm bài này sau khi nộp đơn.',
     )
 
     # ==================== WEBSITE CONTENT ====================
-    job_intro = fields.Text(
+    x_psm_0205_job_intro = fields.Text(
         string='Mô tả công việc',
         help='Đoạn giới thiệu về vị trí này. Mỗi đoạn cách nhau bằng dòng trắng.',
     )
-    responsibilities = fields.Text(
+    x_psm_0205_responsibilities = fields.Text(
         string='Trách nhiệm công việc',
-        help='Mỗi dòng = 1 mục trong danh sách Responsibilities.',
+        help='Mỗi dòng = 1 mục trong danh sách x_psm_0205_responsibilities.',
     )
-    must_have = fields.Text(
+    x_psm_0205_must_have = fields.Text(
         string='Yêu cầu bắt buộc',
         help='Mỗi dòng = 1 mục trong danh sách Must Have.',
     )
-    nice_to_have = fields.Text(
+    x_psm_0205_nice_to_have = fields.Text(
         string='Yêu cầu thêm (Nice to have)',
         help='Mỗi dòng = 1 mục trong danh sách Nice to have.',
     )
-    whats_great = fields.Text(
+    x_psm_0205_whats_great = fields.Text(
         string='Điểm nổi bật của công việc',
         help='Mỗi dòng = 1 mục trong danh sách "What\'s great in the job?".',
     )
 
     # ==================== HELPERS ====================
 
+    def _is_office_department_block(self, block):
+        """Return True when the department block matches the office block."""
+        return bool(block) and (
+            (block.name or '').strip().upper() == 'HEAD OFFICE'
+            or (block.code or '').strip().upper() == 'RST'
+        )
+
     def _is_office_job(self):
-        """Check if this job is an office job. Uses computed recruitment_type from 0204."""
+        """Check if this job belongs to the office block through its stored flag."""
         self.ensure_one()
-        return self.recruitment_type == 'office'
+        return bool(self.x_psm_0205_is_office_job)
 
     def _is_office_job_vals(self, vals):
         """Check if vals would produce an office job, without saving."""
         temp = self.new(vals)
-        return temp.recruitment_type == 'office'
+        return temp._is_office_job()
 
     def _get_group_interviewer_users(self, xmlid):
         group = self.env.ref(xmlid, raise_if_not_found=False)
@@ -73,12 +94,19 @@ class HrJob(models.Model):
         manager = self.department_id.manager_id
         if manager and manager.user_id and not manager.user_id.share:
             users |= manager.user_id
-        ceo_employee = self.company_id.ceo_id
+        ceo_employee = self.company_id.x_psm_0205_ceo_id
         if ceo_employee and ceo_employee.user_id and not ceo_employee.user_id.share:
             users |= ceo_employee.user_id
-        users |= self._get_group_interviewer_users('M02_P0205_00.group_bod_recruitment')
-        users |= self._get_group_interviewer_users('M02_P0205_00.group_abu_recruitment')
+        users |= self._get_group_interviewer_users('M02_P0205_00.group_gdh_rst_office_recruitment_mgr_bod')
+        users |= self._get_group_interviewer_users('M02_P0205_00.group_gdh_rst_office_recruitment_mgr_abu')
         return users.filtered(lambda user: not user.share)
+
+    def _sync_related_applicant_skills(self):
+        applicant_model = self.env['hr.applicant']
+        for job in self:
+            applicants = applicant_model.search([('job_id', '=', job.id)])
+            if applicants:
+                applicants._replace_skills_from_job()
 
     @api.onchange('department_id', 'company_id', 'recruitment_type')
     def _onchange_default_interviewer_ids(self):
@@ -105,8 +133,11 @@ class HrJob(models.Model):
         if self.env.context.get('skip_job_default_interviewers_sync'):
             return super().write(vals)
         needs_sync = any(field in vals for field in ('department_id', 'company_id', 'recruitment_type'))
+        needs_skill_sync = any(field in vals for field in ('current_job_skill_ids', 'job_skill_ids'))
         res = super().write(vals)
         if not needs_sync or 'interviewer_ids' in vals:
+            if needs_skill_sync:
+                self._sync_related_applicant_skills()
             return res
         for rec in self.filtered(lambda job: job._is_office_job() and not job.interviewer_ids):
             default_users = rec._get_default_interviewer_users()
@@ -114,6 +145,8 @@ class HrJob(models.Model):
                 rec.with_context(skip_job_default_interviewers_sync=True).write({
                     'interviewer_ids': [(6, 0, default_users.ids)],
                 })
+        if needs_skill_sync:
+            self._sync_related_applicant_skills()
         return res
 
     def action_go_to_portal_home(self):
@@ -239,10 +272,20 @@ class HrJob(models.Model):
 
     def _compute_current_employee_count(self):
         for job in self:
-            job.current_employee_count = self.env['hr.employee'].search_count([('job_id', '=', job.id)])
+            job.x_psm_0205_current_employee_count = self.env['hr.employee'].search_count([('job_id', '=', job.id)])
 
-    @api.depends('no_of_recruitment', 'current_employee_count')
+    @api.depends('no_of_recruitment', 'x_psm_0205_current_employee_count')
     def _compute_needed_recruitment(self):
         for job in self:
-            needed = (job.no_of_recruitment or 0) - (job.current_employee_count or 0)
-            job.needed_recruitment = needed if needed > 0 else 0
+            needed = (job.no_of_recruitment or 0) - (job.x_psm_0205_current_employee_count or 0)
+            job.x_psm_0205_needed_recruitment = needed if needed > 0 else 0
+
+    @api.depends(
+        'department_id',
+        'department_id.block_id',
+        'department_id.block_id.name',
+        'department_id.block_id.code',
+    )
+    def _compute_is_office_job(self):
+        for job in self:
+            job.x_psm_0205_is_office_job = job._is_office_department_block(job.department_id.block_id)

@@ -7,7 +7,7 @@ Luồng:
   - Không đạt (scoring_success=False)  → Reject
   - Đạt (scoring_success=True)
       - Có câu is_mandatory_correct=True mà trả lời SAI → Under Review (24h)
-      - Tất cả câu phải đúng → Interview / Survey Passed (theo pipeline)
+    - Tất cả câu phải đúng → Interview flow trực tiếp theo pipeline hiện tại
 """
 
 from odoo import models, api, fields
@@ -31,26 +31,44 @@ class SurveyUserInput(models.Model):
             )
         return result
 
+    def _split_mandatory_question_failures(self, user_input):
+        """
+        Tách lỗi câu 'phải đúng' thành 2 nhóm:
+        - review_failed: sai nhưng chỉ đưa Under Review
+        - reject_failed: sai và phải Reject ngay
+        """
+        mandatory_questions = user_input.survey_id.question_ids.filtered(
+            lambda q: q.x_psm_0204_is_mandatory_correct and q.is_scored_question
+        )
+        if not mandatory_questions:
+            return [], []
+
+        review_failed = []
+        reject_failed = []
+
+        for question in mandatory_questions:
+            q_lines = user_input.user_input_line_ids.filtered(
+                lambda l, q=question: l.question_id == q and not l.skipped
+            )
+            is_wrong = (not q_lines) or any(not l.answer_is_correct for l in q_lines)
+            if not is_wrong:
+                continue
+
+            question_label = question.title or question.question
+            if getattr(question, "x_psm_0204_is_reject_when_wrong", False):
+                reject_failed.append(question_label)
+            else:
+                review_failed.append(question_label)
+
+        return review_failed, reject_failed
+
     def _check_mandatory_questions_failed(self, user_input):
         """
         Kiểm tra xem ứng viên có sai câu nào bị đánh dấu is_mandatory_correct không.
         Trả về: (has_fail: bool, failed_questions: list[str])
         """
-        mandatory_questions = user_input.survey_id.question_ids.filtered(
-            lambda q: q.is_mandatory_correct and q.is_scored_question
-        )
-        if not mandatory_questions:
-            return False, []
-
-        failed = []
-        for question in mandatory_questions:
-            q_lines = user_input.user_input_line_ids.filtered(
-                lambda l, q=question: l.question_id == q and not l.skipped
-            )
-            # Câu bị sai nếu không có dòng nào hoặc có dòng sai
-            if not q_lines or any(not l.answer_is_correct for l in q_lines):
-                failed.append(question.title or question.question)
-
+        review_failed, reject_failed = self._split_mandatory_question_failures(user_input)
+        failed = review_failed + reject_failed
         return bool(failed), failed
 
     def _dispatch_recruitment_survey_done(self):
@@ -92,10 +110,37 @@ class SurveyUserInput(models.Model):
         Stage = self.env["hr.recruitment.stage"].sudo()
         stage_type = applicant._get_pipeline_stage_type()
 
-        # Chỉ kiểm tra câu bắt buộc (is_mandatory_correct), bỏ qua điểm số tổng
-        has_mandatory_fail, failed_questions = self._check_mandatory_questions_failed(user_input)
+        # Chỉ kiểm tra câu bắt buộc (is_mandatory_correct), bỏ qua điểm số tổng.
+        # Tách rõ sai cần Under Review và sai phải Reject ngay.
+        failed_review_questions, failed_reject_questions = self._split_mandatory_question_failures(user_input)
 
-        if has_mandatory_fail:
+        if failed_reject_questions:
+            target_name = "Reject"
+            domain = [("name", "=", target_name)]
+            if stage_type:
+                domain.append(("recruitment_type", "in", [stage_type, "both"]))
+            target_stage = Stage.search(domain, limit=1)
+            if not target_stage:
+                target_stage = Stage.search([("name", "=", target_name)], limit=1)
+
+            reject_reason = "Tu dong loai do sai cau 'Loai khi sai': %s" % ", ".join(failed_reject_questions)
+            applicant_vals = {
+                'survey_under_review_date': False,
+                'document_approval_status': 'refused',
+                'reject_reason': reject_reason,
+            }
+            if target_stage:
+                applicant_vals['stage_id'] = target_stage.id
+            applicant.write(applicant_vals)
+
+            _logger.info(
+                "[SURVEY_AUTO] %s -> 'Reject' (reject_when_wrong: %s)",
+                applicant.partner_name,
+                failed_reject_questions,
+            )
+            return
+
+        if failed_review_questions:
             # Sai câu bắt buộc → Under Review
             target_name = "Under Review"
             domain = [("name", "=", target_name)]
@@ -106,10 +151,11 @@ class SurveyUserInput(models.Model):
             if target_stage:
                 applicant.stage_id = target_stage
                 applicant.survey_under_review_date = fields.Datetime.now()
-                q_list = ", ".join(f"<i>{q}</i>" for q in failed_questions)
+                q_list = ", ".join(f"<i>{q}</i>" for q in failed_review_questions)
                 _logger.info(
                     "[SURVEY_AUTO] %s → 'Under Review' (mandatory fail: %s)",
-                    applicant.partner_name, failed_questions,
+                    applicant.partner_name,
+                    failed_review_questions,
                 )
             else:
                 _logger.warning(
@@ -126,8 +172,8 @@ class SurveyUserInput(models.Model):
             target_name = "Interview"
             domain = [("name", "=", "Interview")]
         else:
-            target_name = "Survey Passed"
-            domain = [("name", "=", "Survey Passed")]
+            target_name = "Screening"
+            domain = [("name", "=", "Screening")]
 
         if stage_type:
             domain.append(("recruitment_type", "in", [stage_type, "both"]))
@@ -167,8 +213,16 @@ class SurveyUserInput(models.Model):
 class SurveyUserInputLine(models.Model):
     _inherit = 'survey.user_input.line'
 
-    is_mandatory_correct = fields.Boolean(
-        related='question_id.is_mandatory_correct',
+    x_psm_0204_is_mandatory_correct = fields.Boolean(
+        oldname='is_mandatory_correct',
+        related='question_id.x_psm_0204_is_mandatory_correct',
         string="Phải đúng",
         help="Đánh dấu câu hỏi này có bắt buộc phải làm đúng hay không"
+    )
+
+    x_psm_0204_is_reject_when_wrong = fields.Boolean(
+        oldname='is_reject_when_wrong',
+        related='question_id.x_psm_0204_is_reject_when_wrong',
+        string="Loại khi sai",
+        help="Nếu sai câu này thì ứng viên sẽ bị Reject ngay.",
     )

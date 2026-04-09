@@ -1,4 +1,42 @@
 .oje-backend-page {
+    .oje-page-head {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .oje-table-scroll {
+        position: relative;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 0.3rem;
+        margin-bottom: 0.9rem;
+    }
+
+    .oje-table-scroll > table {
+        margin-bottom: 0;
+    }
+
+    .oje-staff-table,
+    .oje-staff-summary-table {
+        min-width: 900px;
+    }
+
+    .oje-management-table {
+        min-width: 980px;
+    }
+
+    .oje-management-summary-table {
+        min-width: 520px;
+    }
+
+    .oje-management-xfactor-table {
+        min-width: 560px;
+    }
+
+    .oje-form-actions {
+        flex-wrap: wrap;
+    }
+
     .oje-main-title {
         text-align: center;
         font-weight: 700;
@@ -64,5 +102,104 @@
         border: 1px solid #d9d9d9;
         border-radius: 8px;
         padding: 12px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .oje-backend-page {
+        .oje-page-head h2 {
+            font-size: 1.5rem;
+        }
+
+        .oje-main-title {
+            font-size: 1.45rem;
+        }
+
+        .oje-meta-grid > [class*='col-'] {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+
+        .oje-management-dimension {
+            padding: 0.75rem;
+        }
+
+        .oje-table-scroll::after {
+            content: '';
+            position: sticky;
+            right: 0;
+            top: 0;
+            display: block;
+            width: 28px;
+            height: 100%;
+            margin-top: -100%;
+            margin-left: auto;
+            pointer-events: none;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.95));
+        }
+    }
+}
+
+@media (max-width: 767.98px) {
+    .oje-backend-page {
+        .card-body {
+            padding: 0.9rem;
+        }
+
+        .oje-page-head {
+            align-items: flex-start !important;
+        }
+
+        .oje-form-actions {
+            flex-direction: column;
+            align-items: stretch !important;
+            gap: 0.5rem;
+        }
+
+        .oje-form-actions .btn {
+            width: 100%;
+        }
+
+        .oje-staff-table td,
+        .oje-staff-table th,
+        .oje-management-table td,
+        .oje-management-table th,
+        .oje-management-xfactor-table td,
+        .oje-management-xfactor-table th {
+            padding: 0.22rem 0.3rem;
+            font-size: 12px;
+        }
+
+        .form-control,
+        .form-select,
+        .oje-line-input,
+        textarea {
+            min-height: 40px;
+        }
+
+        textarea {
+            min-height: 88px;
+        }
+    }
+}
+
+@media (max-width: 575.98px) {
+    .oje-backend-page {
+        .oje-page-head h2 {
+            font-size: 1.25rem;
+        }
+
+        .oje-main-title {
+            font-size: 1.15rem;
+            letter-spacing: 0.2px;
+        }
+
+        .oje-intro-text {
+            font-size: 12px;
+        }
+
+        .oje-table-scroll::after {
+            width: 18px;
+        }
     }
 }

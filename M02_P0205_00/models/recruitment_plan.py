@@ -3,7 +3,7 @@ from odoo import models, fields, api, _, exceptions
 
 
 class RecruitmentPlan(models.Model):
-    _name = 'recruitment.plan'
+    _name = 'x_psm_recruitment_plan'
     _description = 'Kế Hoạch Tuyển Dụng'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'create_date desc'
@@ -15,7 +15,7 @@ class RecruitmentPlan(models.Model):
 
     # === One2many Lines ===
     line_ids = fields.One2many(
-        'recruitment.plan.line', 'plan_id', string='Chi tiết kế hoạch')
+        'x_psm_recruitment_plan_line', 'plan_id', string='Chi tiết kế hoạch')
 
     # === Additional useful fields ===
     priority = fields.Selection([
@@ -51,7 +51,7 @@ class RecruitmentPlan(models.Model):
     total_quantity = fields.Integer(compute='_compute_total_quantity', string='Tổng số lượng', store=True)
 
     batch_id = fields.Many2one(
-        'recruitment.batch', string='Đợt tuyển dụng',
+        'x_psm_recruitment_batch', string='Đợt tuyển dụng',
         tracking=True,
         help='Chọn đợt tuyển dụng để tự động tải các vị trí từ Yêu Cầu Tuyển Dụng')
     
@@ -67,9 +67,9 @@ class RecruitmentPlan(models.Model):
     # === Sub-plan fields ===
 
     parent_id = fields.Many2one(
-        'recruitment.plan', string='Kế hoạch cha', ondelete='cascade', tracking=True)
+        'x_psm_recruitment_plan', string='Kế hoạch cha', ondelete='cascade', tracking=True)
     sub_plan_ids = fields.One2many(
-        'recruitment.plan', 'parent_id', string='Kế hoạch con')
+        'x_psm_recruitment_plan', 'parent_id', string='Kế hoạch con')
     department_id = fields.Many2one(
         'hr.department', string='Phòng ban (Kế hoạch con)')
     is_sub_plan = fields.Boolean(
@@ -99,7 +99,7 @@ class RecruitmentPlan(models.Model):
             if vals.get('name', 'New') == 'New':
                 # Skip sequence for sub-plans to allow custom naming or handled below
                 if not vals.get('is_sub_plan'):
-                    code = 'recruitment.plan'
+                    code = 'x_psm_recruitment_plan'
                     name = self.env['ir.sequence'].next_by_code(code)
                     if not name:
                         # Auto-heal: Create sequence if missing
@@ -170,7 +170,7 @@ class RecruitmentPlan(models.Model):
                 }
             }
 
-        requests = self.env['recruitment.request'].search([
+        requests = self.env['x_psm_recruitment_request'].search([
             ('batch_id', '=', self.batch_id.id),
             ('state', 'not in', ['cancel']),
         ])
@@ -213,7 +213,7 @@ class RecruitmentPlan(models.Model):
                     })
         
         if new_lines_vals:
-            self.env['recruitment.plan.line'].create(new_lines_vals)
+            self.env['x_psm_recruitment_plan_line'].create(new_lines_vals)
 
         return {
             'type': 'ir.actions.client',
@@ -244,7 +244,7 @@ class RecruitmentPlan(models.Model):
         return {
             'type': 'ir.actions.act_window',
             'name': 'Kế hoạch con',
-            'res_model': 'recruitment.plan',
+            'res_model': 'x_psm_recruitment_plan',
             'view_mode': 'list,form',
             'domain': [('parent_id', '=', self.id)],
             'context': {
@@ -336,7 +336,7 @@ class RecruitmentPlan(models.Model):
             
             # Create lines for sub-plan
             for line in lines:
-                self.env['recruitment.plan.line'].create({
+                self.env['x_psm_recruitment_plan_line'].create({
                     'plan_id': sub_plan.id,
                     'department_id': line.department_id.id,
                     'job_id': line.job_id.id,
@@ -399,7 +399,7 @@ class RecruitmentPlan(models.Model):
             for user in all_users:
                 # Check if activity already exists to avoid duplicates if re-sent
                 existing_activity = self.env['mail.activity'].sudo().search([
-                    ('res_model_id', '=', self.env['ir.model']._get_id('recruitment.plan')),
+                    ('res_model_id', '=', self.env['ir.model']._get_id('x_psm_recruitment_plan')),
                     ('res_id', '=', rec.id),
                     ('user_id', '=', user.id),
                     ('summary', '=', 'Duyệt kế hoạch tuyển dụng')
@@ -407,7 +407,7 @@ class RecruitmentPlan(models.Model):
                 
                 if not existing_activity:
                     self.env['mail.activity'].sudo().create({
-                        'res_model_id': self.env['ir.model']._get_id('recruitment.plan'),
+                        'res_model_id': self.env['ir.model']._get_id('x_psm_recruitment_plan'),
                         'res_id': rec.id,
                         'user_id': user.id,
                         'summary': 'Duyệt kế hoạch tuyển dụng',
@@ -444,7 +444,7 @@ class RecruitmentPlan(models.Model):
             parent_dept_lines.write({'state': 'manager_approved'})
 
         self.message_post(
-            body=_("✓ %s đã duyệt kế hoạch tuyển dụng cho phòng ban %s.")
+            body=_("✔ %s đã duyệt kế hoạch tuyển dụng cho phòng ban %s.")
                  % (current_user.name, self.department_id.name if self.department_id else ''),
             message_type='notification'
         )
@@ -456,7 +456,7 @@ class RecruitmentPlan(models.Model):
             if all_subs_approved:
                 self.parent_id.with_context(skip_parent_sync=True).write({'state': 'manager_approved'})
                 self.parent_id.message_post(
-                    body=_("✓ Tất cả Trưởng phòng đã duyệt. Kế hoạch tuyển dụng chuyển sang HR Validate."),
+                    body=_("✔ Tất cả Trưởng phòng đã duyệt. Kế hoạch tuyển dụng chuyển sang HR Validate."),
                     message_type='notification'
                 )
                 # Gửi Activity cho HR
@@ -478,7 +478,7 @@ class RecruitmentPlan(models.Model):
             return
 
         activity_type = self.env.ref('mail.mail_activity_data_todo', raise_if_not_found=False)
-        res_model_id = self.env['ir.model']._get_id('recruitment.plan')
+        res_model_id = self.env['ir.model']._get_id('x_psm_recruitment_plan')
 
         for user in hr_users:
             # Tránh tạo duplicate activity
@@ -502,11 +502,11 @@ class RecruitmentPlan(models.Model):
     def _send_activity_to_ceo_for_approval(self):
         """Gửi Activity cho CEO (company.user_id) khi HR đã validate xong"""
         self.ensure_one()
-        ceo_user = self.company_id.ceo_id.user_id if self.company_id.ceo_id else False
+        ceo_user = self.company_id.x_psm_0205_ceo_id.user_id if self.company_id.x_psm_0205_ceo_id else False
         if not ceo_user:
             return
         activity_type = self.env.ref('mail.mail_activity_data_todo', raise_if_not_found=False)
-        res_model_id = self.env['ir.model']._get_id('recruitment.plan')
+        res_model_id = self.env['ir.model']._get_id('x_psm_recruitment_plan')
         existing = self.env['mail.activity'].sudo().search([
             ('res_model_id', '=', res_model_id),
             ('res_id', '=', self.id),
@@ -573,7 +573,7 @@ class RecruitmentPlan(models.Model):
                 # Note: Odoo 19 uses website_published for recruitment
                 job.sudo().write({
                     'no_of_recruitment': job.no_of_recruitment + line.quantity,
-                    'website_published': True, 
+                    'website_published': True,
                     'active': True,
                 })
                 # Mark as published to avoid duplicate increments
@@ -582,7 +582,7 @@ class RecruitmentPlan(models.Model):
 
         message = f'Đã cập nhật {published_count} vị trí và đăng tin lên Portal tuyển dụng.'
         if published_count == 0:
-            message = 'Tất cả vị trí trong kế hoạch này đã được đăng bộ từ trước.'
+            message = 'Tất cả vị trí trong kế hoạch này đã được đăng bỏ từ trước.'
 
         return {
             'type': 'ir.actions.client',
@@ -671,7 +671,7 @@ class RecruitmentPlan(models.Model):
         from datetime import timedelta
         today = fields.Date.today()
         # Find lines in 'in_progress' plans where planned_date is this month
-        lines = self.env['recruitment.plan.line'].search([
+        lines = self.env['x_psm_recruitment_plan_line'].search([
             ('plan_id.state', '=', 'in_progress'),
             ('planned_date', '>=', today.replace(day=1)),
             ('planned_date', '<', (today + timedelta(days=31)).replace(day=1))
@@ -683,10 +683,10 @@ class RecruitmentPlan(models.Model):
 
 
 class RecruitmentPlanLine(models.Model):
-    _name = 'recruitment.plan.line'
+    _name = 'x_psm_recruitment_plan_line'
     _description = 'Chi tiết Kế Hoạch Tuyển Dụng'
 
-    plan_id = fields.Many2one('recruitment.plan', string='Kế hoạch', required=True, ondelete='cascade')
+    plan_id = fields.Many2one('x_psm_recruitment_plan', string='Kế hoạch', required=True, ondelete='cascade')
     department_id = fields.Many2one('hr.department', string='Phòng ban', required=True)
     job_id = fields.Many2one('hr.job', string='Vị trí', required=True)
     quantity = fields.Integer(string='Số lượng cần', default=1, required=True)
@@ -694,7 +694,7 @@ class RecruitmentPlanLine(models.Model):
     reason = fields.Text(string='Ghi chú')
     is_approved = fields.Boolean(
         string='Duyệt', default=True,
-        help='Tích ✓ = giữ lại, bỏ tích ✗ = loại khi Trưởng bộ phận duyệt')
+        help='Tích ✔ = giữ lại, bỏ tích ✘ = loại khi Trưởng bộ phận duyệt')
     
     state = fields.Selection([
         ('draft', 'Nháp'),
@@ -707,7 +707,7 @@ class RecruitmentPlanLine(models.Model):
         ('cancel', 'Hủy'),
     ], string='Trạng thái', default='draft')
     
-    batch_id = fields.Many2one('recruitment.batch', string='Đợt tuyển dụng', ondelete='set null')
+    batch_id = fields.Many2one('x_psm_recruitment_batch', string='Đợt tuyển dụng', ondelete='set null')
 
     # === Progress Metrics (Funnel 1-35) ===
     applicant_count = fields.Integer(compute='_compute_metrics', string='Ứng viên')
@@ -731,7 +731,7 @@ class RecruitmentPlanLine(models.Model):
 
 
 class RecruitmentBatch(models.Model):
-    _name = 'recruitment.batch'
+    _name = 'x_psm_recruitment_batch'
     _description = 'Đợt Tuyển Dụng'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'create_date desc'
@@ -756,13 +756,13 @@ class RecruitmentBatch(models.Model):
         ('closed', 'Đã đóng'),
     ], string='Trạng thái', default='draft', tracking=True)
 
-    line_ids = fields.One2many('recruitment.plan.line', 'batch_id', string='Các vị trí trong đợt')
+    line_ids = fields.One2many('x_psm_recruitment_plan_line', 'batch_id', string='Các vị trí trong đợt')
 
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
             if vals.get('name', 'New') == 'New':
-                code = 'recruitment.batch'
+                code = 'x_psm_recruitment_batch'
                 seq = self.env['ir.sequence'].next_by_code(code)
                 if not seq:
                     seq_obj = self.env['ir.sequence'].sudo().search([('code', '=', code)], limit=1)
@@ -869,7 +869,7 @@ class RecruitmentBatch(models.Model):
     def action_pull_approved_lines(self):
         """Kéo tất cả các vị trí đã được Manager duyệt và chưa thuộc đợt nào"""
         self.ensure_one()
-        lines = self.env['recruitment.plan.line'].search([
+        lines = self.env['x_psm_recruitment_plan_line'].search([
             ('plan_id.state', 'in', ['manager_approved', 'hr_validation', 'waiting_ceo', 'ceo_approval', 'in_progress']),
             ('batch_id', '=', False)
         ])
@@ -926,7 +926,7 @@ class RecruitmentBatch(models.Model):
         ])
         
         for batch in batches:
-            # 1. Update batch state to 'open' (or keep approved? user said 'bắt đầu tuyển rồi' 
+            # 1. Update batch state to 'open' (or keep approved? user said 'bắt đầu tuyển rồi'
             # so it should be in progress/open). Let's use 'open'.
             batch.write({'state': 'open'})
             
@@ -951,7 +951,7 @@ class RecruitmentBatch(models.Model):
 class HrApplicantInherit(models.Model):
     _inherit = 'hr.applicant'
 
-    application_source = fields.Selection([
+    x_psm_0205_application_source = fields.Selection([
         ('web', 'Website (Portal)'),
         ('api', 'API / Hệ thống bên ngoài'),
         ('manual', 'HR tạo thủ công'),

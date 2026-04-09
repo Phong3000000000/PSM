@@ -3,101 +3,103 @@
     <data noupdate="1">
 
         <!-- Action limited to Khối Văn Phòng applicants -->
-        <record id="crm_case_categ0_act_job_office" model="ir.actions.act_window">
+        <record id="action_psm_job_office_applicant" model="ir.actions.act_window">
             <field name="name">Applications - Văn Phòng</field>
             <field name="res_model">hr.applicant</field>
             <field name="view_mode">kanban,list,form,pivot,graph,calendar,activity</field>
             <field name="view_id" eval="False" />
             <field name="search_view_id" ref="hr_recruitment.hr_applicant_view_search_bis" />
-            <field name="context">{'search_default_applicants': 1, 'default_recruitment_type':
+            <field name="context">{'search_default_applicants': 1,
+                'default_x_psm_0205_recruitment_type':
                 'office'}</field>
-            <field name="domain">[('recruitment_type', '=', 'office')]</field>
+            <field name="domain">[('x_psm_0205_recruitment_type', '=', 'office')]</field>
         </record>
 
-        <record id="crm_case_categ0_act_job_store" model="ir.actions.act_window">
+        <record id="action_psm_job_store_applicant" model="ir.actions.act_window">
             <field name="name">Applications - Vận hành</field>
             <field name="res_model">hr.applicant</field>
             <field name="view_mode">kanban,list,form,pivot,graph,calendar,activity</field>
             <field name="view_id" eval="False" />
             <field name="search_view_id" ref="hr_recruitment.hr_applicant_view_search_bis" />
-            <field name="context">{'search_default_applicants': 1, 'default_recruitment_type':
+            <field name="context">{'search_default_applicants': 1,
+                'default_x_psm_0205_recruitment_type':
                 'store'}</field>
-            <field name="domain">[('recruitment_type', '=', 'store')]</field>
+            <field name="domain">[('x_psm_0205_recruitment_type', '=', 'store')]</field>
         </record>
 
         <record model="ir.actions.act_window.view" id="action_hr_sec_kanban_view_act_job_office">
             <field name="sequence" eval="1" />
             <field name="view_mode">kanban</field>
             <field name="view_id" ref="hr_recruitment.hr_kanban_view_applicant" />
-            <field name="act_window_id" ref="crm_case_categ0_act_job_office" />
+            <field name="act_window_id" ref="action_psm_job_office_applicant" />
         </record>
         <record model="ir.actions.act_window.view" id="action_hr_sec_tree_view_act_job_office">
             <field name="sequence" eval="0" />
             <field name="view_mode">list</field>
             <field name="view_id" ref="hr_recruitment.crm_case_tree_view_job" />
-            <field name="act_window_id" ref="crm_case_categ0_act_job_office" />
+            <field name="act_window_id" ref="action_psm_job_office_applicant" />
         </record>
         <record model="ir.actions.act_window.view" id="action_hr_sec_form_view_act_job_office">
             <field name="sequence" eval="2" />
             <field name="view_mode">form</field>
             <field name="view_id" ref="hr_recruitment.hr_applicant_view_form" />
-            <field name="act_window_id" ref="crm_case_categ0_act_job_office" />
+            <field name="act_window_id" ref="action_psm_job_office_applicant" />
         </record>
         <record model="ir.actions.act_window.view" id="hr_applicant_action_view_pivot_office">
             <field name="sequence" eval="3" />
             <field name="view_mode">pivot</field>
             <field name="view_id" ref="hr_recruitment.crm_case_pivot_view_job" />
-            <field name="act_window_id" ref="crm_case_categ0_act_job_office" />
+            <field name="act_window_id" ref="action_psm_job_office_applicant" />
         </record>
         <record model="ir.actions.act_window.view" id="action_hr_sec_graph_view_act_job_office">
             <field name="sequence" eval="4" />
             <field name="view_mode">graph</field>
             <field name="view_id" ref="hr_recruitment.crm_case_graph_view_job" />
-            <field name="act_window_id" ref="crm_case_categ0_act_job_office" />
+            <field name="act_window_id" ref="action_psm_job_office_applicant" />
         </record>
 
         <record model="ir.actions.act_window.view" id="action_hr_sec_kanban_view_act_job_store">
             <field name="sequence" eval="1" />
             <field name="view_mode">kanban</field>
             <field name="view_id" ref="hr_recruitment.hr_kanban_view_applicant" />
-            <field name="act_window_id" ref="crm_case_categ0_act_job_store" />
+            <field name="act_window_id" ref="action_psm_job_store_applicant" />
         </record>
         <record model="ir.actions.act_window.view" id="action_hr_sec_tree_view_act_job_store">
             <field name="sequence" eval="0" />
             <field name="view_mode">list</field>
             <field name="view_id" ref="hr_recruitment.crm_case_tree_view_job" />
-            <field name="act_window_id" ref="crm_case_categ0_act_job_store" />
+            <field name="act_window_id" ref="action_psm_job_store_applicant" />
         </record>
         <record model="ir.actions.act_window.view" id="action_hr_sec_form_view_act_job_store">
             <field name="sequence" eval="2" />
             <field name="view_mode">form</field>
             <field name="view_id" ref="hr_recruitment.hr_applicant_view_form" />
-            <field name="act_window_id" ref="crm_case_categ0_act_job_store" />
+            <field name="act_window_id" ref="action_psm_job_store_applicant" />
         </record>
         <record model="ir.actions.act_window.view" id="hr_applicant_action_view_pivot_store">
             <field name="sequence" eval="3" />
             <field name="view_mode">pivot</field>
             <field name="view_id" ref="hr_recruitment.crm_case_pivot_view_job" />
-            <field name="act_window_id" ref="crm_case_categ0_act_job_store" />
+            <field name="act_window_id" ref="action_psm_job_store_applicant" />
         </record>
         <record model="ir.actions.act_window.view" id="action_hr_sec_graph_view_act_job_store">
             <field name="sequence" eval="4" />
             <field name="view_mode">graph</field>
             <field name="view_id" ref="hr_recruitment.crm_case_graph_view_job" />
-            <field name="act_window_id" ref="crm_case_categ0_act_job_store" />
+            <field name="act_window_id" ref="action_psm_job_store_applicant" />
         </record>
 
         <menuitem
-            id="menu_applications_office"
+            id="menu_psm_applications_office"
             name="Applications - Văn Phòng"
             parent="hr_recruitment.menu_crm_case_categ0_act_job"
-            action="crm_case_categ0_act_job_office"
+            action="action_psm_job_office_applicant"
             sequence="4" />
         <menuitem
-            id="menu_applications_store"
+            id="menu_psm_applications_store"
             name="Applications - Vận hành"
             parent="hr_recruitment.menu_crm_case_categ0_act_job"
-            action="crm_case_categ0_act_job_store"
+            action="action_psm_job_store_applicant"
             sequence="5" />
 
     </data>

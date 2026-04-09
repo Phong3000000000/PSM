@@ -25,6 +25,7 @@ class HrApplicantOjeEvaluation(models.Model):
         ('legacy', 'Legacy'),
     ], string='Template Scope', default='legacy', index=True)
     template_version = fields.Char(string='Template Version')
+    x_psm_config_signature = fields.Text(string='PSM Config Signature')
 
     trial_date = fields.Date(string='Ngày thử việc')
     trial_time = fields.Char(string='Thời gian thử việc')
@@ -49,7 +50,13 @@ class HrApplicantOjeEvaluation(models.Model):
     has_any_ni = fields.Boolean(string='Có NI', compute='_compute_staff_counters', store=True)
 
     # Management-only
-    management_overall_rating = fields.Integer(string='Overall Rating')
+    management_overall_rating = fields.Float(
+        string='Overall Rating',
+        compute='_compute_management_overall_rating',
+        store=True,
+        readonly=True,
+        digits=(16, 2),
+    )
     management_final_display = fields.Selection([
         ('hire', 'HIRE'),
         ('reject', 'REJECT'),
@@ -95,6 +102,32 @@ class HrApplicantOjeEvaluation(models.Model):
             else:
                 rec.management_final_display = 'hire' if (rec.management_overall_rating or 0) >= 3 else 'reject'
 
+    @api.depends(
+        'template_scope',
+        'section_ids.section_rating',
+        'section_ids.is_active',
+        'section_ids.section_kind',
+        'section_ids.line_ids.is_active',
+        'section_ids.line_ids.line_kind',
+    )
+    def _compute_management_overall_rating(self):
+        for rec in self:
+            if rec.template_scope != 'store_management':
+                rec.management_overall_rating = 0.0
+                continue
+
+            dimension_sections = rec.section_ids.filtered(
+                lambda s: s.is_active and s.section_kind == 'management_dimension'
+            )
+            rated_sections = dimension_sections.filtered(
+                lambda s: bool(s.line_ids.filtered(lambda l: l.is_active and l.line_kind == 'management_task'))
+            )
+
+            if rated_sections:
+                rec.management_overall_rating = sum(rated_sections.mapped('section_rating')) / len(rated_sections)
+            else:
+                rec.management_overall_rating = 0.0
+
     def _validate_before_submit(self):
         for rec in self:
             if rec.template_scope == 'store_staff':
@@ -107,6 +140,9 @@ class HrApplicantOjeEvaluation(models.Model):
 
             elif rec.template_scope == 'store_management':
                 management_lines = rec.line_ids.filtered(lambda l: l.is_active and l.line_kind == 'management_task')
+                if not management_lines:
+                    raise exceptions.UserError(_('Chưa có task Management đang bật để chấm điểm.'))
+
                 missing_management_score = management_lines.filtered(
                     lambda l: not l.management_score or l.management_score < 1 or l.management_score > 5
                 )
@@ -118,17 +154,19 @@ class HrApplicantOjeEvaluation(models.Model):
                 if missing_xfactor:
                     raise exceptions.UserError(_('Vui lòng chọn Y/N cho toàn bộ dòng X-Factor.'))
 
-                if not rec.management_overall_rating or rec.management_overall_rating < 1 or rec.management_overall_rating > 5:
-                    raise exceptions.UserError(_('Overall Rating phải nằm trong khoảng 1..5.'))
-
                 dimension_sections = rec.section_ids.filtered(
                     lambda s: s.is_active and s.section_kind == 'management_dimension'
                 )
-                invalid_section_rating = dimension_sections.filtered(
-                    lambda s: not s.section_rating or s.section_rating < 1 or s.section_rating > 5
+                empty_dimension_sections = dimension_sections.filtered(
+                    lambda s: not s.line_ids.filtered(
+                        lambda l: l.is_active and l.line_kind == 'management_task'
+                    )
                 )
-                if invalid_section_rating:
-                    raise exceptions.UserError(_('Vui lòng nhập đầy đủ section rating (1..5) cho 3 dimension chính.'))
+                if empty_dimension_sections:
+                    section_names = '; '.join(empty_dimension_sections.mapped('name'))
+                    raise exceptions.UserError(
+                        _('Mỗi Dimension đang bật phải có ít nhất 1 task. Thiếu task ở: %s') % section_names
+                    )
 
     def action_submit(self):
         for rec in self:
@@ -161,7 +199,7 @@ class HrApplicantOjeEvaluation(models.Model):
                 if rec.template_scope == 'store_staff':
                     score_display = f"NI:{rec.staff_ni_count} GD:{rec.staff_gd_count} EX:{rec.staff_ex_count} OS:{rec.staff_os_count}"
                 elif rec.template_scope == 'store_management':
-                    score_display = f"Overall: {rec.management_overall_rating or 0}/5"
+                    score_display = f"Overall: {(rec.management_overall_rating or 0.0):.2f}/5"
                 else:
                     score_display = f"{rec.total_score}/{rec.pass_score_snapshot}"
 
@@ -226,7 +264,7 @@ class HrApplicantOjeEvaluationSection(models.Model):
     _order = 'sequence, id'
 
     evaluation_id = fields.Many2one('hr.applicant.oje.evaluation', string='Evaluation', ondelete='cascade', required=True)
-    source_config_section_id = fields.Many2one('hr.job.oje.config.section', string='Source Job Section', ondelete='set null')
+    source_config_section_id = fields.Many2one('survey.question', string='Source Survey Page', ondelete='set null')
 
     sequence = fields.Integer(string='Sequence', default=10)
     name = fields.Char(string='Section Title', required=True)
@@ -253,9 +291,36 @@ class HrApplicantOjeEvaluationSection(models.Model):
     behavior_html = fields.Html(string='Behavior Checklist')
     is_active = fields.Boolean(default=True)
 
-    section_rating = fields.Integer(string='Section Rating (1..5)')
+    section_rating = fields.Float(
+        string='Section Rating (1..5)',
+        compute='_compute_section_rating',
+        store=True,
+        readonly=True,
+        digits=(16, 2),
+    )
 
     line_ids = fields.One2many('hr.applicant.oje.evaluation.line', 'section_id', string='Lines')
+
+    @api.depends(
+        'section_kind',
+        'is_active',
+        'line_ids.line_kind',
+        'line_ids.is_active',
+        'line_ids.management_score',
+    )
+    def _compute_section_rating(self):
+        for section in self:
+            if not section.is_active or section.section_kind != 'management_dimension':
+                section.section_rating = 0.0
+                continue
+
+            active_tasks = section.line_ids.filtered(
+                lambda l: l.is_active and l.line_kind == 'management_task'
+            )
+            if active_tasks:
+                section.section_rating = sum(float(line.management_score or 0) for line in active_tasks) / len(active_tasks)
+            else:
+                section.section_rating = 0.0
 
 
 class HrApplicantOjeEvaluationLine(models.Model):
@@ -265,7 +330,7 @@ class HrApplicantOjeEvaluationLine(models.Model):
 
     evaluation_id = fields.Many2one('hr.applicant.oje.evaluation', string='Evaluation', ondelete='cascade', required=True)
     section_id = fields.Many2one('hr.applicant.oje.evaluation.section', string='Section', ondelete='cascade')
-    template_line_id = fields.Many2one('hr.job.oje.config.line', string='Template Line', ondelete='set null')
+    template_line_id = fields.Many2one('survey.question', string='Source Survey Question', ondelete='set null')
 
     sequence = fields.Integer(string='Sequence', default=10)
     name = fields.Char(string='Tiêu chí', required=True)
@@ -306,7 +371,7 @@ class HrApplicantOjeEvaluationLine(models.Model):
     checkbox_value = fields.Boolean(string='Checkbox Value')
     checkbox_score = fields.Float(string='Điểm (Checkbox)')
 
-    selected_option_id = fields.Many2one('hr.job.oje.config.option', string='Lựa chọn')
+    selected_option_id = fields.Many2one('survey.question.answer', string='Lựa chọn')
     selected_option_score = fields.Float(string='Điểm (Radio)', compute='_compute_selected_option_score', store=True)
 
     # New dynamic template answers
@@ -326,10 +391,10 @@ class HrApplicantOjeEvaluationLine(models.Model):
 
     awarded_score = fields.Float(string='Điểm đạt được', compute='_compute_awarded_score', store=True)
 
-    @api.depends('selected_option_id', 'selected_option_id.score')
+    @api.depends('selected_option_id', 'selected_option_id.answer_score')
     def _compute_selected_option_score(self):
         for rec in self:
-            rec.selected_option_score = rec.selected_option_id.score if rec.selected_option_id else 0.0
+            rec.selected_option_score = rec.selected_option_id.answer_score if rec.selected_option_id else 0.0
 
     @api.depends(
         'line_kind',
@@ -341,7 +406,7 @@ class HrApplicantOjeEvaluationLine(models.Model):
         'checkbox_value',
         'checkbox_score',
         'selected_option_id',
-        'selected_option_id.score',
+        'selected_option_id.answer_score',
     )
     def _compute_awarded_score(self):
         for line in self:
@@ -362,6 +427,6 @@ class HrApplicantOjeEvaluationLine(models.Model):
                 elif line.field_type == 'checkbox':
                     line.awarded_score = line.checkbox_score if line.checkbox_value else 0.0
                 elif line.field_type == 'radio':
-                    line.awarded_score = line.selected_option_id.score if line.selected_option_id else 0.0
+                    line.awarded_score = line.selected_option_id.answer_score if line.selected_option_id else 0.0
                 else:
                     line.awarded_score = 0.0

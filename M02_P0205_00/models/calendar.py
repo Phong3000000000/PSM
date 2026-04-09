@@ -17,24 +17,24 @@ class CalendarEvent(models.Model):
             context['default_partner_ids'] = default_partner_ids
         return super(CalendarEvent, self.with_context(context)).default_get(fields_list)
 
-    round2_notification_sent = fields.Boolean(
-        string='Thông báo vòng 2 đã gửi',
+    x_psm_0205_round2_notification_sent = fields.Boolean(
+        string='Thong bao vong 2 da gui',
         copy=False,
     )
 
-    round3_notification_sent = fields.Boolean(
-        string='Thông báo vòng 3 đã gửi',
+    x_psm_0205_round3_notification_sent = fields.Boolean(
+        string='Thong bao vong 3 da gui',
         copy=False,
     )
 
-    round4_notification_sent = fields.Boolean(
-        string='Thông báo vòng 4 đã gửi',
+    x_psm_0205_round4_notification_sent = fields.Boolean(
+        string='Thong bao vong 4 da gui',
         copy=False,
     )
 
-    interview_round = fields.Selection(
+    x_psm_0205_interview_round = fields.Selection(
         INTERVIEW_ROUND_SELECTION,
-        string=_('Vòng phỏng vấn'),
-        help=_('Ghi nhận vòng phỏng vấn mà lịch này thuộc về.'),
+        string=_('Vong phong van'),
+        help=_('Ghi nhan vong phong van ma lich nay thuoc ve.'),
         index=True,
     )

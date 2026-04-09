@@ -3,18 +3,18 @@
     <data noupdate="1">
 
         <!-- ensure Applications action defaults to office stages -->
-        <record id="crm_case_categ0_act_job" model="ir.actions.act_window">
+        <record id="action_psm_job_office_filter" model="ir.actions.act_window">
             <field name="name">Applications</field>
             <field name="res_model">hr.applicant</field>
-            <field name="domain">[('recruitment_type', '=', 'office')]</field>
-            <field name="context">{'search_default_applicants': 1, 'default_recruitment_type':
+            <field name="domain">[('x_psm_0205_recruitment_type', '=', 'office')]</field>
+            <field name="context">{'search_default_applicants': 1, 'default_x_psm_0205_recruitment_type':
                 'office'}</field>
         </record>
 
         <!-- keep fallback menu items to the same action but filter by recruitment type -->
-        <record id="menu_applications_office" model="ir.ui.menu">
+        <record id="menu_psm_applications_office" model="ir.ui.menu">
             <field name="parent_id" ref="menu_crm_case_categ0_act_job" />
-            <field name="action" ref="crm_case_categ0_act_job" />
+            <field name="action" ref="action_psm_job_office_filter" />
         </record>
 
     </data>

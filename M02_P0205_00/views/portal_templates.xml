@@ -1,12 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <template id="psm_portal_recruitment_theme_assets" name="Portal Recruitment Theme Assets">
+        <style>
+            .psm-portal-recruitment {
+                color: var(--foreground);
+            }
+
+            .psm-portal-recruitment .alert,
+            .psm-portal-recruitment .card,
+            .psm-portal-recruitment table {
+                background: var(--card) !important;
+                color: var(--card-foreground) !important;
+                border-color: var(--border) !important;
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+            }
+
+            .psm-portal-recruitment .text-dark,
+            .psm-portal-recruitment .text-primary,
+            .psm-portal-recruitment .text-secondary,
+            .psm-portal-recruitment .text-danger,
+            .psm-portal-recruitment h3,
+            .psm-portal-recruitment h4,
+            .psm-portal-recruitment h5 {
+                color: var(--foreground) !important;
+            }
+
+            .psm-portal-recruitment .text-muted,
+            .psm-portal-recruitment small {
+                color: var(--muted-foreground) !important;
+            }
+
+            .psm-portal-recruitment .border,
+            .psm-portal-recruitment .border-bottom,
+            .psm-portal-recruitment .border-top,
+            .psm-portal-recruitment thead th,
+            .psm-portal-recruitment tbody td {
+                border-color: var(--border) !important;
+            }
+
+            .psm-portal-recruitment .badge.bg-primary,
+            .psm-portal-recruitment .badge.bg-success,
+            .psm-portal-recruitment .badge.bg-info {
+                background: var(--primary) !important;
+                color: var(--primary-foreground) !important;
+            }
+
+            .psm-portal-recruitment .btn-theme-primary {
+                background: var(--primary) !important;
+                border-color: var(--primary) !important;
+                color: var(--primary-foreground) !important;
+            }
+        </style>
+    </template>
+
     <!-- Section in Portal Home -->
     <!-- Section in Portal Home (Custom for MCD) -->
-    <template id="portal_my_home_recruitment_custom" name="Portal My Home: Recruitment Custom" inherit_id="portal_custom.portal_my_home_inherit" priority="30">
+    <template id="psm_portal_my_home_recruitment_custom" name="Portal My Home: Recruitment Custom" inherit_id="portal_custom.portal_my_home_inherit" priority="30">
         <!-- Sidebar (Desktop) -->
         <xpath expr="//a[@href='/my/shifts']" position="after">
-            <a href="/my/jobs" class="sidebar-link">
-                <div class="app-icon-wrapper me-3" style="background: #f1f8e9; color: #7cb342;">
+            <a href="/my/jobs" class="sidebar-link" t-if="False">
+                <div class="app-icon-wrapper me-3" style="background: color-mix(in srgb, var(--primary) 12%, transparent); color: var(--primary); border: 1px solid var(--border);">
                     <i class="fa fa-briefcase" />
                 </div>
                 <span class="d-flex align-items-center justify-content-between flex-grow-1">
@@ -16,8 +70,8 @@
                     </t>
                 </span>
             </a>
-            <a href="/my/recruitment_requests" class="sidebar-link">
-                <div class="app-icon-wrapper me-3" style="background: #e1f5fe; color: #0288d1;">
+            <a href="/my/recruitment_requests" class="sidebar-link" t-if="False">
+                <div class="app-icon-wrapper me-3" style="background: color-mix(in srgb, var(--secondary) 18%, transparent); color: var(--foreground); border: 1px solid var(--border);">
                     <i class="fa fa-id-card-o" />
                 </div>
                 <span class="d-flex align-items-center justify-content-between flex-grow-1">
@@ -31,8 +85,8 @@
 
         <!-- App Grid (Mobile) -->
         <xpath expr="//div[hasclass('mobile-app-grid')]//a[@href='/my/shifts']" position="after">
-            <a href="/my/jobs" class="mobile-app-item">
-                <div class="mobile-app-icon position-relative" style="background: linear-gradient(135deg, #81fbb8 0%, #28c76f 100%);">
+            <a href="/my/jobs" class="mobile-app-item"  t-if="False">
+                <div class="mobile-app-icon position-relative" style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: var(--primary-foreground);">
                     <i class="fa fa-briefcase" />
                     <t t-if="published_job_count">
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light p-1" style="font-size: 8px;">
@@ -46,13 +100,15 @@
     </template>
 
     <!-- Published Jobs Portal Page -->
-    <template id="portal_my_published_jobs" name="Published Jobs on Portal">
+    <template id="psm_portal_my_published_jobs" name="Published Jobs on Portal">
         <t t-call="portal.portal_layout">
+            <t t-call="M02_P0205_00.psm_portal_recruitment_theme_assets"/>
             <t t-set="breadcrumbs_searchbar" t-value="True"/>
             <t t-call="portal.portal_searchbar">
                 <t t-set="title">Việc Làm Đang Tuyển</t>
             </t>
 
+            <div class="psm-portal-recruitment">
             <t t-if="not batches and not no_batch_lines">
                 <div class="alert alert-info" role="alert">
                     Hiện chưa có vị trí nào đang tuyển dụng.
@@ -108,8 +164,8 @@
                                         </t>
                                         <div class="mt-auto">
                                             <a t-attf-href="/jobs/detail/#{line.id}"
-                                               class="btn btn-sm w-100"
-                                               style="background-color: #DA291C; color: white; border-radius: 8px;">
+                                               class="btn btn-sm w-100 btn-theme-primary"
+                                               style="border-radius: 8px;">
                                                 <i class="fa fa-eye me-1"/> Xem &amp; Ứng tuyển
                                             </a>
                                         </div>
@@ -146,8 +202,8 @@
                                         </p>
                                         <div class="mt-auto">
                                             <a t-attf-href="/jobs/request/detail/#{req.id}"
-                                               class="btn btn-sm w-100"
-                                               style="background-color: #DA291C; color: white; border-radius: 8px;">
+                                               class="btn btn-sm w-100 btn-theme-primary"
+                                               style="border-radius: 8px;">
                                                 <i class="fa fa-eye me-1"/> Xem &amp; Ứng tuyển
                                             </a>
                                         </div>
@@ -184,8 +240,8 @@
                                         </p>
                                         <div class="mt-auto">
                                             <a t-attf-href="/jobs/detail/#{line.id}"
-                                               class="btn btn-sm w-100"
-                                               style="background-color: #DA291C; color: white; border-radius: 8px;">
+                                               class="btn btn-sm w-100 btn-theme-primary"
+                                               style="border-radius: 8px;">
                                                 <i class="fa fa-eye me-1"/> Xem &amp; Ứng tuyển
                                             </a>
                                         </div>
@@ -196,18 +252,21 @@
                     </div>
                 </div>
             </t>
+            </div>
         </t>
     </template>
 
     <!-- List View Template -->
-    <template id="portal_my_recruitment_requests" name="My Recruitment Requests">
+    <template id="psm_portal_my_recruitment_requests" name="My Recruitment Requests">
         <t t-call="portal.portal_layout">
+            <t t-call="M02_P0205_00.psm_portal_recruitment_theme_assets"/>
             <t t-set="breadcrumbs_searchbar" t-value="True"/>
 
             <t t-call="portal.portal_searchbar">
                 <t t-set="title">Yêu Cầu Tuyển Dụng</t>
             </t>
             
+            <div class="psm-portal-recruitment">
             <t t-if="not recruitment_requests">
                 <div class="alert alert-warning" role="alert">
                     Bạn chưa có yêu cầu tuyển dụng nào.
@@ -250,6 +309,7 @@
                     </tbody>
                 </t>
             </t>
+            </div>
         </t>
     </template>
 </odoo>

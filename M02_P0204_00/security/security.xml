@@ -8,10 +8,28 @@
         <field name="comment">Store Manager có thể tạo lịch PV cho brand của mình</field>
     </record>
 
+    <!-- XML ID alias: dùng tên chuẩn mới nhưng giữ nguyên record gốc để tránh tạo trùng khi upgrade -->
+    <record id="alias_group_gdh_ops_0204_crw" model="ir.model.data">
+        <field name="module">M02_P0204_00</field>
+        <field name="name">group_gdh_ops_0204_crw</field>
+        <field name="model">res.groups</field>
+        <field name="res_id" eval="ref('group_store_manager')"/>
+        <field name="noupdate" eval="1"/>
+    </record>
+
     <record id="group_operations_manager" model="res.groups">
         <field name="name">Operations Manager (RGM/DM)</field>
-        <field name="implied_ids" eval="[(4, ref('group_store_manager')), (4, ref('survey.group_survey_user'))]"/>
+        <field name="implied_ids" eval="[(4, ref('group_gdh_ops_0204_crw')), (4, ref('survey.group_survey_user'))]"/>
         <field name="comment">Operations Manager quản lý nhiều lịch PV và yêu cầu tuyển dụng, khảo sát</field>
+    </record>
+
+    <!-- XML ID alias: dùng tên chuẩn mới nhưng giữ nguyên record gốc để tránh tạo trùng khi upgrade -->
+    <record id="alias_group_gdh_ops_0204_mgr" model="ir.model.data">
+        <field name="module">M02_P0204_00</field>
+        <field name="name">group_gdh_ops_0204_mgr</field>
+        <field name="model">res.groups</field>
+        <field name="res_id" eval="ref('group_operations_manager')"/>
+        <field name="noupdate" eval="1"/>
     </record>
 
     <!-- Record Rules -->
@@ -21,7 +39,7 @@
     <record id="rule_interview_schedule_department_hierarchy" model="ir.rule">
         <field name="name">Interview Schedule: Department Hierarchy Visibility</field>
         <field name="model_id" ref="model_interview_schedule"/>
-        <field name="groups" eval="[(4, ref('group_store_manager')), (4, ref('group_operations_manager'))]"/>
+        <field name="groups" eval="[(4, ref('group_gdh_ops_0204_crw')), (4, ref('group_gdh_ops_0204_mgr'))]"/>
         <field name="domain_force">['|', '|', '|', '|', ('department_id', '=', False), ('department_id', 'in', user.employee_ids.mapped('department_id').ids), ('department_id.manager_id.user_id', '=', user.id), ('department_id.parent_id.manager_id.user_id', '=', user.id), ('department_id.parent_id.parent_id.manager_id.user_id', '=', user.id)]</field>
         <field name="perm_read">1</field>
         <field name="perm_write">1</field>
@@ -89,7 +107,7 @@
     </record>
     -->
 
-    DEACTIVATE the default global multi-company rule for hr.job
+    <!-- DEACTIVATE the default global multi-company rule for hr.job -->
     <!-- Fix: Website frontend forces company_ids to only website's company, -->
     <!-- blocking access to hr.job records from other companies (403 error) -->
     <!-- <record id="hr.hr_job_comp_rule" model="ir.rule">
@@ -148,7 +166,7 @@
     <record id="rule_hr_applicant_department_hierarchy" model="ir.rule">
         <field name="name">HR Applicant: Department Hierarchy Visibility</field>
         <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
-        <field name="groups" eval="[(4, ref('group_store_manager')), (4, ref('group_operations_manager'))]"/>
+        <field name="groups" eval="[(4, ref('group_gdh_ops_0204_crw')), (4, ref('group_gdh_ops_0204_mgr'))]"/>
         <field name="domain_force">['|', '|', '|', '|', ('department_id', '=', False), ('department_id', 'in', user.employee_ids.mapped('department_id').ids), ('department_id.manager_id.user_id', '=', user.id), ('department_id.parent_id.manager_id.user_id', '=', user.id), ('department_id.parent_id.parent_id.manager_id.user_id', '=', user.id)]</field>
         <field name="perm_read">1</field>
         <field name="perm_write">1</field>
@@ -160,7 +178,7 @@
     <record id="rule_hr_department_hierarchy" model="ir.rule">
         <field name="name">HR Department: Hierarchy Visibility</field>
         <field name="model_id" ref="hr.model_hr_department"/>
-        <field name="groups" eval="[(4, ref('group_store_manager')), (4, ref('group_operations_manager'))]"/>
+        <field name="groups" eval="[(4, ref('group_gdh_ops_0204_crw')), (4, ref('group_gdh_ops_0204_mgr'))]"/>
         <!-- Cho phép thấy phòng ban của mình, phòng ban mình làm quản lý, và các phòng ban con của nó -->
         <field name="domain_force">['|', '|', '|', ('id', 'in', user.employee_ids.mapped('department_id').ids), ('manager_id.user_id', '=', user.id), ('parent_id.manager_id.user_id', '=', user.id), ('parent_id.parent_id.manager_id.user_id', '=', user.id)]</field>
         <field name="perm_read">1</field>
@@ -194,27 +212,4 @@
         <field name="perm_unlink">0</field>
     </record>
 
-    <!-- Restrict Job Approval Request for Officer to Department -->
-    <record id="rule_job_approval_request_department" model="ir.rule">
-        <field name="name">Job Approval Request: Department Visibility</field>
-        <field name="model_id" ref="model_job_approval_request"/>
-        <field name="groups" eval="[(4, ref('hr_recruitment.group_hr_recruitment_user'))]"/>
-        <field name="domain_force">['|', '|', '|', '|', ('department_id', '=', False), ('department_id', 'in', user.employee_ids.mapped('department_id').ids), ('department_id.manager_id.user_id', '=', user.id), ('department_id.parent_id.manager_id.user_id', '=', user.id), ('department_id.parent_id.parent_id.manager_id.user_id', '=', user.id)]</field>
-        <field name="perm_read">1</field>
-        <field name="perm_write">1</field>
-        <field name="perm_create">1</field>
-        <field name="perm_unlink">0</field>
-    </record>
-
-    <!-- Admin sees all Job Approval Requests -->
-    <record id="rule_job_approval_request_admin" model="ir.rule">
-        <field name="name">Job Approval Request: Admin All</field>
-        <field name="model_id" ref="model_job_approval_request"/>
-        <field name="groups" eval="[(4, ref('hr_recruitment.group_hr_recruitment_manager'))]"/>
-        <field name="domain_force">[(1, '=', 1)]</field>
-        <field name="perm_read">1</field>
-        <field name="perm_write">1</field>
-        <field name="perm_create">1</field>
-        <field name="perm_unlink">1</field>
-    </record>
 </odoo>

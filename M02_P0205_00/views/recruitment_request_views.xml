@@ -2,18 +2,19 @@
 <odoo>
     <data>
         <!-- Form View -->
-        <record id="view_recruitment_request_form" model="ir.ui.view">
-            <field name="name">recruitment.request.form</field>
-            <field name="model">recruitment.request</field>
+        <record id="view_psm_recruitment_request_form" model="ir.ui.view">
+            <field name="name">x_psm_recruitment_request.form</field>
+            <field name="model">x_psm_recruitment_request</field>
             <field name="arch" type="xml">
                 <form string="Yêu Cầu Tuyển Dụng">
                     <header>
                         <button name="action_submit" string="Gửi duyệt" type="object"
-                            class="oe_highlight" invisible="state != 'draft'" />
+                            class="oe_highlight"
+                            invisible="state != 'draft' or (recruitment_block == 'store' and x_psm_approval_request_id)" />
                         <button name="action_hr_validate" string="HR Validate" type="object"
-                            class="oe_highlight" invisible="state != 'hr_validation'" />
+                            class="oe_highlight" invisible="1" />
                         <button name="action_ceo_approve" string="CEO Duyệt" type="object"
-                            class="oe_highlight" invisible="state != 'ceo_approval'" />
+                            class="oe_highlight" invisible="1" />
 
                         <button name="action_publish_jobs" string="Đăng tin lên Job Page"
                             type="object" class="oe_highlight" invisible="state != 'in_progress'" />
@@ -25,10 +26,21 @@
                         <button name="action_reset_draft" string="Về nháp" type="object"
                             invisible="state != 'cancel'" />
                         <field name="state" widget="statusbar"
-                            statusbar_visible="draft,hr_validation,ceo_approval,in_progress,done" />
+                            statusbar_visible="draft,hr_validation,ceo_approval,in_progress,done"
+                            invisible="recruitment_block == 'store'" />
+                        <field name="state" widget="statusbar"
+                            statusbar_visible="draft,in_progress,done"
+                            invisible="recruitment_block != 'store'" />
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
+                            <button name="action_open_approval_request" type="object"
+                                class="oe_stat_button" icon="fa-check-square-o"
+                                invisible="not x_psm_approval_request_id">
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_text">Approval</span>
+                                </div>
+                            </button>
                             <button name="action_open_job_page" type="object"
                                 class="oe_stat_button" icon="fa-globe">
                                 <div class="o_field_widget o_stat_info">
@@ -43,15 +55,19 @@
                         </div>
                         <group>
                             <field name="request_type" widget="radio" options="{'horizontal': true}" />
+                            <field name="recruitment_block" widget="radio" options="{'horizontal': true}" />
                             <field name="batch_id"
                                 options="{'no_create': True}"
                                 placeholder="Chọn đợt tuyển dụng..."
                                 invisible="request_type == 'unplanned'" />
                         </group>
                         <group>
+                            <field name="x_psm_approval_request_id" invisible="1" />
                             <field name="user_id" groups="base.group_user" />
                             <field name="department_id" />
                             <field name="company_id" groups="base.group_user" />
+                            <field name="x_psm_approval_status" readonly="1"
+                                invisible="not x_psm_approval_request_id" />
                         </group>
                         <notebook>
                             <page string="Vị trí tuyển dụng" invisible="request_type == 'unplanned'">
@@ -65,10 +81,14 @@
                             </page>
                             <page string="Danh sách tuyển dụng">
                                 <field name="line_ids"
-                                    context="{'default_department_id': department_id or (user_department_id and user_department_id.id), 'default_request_id': id}">
+                                    context="{'default_department_id': department_id or (user_department_id and user_department_id.id), 'default_request_id': id, 'default_recruitment_block': recruitment_block}">
                                     <list editable="bottom">
+                                        <field name="position_name" />
                                         <field name="job_id"
                                             domain="[('department_id', '=', department_id)]" />
+                                        <field name="position_level" />
+                                        <field name="work_location_id" options="{'no_create': True}" />
+                                        <field name="recruitment_block" readonly="1" />
                                         <field name="department_id" />
                                         <field name="quantity" />
                                         <field name="reason" />
@@ -87,13 +107,14 @@
         </record>
 
         <!-- Tree View -->
-        <record id="view_recruitment_request_tree" model="ir.ui.view">
-            <field name="name">recruitment.request.tree</field>
-            <field name="model">recruitment.request</field>
+        <record id="view_psm_recruitment_request_tree" model="ir.ui.view">
+            <field name="name">x_psm_recruitment_request.tree</field>
+            <field name="model">x_psm_recruitment_request</field>
             <field name="arch" type="xml">
                 <list string="Yêu Cầu Tuyển Dụng">
                     <field name="name" />
                     <field name="batch_id" optional="show" />
+                    <field name="recruitment_block" optional="show" />
                     <field name="job_id" />
                     <field name="department_id" />
                     <field name="quantity" />
@@ -105,9 +126,9 @@
         </record>
 
         <!-- Action cho YCTD Đột xuất -->
-        <record id="action_recruitment_request_unplanned" model="ir.actions.act_window">
+        <record id="action_psm_recruitment_request_unplanned" model="ir.actions.act_window">
             <field name="name">Yêu Cầu Tuyển Dụng</field>
-            <field name="res_model">recruitment.request</field>
+            <field name="res_model">x_psm_recruitment_request</field>
             <field name="view_mode">list,form</field>
             <field name="domain">[('request_type', '=', 'unplanned')]</field>
             <field name="context">{'default_request_type': 'unplanned'}</field>
@@ -119,9 +140,9 @@
         </record>
 
         <!-- Action cho YCTD Theo kế hoạch -->
-        <record id="action_recruitment_request_planned" model="ir.actions.act_window">
+        <record id="action_psm_recruitment_request_planned" model="ir.actions.act_window">
             <field name="name">YC Tuyển Dụng Theo KH</field>
-            <field name="res_model">recruitment.request</field>
+            <field name="res_model">x_psm_recruitment_request</field>
             <field name="view_mode">list,form</field>
             <field name="domain">[('request_type', '=', 'planned')]</field>
             <field name="context">{'default_request_type': 'planned'}</field>
@@ -132,17 +153,35 @@
             </field>
         </record>
 
+        <record id="view_psm_recruitment_request_form_reason_inline" model="ir.ui.view">
+            <field name="name">x_psm_recruitment_request.form.reason.inline</field>
+            <field name="model">x_psm_recruitment_request</field>
+            <field name="inherit_id" ref="M02_P0205_00.view_psm_recruitment_request_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//sheet/group[field[@name='user_id'] and field[@name='company_id']]" position="after">
+                    <group string="L&#253; do &amp; M&#244; t&#7843;">
+                        <field name="reason"
+                            nolabel="1"
+                            placeholder="M&#244; t&#7843; chi ti&#7871;t l&#253; do tuy&#7875;n d&#7909;ng..." />
+                    </group>
+                </xpath>
+                <xpath expr="//notebook/page[field[@name='reason']]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
         <!-- Menu -->
-        <menuitem id="menu_recruitment_request_unplanned"
+        <menuitem id="menu_psm_recruitment_request_unplanned"
             name="Yêu Cầu Tuyển Dụng"
-            parent="menu_office_recruitment_root"
-            action="action_recruitment_request_unplanned"
+            parent="menu_psm_office_recruitment_root"
+            action="action_psm_recruitment_request_unplanned"
             sequence="1" />
 
-        <menuitem id="menu_recruitment_request_root"
+        <menuitem id="menu_psm_recruitment_request_root"
             name="Yêu Cầu Tuyển Dụng"
             parent="hr_recruitment.menu_hr_recruitment_root"
-            action="action_recruitment_request_unplanned"
+            action="action_psm_recruitment_request_unplanned"
             sequence="5" />
 
     </data>

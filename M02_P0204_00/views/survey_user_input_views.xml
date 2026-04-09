@@ -11,7 +11,8 @@
             </xpath>
             <!-- Thêm cột Phải đúng -->
             <xpath expr="//field[@name='user_input_line_ids']/list/field[@name='answer_is_correct']" position="before">
-                <field name="is_mandatory_correct" string="Phải đúng" decoration-danger="is_mandatory_correct"/>
+                <field name="x_psm_0204_is_mandatory_correct" string="Phải đúng" decoration-danger="x_psm_0204_is_mandatory_correct"/>
+                <field name="x_psm_0204_is_reject_when_wrong" string="Loại khi sai" decoration-danger="x_psm_0204_is_reject_when_wrong"/>
             </xpath>
         </field>
     </record>

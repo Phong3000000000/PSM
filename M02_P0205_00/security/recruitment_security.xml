@@ -2,7 +2,8 @@
 <odoo>
     <!-- Force update the standard multi-company rule via function to bypass noupdate="1" -->
     <function model="ir.rule" name="write">
-        <value eval="[ref('hr.hr_job_comp_rule')]"/>
-        <value eval="{'domain_force': '[\'|\', (\'website_published\', \'=\', True), (\'company_id\', \'in\', company_ids + [False])]', 'name': 'Job multi company rule (Published bypass)'}"/>
+        <value eval="[ref('hr.hr_job_comp_rule')]" />
+        <value
+            eval="{'domain_force': '[\'|\', (\'website_published\', \'=\', True), (\'company_id\', \'in\', company_ids + [False])]', 'name': 'Job multi company rule (Published bypass)'}" />
     </function>
 </odoo>

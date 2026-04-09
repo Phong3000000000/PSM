@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "Quy Trình Tuyển Dụng Khối Cửa Hàng",
+    "name": "M02_P0204 - Quy Trinh Tuyen Dung Khoi Cua Hang",
     "version": "1.0",
     "category": "Human Resources/Recruitment",
     "summary": "Quản lý lịch phỏng vấn cửa hàng, gửi email mời PV kèm khảo sát",
@@ -16,7 +16,7 @@
         
         Menu mới: Recruitment > Lịch phỏng vấn dự kiến
     """,
-    "author": "Your Company",
+    "author": "PSM",
     "depends": [
         "hr_recruitment",  # Module tuyển dụng
         "calendar",  # Đồng bộ lịch phỏng vấn
@@ -39,23 +39,13 @@
         "data/survey_template.xml",
         "data/email_template.xml",
         "data/refuse_reason_data.xml",
-        "data/default_master_fields.xml",
-        "data/oje_master_template_data.xml",
-        "data/interview_master_template_data.xml",
         "views/interview_schedule_views.xml",
         "views/hr_job_views.xml",
-        "views/hr_job_application_field_views.xml",
-        "views/hr_job_survey_config_views.xml",
         "views/survey_user_input_views.xml",
         "views/applicant_get_refuse_reason_views.xml",
         "views/website_job_apply_custom.xml",
         "views/hr_recruitment_stage_views.xml",
         "views/hr_applicant_views.xml",
-        "views/job_approval_request_views.xml",
-        "views/recruitment_type_menus.xml",
-        "views/recruitment_master_field_views.xml",
-        "views/recruitment_oje_template_views.xml",
-        "views/recruitment_interview_template_views.xml",
         "views/menus.xml",
         "views/website_hr_recruitment_templates.xml",
         "views/portal_recruitment_templates.xml",
@@ -65,20 +55,26 @@
         "views/survey_survey_views.xml",
         "views/survey_templates.xml",
         "views/hr_applicant_oje_evaluation_views.xml",
-        "wizards/reject_job_approval_wizard_views.xml",
         "wizards/reject_applicant_wizard_views.xml",
         "views/create_job_templates_wizard_views.xml",
+        "data/xmlid_aliases.xml",
     ],
     "demo": [],
     "assets": {
         "survey.survey_assets": [
             "M02_P0204_00/static/src/js/survey_slot_availability.js",
         ],
+        "web.assets_backend": [
+            "M02_P0204_00/static/src/scss/hr_job_config.scss",
+        ],
         "web.assets_frontend": [
             "M02_P0204_00/static/src/js/oje_backend_staff.js",
             "M02_P0204_00/static/src/js/interview_backend.js",
+            "M02_P0204_00/static/src/js/portal_recruitment_history.js",
             "M02_P0204_00/static/src/scss/oje_backend.scss",
             "M02_P0204_00/static/src/scss/interview_backend.scss",
+            "M02_P0204_00/static/src/scss/website_apply_responsive.scss",
+            "M02_P0204_00/static/src/scss/portal_recruitment.scss",
         ],
     },
     "installable": True,

@@ -1,0 +1,25 @@
+.o_form_view .x_psm_job_config_page {
+    width: 100%;
+}
+
+.o_form_view .x_psm_job_config_grid {
+    width: 100%;
+}
+
+.o_form_view .x_psm_job_config_grid > [class*="col-"] {
+    display: flex;
+}
+
+.o_form_view .x_psm_job_config_box {
+    width: 100%;
+    min-height: 100%;
+}
+
+.o_form_view .x_psm_job_config_box .o_field_widget {
+    width: 100%;
+}
+
+.o_form_view .x_psm_btn_stack .btn {
+    width: 100%;
+    white-space: normal;
+}

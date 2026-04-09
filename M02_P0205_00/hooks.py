@@ -1,12 +1,33 @@
 # -*- coding: utf-8 -*-
 import logging
 
+from .models.res_company import GROUP_XMLID_MAPPINGS
+
 _logger = logging.getLogger(__name__)
 
 
+def _migrate_legacy_groups(env):
+    """Map users from legacy 0205 flow groups into standardized group codes."""
+    for legacy_xmlid, standardized_xmlid in GROUP_XMLID_MAPPINGS.items():
+        legacy_group = env.ref(legacy_xmlid, raise_if_not_found=False)
+        standardized_group = env.ref(standardized_xmlid, raise_if_not_found=False)
+        if not legacy_group or not standardized_group:
+            continue
+        missing_users = legacy_group.users - standardized_group.users
+        if missing_users:
+            standardized_group.write({'users': [(4, user.id) for user in missing_users]})
+            _logger.info(
+                "0205 security migration: mapped %s users from %s to %s.",
+                len(missing_users),
+                legacy_xmlid,
+                standardized_xmlid,
+            )
+
+
 def post_init_hook(env):
-    """Cleanup legacy interview evaluations that still use 'consider'."""
-    Evaluation = env['hr.applicant.evaluation'].sudo()
+    """Cleanup legacy interview evaluations and map legacy groups on install."""
+    _migrate_legacy_groups(env)
+    Evaluation = env['x_psm_applicant_evaluation'].sudo()
     legacy_evaluations = Evaluation.search([('recommendation', '=', 'consider')])
     if not legacy_evaluations:
         _logger.info("0205 migration: no legacy 'consider' evaluations found.")

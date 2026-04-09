@@ -6,7 +6,7 @@
             <field name="title">Khảo sát năng lực - Digital Marketing Executive</field>
             <field name="scoring_type">scoring_with_answers</field>
             <field name="scoring_success_min">70</field>
-            <field name="is_pre_interview">True</field>
+            <field name="x_psm_0205_is_pre_interview">True</field>
             <field name="users_login_required">False</field>
             <field name="description"><![CDATA[
                 <p>Khảo sát nhanh nhằm đánh giá nền tảng triển khai Digital Marketing cho vị trí Digital Marketing Executive.</p>
@@ -17,149 +17,152 @@
         </record>
 
         <record id="dm_exec_page_1" model="survey.question">
-            <field name="survey_id" ref="survey_digital_marketing_executive"/>
+            <field name="survey_id" ref="survey_digital_marketing_executive" />
             <field name="title">I. Kinh nghiệm triển khai</field>
             <field name="is_page">True</field>
             <field name="sequence">1</field>
         </record>
 
         <record id="dm_exec_q1" model="survey.question">
-            <field name="survey_id" ref="survey_digital_marketing_executive"/>
-            <field name="page_id" ref="dm_exec_page_1"/>
+            <field name="survey_id" ref="survey_digital_marketing_executive" />
+            <field name="page_id" ref="dm_exec_page_1" />
             <field name="title">Bạn đã từng trực tiếp triển khai kênh nào sau đây?</field>
             <field name="question_type">multiple_choice</field>
             <field name="sequence">2</field>
             <field name="constr_mandatory">True</field>
         </record>
         <record id="dm_exec_q1_a1" model="survey.question.answer">
-            <field name="question_id" ref="dm_exec_q1"/>
+            <field name="question_id" ref="dm_exec_q1" />
             <field name="value">Facebook Ads</field>
             <field name="answer_score">8</field>
-            <field name="is_must_have">True</field>
+            <field name="x_psm_0205_is_must_have">True</field>
         </record>
         <record id="dm_exec_q1_a2" model="survey.question.answer">
-            <field name="question_id" ref="dm_exec_q1"/>
+            <field name="question_id" ref="dm_exec_q1" />
             <field name="value">Google Ads</field>
             <field name="answer_score">8</field>
-            <field name="is_must_have">True</field>
+            <field name="x_psm_0205_is_must_have">True</field>
         </record>
         <record id="dm_exec_q1_a3" model="survey.question.answer">
-            <field name="question_id" ref="dm_exec_q1"/>
+            <field name="question_id" ref="dm_exec_q1" />
             <field name="value">Content / Social</field>
             <field name="answer_score">6</field>
             <field name="is_correct">True</field>
         </record>
         <record id="dm_exec_q1_a4" model="survey.question.answer">
-            <field name="question_id" ref="dm_exec_q1"/>
+            <field name="question_id" ref="dm_exec_q1" />
             <field name="value">Email Marketing / Automation</field>
             <field name="answer_score">5</field>
-            <field name="is_nice_to_have">True</field>
+            <field name="x_psm_0205_is_nice_to_have">True</field>
         </record>
 
         <record id="dm_exec_page_2" model="survey.question">
-            <field name="survey_id" ref="survey_digital_marketing_executive"/>
+            <field name="survey_id" ref="survey_digital_marketing_executive" />
             <field name="title">II. Tư duy tối ưu chiến dịch</field>
             <field name="is_page">True</field>
             <field name="sequence">10</field>
         </record>
 
         <record id="dm_exec_q2" model="survey.question">
-            <field name="survey_id" ref="survey_digital_marketing_executive"/>
-            <field name="page_id" ref="dm_exec_page_2"/>
+            <field name="survey_id" ref="survey_digital_marketing_executive" />
+            <field name="page_id" ref="dm_exec_page_2" />
             <field name="title">Khi một chiến dịch có CPA tăng cao, bạn ưu tiên làm gì trước?</field>
             <field name="question_type">simple_choice</field>
             <field name="sequence">11</field>
             <field name="constr_mandatory">True</field>
         </record>
         <record id="dm_exec_q2_a1" model="survey.question.answer">
-            <field name="question_id" ref="dm_exec_q2"/>
-            <field name="value">Kiểm tra lại target, nội dung và chỉ số chuyển đổi trước khi tăng ngân sách</field>
+            <field name="question_id" ref="dm_exec_q2" />
+            <field name="value">Kiểm tra lại target, nội dung và chỉ số chuyển đổi trước khi tăng
+                ngân sách</field>
             <field name="answer_score">10</field>
-            <field name="is_must_have">True</field>
+            <field name="x_psm_0205_is_must_have">True</field>
         </record>
         <record id="dm_exec_q2_a2" model="survey.question.answer">
-            <field name="question_id" ref="dm_exec_q2"/>
+            <field name="question_id" ref="dm_exec_q2" />
             <field name="value">Tăng ngân sách để kéo thêm traffic rồi đo tiếp</field>
             <field name="answer_score">3</field>
         </record>
 
         <record id="dm_exec_page_3" model="survey.question">
-            <field name="survey_id" ref="survey_digital_marketing_executive"/>
+            <field name="survey_id" ref="survey_digital_marketing_executive" />
             <field name="title">III. Đo lường và báo cáo</field>
             <field name="is_page">True</field>
             <field name="sequence">20</field>
         </record>
 
         <record id="dm_exec_q3" model="survey.question">
-            <field name="survey_id" ref="survey_digital_marketing_executive"/>
-            <field name="page_id" ref="dm_exec_page_3"/>
-            <field name="title">Bạn thường theo dõi chỉ số nào để đánh giá hiệu quả chiến dịch performance?</field>
+            <field name="survey_id" ref="survey_digital_marketing_executive" />
+            <field name="page_id" ref="dm_exec_page_3" />
+            <field name="title">Bạn thường theo dõi chỉ số nào để đánh giá hiệu quả chiến dịch
+                performance?</field>
             <field name="question_type">multiple_choice</field>
             <field name="sequence">21</field>
             <field name="constr_mandatory">True</field>
         </record>
         <record id="dm_exec_q3_a1" model="survey.question.answer">
-            <field name="question_id" ref="dm_exec_q3"/>
+            <field name="question_id" ref="dm_exec_q3" />
             <field name="value">CTR</field>
             <field name="answer_score">5</field>
-            <field name="is_must_have">True</field>
+            <field name="x_psm_0205_is_must_have">True</field>
         </record>
         <record id="dm_exec_q3_a2" model="survey.question.answer">
-            <field name="question_id" ref="dm_exec_q3"/>
+            <field name="question_id" ref="dm_exec_q3" />
             <field name="value">CPC / CPM</field>
             <field name="answer_score">5</field>
-            <field name="is_must_have">True</field>
+            <field name="x_psm_0205_is_must_have">True</field>
         </record>
         <record id="dm_exec_q3_a3" model="survey.question.answer">
-            <field name="question_id" ref="dm_exec_q3"/>
+            <field name="question_id" ref="dm_exec_q3" />
             <field name="value">Conversion Rate / CPA</field>
             <field name="answer_score">7</field>
             <field name="is_correct">True</field>
         </record>
         <record id="dm_exec_q3_a4" model="survey.question.answer">
-            <field name="question_id" ref="dm_exec_q3"/>
+            <field name="question_id" ref="dm_exec_q3" />
             <field name="value">ROAS</field>
             <field name="answer_score">7</field>
-            <field name="is_nice_to_have">True</field>
+            <field name="x_psm_0205_is_nice_to_have">True</field>
         </record>
 
         <record id="dm_exec_page_4" model="survey.question">
-            <field name="survey_id" ref="survey_digital_marketing_executive"/>
+            <field name="survey_id" ref="survey_digital_marketing_executive" />
             <field name="title">IV. Công cụ và phối hợp</field>
             <field name="is_page">True</field>
             <field name="sequence">30</field>
         </record>
 
         <record id="dm_exec_q4" model="survey.question">
-            <field name="survey_id" ref="survey_digital_marketing_executive"/>
-            <field name="page_id" ref="dm_exec_page_4"/>
+            <field name="survey_id" ref="survey_digital_marketing_executive" />
+            <field name="page_id" ref="dm_exec_page_4" />
             <field name="title">Bạn đã từng dùng công cụ nào để theo dõi dữ liệu marketing?</field>
             <field name="question_type">simple_choice</field>
             <field name="sequence">31</field>
             <field name="constr_mandatory">True</field>
         </record>
         <record id="dm_exec_q4_a1" model="survey.question.answer">
-            <field name="question_id" ref="dm_exec_q4"/>
+            <field name="question_id" ref="dm_exec_q4" />
             <field name="value">Meta Ads Manager / Google Ads / GA4</field>
             <field name="answer_score">9</field>
-            <field name="is_must_have">True</field>
+            <field name="x_psm_0205_is_must_have">True</field>
         </record>
         <record id="dm_exec_q4_a2" model="survey.question.answer">
-            <field name="question_id" ref="dm_exec_q4"/>
+            <field name="question_id" ref="dm_exec_q4" />
             <field name="value">Đã từng xem dashboard Looker Studio hoặc báo cáo tổng hợp</field>
             <field name="answer_score">7</field>
-            <field name="is_nice_to_have">True</field>
+            <field name="x_psm_0205_is_nice_to_have">True</field>
         </record>
         <record id="dm_exec_q4_a3" model="survey.question.answer">
-            <field name="question_id" ref="dm_exec_q4"/>
+            <field name="question_id" ref="dm_exec_q4" />
             <field name="value">Chủ yếu theo dõi thủ công, chưa quen các công cụ</field>
             <field name="answer_score">2</field>
         </record>
 
         <record id="dm_exec_q5" model="survey.question">
-            <field name="survey_id" ref="survey_digital_marketing_executive"/>
-            <field name="page_id" ref="dm_exec_page_4"/>
-            <field name="title">Mô tả ngắn cách bạn phối hợp với team content hoặc design khi chạy campaign.</field>
+            <field name="survey_id" ref="survey_digital_marketing_executive" />
+            <field name="page_id" ref="dm_exec_page_4" />
+            <field name="title">Mô tả ngắn cách bạn phối hợp với team content hoặc design khi chạy
+                campaign.</field>
             <field name="question_type">text_box</field>
             <field name="sequence">32</field>
         </record>

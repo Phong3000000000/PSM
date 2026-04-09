@@ -6,35 +6,21 @@
         <field name="arch" type="xml">
             <form string="Chi tiết Biểu mẫu ứng tuyển">
                 <sheet>
-                    <div class="alert alert-info" role="alert" invisible="application_match_result == 'failed'">
-                        <i class="fa fa-check-circle me-1"/> Ứng viên đạt yêu cầu! Không có câu hỏi phải đúng nào bị sai.
+                    <div class="alert alert-success" role="alert" invisible="application_match_result != 'passed'">
+                        <i class="fa fa-check-circle me-1"/> Kết quả: Đạt. Ứng viên trả lời đúng các câu bắt buộc phải đúng.
                     </div>
-                    <div class="alert alert-danger" role="alert" invisible="application_match_result == 'passed'">
-                        <i class="fa fa-exclamation-triangle me-1"/> Ứng viên chưa đạt! Có câu hỏi phải đúng bị trả lời sai (được tô đỏ bên dưới).
+                    <div class="alert alert-warning" role="alert" invisible="application_match_result != 'review'">
+                        <i class="fa fa-exclamation-circle me-1"/> Kết quả: Cần xem xét. Có câu trả lời sai ở rule Phải đúng.
                     </div>
-                    
-                    <!-- Dành cho hồ sơ mới: Hiển thị danh sách snapshot chi tiết -->
-                    <separator string="Lịch sử trả lời chi tiết" invisible="not application_answer_line_ids"/>
-                    <field name="application_answer_line_ids" nolabel="1" invisible="not application_answer_line_ids" style="width: 100%; display: block;">
-                        <list create="false" delete="false" edit="false" 
-                                decoration-danger="is_answer_must_match and not is_answer_correct">
-                            <field name="section" optional="show"/>
-                            <field name="field_label" string="Câu hỏi"/>
-                            <field name="field_type" optional="hide"/>
-                            <field name="applicant_answer_text" string="Ứng viên trả lời"/>
-                            <field name="expected_answer_text" string="Đáp án phải đúng"/>
-                            <field name="is_answer_must_match" string="Phải đúng?" optional="show"/>
-                            <field name="is_answer_correct" column_invisible="True"/>
-                        </list>
-                    </field>
+                    <div class="alert alert-danger" role="alert" invisible="application_match_result != 'reject'">
+                        <i class="fa fa-times-circle me-1"/> Kết quả: Reject ngay. Có câu sai ở rule Loại khi sai.
+                    </div>
 
-                    <!-- Dành cho hồ sơ cũ (Fallback): Hiển thị HTML tóm tắt lỗi -->
-                    <group string="Chi tiết lỗi (Dữ liệu cũ)" invisible="application_answer_line_ids or not failed_mandatory_questions">
-                        <div class="alert alert-warning" role="alert">
-                            Bản ghi này được tạo trước khi hệ thống cập nhật lịch sử chi tiết. Dưới đây là tóm tắt lỗi cũ:
-                        </div>
-                        <field name="failed_mandatory_questions" widget="html" nolabel="1"/>
-                    </group>
+                    <separator string="Chi tiết rà soát biểu mẫu"/>
+                    <div class="w-100 x_psm_application_review_block">
+                        <field name="application_form_review_payload" invisible="1"/>
+                        <field name="application_form_review_html" widget="html" nolabel="1" class="w-100"/>
+                    </div>
 
                     <group string="Phần 2: Khảo sát bổ sung" invisible="not survey_user_input_id">
                         <field name="survey_user_input_id" string="Bài làm Khảo sát" readonly="1" options="{'no_open': False}"/>
@@ -168,7 +154,7 @@
                 </button>
                 <button name="action_open_oje_results"
                         class="oe_stat_button" icon="fa-clipboard"
-                        type="object" invisible="not oje_evaluation_id and not oje_survey_user_input_id">
+                        type="object" invisible="not oje_evaluation_id">
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_text"><field name="oje_display_result"/></span>
                         <span class="o_stat_value"><field name="oje_display_text" readonly="1"/></span>
@@ -198,6 +184,7 @@
                             <field name="x_birthday"/>
                             <field name="x_gender"/>
                             <field name="x_salutation"/>
+                            <field name="x_id_document_type"/>
                             <field name="x_id_number"/>
                             <field name="x_id_issue_date"/>
                             <field name="x_id_issue_place"/>
@@ -327,14 +314,6 @@
                         </group>
                     </group>
 
-                    <group string="Tóm tắt OJE - Legacy"
-                           invisible="oje_template_scope == 'store_staff' or oje_template_scope == 'store_management'">
-                        <group>
-                            <field name="oje_total_score"/>
-                            <field name="oje_pass_score_snapshot"/>
-                        </group>
-                    </group>
-
                     <group string="Lý do không đạt" invisible="oje_result != 'fail'">
                         <field name="oje_fail_reason" nolabel="1"/>
                     </group>
@@ -411,6 +390,11 @@
                 <attribute name="invisible">1</attribute>
             </xpath>
 
+            <!-- Ẩn block Properties mặc định vì các trường cá nhân đã được đưa vào tab riêng -->
+            <xpath expr="//field[@name='applicant_properties']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
             <!-- Group Đánh giá & Phụ trách trước notebook -->
             <xpath expr="//notebook" position="before">
                 <group string="Đánh giá &amp; Phụ trách">
@@ -442,5 +426,18 @@
             </kanban>
         </field>
     </record>
+
+    <record id="view_hr_applicant_form_hide_send_interview_store" model="ir.ui.view">
+        <field name="name">hr.applicant.form.hide.send.interview.store</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_recruitment_survey.hr_applicant_view_form_inherit"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_send_survey']" position="attributes">
+                <attribute name="invisible">recruitment_type == 'store' or not active or not survey_id</attribute>
+            </xpath>
+        </field>
+    </record>
+
+
 
 </odoo>

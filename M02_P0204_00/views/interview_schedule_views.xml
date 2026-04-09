@@ -171,4 +171,13 @@
             </p>
         </field>
     </record>
+
+    <!-- XML ID alias: action chuẩn hóa theo quy ước mới, giữ nguyên record gốc -->
+    <record id="alias_action_psm_interview_schedule" model="ir.model.data">
+        <field name="module">M02_P0204_00</field>
+        <field name="name">action_psm_interview_schedule</field>
+        <field name="model">ir.actions.act_window</field>
+        <field name="res_id" eval="ref('action_interview_schedule')"/>
+        <field name="noupdate" eval="1"/>
+    </record>
 </odoo>

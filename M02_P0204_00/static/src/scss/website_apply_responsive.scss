@@ -1,0 +1,105 @@
+.psm-store-apply-page {
+    .psm-store-apply-form {
+        .form-control,
+        .form-select,
+        textarea,
+        input[type='file'] {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+    }
+
+    .psm-store-slot-grid .slot-option .border {
+        height: 100%;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .psm-store-apply-page {
+        .psm-store-apply-container {
+            padding-left: 0.85rem;
+            padding-right: 0.85rem;
+        }
+
+        .psm-store-apply-main-body {
+            padding: 1rem;
+        }
+
+        .psm-store-apply-field-grid > [class*='col-'],
+        .psm-store-slot-grid > [class*='col-'] {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+
+        .psm-store-apply-card .card-header h4,
+        .psm-store-apply-schedule-card .card-header h4 {
+            font-size: 1.05rem;
+        }
+    }
+}
+
+@media (max-width: 767.98px) {
+    .psm-store-apply-page {
+        .psm-store-apply-container {
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+
+        .psm-store-apply-title {
+            font-size: 1.55rem;
+            line-height: 1.25;
+            margin-bottom: 1rem;
+            word-break: break-word;
+        }
+
+        .psm-store-apply-main-body,
+        .psm-store-apply-schedule-card .card-body {
+            padding: 0.9rem;
+        }
+
+        .psm-store-apply-form .form-control,
+        .psm-store-apply-form .form-select,
+        .psm-store-apply-form textarea,
+        .psm-store-apply-form input[type='file'] {
+            min-height: 44px;
+        }
+
+        .psm-store-apply-form textarea {
+            min-height: 96px;
+        }
+
+        .psm-store-apply-actions {
+            margin-top: 1.25rem !important;
+            margin-bottom: 1.5rem !important;
+        }
+
+        .psm-store-apply-submit {
+            width: 100%;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
+    }
+}
+
+@media (max-width: 575.98px) {
+    .psm-store-apply-page {
+        .psm-store-apply-container {
+            padding-left: 0.65rem;
+            padding-right: 0.65rem;
+        }
+
+        .psm-store-apply-title {
+            font-size: 1.35rem;
+        }
+
+        .psm-store-apply-card .card-header,
+        .psm-store-apply-schedule-card .card-header {
+            padding: 0.7rem 0.9rem;
+        }
+
+        .psm-store-apply-main-body,
+        .psm-store-apply-schedule-card .card-body {
+            padding: 0.75rem;
+        }
+    }
+}

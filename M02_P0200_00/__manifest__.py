@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'M02_P0200_00 Master Data',
+    'name': 'M02_P0200 Master Data',
     'version': '1.1',
     'summary': 'Master Data: Users, Employees, Hierarchy, Department Blocks, Restaurant Config',
     'category': 'Human Resources',
-    'author': 'DO MANH DAT',
+    'author': 'PSM',
     'description': """
 M02_P0200_00: HR Master Data
 ============================
@@ -32,6 +32,7 @@ RGM (Internal) -> DM (Portal) -> SM (Portal) -> Crew (Portal)
         'planning',
     ],
     'data': [
+        'security/security.xml',
         'security/ir.model.access.csv',
         'data/hr_job_level_data.xml',
         'data/department_block_data.xml',

@@ -22,7 +22,8 @@ class HrJobEmailRule(models.Model):
         ('interview_slot_confirmed', 'Xác nhận lịch phỏng vấn'),
         ('reject', 'Từ chối (Tiêu chuẩn)'),
         ('oje_reject', 'Từ chối (Cần ghi rõ lý do)'),
-        ('hired', 'Tuyển dụng / Chúc mừng')
+        ('hired', 'Tuyển dụng / Chúc mừng'),
+        ('hired_part_time', 'Tuyển dụng / Chúc mừng (Part-Time)')
     ], string='Sự kiện')
 
     template_id = fields.Many2one('mail.template', string='Email Template', domain=[('model', '=', 'hr.applicant')], required=True)

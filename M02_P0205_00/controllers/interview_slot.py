@@ -22,20 +22,20 @@ class InterviewSlotController(http.Controller):
 
     @http.route('/interview/choose/<string:token>/<int:event_id>', type='http', auth='public', website=True)
     def interview_choose(self, token, event_id, **kw):
-        applicant = request.env['hr.applicant'].sudo().search([('interview_slot_token', '=', token)], limit=1)
+        applicant = request.env['hr.applicant'].sudo().search([('x_psm_0205_interview_slot_token', '=', token)], limit=1)
         if not applicant:
-            return request.render('M02_P0205_00.interview_slot_invalid')
+            return request.render('M02_P0205_00.psm_interview_slot_invalid')
 
         event = request.env['calendar.event'].sudo().browse(event_id)
         if not event.exists() or event.applicant_id.id != applicant.id:
-            return request.render('M02_P0205_00.interview_slot_invalid')
+            return request.render('M02_P0205_00.psm_interview_slot_invalid')
 
         applicant.write({
-            'interview_date_1': event.start,
-            'interview_slot_event_id': event.id,
+            'x_psm_0205_interview_date_1': event.start,
+            'x_psm_0205_interview_slot_event_id': event.id,
         })
 
-        return request.render('M02_P0205_00.interview_slot_confirm', {
+        return request.render('M02_P0205_00.psm_interview_slot_confirm', {
             'applicant': applicant,
             'event': event,
             'event_start_display': self._format_event_start_for_display(event),

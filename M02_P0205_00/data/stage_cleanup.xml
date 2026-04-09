@@ -20,8 +20,5 @@
         <record id="hr_recruitment.stage_job5" model="hr.recruitment.stage">
             <field name="recruitment_type">store</field>
         </record>
-
-
-
     </data>
 </odoo>

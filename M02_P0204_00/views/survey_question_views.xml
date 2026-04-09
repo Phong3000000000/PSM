@@ -1,16 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Thêm field "Không Thể Sai" vào form câu hỏi survey -->
+    <!-- Cấu hình 3 option cho câu hỏi biểu mẫu ứng tuyển:
+         1) Bắt buộc
+         2) Phải đúng
+         3) Loại khi sai -->
     <record id="survey_question_form_inherit_mandatory" model="ir.ui.view">
         <field name="name">survey.question.form.inherit.mandatory</field>
         <field name="model">survey.question</field>
         <field name="inherit_id" ref="survey.survey_question_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='constr_mandatory']" position="before">
+                <field name="x_psm_parent_survey_usage" invisible="1"/>
+                <field name="x_psm_show_on_webform"
+                    widget="boolean_toggle"
+                    invisible="x_psm_parent_survey_usage != 'pre_interview'"
+                    help="Bật thì hiện trên trang ứng tuyển website; tắt thì không render trên form apply."/>
+            </xpath>
+            <xpath expr="//field[@name='constr_mandatory']" position="attributes">
+                <attribute name="string">Bắt buộc</attribute>
+                <attribute name="help">Nếu tick, câu này hiển thị dấu * trên form ứng tuyển và bắt buộc phải điền trước khi nộp.</attribute>
+            </xpath>
             <!-- Thẻ Options -> Group Constraints -->
             <xpath expr="//field[@name='constr_mandatory']" position="after">
-                <field name="is_mandatory_correct"
+                <field name="x_psm_0204_is_mandatory_correct"
                        invisible="not is_scored_question"
-                       help="Nếu tick, ứng viên sai câu này sẽ bị ghi nhận lỗi bắt buộc (Store: Under Review, Office: Ghi log cảnh báo)"/>
+                      help="Nếu tick, ứng viên sai câu này sẽ bị đưa vào Under Review (trừ khi bật 'Loại khi sai')."/>
+                  <field name="x_psm_0204_is_reject_when_wrong"
+                      invisible="not is_scored_question or not x_psm_0204_is_mandatory_correct"
+                      help="Nếu tick, ứng viên sai câu này sẽ bị chuyển Reject ngay lập tức."/>
+            </xpath>
+            <xpath expr="//field[@name='title']" position="after">
+                <field name="x_psm_oje_section_kind" invisible="not is_page"/>
+                <field name="x_psm_oje_line_kind" invisible="is_page"/>
+                <field name="x_psm_interview_line_kind"
+                    invisible="is_page or x_psm_parent_survey_usage != 'interview'"/>
+                <field name="x_psm_interview_group_label"
+                    invisible="is_page or x_psm_parent_survey_usage != 'interview' or x_psm_interview_line_kind != 'skillset_child'"/>
             </xpath>
         </field>
     </record>

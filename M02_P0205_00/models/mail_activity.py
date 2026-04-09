@@ -17,6 +17,6 @@ class MailActivity(models.Model):
 
         if applicants_to_mark:
             self.env["hr.applicant"].browse(applicants_to_mark).sudo().write({
-                "cv_checked": True,
+                "x_psm_0205_cv_checked": True,
             })
         return res

@@ -6,7 +6,7 @@
             <field name="title">Khảo sát năng lực - Marketing Consultant</field>
             <field name="scoring_type">scoring_with_answers</field>
             <field name="scoring_success_min">80</field>
-            <field name="is_pre_interview">True</field>
+            <field name="x_psm_0205_is_pre_interview">True</field>
             <field name="description"><![CDATA[
                 <p>Đây là khảo sát đánh giá kiến thức và kinh nghiệm tư vấn chiến dịch marketing đa kênh.</p>
             ]]></field>
@@ -34,13 +34,13 @@
             <field name="question_id" ref="sq_consult_q1" />
             <field name="value">B2B</field>
             <field name="answer_score">7</field>
-            <field name="is_must_have">True</field>
+            <field name="x_psm_0205_is_must_have">True</field>
         </record>
         <record id="sq_consult_q1_a2" model="survey.question.answer">
             <field name="question_id" ref="sq_consult_q1" />
             <field name="value">B2C</field>
             <field name="answer_score">7</field>
-            <field name="is_must_have">True</field>
+            <field name="x_psm_0205_is_must_have">True</field>
         </record>
         <record id="sq_consult_q1_a3" model="survey.question.answer">
             <field name="question_id" ref="sq_consult_q1" />
@@ -74,7 +74,7 @@
             <field name="question_id" ref="sq_consult_q2" />
             <field name="value">Định vị insight → KPI → Plan</field>
             <field name="answer_score">10</field>
-            <field name="is_must_have">True</field>
+            <field name="x_psm_0205_is_must_have">True</field>
         </record>
         <record id="sq_consult_q2_a2" model="survey.question.answer">
             <field name="question_id" ref="sq_consult_q2" />
@@ -84,7 +84,7 @@
 
         <record id="sq_consult_tools" model="survey.question">
             <field name="survey_id" ref="survey_marketing_consultant" />
-            <field name="title">III. Tools và báo cáo</field>  <!-- no amp needed -->
+            <field name="title">III. Tools và báo cáo</field>
             <field name="is_page">True</field>
             <field name="sequence">20</field>
         </record>

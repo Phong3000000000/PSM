@@ -34,6 +34,57 @@ class HrRecruitmentStage(models.Model):
     )
 
     @api.model
+    def _x_psm_resolve_cleanup_fallback_stage(self, applicant, deleting_stage_ids):
+        """Resolve fallback stage before deleting obsolete stages."""
+        stage_model = self.with_context(active_test=False)
+
+        if applicant.recruitment_type == 'store' and applicant.position_level == 'staff':
+            target = self.env.ref('M02_P0204_00.stage_staff_interview_oje', raise_if_not_found=False)
+            if target and target.id not in deleting_stage_ids:
+                return target
+            target = stage_model.search([
+                ('name', '=', 'Interview & OJE'),
+                ('recruitment_type', 'in', ['staff', 'both']),
+                ('id', 'not in', deleting_stage_ids),
+            ], order='sequence asc', limit=1)
+            if target:
+                return target
+
+        if applicant.recruitment_type == 'store' and applicant.position_level == 'management':
+            target = self.env.ref('M02_P0204_00.stage_mgmt_interview', raise_if_not_found=False)
+            if target and target.id not in deleting_stage_ids:
+                return target
+            target = stage_model.search([
+                ('name', '=', 'Interview'),
+                ('recruitment_type', 'in', ['management', 'both']),
+                ('id', 'not in', deleting_stage_ids),
+            ], order='sequence asc', limit=1)
+            if target:
+                return target
+
+        office_screening = self.env.ref('M02_P0205_00.stage_office_screening', raise_if_not_found=False)
+        if office_screening and office_screening.id not in deleting_stage_ids:
+            return office_screening
+
+        stage_type = False
+        if hasattr(applicant, '_get_pipeline_stage_type'):
+            stage_type = applicant._get_pipeline_stage_type()
+
+        domain = [
+            ('id', 'not in', deleting_stage_ids),
+            ('fold', '=', False),
+        ]
+        if stage_type:
+            domain.append(('recruitment_type', 'in', [stage_type, 'both']))
+        fallback = stage_model.search(domain, order='sequence asc', limit=1)
+        if fallback:
+            return fallback
+
+        return stage_model.search([
+            ('id', 'not in', deleting_stage_ids),
+        ], order='sequence asc', limit=1)
+
+    @api.model
     def _auto_cleanup_redundant_stages(self):
         """Xóa cứng 18 stage thừa khi install/upgrade."""
         TO_DELETE = [
@@ -47,6 +98,9 @@ class HrRecruitmentStage(models.Model):
             # New thừa cho staff / management
             ('New', 'staff'),
             ('New', 'management'),
+            # Survey Passed thừa cho store flow hiện tại
+            ('Survey Passed', 'staff'),
+            ('Survey Passed', 'management'),
             # Store thừa
             ('Review Tiêu chí', 'store'),
             ('Thử việc', 'store'),
@@ -65,17 +119,15 @@ class HrRecruitmentStage(models.Model):
         for name, rtype in TO_DELETE:
             stages = self.search([('name', '=', name), ('recruitment_type', '=', rtype)])
             if stages:
-                # Chuyển applicant sang New (store) trước khi xóa
+                # Chuyển applicant sang stage hợp lệ trước khi xóa
                 apps = self.env['hr.applicant'].with_context(active_test=False).search([
                     ('stage_id', 'in', stages.ids)
                 ])
                 if apps:
-                    fallback = self.search([
-                        ('name', '=', 'New'), ('recruitment_type', '=', 'store'),
-                        ('id', 'not in', stages.ids),
-                    ], limit=1)
-                    if fallback:
-                        apps.write({'stage_id': fallback.id})
+                    for applicant in apps:
+                        fallback = self._x_psm_resolve_cleanup_fallback_stage(applicant, stages.ids)
+                        if fallback:
+                            applicant.write({'stage_id': fallback.id})
 
                 count = len(stages)
                 stages.unlink()
@@ -83,3 +135,21 @@ class HrRecruitmentStage(models.Model):
                 _logger.info("Deleted stage: '%s' (%s)", name, rtype)
 
         _logger.info("Cleanup done: deleted %d redundant stages", deleted)
+
+    @api.model
+    def _x_psm_archive_obsolete_stage_cleanup_server_action(self):
+        """Archive obsolete manual cleanup action kept from older releases."""
+        action = self.env.ref('M02_P0204_00.action_migrate_and_clean_stages', raise_if_not_found=False)
+        if not action or not action.exists():
+            return
+
+        updates = {}
+        # Odoo 19 ir.actions.server does not always expose `active`; keep this hook
+        # schema-safe by only writing fields that exist on the model.
+        if 'active' in action._fields:
+            updates['active'] = False
+        if 'binding_model_id' in action._fields and action.binding_model_id:
+            updates['binding_model_id'] = False
+        if updates:
+            action.sudo().write(updates)
+            _logger.info("Archived obsolete server action action_migrate_and_clean_stages")

@@ -127,18 +127,7 @@ class BackendOjeController(http.Controller):
                 answer = False
             line.sudo().write({'yes_no_answer': answer})
 
-        dimension_sections = evaluation.section_ids.filtered(
-            lambda s: s.is_active and s.section_kind == 'management_dimension'
-        )
-        for section in dimension_sections:
-            section_rating = self._parse_int(
-                post.get(f'section_{section.id}_rating'), min_value=1, max_value=5
-            )
-            section.sudo().write({'section_rating': section_rating})
-
-        overall_rating = self._parse_int(post.get('management_overall_rating'), min_value=1, max_value=5)
         evaluation.sudo().write({
-            'management_overall_rating': overall_rating,
             'overall_comments': self._clean_text(post.get('overall_comments')),
         })
 
@@ -151,6 +140,182 @@ class BackendOjeController(http.Controller):
                 message = str(error)
             return message
         return _('Hệ thống chưa thể xử lý yêu cầu lúc này. Vui lòng thử lại.')
+
+    def _is_xfactor_label(self, value):
+        normalized = (value or '').strip().lower().replace(' ', '')
+        return 'xfactor' in normalized or 'x-factor' in (value or '').strip().lower()
+
+    def _group_questions_by_page(self, survey):
+        ordered_items = survey.question_and_page_ids.sorted(lambda q: (q.sequence, q.id))
+        pages = ordered_items.filtered('is_page')
+
+        grouped = []
+        if pages:
+            unpaged_questions = ordered_items.filtered(lambda q: not q.is_page and not q.page_id).sorted('sequence')
+            if unpaged_questions:
+                grouped.append((False, unpaged_questions))
+
+            for page in pages:
+                page_questions = ordered_items.filtered(lambda q, p=page: (not q.is_page) and q.page_id == p).sorted('sequence')
+                if page_questions:
+                    grouped.append((page, page_questions))
+            return grouped
+
+        questions = ordered_items.filtered(lambda q: not q.is_page).sorted('sequence')
+        if questions:
+            grouped.append((False, questions))
+        return grouped
+
+    def _build_oje_snapshot_sections_from_survey(self, survey, scope):
+        if not survey or scope not in ('store_staff', 'store_management'):
+            return []
+
+        prepared_sections = []
+        section_sequence = 10
+
+        for idx, (page, questions) in enumerate(self._group_questions_by_page(survey), start=1):
+            page_title = (page.title if page else False) or (page.question if page else False) or _('Section %s') % idx
+            objective_text = page.description if page and 'description' in page._fields else False
+
+            if scope == 'store_staff':
+                lines = []
+                line_sequence = 10
+                for question in questions:
+                    question_text = (question.title or question.question or '').strip()
+                    if not question_text:
+                        continue
+                    lines.append(
+                        {
+                            'source_question_id': question.id,
+                            'sequence': line_sequence,
+                            'name': question_text,
+                            'question_text': question_text,
+                            'line_kind': 'staff_question',
+                            'scope': scope,
+                            'rating_mode': 'staff_matrix',
+                            'is_required': bool(question.constr_mandatory),
+                            'is_active': True,
+                            'field_type': 'radio',
+                            'text_max_score': 0.0,
+                            'checkbox_score': 0.0,
+                        }
+                    )
+                    line_sequence += 10
+
+                if lines:
+                    prepared_sections.append(
+                        {
+                            'source_question_id': page.id if page else False,
+                            'sequence': section_sequence,
+                            'name': page_title,
+                            'section_kind': 'staff_block',
+                            'scope': scope,
+                            'rating_mode': 'staff_matrix',
+                            'objective_text': objective_text,
+                            'hint_html': False,
+                            'behavior_html': False,
+                            'is_active': True,
+                            'lines': lines,
+                        }
+                    )
+                    section_sequence += 10
+                continue
+
+            section_kind_hint = page.x_psm_oje_section_kind if page and page.x_psm_oje_section_kind else 'auto'
+            page_force_xfactor = section_kind_hint == 'management_xfactor'
+            if section_kind_hint == 'auto' and self._is_xfactor_label(page_title):
+                page_force_xfactor = True
+
+            task_lines = []
+            xfactor_lines = []
+            line_sequence = 10
+
+            for question in questions:
+                question_text = (question.title or question.question or '').strip()
+                if not question_text:
+                    continue
+
+                line_kind_hint = question.x_psm_oje_line_kind or 'auto'
+                if line_kind_hint != 'auto':
+                    line_kind = line_kind_hint
+                elif page_force_xfactor or self._is_xfactor_label(question_text):
+                    line_kind = 'management_xfactor'
+                else:
+                    line_kind = 'management_task'
+
+                line_vals = {
+                    'source_question_id': question.id,
+                    'sequence': line_sequence,
+                    'name': question_text,
+                    'question_text': question_text,
+                    'line_kind': line_kind,
+                    'scope': scope,
+                    'is_required': bool(question.constr_mandatory),
+                    'is_active': True,
+                }
+
+                if line_kind == 'management_xfactor':
+                    line_vals.update(
+                        {
+                            'rating_mode': 'xfactor_yes_no',
+                            'field_type': 'checkbox',
+                            'text_max_score': 0.0,
+                            'checkbox_score': 1.0,
+                        }
+                    )
+                    xfactor_lines.append(line_vals)
+                else:
+                    line_vals.update(
+                        {
+                            'line_kind': 'management_task',
+                            'rating_mode': 'management_1_5',
+                            'field_type': 'text',
+                            'text_max_score': 5.0,
+                            'checkbox_score': 0.0,
+                        }
+                    )
+                    task_lines.append(line_vals)
+
+                line_sequence += 10
+
+            if task_lines:
+                prepared_sections.append(
+                    {
+                        'source_question_id': page.id if page else False,
+                        'sequence': section_sequence,
+                        'name': page_title,
+                        'section_kind': 'management_dimension',
+                        'scope': scope,
+                        'rating_mode': 'management_1_5',
+                        'objective_text': objective_text,
+                        'hint_html': False,
+                        'behavior_html': False,
+                        'is_active': True,
+                        'lines': task_lines,
+                    }
+                )
+                section_sequence += 10
+
+            if xfactor_lines:
+                section_name = page_title if page_force_xfactor else _('X-Factor')
+                prepared_sections.append(
+                    {
+                        'source_question_id': page.id if page else False,
+                        'sequence': section_sequence,
+                        'name': section_name,
+                        'section_kind': 'management_xfactor',
+                        'scope': scope,
+                        'rating_mode': 'xfactor_yes_no',
+                        'objective_text': False,
+                        'hint_html': False,
+                        'behavior_html': False,
+                        'is_active': True,
+                        'lines': xfactor_lines,
+                    }
+                )
+                section_sequence += 10
+
+        return prepared_sections
 
     def _prepare_oje_preview_values(self, scope, section_records, line_active_field, title, back_url, intro_html=False):
         section_records = section_records.sorted('sequence')
@@ -210,27 +375,88 @@ class BackendOjeController(http.Controller):
             'back_url': back_url,
         }
 
+    def _prepare_oje_preview_values_from_payload(self, scope, section_payloads, title, back_url, intro_html=False):
+        sorted_sections = sorted(section_payloads, key=lambda section: section.get('sequence', 10))
+
+        def _serialize_lines(lines):
+            items = []
+            for index, line in enumerate(sorted(lines, key=lambda item: item.get('sequence', 10)), start=1):
+                items.append(
+                    {
+                        'index': index,
+                        'text': line.get('question_text') or line.get('name') or '',
+                    }
+                )
+            return items
+
+        preview_staff_sections = []
+        for section in sorted_sections:
+            if section.get('section_kind') != 'staff_block':
+                continue
+            active_lines = [line for line in section.get('lines', []) if line.get('is_active') and line.get('line_kind') == 'staff_question']
+            preview_staff_sections.append(
+                {
+                    'name': section.get('name'),
+                    'lines': _serialize_lines(active_lines),
+                }
+            )
+
+        preview_management_sections = []
+        for section in sorted_sections:
+            if section.get('section_kind') != 'management_dimension':
+                continue
+            active_lines = [line for line in section.get('lines', []) if line.get('is_active') and line.get('line_kind') == 'management_task']
+            preview_management_sections.append(
+                {
+                    'name': section.get('name'),
+                    'objective_text': section.get('objective_text'),
+                    'hint_html': section.get('hint_html'),
+                    'behavior_html': section.get('behavior_html'),
+                    'lines': _serialize_lines(active_lines),
+                }
+            )
+
+        preview_xfactor_lines = []
+        for section in sorted_sections:
+            if section.get('section_kind') != 'management_xfactor':
+                continue
+            active_lines = [line for line in section.get('lines', []) if line.get('is_active') and line.get('line_kind') == 'management_xfactor']
+            preview_xfactor_lines.extend(_serialize_lines(active_lines))
+
+        return {
+            'preview_title': title,
+            'preview_scope': scope,
+            'preview_intro_html': intro_html,
+            'preview_staff_sections': preview_staff_sections,
+            'preview_management_sections': preview_management_sections,
+            'preview_xfactor_lines': preview_xfactor_lines,
+            'back_url': back_url,
+        }
+
     @http.route('/recruitment/oje/template-preview/<int:template_id>', type='http', auth='user', website=True)
     def backend_oje_template_preview(self, template_id, **kwargs):
         user = request.env.user
         if not user.has_group('hr_recruitment.group_hr_recruitment_user'):
             raise exceptions.AccessError(_('Bạn không có quyền xem preview OJE.'))
 
-        template = request.env['recruitment.oje.template'].sudo().browse(template_id)
-        if not template.exists():
-            raise exceptions.UserError(_('Không tìm thấy mẫu OJE để preview.'))
+        survey = request.env['survey.survey'].sudo().browse(template_id)
+        if not survey.exists():
+            raise exceptions.UserError(_('Không tìm thấy survey OJE để preview.'))
 
-        template.with_user(user).check_access_rights('read')
-        template.with_user(user).check_access_rule('read')
+        survey.with_user(user).check_access_rights('read')
+        survey.with_user(user).check_access_rule('read')
 
-        sections = template.section_ids.filtered('is_active')
-        values = self._prepare_oje_preview_values(
-            template.scope,
-            sections,
-            line_active_field='active',
-            title=f'{template.name} (Preview)',
-            back_url=f'/web#id={template.id}&model=recruitment.oje.template&view_type=form',
-            intro_html=template.intro_html,
+        scope = survey.x_psm_oje_scope
+        if scope not in ('store_staff', 'store_management'):
+            raise exceptions.UserError(_('Survey OJE chưa cấu hình PSM OJE Scope hợp lệ.'))
+
+        sections_payload = self._build_oje_snapshot_sections_from_survey(survey, scope)
+        values = self._prepare_oje_preview_values_from_payload(
+            scope,
+            sections_payload,
+            title=f'{survey.title} (Preview)',
+            back_url=f'/web#id={survey.id}&model=survey.survey&view_type=form',
+            intro_html=survey.description,
         )
         return request.render('M02_P0204_00.backend_oje_template_preview_page', values)
 
@@ -251,15 +477,16 @@ class BackendOjeController(http.Controller):
         if not scope:
             raise exceptions.UserError(_('Chỉ hỗ trợ preview OJE cho job thuộc khối Cửa hàng.'))
 
-        sections = job.oje_config_section_ids.filtered(
-            lambda s: s.is_active and (not s.scope or s.scope == scope)
-        )
-        values = self._prepare_oje_preview_values(
+        if not job.x_psm_oje_survey_id:
+            raise exceptions.UserError(_('Job chưa cấu hình Survey OJE.'))
+
+        sections_payload = job._x_psm_prepare_oje_snapshot_sections() if hasattr(job, '_x_psm_prepare_oje_snapshot_sections') else []
+        values = self._prepare_oje_preview_values_from_payload(
             scope,
-            sections,
-            line_active_field='is_active',
+            sections_payload,
             title=f'{job.name} - OJE Preview',
             back_url=f'/web#id={job.id}&model=hr.job&view_type=form',
+            intro_html=job.x_psm_oje_survey_id.description,
         )
         return request.render('M02_P0204_00.backend_oje_template_preview_page', values)
 

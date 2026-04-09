@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_psm_hr_job_level_tree_interview_round" model="ir.ui.view">
+        <field name="name">hr.job.level.tree.interview.round.0205</field>
+        <field name="model">hr.job.level</field>
+        <field name="inherit_id" ref="M02_P0200_00.view_hr_job_level_tree"/>
+        <field name="arch" type="xml">
+            <field name="code" position="after">
+                <field name="x_psm_0205_max_interview_round"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_psm_hr_job_level_form_interview_round" model="ir.ui.view">
+        <field name="name">hr.job.level.form.interview.round.0205</field>
+        <field name="model">hr.job.level</field>
+        <field name="inherit_id" ref="M02_P0200_00.view_hr_job_level_form"/>
+        <field name="arch" type="xml">
+            <field name="code" position="after">
+                <field name="x_psm_0205_max_interview_round"/>
+            </field>
+        </field>
+    </record>
+</odoo>

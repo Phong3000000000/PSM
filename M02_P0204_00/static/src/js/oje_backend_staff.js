@@ -7,9 +7,19 @@
         var countOs = document.getElementById("staff_count_os");
         var warning = document.getElementById("staff_ni_warning");
         var rejectDecision = form.querySelector("input[name='staff_decision'][value='reject']");
+        var hireDecision = form.querySelector("input[name='staff_decision'][value='hire']");
+        var otherPositionDecision = form.querySelector("input[name='staff_decision'][value='other_position']");
 
         if (!countNi || !countGd || !countEx || !countOs) {
             return;
+        }
+
+        function setAutoDecision(value) {
+            if (value) {
+                form.dataset.autoDecision = value;
+            } else {
+                delete form.dataset.autoDecision;
+            }
         }
 
         function recalc() {
@@ -44,13 +54,46 @@
                 }
             }
 
-            if (rejectDecision && !rejectDecision.disabled && ni > 0 && !rejectDecision.checked) {
-                rejectDecision.checked = true;
+            if (rejectDecision && !rejectDecision.disabled && ni > 0) {
+                if (!rejectDecision.checked) {
+                    rejectDecision.checked = true;
+                }
+                setAutoDecision("reject");
+                return;
+            }
+
+            if (ni === 0 && rejectDecision && hireDecision && !hireDecision.disabled) {
+                if (form.dataset.autoDecision === "reject" && rejectDecision.checked) {
+                    hireDecision.checked = true;
+                    setAutoDecision("");
+                    return;
+                }
+
+                // Backward compatibility for old records that were auto-rejected before this flag existed.
+                if (
+                    !form.dataset.autoDecision &&
+                    form.dataset.staffDecisionTouched !== "1" &&
+                    rejectDecision.checked &&
+                    !(otherPositionDecision && otherPositionDecision.checked)
+                ) {
+                    hireDecision.checked = true;
+                }
             }
         }
 
         form.addEventListener("change", function (ev) {
-            if (ev.target && ev.target.name && ev.target.name.endsWith("_rating")) {
+            if (!ev.target || !ev.target.name) {
+                return;
+            }
+
+            if (ev.target.name === "staff_decision") {
+                form.dataset.staffDecisionTouched = "1";
+                setAutoDecision("");
+                recalc();
+                return;
+            }
+
+            if (ev.target.name.endsWith("_rating")) {
                 recalc();
             }
         });
@@ -63,52 +106,86 @@
         var resultLabel = document.getElementById("management_result_label");
         var hireRadio = document.getElementById("management_applicant_hire");
         var rejectRadio = document.getElementById("management_applicant_reject");
+        var dimensionBlocks = form.querySelectorAll(".oje-management-dimension[data-management-dimension-id]");
 
         if (!overallInput || !resultLabel || !hireRadio || !rejectRadio) {
             return;
         }
 
-        function normalizeOverall() {
-            var parsed = Number(overallInput.value || 0);
-            if (!Number.isFinite(parsed)) {
-                parsed = 0;
+        function formatRating(value) {
+            if (!Number.isFinite(value)) {
+                return "0.00";
             }
-            parsed = Math.floor(parsed);
-
-            if (parsed < 1) {
-                parsed = 1;
-            }
-            if (parsed > 5) {
-                parsed = 5;
-            }
-            overallInput.value = parsed;
-            return parsed;
+            return value.toFixed(2);
         }
 
-        function syncFinalDisplay() {
-            var value = Number(overallInput.value || 0);
-            if (!Number.isFinite(value)) {
-                value = 0;
-            }
+        function recalc() {
+            var overallTotal = 0;
+            var overallCount = 0;
 
-            var isHire = value >= 3;
+            dimensionBlocks.forEach(function (sectionBlock) {
+                var sectionId = sectionBlock.getAttribute("data-management-dimension-id");
+                var groupScores = {};
+
+                sectionBlock.querySelectorAll("input[type='radio'][name$='_score']").forEach(function (input) {
+                    if (!groupScores[input.name]) {
+                        groupScores[input.name] = 0;
+                    }
+                    if (input.checked) {
+                        var parsed = Number(input.value || 0);
+                        if (Number.isFinite(parsed)) {
+                            groupScores[input.name] = parsed;
+                        }
+                    }
+                });
+
+                var taskNames = Object.keys(groupScores);
+                var sectionRating = 0;
+                if (taskNames.length) {
+                    var sectionTotal = 0;
+                    taskNames.forEach(function (taskName) {
+                        sectionTotal += groupScores[taskName];
+                    });
+                    sectionRating = sectionTotal / taskNames.length;
+                    overallTotal += sectionRating;
+                    overallCount += 1;
+                }
+
+                var sectionInput = sectionBlock.querySelector("[data-management-section-rating-input]");
+                if (sectionInput) {
+                    sectionInput.value = formatRating(sectionRating);
+                }
+
+                if (sectionId) {
+                    var summaryCell = form.querySelector(
+                        "[data-management-summary-section-id='" + sectionId + "']"
+                    );
+                    if (summaryCell) {
+                        summaryCell.textContent = formatRating(sectionRating);
+                    }
+                }
+            });
+
+            var overallRating = overallCount ? overallTotal / overallCount : 0;
+            overallInput.value = formatRating(overallRating);
+
+            var isHire = overallRating >= 3;
             resultLabel.textContent = isHire ? "HIRE" : "REJECT";
             hireRadio.checked = isHire;
             rejectRadio.checked = !isHire;
         }
 
-        overallInput.addEventListener("blur", function () {
-            if (!overallInput.value) {
+        form.addEventListener("change", function (ev) {
+            if (!ev.target || !ev.target.name) {
                 return;
             }
-            normalizeOverall();
-            syncFinalDisplay();
+
+            if (ev.target.name.endsWith("_score")) {
+                recalc();
+            }
         });
 
-        overallInput.addEventListener("change", syncFinalDisplay);
-        overallInput.addEventListener("input", syncFinalDisplay);
-
-        syncFinalDisplay();
+        recalc();
     }
 
     function init() {
