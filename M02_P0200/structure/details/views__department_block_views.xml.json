@@ -1,0 +1,79 @@
+{
+  "file": "views/department_block_views.xml",
+  "type": "xml",
+  "bucket": "views",
+  "summary": "2 views, 1 actions, 1 menus",
+  "records": [
+    {
+      "id": "view_department_block_tree",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "department.block.tree",
+        "model": "department.block",
+        "arch": ""
+      }
+    },
+    {
+      "id": "view_department_block_form",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "department.block.form",
+        "model": "department.block",
+        "arch": ""
+      }
+    },
+    {
+      "id": "action_department_block",
+      "model": "ir.actions.act_window",
+      "fields": {
+        "name": "Khối Phòng Ban",
+        "res_model": "department.block",
+        "view_mode": "list,form",
+        "help": ""
+      }
+    }
+  ],
+  "views": [
+    {
+      "id": "view_department_block_tree",
+      "model": "department.block",
+      "name": "department.block.tree",
+      "inherit_id": null,
+      "file": "views/department_block_views.xml"
+    },
+    {
+      "id": "view_department_block_form",
+      "model": "department.block",
+      "name": "department.block.form",
+      "inherit_id": null,
+      "file": "views/department_block_views.xml"
+    }
+  ],
+  "actions": [
+    {
+      "id": "action_department_block",
+      "name": "Khối Phòng Ban",
+      "res_model": "department.block",
+      "view_mode": "list,form",
+      "domain": null,
+      "file": "views/department_block_views.xml"
+    }
+  ],
+  "menus": [
+    {
+      "id": "menu_department_block",
+      "name": "Khối Phòng Ban",
+      "parent": "hr.menu_human_resources_configuration",
+      "action": "action_department_block",
+      "groups": null,
+      "file": "views/department_block_views.xml"
+    }
+  ],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "department.block",
+    "ir.actions.act_window",
+    "ir.ui.view"
+  ]
+}

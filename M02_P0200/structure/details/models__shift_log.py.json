@@ -1,0 +1,420 @@
+{
+  "file": "models/shift_log.py",
+  "type": "python",
+  "bucket": "models",
+  "summary": "models: shift.log; 1 classes; 19 fields; 8 actions",
+  "classes": [
+    {
+      "python_class": "ShiftLog",
+      "description": "Nhật Ký Ca Làm Việc",
+      "model": "shift.log",
+      "inherit": [
+        "mail.thread",
+        "mail.activity.mixin"
+      ],
+      "order": "date desc, shift_id",
+      "rec_name": null,
+      "fields": [
+        {
+          "name": "name",
+          "type": "Char",
+          "string": "Tên",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": true,
+          "related": null,
+          "compute": "_compute_name",
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "pos_config_id",
+          "type": "Many2one",
+          "string": "Cửa Hàng (POS)",
+          "comodel": "pos.config",
+          "required": true,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": true,
+          "help": null
+        },
+        {
+          "name": "date",
+          "type": "Date",
+          "string": "Ngày",
+          "comodel": null,
+          "required": true,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": "fields.Date.context_today",
+          "tracking": true,
+          "help": null
+        },
+        {
+          "name": "shift_id",
+          "type": "Many2one",
+          "string": "Ca",
+          "comodel": "restaurant.shift",
+          "required": true,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": true,
+          "help": null
+        },
+        {
+          "name": "mic_id",
+          "type": "Many2one",
+          "string": "MIC (Người Đứng Ca)",
+          "comodel": "hr.employee",
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": true,
+          "help": null
+        },
+        {
+          "name": "department_id",
+          "type": "Many2one",
+          "string": "Phòng Ban",
+          "comodel": "hr.department",
+          "required": false,
+          "readonly": false,
+          "store": true,
+          "related": "pos_config_id.department_id",
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "start_datetime",
+          "type": "Datetime",
+          "string": "Thời Gian Bắt Đầu",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": true,
+          "related": null,
+          "compute": "_compute_datetimes",
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "end_datetime",
+          "type": "Datetime",
+          "string": "Thời Gian Kết Thúc",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": true,
+          "related": null,
+          "compute": "_compute_datetimes",
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "state",
+          "type": "Selection",
+          "string": "Trạng Thái",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": "[[\"draft\", \"Nháp\"], [\"preparing\", \"Chuẩn Bị\"], [\"running\", \"Đang Chạy\"], [\"evaluating\", \"Đánh Giá\"], [\"done\", \"Hoàn T...",
+          "default": "draft",
+          "tracking": true,
+          "help": null
+        },
+        {
+          "name": "gc_projected",
+          "type": "Float",
+          "string": "GC's Projected",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": "Lượng khách dự kiến"
+        },
+        {
+          "name": "gc_actual",
+          "type": "Float",
+          "string": "GC's Actual",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": "Lượng khách thực tế"
+        },
+        {
+          "name": "sales_projected",
+          "type": "Float",
+          "string": "Sales Projected",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": "Doanh thu dự kiến"
+        },
+        {
+          "name": "sales_actual",
+          "type": "Float",
+          "string": "Sales Actual",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": "Doanh thu thực tế"
+        },
+        {
+          "name": "labor_hours",
+          "type": "Float",
+          "string": "Labor Hours",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": true,
+          "related": null,
+          "compute": "_compute_labor_hours",
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": "Tổng số giờ làm việc của nhân viên trong ca"
+        },
+        {
+          "name": "employee_line_ids",
+          "type": "One2many",
+          "string": "Nhân Viên Trong Ca",
+          "comodel": "shift.log.employee",
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "checklist_line_ids",
+          "type": "One2many",
+          "string": "Checklist",
+          "comodel": "shift.log.checklist.line",
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "best_employee_id",
+          "type": "Many2one",
+          "string": "Nhân Viên Xuất Sắc",
+          "comodel": "hr.employee",
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "best_employee_reason",
+          "type": "Text",
+          "string": "Lý Do Chọn NV Xuất Sắc",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "handover_notes",
+          "type": "Text",
+          "string": "Ghi Chú Bàn Giao",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        }
+      ],
+      "methods": [
+        {
+          "name": "_compute_datetimes",
+          "type": "compute",
+          "decorators": [
+            {
+              "call": "api.depends",
+              "args": [
+                "date",
+                "shift_id"
+              ],
+              "keywords": {}
+            }
+          ],
+          "summary": "compute"
+        },
+        {
+          "name": "_compute_name",
+          "type": "compute",
+          "decorators": [
+            {
+              "call": "api.depends",
+              "args": [
+                "pos_config_id",
+                "date",
+                "shift_id"
+              ],
+              "keywords": {}
+            }
+          ],
+          "summary": "compute"
+        },
+        {
+          "name": "_compute_labor_hours",
+          "type": "compute",
+          "decorators": [
+            {
+              "call": "api.depends",
+              "args": [
+                "employee_line_ids",
+                "employee_line_ids.working_hours"
+              ],
+              "keywords": {}
+            }
+          ],
+          "summary": "compute"
+        },
+        {
+          "name": "action_prepare",
+          "type": "action",
+          "decorators": [],
+          "summary": "action"
+        },
+        {
+          "name": "action_start",
+          "type": "action",
+          "decorators": [],
+          "summary": "action"
+        },
+        {
+          "name": "action_evaluate",
+          "type": "action",
+          "decorators": [],
+          "summary": "action"
+        },
+        {
+          "name": "action_done",
+          "type": "action",
+          "decorators": [],
+          "summary": "action"
+        },
+        {
+          "name": "action_reset_draft",
+          "type": "action",
+          "decorators": [],
+          "summary": "action"
+        },
+        {
+          "name": "action_pull_employees",
+          "type": "action",
+          "decorators": [],
+          "summary": "Lấy danh sách nhân viên từ planning.slot trùng ngày + giờ ca.\n\nVí dụ: Ca AM 6:00-14:30, nhân viên có lịch 8:00-15:00\n→ overlap = 8:00 đến 14:30 = 6 tiếng 30 phút"
+        },
+        {
+          "name": "_generate_checklist_lines",
+          "type": "helper",
+          "decorators": [],
+          "summary": "Tạo dòng checklist từ master data nếu chưa có."
+        },
+        {
+          "name": "get_matrix_data",
+          "type": "method",
+          "decorators": [
+            "api.model"
+          ],
+          "summary": "Trả về dữ liệu ma trận cho giao diện gán MIC."
+        },
+        {
+          "name": "action_bulk_assign_mic",
+          "type": "action",
+          "decorators": [],
+          "summary": "Gán MIC hàng loạt cho các logs đang chọn."
+        },
+        {
+          "name": "action_copy_day_schedule",
+          "type": "action",
+          "decorators": [
+            "api.model"
+          ],
+          "summary": "Copy MIC assignment từ 1 ngày sang các ngày khác."
+        }
+      ],
+      "kind": "new_model_with_inherit"
+    }
+  ],
+  "routes": []
+}

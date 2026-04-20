@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Staff: store requests are restricted to request owner. -->
+        <record id="rule_recruitment_request_store_owner_staff" model="ir.rule">
+            <field name="name">Recruitment Request Store Owner - Staff</field>
+            <field name="model_id" ref="model_x_psm_recruitment_request"/>
+            <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_S')])]"/>
+            <field name="domain_force">['|', '&amp;', ('recruitment_block', '=', 'store'), ('user_id', '=', user.id), '&amp;', ('recruitment_block', '!=', 'store'), ('department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_recruitment_request_store_owner_manager" model="ir.rule">
+            <field name="name">Recruitment Request Store Owner - Manager Full</field>
+            <field name="model_id" ref="model_x_psm_recruitment_request"/>
+            <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_M')])]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <!-- RGM can only read store requests from the same department where current user is an approval approver. -->
+        <record id="rule_recruitment_request_store_readonly_rgm" model="ir.rule">
+            <field name="name">Recruitment Request Store Readonly - RGM Approver Scope</field>
+            <field name="model_id" ref="model_x_psm_recruitment_request"/>
+            <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_OPS_STORE_RGM_M')])]"/>
+            <field name="domain_force">[('recruitment_block', '=', 'store'), ('department_id', 'in', user.employee_ids.mapped('department_id').ids), ('x_psm_approval_request_id.approver_ids.user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Request lines follow parent request visibility. -->
+        <record id="rule_recruitment_request_line_store_owner_staff" model="ir.rule">
+            <field name="name">Recruitment Request Line Store Owner - Staff</field>
+            <field name="model_id" ref="model_x_psm_recruitment_request_line"/>
+            <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_S')])]"/>
+            <field name="domain_force">['|', '&amp;', ('request_id.recruitment_block', '=', 'store'), ('request_id.user_id', '=', user.id), '&amp;', ('request_id.recruitment_block', '!=', 'store'), ('request_id.department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_recruitment_request_line_store_owner_manager" model="ir.rule">
+            <field name="name">Recruitment Request Line Store Owner - Manager Full</field>
+            <field name="model_id" ref="model_x_psm_recruitment_request_line"/>
+            <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_M')])]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <record id="rule_recruitment_request_line_store_readonly_rgm" model="ir.rule">
+            <field name="name">Recruitment Request Line Store Readonly - RGM Approver Scope</field>
+            <field name="model_id" ref="model_x_psm_recruitment_request_line"/>
+            <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_OPS_STORE_RGM_M')])]"/>
+            <field name="domain_force">[('request_id.recruitment_block', '=', 'store'), ('request_id.department_id', 'in', user.employee_ids.mapped('department_id').ids), ('request_id.x_psm_approval_request_id.approver_ids.user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Approver lines follow parent request visibility. -->
+        <record id="rule_recruitment_request_approver_store_owner_staff" model="ir.rule">
+            <field name="name">Recruitment Request Approver Store Owner - Staff</field>
+            <field name="model_id" ref="model_x_psm_recruitment_request_approver"/>
+            <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_S')])]"/>
+            <field name="domain_force">['|', '&amp;', ('request_id.recruitment_block', '=', 'store'), ('request_id.user_id', '=', user.id), '&amp;', ('request_id.recruitment_block', '!=', 'store'), ('request_id.department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_recruitment_request_approver_store_owner_manager" model="ir.rule">
+            <field name="name">Recruitment Request Approver Store Owner - Manager Full</field>
+            <field name="model_id" ref="model_x_psm_recruitment_request_approver"/>
+            <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_M')])]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <!-- Enforce store-approval scope for recruitment-linked approvals. -->
+        <record id="rule_approval_request_store_scope_0205" model="ir.rule">
+            <field name="name">Approval Request Store Scope 0205</field>
+            <field name="model_id" ref="approvals.model_approval_request"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', ('x_psm_0205_recruitment_request_id', '=', False), '&amp;', ('approver_ids.user_id', '=', user.id), ('x_psm_0205_recruitment_request_id.department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="rule_approval_approver_store_scope_0205" model="ir.rule">
+            <field name="name">Approval Approver Store Scope 0205</field>
+            <field name="model_id" ref="approvals.model_approval_approver"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', ('request_id.x_psm_0205_recruitment_request_id', '=', False), '&amp;', ('user_id', '=', user.id), ('request_id.x_psm_0205_recruitment_request_id.department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+    </data>
+</odoo>

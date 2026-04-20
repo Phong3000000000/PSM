@@ -1,0 +1,30 @@
+{
+  "file": "data/email_template_social_insurance.xml",
+  "type": "xml",
+  "bucket": "data",
+  "summary": "XML data file.",
+  "records": [
+    {
+      "id": "psm_0213_email_template_social_insurance",
+      "model": "mail.template",
+      "fields": {
+        "name": "Thông tin sổ bảo hiểm xã hội",
+        "model_id": {
+          "ref": "hr.model_hr_employee"
+        },
+        "subject": "Thông tin sổ bảo hiểm xã hội - {{ object.name }}",
+        "email_from": "{{ (object.company_id.email or user.email_formatted) }}",
+        "email_to": "{{ object.work_email }}",
+        "body_html": ""
+      }
+    }
+  ],
+  "views": [],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "mail.template"
+  ]
+}

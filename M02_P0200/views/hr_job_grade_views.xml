@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_job_grade_list" model="ir.ui.view">
+        <field name="name">hr.job.grade.list</field>
+        <field name="model">hr.job.grade</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="parent_id"/>
+                <field name="complete_name" string="Career Path"/>
+                <field name="global_grade"/>
+                <field name="mercer_min"/>
+                <field name="mercer_max"/>
+                <field name="level_count" string="Levels"/>
+                <field name="child_count" string="Next Grades"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_hr_job_grade_form" model="ir.ui.view">
+        <field name="name">hr.job.grade.form</field>
+        <field name="model">hr.job.grade</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(M02_P0200.action_hr_job_level)d"
+                                type="action"
+                                class="oe_stat_button"
+                                icon="fa-list-ul"
+                                context="{'search_default_grade_id': id}">
+                            <field name="level_count" widget="statinfo" string="Levels"/>
+                        </button>
+                        <button name="action_open_career_path"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-sitemap">
+                            <field name="child_count" widget="statinfo" string="Career Path"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="parent_id"/>
+                            <field name="complete_name" readonly="1"/>
+                            <field name="global_grade"/>
+                        </group>
+                        <group>
+                            <field name="mercer_min"/>
+                            <field name="mercer_max"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Next Grades" name="next_grades">
+                            <field name="child_ids" context="{'default_parent_id': id}">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="global_grade"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Levels" name="levels">
+                            <field name="level_ids">
+                                <list>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_hr_job_grade_search" model="ir.ui.view">
+        <field name="name">hr.job.grade.search</field>
+        <field name="model">hr.job.grade</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="parent_id"/>
+                <field name="global_grade"/>
+                <filter string="Root Grades" name="root_grades" domain="[('parent_id', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_hr_job_grade" model="ir.actions.act_window">
+        <field name="name">Job Grades</field>
+        <field name="res_model">hr.job.grade</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_hr_job_grade_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a new Job Grade</p>
+        </field>
+    </record>
+
+    <record id="action_hr_job_grade_career_path" model="ir.actions.act_window">
+        <field name="name">Career Path</field>
+        <field name="res_model">hr.job.grade</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_hr_job_grade_search"/>
+        <field name="domain">[('parent_id', '=', False)]</field>
+        <field name="context">{'search_default_root_grades': 1}</field>
+    </record>
+
+    <menuitem id="menu_hr_job_grade"
+              name="Job Grades"
+              parent="menu_hr_job_position_default_categ"
+              action="action_hr_job_grade"
+              sequence="15"/>
+
+    <menuitem id="menu_hr_job_grade_career_path"
+              name="Career Path"
+              parent="menu_hr_job_position_default_categ"
+              action="action_hr_job_grade_career_path"
+              sequence="16"/>
+</odoo>

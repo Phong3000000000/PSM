@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="0">
-        <record id="approval_category_resignation" model="approval.category">
+        <record id="psm_0213_approval_category_resignation" model="approval.category">
             <field name="name">Yêu cầu nghỉ việc </field>
             <field name="description">Yêu cầu nghỉ việc từ nhân viên qua</field>
             <field name="manager_approval">required</field>

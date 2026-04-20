@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'Quy trình nghỉ việc',
+    'name': 'M02_P0213 - Quy Trinh OFFBOARDING OPS',
     'version': '19.0.1.0.0',
     'category': 'Human Resources',
     'summary': 'Quy trình nghỉ việc',
@@ -20,6 +20,7 @@
         # nên depend thêm 0200 để có thể approval trên portal, tạo nhanh account portal bằng 1 nút
     ],
     'data': [
+        'security/security.xml',
         'security/ir.model.access.csv',
         'data/approval_category_data.xml',
         'data/survey_exit_interview_data.xml',

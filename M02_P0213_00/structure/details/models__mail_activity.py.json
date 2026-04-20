@@ -1,0 +1,77 @@
+{
+  "file": "models/mail_activity.py",
+  "type": "python",
+  "bucket": "models",
+  "summary": "models: mail.activity; 1 classes; 1 fields",
+  "classes": [
+    {
+      "python_class": "MailActivity",
+      "description": "Extends mail.activity in models/mail_activity.py.",
+      "model": null,
+      "inherit": "mail.activity",
+      "order": null,
+      "rec_name": null,
+      "fields": [
+        {
+          "name": "x_psm_0213_ops_display_state",
+          "type": "Selection",
+          "string": "Trạng thái",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": "_compute_ops_display_state",
+          "selection": "[[\"pending\", \"Pending\"], [\"overdue\", \"Overdue\"], [\"done\", \"Done\"]]",
+          "default": null,
+          "tracking": null,
+          "help": null
+        }
+      ],
+      "methods": [
+        {
+          "name": "_compute_ops_display_state",
+          "type": "compute",
+          "decorators": [
+            {
+              "call": "api.depends",
+              "args": [
+                "active",
+                "date_deadline",
+                "state"
+              ],
+              "keywords": {}
+            }
+          ],
+          "summary": "active=False => Done, trễ hạn => Overdue, còn lại => Pending"
+        },
+        {
+          "name": "unlink",
+          "type": "override",
+          "decorators": [],
+          "summary": "Ngăn xóa activities của OPS Offboarding.\nThay vào đó archive (active=False) để giữ lại lịch sử checklist."
+        },
+        {
+          "name": "_is_ops_offboarding_activity",
+          "type": "helper",
+          "decorators": [],
+          "summary": "Check if activity belongs to an OPS offboarding request"
+        },
+        {
+          "name": "_trigger_ops_recompute",
+          "type": "helper",
+          "decorators": [],
+          "summary": "Trigger recompute on OPS approval.request after activity archive"
+        },
+        {
+          "name": "_action_done",
+          "type": "helper",
+          "decorators": [],
+          "summary": "Override để trigger recompute checklist sau khi Mark Done."
+        }
+      ],
+      "kind": "inherit_only"
+    }
+  ],
+  "routes": []
+}

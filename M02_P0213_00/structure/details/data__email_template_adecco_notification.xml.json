@@ -1,0 +1,30 @@
+{
+  "file": "data/email_template_adecco_notification.xml",
+  "type": "xml",
+  "bucket": "data",
+  "summary": "XML data file.",
+  "records": [
+    {
+      "id": "psm_0213_email_template_adecco_notification",
+      "model": "mail.template",
+      "fields": {
+        "name": "Thông báo nghỉ việc - Adecco",
+        "model_id": {
+          "ref": "hr.model_hr_employee"
+        },
+        "subject": "Thông báo nghỉ việc - {{ object.name }}",
+        "email_from": "{{ (object.company_id.email or user.email_formatted) }}",
+        "email_to": "abigail.peterson39@example.com",
+        "body_html": ""
+      }
+    }
+  ],
+  "views": [],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "mail.template"
+  ]
+}

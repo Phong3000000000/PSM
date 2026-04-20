@@ -1,0 +1,1082 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ========== APPROVALS PAGE (Line Manager Portal) ========== -->
+    <template id="portal_approvals_page" name="Portal Approvals Page">
+        <t t-call="portal.portal_layout">
+            <style>
+                .psm-portal-approvals {
+                    color: var(--foreground);
+                }
+
+                .psm-portal-approvals .table,
+                .psm-portal-approvals .table th,
+                .psm-portal-approvals .table td,
+                .psm-portal-approvals .list-group-item,
+                .psm-portal-approvals .modal-content,
+                .psm-portal-approvals .modal-body,
+                .psm-portal-approvals .modal-footer,
+                .psm-portal-approvals .form-control,
+                .psm-portal-approvals .form-select {
+                    color: var(--foreground) !important;
+                    border-color: var(--border) !important;
+                }
+
+                .psm-portal-approvals .table,
+                .psm-portal-approvals .list-group-item,
+                .psm-portal-approvals .modal-content,
+                .psm-portal-approvals .modal-body,
+                .psm-portal-approvals .modal-footer,
+                .psm-portal-approvals .form-control,
+                .psm-portal-approvals .form-select,
+                .psm-portal-approvals .input-group-text,
+                .psm-portal-approvals .bg-light {
+                    background: var(--card) !important;
+                }
+
+                .psm-portal-approvals .table-light,
+                .psm-portal-approvals .table-light th,
+                .psm-portal-approvals .table-light td {
+                    background: color-mix(in srgb, var(--card) 82%, var(--background) 18%) !important;
+                    color: var(--foreground) !important;
+                    border-color: var(--border) !important;
+                }
+
+                .psm-portal-approvals .request-row {
+                    background: color-mix(in srgb, var(--card) 88%, var(--background) 12%) !important;
+                    border: 1px solid var(--border) !important;
+                    border-radius: 14px;
+                    margin-bottom: 12px;
+                }
+
+                .psm-portal-approvals .request-item-layout {
+                    gap: 16px;
+                }
+
+                .psm-portal-approvals .request-actions {
+                    display: flex;
+                    flex-shrink: 0;
+                    align-items: flex-start;
+                    gap: 8px;
+                    min-width: 196px;
+                    justify-content: flex-end;
+                }
+
+                .psm-portal-approvals .request-actions .btn {
+                    white-space: nowrap;
+                    min-width: 92px;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .psm-portal-approvals .final-action-card {
+                    background: color-mix(in srgb, var(--card) 90%, var(--background) 10%) !important;
+                    border: 1px solid var(--border) !important;
+                    border-radius: 16px;
+                }
+
+                .psm-portal-approvals .final-action-meta {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 6px 10px;
+                    border-radius: 999px;
+                    background: color-mix(in srgb, var(--card) 78%, var(--background) 22%);
+                    border: 1px solid var(--border);
+                    color: var(--muted-foreground);
+                    font-size: 0.78rem;
+                }
+
+                .psm-portal-approvals .final-action-buttons {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 8px;
+                }
+
+                @media (max-width: 991.98px) {
+                    .psm-portal-approvals .request-item-layout {
+                        flex-direction: column;
+                    }
+
+                    .psm-portal-approvals .request-actions {
+                        width: 100%;
+                        min-width: 0;
+                        justify-content: flex-start;
+                    }
+                }
+
+                .psm-portal-approvals .request-row .text-dark,
+                .psm-portal-approvals .modal-content .text-dark,
+                .psm-portal-approvals .fw-bold,
+                .psm-portal-approvals h3,
+                .psm-portal-approvals h5,
+                .psm-portal-approvals h6,
+                .psm-portal-approvals strong,
+                .psm-portal-approvals label {
+                    color: var(--foreground) !important;
+                }
+
+                .psm-portal-approvals .text-muted,
+                .psm-portal-approvals small,
+                .psm-portal-approvals .form-text {
+                    color: var(--muted-foreground) !important;
+                }
+
+                .psm-portal-approvals .btn-outline-secondary,
+                .psm-portal-approvals .btn-outline-danger {
+                    border-color: var(--border) !important;
+                }
+
+                .psm-portal-approvals .btn-outline-secondary {
+                    color: var(--foreground) !important;
+                }
+
+                .psm-portal-approvals .btn-outline-secondary:hover {
+                    background: var(--muted) !important;
+                    color: var(--foreground) !important;
+                }
+
+                .psm-portal-approvals .avatar-sm.bg-light {
+                    background: color-mix(in srgb, var(--card) 78%, var(--background) 22%) !important;
+                    color: var(--muted-foreground) !important;
+                    border: 1px solid var(--border);
+                }
+
+                .psm-portal-approvals .input-group .form-control {
+                    background: color-mix(in srgb, var(--card) 86%, var(--background) 14%) !important;
+                }
+
+                .psm-portal-approvals .modal-header.bg-success {
+                    background: linear-gradient(135deg, #198754 0%, #157347 100%) !important;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+                }
+
+                .psm-portal-approvals .modal-content {
+                    box-shadow: var(--glass-shadow);
+                }
+
+                .psm-portal-approvals .modal {
+                    background: transparent !important;
+                }
+
+                .psm-portal-approvals .modal-dialog {
+                    max-width: 640px;
+                }
+
+                .psm-portal-approvals .modal-content {
+                    border-radius: 24px !important;
+                    overflow: hidden;
+                    background: color-mix(in srgb, var(--card) 96%, #ffffff 4%) !important;
+                    border: 1px solid color-mix(in srgb, var(--border) 80%, transparent 20%) !important;
+                    box-shadow: 0 28px 70px rgba(15, 23, 42, 0.16), 0 8px 24px rgba(15, 23, 42, 0.08) !important;
+                }
+
+                .psm-portal-approvals .modal-header {
+                    padding: 18px 22px;
+                    border-bottom: 0;
+                }
+
+                .psm-portal-approvals .modal-header.bg-success {
+                    background: linear-gradient(135deg, #0f8a43 0%, #1fa85b 100%) !important;
+                }
+
+                .psm-portal-approvals .modal-header.bg-danger {
+                    background: linear-gradient(135deg, #c62828 0%, #e53935 100%) !important;
+                }
+
+                .psm-portal-approvals .modal-title {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    font-size: 1.15rem;
+                    font-weight: 800;
+                    letter-spacing: -0.02em;
+                }
+
+                .psm-portal-approvals .modal-title-icon {
+                    width: 34px;
+                    height: 34px;
+                    border-radius: 999px;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: rgba(255, 255, 255, 0.18);
+                    border: 1px solid rgba(255, 255, 255, 0.18);
+                }
+
+                .psm-portal-approvals .btn-close.btn-close-white {
+                    opacity: 0.92;
+                    box-shadow: none;
+                }
+
+                .psm-portal-approvals .modal-body {
+                    padding: 26px 22px 18px;
+                    background: transparent !important;
+                }
+
+                .psm-portal-approvals .modal-copy {
+                    text-align: center;
+                    max-width: 460px;
+                    margin: 0 auto;
+                }
+
+                .psm-portal-approvals .modal-copy p {
+                    margin-bottom: 14px;
+                    color: var(--muted-foreground) !important;
+                    font-size: 0.98rem;
+                }
+
+                .psm-portal-approvals .modal-highlight {
+                    padding: 18px 20px;
+                    border-radius: 18px;
+                    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 82%, #ffffff 18%) 0%, color-mix(in srgb, var(--card) 94%, var(--background) 6%) 100%);
+                    border: 1px solid color-mix(in srgb, var(--border) 78%, transparent 22%);
+                    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+                }
+
+                .psm-portal-approvals .modal-highlight h5 {
+                    margin-bottom: 0;
+                    font-size: 1.7rem;
+                    line-height: 1.2;
+                    font-weight: 800;
+                    letter-spacing: -0.03em;
+                }
+
+                .psm-portal-approvals .modal-highlight-success h5 {
+                    color: #118547 !important;
+                }
+
+                .psm-portal-approvals .modal-highlight-danger h5 {
+                    color: #cf2f2f !important;
+                }
+
+                .psm-portal-approvals .modal-note {
+                    margin-top: 12px;
+                    font-size: 0.88rem;
+                    color: var(--muted-foreground) !important;
+                }
+
+                .psm-portal-approvals .modal-footer {
+                    padding: 16px 22px 22px;
+                    gap: 10px;
+                    border-top: 0;
+                    background: transparent !important;
+                }
+
+                .psm-portal-approvals .modal-footer .btn {
+                    min-width: 160px;
+                    min-height: 46px;
+                    border-radius: 14px;
+                    font-weight: 700;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+                }
+
+                .psm-portal-approvals .modal-footer .btn-success,
+                .psm-portal-approvals .modal-footer .btn-danger {
+                    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+                }
+
+                .psm-portal-approvals .modal-footer .btn-outline-secondary {
+                    background: transparent !important;
+                }
+
+                .psm-portal-approvals .modal textarea.form-control {
+                    min-height: 132px;
+                    border-radius: 16px;
+                    padding: 14px 16px;
+                    resize: vertical;
+                }
+
+                .psm-portal-approvals .modal textarea.form-control::placeholder {
+                    color: var(--muted-foreground);
+                }
+
+                @media (max-width: 767.98px) {
+                    .psm-portal-approvals .modal-dialog {
+                        margin: 18px;
+                    }
+
+                    .psm-portal-approvals .modal-footer {
+                        flex-direction: column-reverse;
+                    }
+
+                    .psm-portal-approvals .modal-footer .btn {
+                        width: 100%;
+                    }
+
+                    .psm-portal-approvals .modal-highlight h5 {
+                        font-size: 1.35rem;
+                    }
+                }
+
+                html[data-theme='dark'] .psm-portal-approvals .request-row,
+                html[data-bs-theme='dark'] .psm-portal-approvals .request-row {
+                    background: color-mix(in srgb, var(--card) 90%, var(--background) 10%) !important;
+                }
+
+                html[data-theme='dark'] .psm-portal-approvals .modal-content,
+                html[data-bs-theme='dark'] .psm-portal-approvals .modal-content {
+                    background: color-mix(in srgb, var(--card) 95%, var(--background) 5%) !important;
+                    border-color: color-mix(in srgb, var(--border) 88%, transparent 12%) !important;
+                    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.42), 0 10px 28px rgba(0, 0, 0, 0.22) !important;
+                }
+
+                html[data-theme='dark'] .psm-portal-approvals .modal-highlight,
+                html[data-bs-theme='dark'] .psm-portal-approvals .modal-highlight {
+                    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 78%, #201d1b 22%) 0%, color-mix(in srgb, var(--card) 92%, var(--background) 8%) 100%);
+                    border-color: color-mix(in srgb, var(--border) 86%, transparent 14%);
+                }
+
+                html[data-theme='dark'] .psm-portal-approvals .modal-highlight-success h5,
+                html[data-bs-theme='dark'] .psm-portal-approvals .modal-highlight-success h5 {
+                    color: #55d88c !important;
+                }
+
+                html[data-theme='dark'] .psm-portal-approvals .modal-highlight-danger h5,
+                html[data-bs-theme='dark'] .psm-portal-approvals .modal-highlight-danger h5 {
+                    color: #ff7b7b !important;
+                }
+
+                html[data-theme='dark'] .psm-portal-approvals .input-group .form-control,
+                html[data-theme='dark'] .psm-portal-approvals .form-control,
+                html[data-theme='dark'] .psm-portal-approvals .form-select,
+                html[data-theme='dark'] .psm-portal-approvals .bg-light,
+                html[data-bs-theme='dark'] .psm-portal-approvals .input-group .form-control,
+                html[data-bs-theme='dark'] .psm-portal-approvals .form-control,
+                html[data-bs-theme='dark'] .psm-portal-approvals .form-select,
+                html[data-bs-theme='dark'] .psm-portal-approvals .bg-light {
+                    background: color-mix(in srgb, var(--card) 88%, var(--background) 12%) !important;
+                    color: var(--foreground) !important;
+                }
+
+                html[data-theme='dark'] .psm-portal-approvals input::file-selector-button,
+                html[data-bs-theme='dark'] .psm-portal-approvals input::file-selector-button {
+                    background: color-mix(in srgb, var(--card) 84%, var(--background) 16%);
+                    color: var(--foreground);
+                    border: 1px solid var(--border);
+                }
+            </style>
+            <div class="container py-4 psm-portal-approvals">
+                <!-- Header -->
+                <div class="social-card p-4 mb-4">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h3 class="mb-1">
+                                <i class="fa fa-check-square-o me-2 text-warning"/>
+                                Duyệt yêu cầu
+                            </h3>
+                            <p class="text-muted mb-0">
+                                Xin chào <strong t-esc="employee.name"/>, bạn có 
+                                <strong t-esc="len(pending_shifts) + len(pending_requests) + len(pending_leaves)"/> yêu cầu chờ duyệt từ
+                                <strong t-esc="len(subordinates)"/> nhân viên.
+                            </p>
+                        </div>
+                        <a href="/my/home" class="btn btn-outline-secondary">
+                            <i class="fa fa-arrow-left me-2"/>Quay lại
+                        </a>
+                    </div>
+                </div>
+
+                <t t-if="final_action_done">
+                    <div class="alert alert-success mb-4">
+                        <i class="fa fa-check-circle me-2"/>Quản lý đã xử lý bước kết thúc quy trình nghỉ việc thành công.
+                    </div>
+                </t>
+
+                <div class="row">
+                    <div class="col-lg-8">
+                        <!-- Pending Shifts Section -->
+                        <t t-if="pending_shifts">
+                            <div class="social-card p-4 mb-4">
+                                <h5 class="mb-3 text-success">
+                                    <i class="fa fa-calendar me-2"/>
+                                    Ca làm việc chờ duyệt (<t t-esc="len(pending_shifts)"/>)
+                                </h5>
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Nhân viên</th>
+                                                <th>Ca làm việc</th>
+                                                <th>Ngày</th>
+                                                <th>Giờ</th>
+                                                <th class="text-end">Thao tác</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="pending_shifts" t-as="slot">
+                                                <tr t-att-data-slot-id="slot.id" class="shift-row">
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="avatar-sm rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+                                                                <i class="fa fa-user"/>
+                                                            </div>
+                                                            <span t-esc="slot.resource_id.name"/>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <span t-if="slot.role_id" t-esc="slot.role_id.name" class="badge bg-info"/>
+                                                        <span t-else="">-</span>
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="slot.start_datetime" t-options="{'widget': 'date', 'format': 'dd/MM/yyyy'}"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="slot.start_datetime" t-options="{'widget': 'datetime', 'format': 'HH:mm'}"/> - 
+                                                        <t t-esc="slot.end_datetime" t-options="{'widget': 'datetime', 'format': 'HH:mm'}"/>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <button type="button" class="btn btn-success btn-sm js_approve_shift me-1"
+                                                                t-att-data-slot-id="slot.id">
+                                                            <i class="fa fa-check"/> Duyệt
+                                                        </button>
+                                                        <button type="button" class="btn btn-outline-danger btn-sm js_reject_shift"
+                                                                t-att-data-slot-id="slot.id">
+                                                            <i class="fa fa-times"/> Từ chối
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Pending Leaves Section -->
+                        <t t-if="pending_leaves">
+                            <div class="social-card p-4 mb-4 border-start border-4 border-warning">
+                                <h5 class="mb-3 text-warning">
+                                    <i class="fa fa-bed me-2"/>
+                                    Nghỉ phép chờ duyệt (<t t-esc="len(pending_leaves)"/>)
+                                </h5>
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Nhân viên</th>
+                                                <th>Loại</th>
+                                                <th>Thời gian</th>
+                                                <th class="text-end">Thao tác</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="pending_leaves" t-as="lv">
+                                                <tr t-att-data-leave-id="lv.id" class="leave-row">
+                                                    <td>
+                                                        <div class="fw-bold" t-esc="lv.employee_id.name"/>
+                                                        <div class="small text-muted" t-esc="lv.employee_id.department_id.name"/>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-warning text-dark" t-esc="lv.holiday_status_id.name"/>
+                                                        <div class="small text-muted mt-1" t-esc="lv.name"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="lv.date_from" t-options="{'widget': 'date', 'format': 'dd/MM/yyyy'}"/> - 
+                                                        <t t-esc="lv.date_to" t-options="{'widget': 'date', 'format': 'dd/MM/yyyy'}"/>
+                                                        <div class="small text-primary mt-1">
+                                                            <i class="fa fa-clock-o me-1"/><t t-esc="lv.number_of_days"/> ngày
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <button type="button" class="btn btn-success btn-sm js_approve_leave me-1"
+                                                                t-att-data-leave-id="lv.id"
+                                                                t-att-data-employee-name="lv.employee_id.name"
+                                                                t-att-data-leave-info="lv.holiday_status_id.name + ': ' + lv.date_from.strftime('%d/%m/%Y') + ' - ' + lv.date_to.strftime('%d/%m/%Y')">
+                                                            <i class="fa fa-check"/> Duyệt
+                                                        </button>
+                                                        <button type="button" class="btn btn-outline-danger btn-sm js_reject_leave"
+                                                                t-att-data-leave-id="lv.id">
+                                                            <i class="fa fa-times"/> Từ chối
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </t>
+                        
+                        <!-- Pending Approval Requests Section -->
+                        <t t-if="pending_requests">
+                            <div class="social-card p-4 mb-4">
+                                <h5 class="mb-3 text-primary">
+                                    <i class="fa fa-file-text-o me-2"/>
+                                    Yêu cầu phê duyệt (<t t-esc="len(pending_requests)"/>)
+                                </h5>
+                                <div class="list-group list-group-flush">
+                                    <t t-foreach="pending_requests" t-as="req">
+                                        <div class="list-group-item request-row" t-att-data-request-id="req.id">
+                                            <div class="d-flex justify-content-between align-items-start request-item-layout">
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex align-items-center mb-1">
+                                                        <span class="badge bg-secondary me-2" t-esc="req.category_id.name"/>
+                                                        <strong t-esc="req.name"/>
+                                                    </div>
+                                                    <p class="text-muted mb-1 small">
+                                                        <i class="fa fa-user me-1"/>
+                                                        <t t-esc="req.request_owner_id.name"/>
+                                                        <span class="mx-2">•</span>
+                                                        <i class="fa fa-clock-o me-1"/>
+                                                        <t t-esc="req.create_date" t-options="{'widget': 'datetime', 'format': 'dd/MM/yyyy HH:mm'}"/>
+                                                    </p>
+                                                    <t t-set="display_details" t-value="pending_request_display.get(req.id, [])"/>
+                                                    <t t-if="display_details">
+                                                        <div class="mt-2 mb-2">
+                                                            <t t-foreach="display_details" t-as="detail">
+                                                                <div t-if="detail['is_long']" class="small text-muted mb-1" style="max-width: 560px;">
+                                                                    <span class="fw-bold text-dark" t-esc="detail['label']"/>:
+                                                                    <span t-esc="detail['value']"/>
+                                                                </div>
+                                                                <div t-else="" class="d-inline-flex align-items-center me-3 mb-1 small text-muted">
+                                                                    <span class="fw-bold text-dark me-1" t-esc="detail['label'] + ':'"/>
+                                                                    <span t-esc="detail['value']"/>
+                                                                </div>
+                                                            </t>
+                                                        </div>
+                                                    </t>
+                                                    <t t-if="req.reason">
+                                                        <div class="small text-muted" style="max-width: 400px;">
+                                                            <t t-raw="req.reason[:200]"/>
+                                                            <t t-if="len(req.reason or '') > 200">...</t>
+                                                        </div>
+                                                    </t>
+                                                    
+                                                    <!-- Hiển thị thay đổi (nếu có) -->
+                                                    <t t-set="changes" t-value="pending_request_changes.get(req.id, [])"/>
+                                                    <t t-if="changes">
+                                                            <div class="mt-2 p-2 bg-light rounded small border" style="max-width: 500px;">
+                                                                <div class="fw-bold text-muted mb-1" style="font-size: 0.85rem;">
+                                                                    <i class="fa fa-pencil-square-o me-1"/>Thay đổi đề xuất:
+                                                                </div>
+                                                                <ul class="list-unstyled mb-0 ms-2">
+                                                                    <t t-foreach="changes" t-as="change">
+                                                                        <li class="mb-1">
+                                                                            <span class="fw-bold text-dark" t-esc="change['label']"/>: 
+                                                                            <span class="text-decoration-line-through text-muted" t-esc="change['old']"/> 
+                                                                            <i class="fa fa-long-arrow-right mx-1 text-primary"/> 
+                                                                            <span class="text-success fw-bold" t-esc="change['new']"/>
+                                                                        </li>
+                                                                    </t>
+                                                                </ul>
+                                                            </div>
+                                                    </t>
+                                                    
+                                                    <!-- Hiển thị đính kèm (nếu có) -->
+                                                    <t t-set="attachments" t-value="req.env['ir.attachment'].sudo().search([
+                                                        ('res_model', '=', 'approval.request'),
+                                                        ('res_id', '=', req.id)
+                                                    ])"/>
+                                                    <t t-if="attachments">
+                                                        <div class="mt-2 text-muted small">
+                                                            <i class="fa fa-paperclip me-1"/> 
+                                                            <strong>Đính kèm:</strong>
+                                                            <ul class="list-inline mb-0 d-inline-block ms-1">
+                                                                <t t-foreach="attachments" t-as="att">
+                                                                    <li class="list-inline-item me-2">
+                                                                        <a t-attf-href="/web/content/#{att.id}?download=true" target="_blank" class="text-decoration-none">
+                                                                            <t t-esc="att.name"/>
+                                                                        </a>
+                                                                    </li>
+                                                                </t>
+                                                            </ul>
+                                                        </div>
+                                                    </t>
+                                                    
+                                                    <!-- Upload Form -->
+                                                    <form action="/my/approvals/upload_attachment" method="post" enctype="multipart/form-data" class="mt-2">
+                                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                        <input type="hidden" name="request_id" t-att-value="req.id"/>
+                                                        <div class="input-group input-group-sm" style="max-width: 300px;">
+                                                            <input type="file" name="attachment_ids" multiple="multiple" class="form-control form-control-sm"/>
+                                                            <button type="submit" class="btn btn-outline-secondary">
+                                                                <i class="fa fa-upload"/>
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="request-actions">
+                                                    <button type="button" class="btn btn-success btn-sm js_approve_request"
+                                                            t-att-data-request-id="req.id"
+                                                            t-att-data-request-title="req.name">
+                                                        <i class="fa fa-check"/> Duyệt
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-danger btn-sm js_reject_request"
+                                                            t-att-data-request-id="req.id"
+                                                            t-att-data-request-title="req.name">
+                                                        <i class="fa fa-times"/> Từ chối
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
+                        
+                        <t t-if="ready_resignation_requests">
+                            <div class="social-card p-4 mb-4 border-start border-4 border-success">
+                                <h5 class="mb-3 text-success">
+                                    <i class="fa fa-flag-checkered me-2"/>
+                                    Kết thúc quy trình nghỉ việc (<t t-esc="len(ready_resignation_requests)"/>)
+                                </h5>
+                                <p class="text-muted small mb-3">
+                                    Các đơn dưới đây đã hoàn thành khảo sát và checklist. Quản lý có thể thực hiện bước cuối để khép quy trình ngay trên portal.
+                                </p>
+                                <div class="d-flex flex-column gap-3">
+                                    <t t-foreach="ready_resignation_requests" t-as="req">
+                                        <div class="final-action-card p-3">
+                                            <div class="d-flex justify-content-between align-items-start gap-3 flex-column flex-lg-row">
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex align-items-center mb-2 flex-wrap gap-2">
+                                                        <span class="badge bg-warning text-dark" t-esc="req.category_id.name"/>
+                                                        <strong t-esc="req.name"/>
+                                                    </div>
+                                                    <div class="small text-muted mb-2">
+                                                        <i class="fa fa-user me-1"/>
+                                                        <t t-esc="req.request_owner_id.name"/>
+                                                        <span class="mx-2">•</span>
+                                                        <i class="fa fa-check-circle me-1 text-success"/>
+                                                        Checklist và khảo sát đã hoàn tất
+                                                    </div>
+                                                    <t t-set="display_details" t-value="pending_request_display.get(req.id, [])"/>
+                                                    <t t-if="display_details">
+                                                        <div class="mb-3">
+                                                            <t t-foreach="display_details" t-as="detail">
+                                                                <div t-if="detail['is_long']" class="small text-muted mb-1" style="max-width: 620px;">
+                                                                    <span class="fw-bold text-dark" t-esc="detail['label']"/>:
+                                                                    <span t-esc="detail['value']"/>
+                                                                </div>
+                                                                <div t-else="" class="d-inline-flex align-items-center me-3 mb-1 small text-muted">
+                                                                    <span class="fw-bold text-dark me-1" t-esc="detail['label'] + ':'"/>
+                                                                    <span t-esc="detail['value']"/>
+                                                                </div>
+                                                            </t>
+                                                        </div>
+                                                    </t>
+                                                    <div class="d-flex flex-wrap gap-2">
+                                                        <span class="final-action-meta">
+                                                            <i class="fa fa-tasks"/>
+                                                            Offboarding đã xong
+                                                        </span>
+                                                        <span class="final-action-meta">
+                                                            <i class="fa fa-list-check"/>
+                                                            Sẵn sàng bước cuối
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="final-action-buttons">
+                                                    <t t-foreach="ready_resignation_actions.get(req.id, [])" t-as="action">
+                                                        <button type="button"
+                                                                t-att-class="action['button_class'] + ' js_open_final_resignation_action'"
+                                                                t-att-data-request-id="req.id"
+                                                                t-att-data-request-title="req.name"
+                                                                t-att-data-action-code="action['code']"
+                                                                t-att-data-modal-title="action['modal_title']"
+                                                                t-att-data-modal-note="action['modal_note']"
+                                                                t-att-data-modal-class="action['modal_class']">
+                                                            <i class="fa fa-check-circle me-1"/>
+                                                            <t t-esc="action['label']"/>
+                                                        </button>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Empty State -->
+                        <t t-if="not pending_shifts and not pending_requests and not pending_leaves and not ready_resignation_requests">
+                            <div class="social-card p-5 text-center">
+                                <i class="fa fa-check-circle text-success mb-3" style="font-size: 48px;"/>
+                                <h5 class="text-muted">Không có yêu cầu chờ duyệt</h5>
+                                <p class="text-muted small">Tất cả các yêu cầu từ nhân viên đã được xử lý.</p>
+                            </div>
+                        </t>
+                    </div>
+                    
+                    <!-- Right Sidebar: Recently Processed -->
+                    <div class="col-lg-4">
+                        <div class="social-card p-3">
+                            <h6 class="text-muted mb-3">
+                                <i class="fa fa-history me-2"/>ĐÃ XỬ LÝ GẦN ĐÂY
+                            </h6>
+                            <t t-if="recent_processed">
+                                <t t-foreach="recent_processed" t-as="req">
+                                    <div class="d-flex align-items-start mb-3 pb-2 border-bottom">
+                                        <div class="flex-grow-1">
+                                            <div class="small fw-bold" t-esc="req.name"/>
+                                            <div class="small text-muted">
+                                                <t t-esc="req.request_owner_id.name"/>
+                                            </div>
+                                        </div>
+                                        <span t-if="req.request_status == 'approved'" class="badge bg-success">
+                                            <i class="fa fa-check"/> Đã duyệt
+                                        </span>
+                                        <span t-elif="req.request_status == 'refused'" class="badge bg-danger">
+                                            <i class="fa fa-times"/> Từ chối
+                                        </span>
+                                    </div>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <p class="text-muted small mb-0">Chưa có yêu cầu nào được xử lý.</p>
+                            </t>
+                        </div>
+                        
+                        <!-- Team Info -->
+                        <div class="social-card p-3 mt-3">
+                            <h6 class="text-muted mb-3">
+                                <i class="fa fa-users me-2"/>NHÂN VIÊN CẤP DƯỚI
+                            </h6>
+                            <t t-if="subordinates">
+                                <t t-foreach="subordinates[:5]" t-as="sub">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <div class="avatar-sm rounded-circle bg-light text-secondary d-flex align-items-center justify-content-center me-2" style="width: 28px; height: 28px;">
+                                            <i class="fa fa-user"/>
+                                        </div>
+                                        <span class="small" t-esc="sub.name"/>
+                                    </div>
+                                </t>
+                                <t t-if="len(subordinates) > 5">
+                                    <p class="text-muted small mb-0">
+                                        và <t t-esc="len(subordinates) - 5"/> nhân viên khác...
+                                    </p>
+                                </t>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Duyệt Nghỉ Phép & Chọn Người Thay Thế -->
+            <div class="modal fade" id="leaveApprovalModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content border-0 shadow-lg">
+                        <div class="modal-header bg-success text-white">
+                            <h5 class="modal-title">
+                                <span class="modal-title-icon"><i class="fa fa-check-circle"/></span>
+                                Duyệt nghỉ phép
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <input type="hidden" id="modal_leave_id"/>
+                            <div class="mb-4 modal-copy">
+                                <p class="mb-1">Bạn đang chuẩn bị duyệt đơn nghỉ phép của:</p>
+                                <div class="modal-highlight modal-highlight-success">
+                                    <h5 id="modal_employee_name" class="fw-bold mb-0">---</h5>
+                                </div>
+                                <p id="modal_leave_info" class="text-muted small">---</p>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Chọn nhân viên thay thế (từ các store lân cận)</label>
+                                <select id="replacement_employee_id" class="form-select">
+                                    <option value="">-- Không có người thay thế --</option>
+                                    <!-- Options populated via JS -->
+                                </select>
+                                <div class="form-text text-muted">
+                                    <i class="fa fa-info-circle me-1"/>
+                                    Danh sách gợi ý từ các cửa hàng bạn cùng quản lý.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer bg-light border-top-0">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="button" id="btn_confirm_leave_approval" class="btn btn-success px-4">
+                                <i class="fa fa-check me-1"/>Xác nhận duyệt
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="requestApproveModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow-lg">
+                        <div class="modal-header bg-success text-white">
+                            <h5 class="modal-title">
+                                <span class="modal-title-icon"><i class="fa fa-check-circle"/></span>
+                                Duyệt yêu cầu
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <input type="hidden" id="modal_request_approve_id"/>
+                            <div class="modal-copy">
+                                <p>Bạn sắp duyệt yêu cầu sau:</p>
+                                <div class="modal-highlight modal-highlight-success">
+                                    <h5 id="modal_request_approve_title" class="fw-bold mb-0">---</h5>
+                                </div>
+                                <div class="modal-note">Hành động này sẽ cập nhật trạng thái đơn và thông báo cho nhân viên.</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer bg-light border-top-0">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="button" id="btn_confirm_request_approve" class="btn btn-success px-4">
+                                <i class="fa fa-check me-1"/>Xác nhận duyệt
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="requestRejectModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow-lg">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title">
+                                <span class="modal-title-icon"><i class="fa fa-times-circle"/></span>
+                                Từ chối yêu cầu
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <input type="hidden" id="modal_request_reject_id"/>
+                            <div class="mb-3 modal-copy">
+                                <p>Bạn sắp từ chối yêu cầu sau:</p>
+                                <div class="modal-highlight modal-highlight-danger">
+                                    <h5 id="modal_request_reject_title" class="fw-bold mb-0">---</h5>
+                                </div>
+                                <div class="modal-note">Nên ghi rõ lý do để nhân viên dễ theo dõi và xử lý tiếp.</div>
+                            </div>
+                            <div>
+                                <label for="modal_request_reject_reason" class="form-label fw-bold">Lý do từ chối</label>
+                                <textarea id="modal_request_reject_reason" class="form-control" rows="4" placeholder="Nhập lý do từ chối để phản hồi cho nhân viên"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer bg-light border-top-0">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="button" id="btn_confirm_request_reject" class="btn btn-danger px-4">
+                                <i class="fa fa-times me-1"/>Xác nhận từ chối
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="resignationFinalActionModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow-lg">
+                        <div class="modal-header bg-success text-white" id="modal_resignation_final_header">
+                            <h5 class="modal-title">
+                                <span class="modal-title-icon"><i class="fa fa-flag-checkered"/></span>
+                                <span id="modal_resignation_final_title">Xử lý bước cuối</span>
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <input type="hidden" id="modal_resignation_final_request_id"/>
+                            <input type="hidden" id="modal_resignation_final_action_code"/>
+                            <div class="modal-copy">
+                                <p>Bạn sắp xử lý bước cuối cho đơn nghỉ việc sau:</p>
+                                <div class="modal-highlight modal-highlight-success" id="modal_resignation_final_highlight">
+                                    <h5 id="modal_resignation_final_request_title" class="fw-bold mb-0">---</h5>
+                                </div>
+                                <div class="modal-note" id="modal_resignation_final_note">
+                                    Hệ thống sẽ thực hiện bước kết thúc quy trình theo cấu hình của từng module.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer bg-light border-top-0">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="button" id="btn_confirm_resignation_final_action" class="btn btn-success px-4">
+                                <i class="fa fa-check-circle me-1"/>Xác nhận thực hiện
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_my_activities_page" name="Portal My Activities Page">
+        <t t-call="portal.portal_layout">
+            <style>
+                .psm-portal-activities {
+                    color: var(--foreground);
+                }
+
+                .psm-portal-activities .activity-card,
+                .psm-portal-activities .activity-history-card {
+                    background: color-mix(in srgb, var(--card) 92%, var(--background) 8%) !important;
+                    border: 1px solid var(--border) !important;
+                    border-radius: 18px;
+                    box-shadow: var(--glass-shadow);
+                }
+
+                .psm-portal-activities .activity-title,
+                .psm-portal-activities .text-dark,
+                .psm-portal-activities h3,
+                .psm-portal-activities h5,
+                .psm-portal-activities h6,
+                .psm-portal-activities strong,
+                .psm-portal-activities label {
+                    color: var(--foreground) !important;
+                }
+
+                .psm-portal-activities .text-muted,
+                .psm-portal-activities small {
+                    color: var(--muted-foreground) !important;
+                }
+
+                .psm-portal-activities .activity-meta-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 6px 10px;
+                    border-radius: 999px;
+                    background: color-mix(in srgb, var(--card) 78%, var(--background) 22%);
+                    border: 1px solid var(--border);
+                    color: var(--muted-foreground);
+                    font-size: 0.78rem;
+                }
+
+                .psm-portal-activities .activity-note {
+                    background: color-mix(in srgb, var(--card) 82%, var(--background) 18%);
+                    border: 1px solid var(--border);
+                    border-radius: 14px;
+                    color: var(--foreground);
+                }
+
+                .psm-portal-activities .activity-actions .btn {
+                    min-width: 180px;
+                    white-space: nowrap;
+                }
+
+                html[data-theme='dark'] .psm-portal-activities .activity-card,
+                html[data-theme='dark'] .psm-portal-activities .activity-history-card,
+                html[data-bs-theme='dark'] .psm-portal-activities .activity-card,
+                html[data-bs-theme='dark'] .psm-portal-activities .activity-history-card {
+                    background: color-mix(in srgb, var(--card) 90%, var(--background) 10%) !important;
+                }
+
+                html[data-theme='dark'] .psm-portal-activities .activity-note,
+                html[data-bs-theme='dark'] .psm-portal-activities .activity-note {
+                    background: color-mix(in srgb, var(--card) 86%, var(--background) 14%) !important;
+                }
+            </style>
+            <div class="container py-4 psm-portal-activities">
+                <div class="social-card p-4 mb-4">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h3 class="mb-1">
+                                <i class="fa fa-tasks me-2 text-primary"/>
+                                Hoạt động cần làm
+                            </h3>
+                            <p class="text-muted mb-0">
+                                Xin chào <strong t-esc="employee.name if employee else user.name"/>, bạn đang có
+                                <strong t-esc="len(pending_activities)"/> hoạt động chờ xử lý.
+                            </p>
+                        </div>
+                        <a href="/my/home" class="btn btn-outline-secondary">
+                            <i class="fa fa-arrow-left me-2"/>Quay lại
+                        </a>
+                    </div>
+                </div>
+
+                <t t-if="activity_done">
+                    <div class="alert alert-success mb-4">
+                        <i class="fa fa-check-circle me-2"/>Đã xác nhận hoàn thành hoạt động thành công.
+                    </div>
+                </t>
+
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="social-card p-4">
+                            <h5 class="mb-3 text-primary">
+                                <i class="fa fa-list-check me-2"/>
+                                Hoạt động đang chờ bạn thực hiện (<t t-esc="len(pending_activities)"/>)
+                            </h5>
+
+                            <t t-if="pending_activities">
+                                <div class="d-flex flex-column gap-3">
+                                    <t t-foreach="pending_activities" t-as="activity">
+                                        <t t-set="activity_info" t-value="activity_display.get(activity.id, {})"/>
+                                        <div class="activity-card p-3">
+                                            <div class="d-flex justify-content-between align-items-start gap-3 flex-column flex-lg-row">
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                                                        <span t-if="activity_info.get('category_name')" class="badge bg-warning text-dark" t-esc="activity_info['category_name']"/>
+                                                        <h6 class="mb-0 activity-title" t-esc="activity_info.get('title') or activity.summary or activity.activity_type_id.name"/>
+                                                    </div>
+                                                    <div class="small text-muted mb-2" t-if="activity_info.get('subtitle')">
+                                                        <i class="fa fa-link me-1"/>
+                                                        <span t-esc="activity_info['subtitle']"/>
+                                                    </div>
+                                                    <div t-if="activity.note" class="activity-note p-3 small mb-3">
+                                                        <t t-out="activity.note"/>
+                                                    </div>
+                                                    <div class="d-flex gap-2 flex-wrap">
+                                                        <span t-if="activity.date_deadline" class="activity-meta-badge">
+                                                            <i class="fa fa-calendar-check-o"/>
+                                                            Hạn: <t t-esc="activity.date_deadline"/>
+                                                        </span>
+                                                        <span class="activity-meta-badge">
+                                                            <i class="fa fa-tag"/>
+                                                            <t t-esc="activity.res_model"/>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="activity-actions">
+                                                    <form action="/my/activities/done" method="post" class="m-0">
+                                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                        <input type="hidden" name="activity_id" t-att-value="activity.id"/>
+                                                        <button type="submit" class="btn btn-success">
+                                                            <i class="fa fa-check me-2"/>Xác nhận thực hiện
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <div class="text-center py-5">
+                                    <i class="fa fa-check-circle text-success mb-3" style="font-size: 48px;"/>
+                                    <h5 class="text-muted">Không có hoạt động chờ xử lý</h5>
+                                    <p class="text-muted small mb-0">Các hoạt động được gán cho bạn hiện đã hoàn tất hoặc chưa phát sinh.</p>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="social-card p-3">
+                            <h6 class="text-muted mb-3">
+                                <i class="fa fa-history me-2"/>Đã hoàn thành gần đây
+                            </h6>
+                            <t t-if="completed_activities">
+                                <div class="d-flex flex-column gap-2">
+                                    <t t-foreach="completed_activities" t-as="activity">
+                                        <t t-set="activity_info" t-value="activity_display.get(activity.id, {})"/>
+                                        <div class="activity-history-card p-3">
+                                            <div class="small fw-bold" t-esc="activity_info.get('title') or activity.summary or activity.activity_type_id.name"/>
+                                            <div class="small text-muted mt-1" t-if="activity_info.get('subtitle')" t-esc="activity_info['subtitle']"/>
+                                            <div class="mt-2">
+                                                <span class="badge bg-success">
+                                                    <i class="fa fa-check me-1"/>Đã hoàn thành
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <p class="text-muted small mb-0">Chưa có hoạt động nào được xác nhận hoàn thành.</p>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

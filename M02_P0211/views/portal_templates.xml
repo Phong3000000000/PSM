@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_contact_form" name="Portal Onboarding Form">
+        <t t-call="portal.portal_layout">
+            <t t-set="title">Onboarding Documents</t>
+            
+            <div class="container mt-4" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333;">
+                <!-- Success/Error Messages -->
+                <t t-if="success">
+                    <div class="alert alert-success border-0 shadow-sm mb-4" role="alert" style="background-color: #f0fdf4; color: #166534;">
+                        Your documents have been submitted successfully!
+                    </div>
+                </t>
+                <t t-if="request.params.get('error')">
+                    <div class="alert alert-danger border-0 shadow-sm mb-4" role="alert" style="background-color: #fef2f2; color: #991b1b;">
+                        An error occurred while uploading. Please try again or contact HR.
+                    </div>
+                </t>
+
+                <!-- Section Header -->
+                <div class="row mb-5">
+                    <div class="col-12 border-bottom pb-3">
+                        <t t-if="contract_type == 'fulltime'">
+                            <h2 class="display-6 fw-bold text-dark mb-1">FULL-TIME ONBOARDING</h2>
+                            <p class="text-muted small">Please provide the required professional documents listed below.</p>
+                        </t>
+                        <t t-elif="contract_type == 'parttime'">
+                            <h2 class="display-6 fw-bold text-dark mb-1">PART-TIME ONBOARDING</h2>
+                            <p class="text-muted small">Please provide the essential documents for your registration.</p>
+                        </t>
+                        <t t-else="">
+                            <h2 class="display-6 fw-bold text-dark mb-1">ONBOARDING DOCUMENTS</h2>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- Form Section -->
+                <form action="/my/onboard_info/submit" method="post" enctype="multipart/form-data" 
+                      class="o_portal_onboarding_form"
+                      t-att-data-partner-id="partner.id"
+                      t-att-data-contract-type="contract_type"
+                          t-att-data-existing-id-front="partner.x_psm_0211_id_card_front_filename"
+                          t-att-data-existing-id-back="partner.x_psm_0211_id_card_back_filename"
+                          t-att-data-existing-cv="partner.x_psm_0211_curriculum_vitae_filename"
+                          t-att-data-existing-health="partner.x_psm_0211_health_certificate_filename"
+                          t-att-data-existing-photo="partner.x_psm_0211_passport_photo_filename">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        
+                        <div class="row">
+                            <!-- Left Column: Mandatory -->
+                            <div class="col-lg-7">
+                                <h4 class="mb-4 text-secondary border-start border-4 border-danger ps-3">MANDATORY DOCUMENTS</h4>
+                                
+                                <!-- Identity Card (Two Sides) -->
+                                <div class="mb-4 p-3 border rounded shadow-sm bg-white">
+                                    <label class="form-label fw-bold small text-uppercase">1. CITIZEN IDENTITY CARD <span class="text-danger">*</span></label>
+                                    <p class="text-muted x-small mb-3" style="font-size: 0.8rem;">Please provide both front and back sides of your Identity Card.</p>
+                                    
+                                    <div class="row">
+                                        <!-- Front Side -->
+                                        <div class="col-md-6 mb-3">
+                                            <label class="x-small fw-bold text-muted">FRONT SIDE</label>
+                                            <t t-if="partner.x_psm_0211_id_card_front_filename">
+                                                <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded border border-info">
+                                                    <span class="x-small overflow-hidden text-truncate me-2" t-esc="partner.x_psm_0211_id_card_front_filename"/>
+                                                    <div class="d-flex gap-2 align-items-center flex-shrink-0">
+                                                        <t t-if="doc_is_image.get('x_psm_0211_id_card_front')">
+                                                            <button type="button" class="btn btn-sm btn-link text-danger p-0 fw-bold x-small" 
+                                                                    style="text-decoration: none;"
+                                                                    data-bs-toggle="modal" data-bs-target="#imagePreviewModal" 
+                                                                    t-attf-data-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_id_card_front"
+                                                                    t-att-data-title="'ID CARD FRONT SIDE'"><i class="fa fa-eye me-1"/>Preview</button>
+                                                            <span class="text-muted x-small">|</span>
+                                                        </t>
+                                                        <a t-attf-href="/web/content?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_id_card_front&amp;filename={{ partner.x_psm_0211_id_card_front_filename }}&amp;download=true" 
+                                                           class="btn btn-sm btn-link text-dark p-0 x-small" style="text-decoration: none;">
+                                                            <i class="fa fa-download me-1"/>Download
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <!-- Preview for Front Side -->
+                                                <t t-if="doc_is_image.get('x_psm_0211_id_card_front')">
+                                                    <div class="position-relative mb-3 js_image_preview_container" style="cursor: pointer;" 
+                                                         data-bs-toggle="modal" data-bs-target="#imagePreviewModal" 
+                                                         t-attf-data-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_id_card_front"
+                                                         t-att-data-title="'ID CARD FRONT SIDE'">
+                                                        <img t-attf-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_id_card_front" 
+                                                             class="img-thumbnail w-100 shadow-sm hover-elevate" style="max-height: 180px; object-fit: cover; transition: transform 0.3s; border: 2px solid #eee;"/>
+                                                        <div class="position-absolute bottom-0 end-0 bg-dark text-white p-1 x-small opacity-75 rounded-start"><i class="fa fa-search-plus"/> Click to preview</div>
+                                                    </div>
+                                                </t>
+                                            </t>
+                                            <input type="file" name="x_psm_0211_id_card_front" class="form-control form-control-sm" accept=".png,.jpg,.jpeg"/>
+                                            <img class="js_image_preview img-thumbnail mt-2 d-none" style="max-height: 150px;"/>
+                                        </div>
+                                        <!-- Back Side -->
+                                        <div class="col-md-6 mb-3">
+                                            <label class="x-small fw-bold text-muted">BACK SIDE</label>
+                                            <t t-if="partner.x_psm_0211_id_card_back_filename">
+                                                <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded border border-info">
+                                                    <span class="x-small overflow-hidden text-truncate me-2" t-esc="partner.x_psm_0211_id_card_back_filename"/>
+                                                    <div class="d-flex gap-2 align-items-center flex-shrink-0">
+                                                        <t t-if="doc_is_image.get('x_psm_0211_id_card_back')">
+                                                            <button type="button" class="btn btn-sm btn-link text-danger p-0 fw-bold x-small" 
+                                                                    style="text-decoration: none;"
+                                                                    data-bs-toggle="modal" data-bs-target="#imagePreviewModal" 
+                                                                    t-attf-data-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_id_card_back"
+                                                                    t-att-data-title="'ID CARD BACK SIDE'"><i class="fa fa-eye me-1"/>Preview</button>
+                                                            <span class="text-muted x-small">|</span>
+                                                        </t>
+                                                        <a t-attf-href="/web/content?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_id_card_back&amp;filename={{ partner.x_psm_0211_id_card_back_filename }}&amp;download=true" 
+                                                           class="btn btn-sm btn-link text-dark p-0 x-small" style="text-decoration: none;">
+                                                            <i class="fa fa-download me-1"/>Download
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <!-- Preview for Back Side -->
+                                                <t t-if="doc_is_image.get('x_psm_0211_id_card_back')">
+                                                    <div class="position-relative mb-3 js_image_preview_container" style="cursor: pointer;" 
+                                                         data-bs-toggle="modal" data-bs-target="#imagePreviewModal" 
+                                                         t-attf-data-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_id_card_back"
+                                                         t-att-data-title="'ID CARD BACK SIDE'">
+                                                        <img t-attf-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_id_card_back" 
+                                                             class="img-thumbnail w-100 shadow-sm hover-elevate" style="max-height: 180px; object-fit: cover; transition: transform 0.3s; border: 2px solid #eee;"/>
+                                                        <div class="position-absolute bottom-0 end-0 bg-dark text-white p-1 x-small opacity-75 rounded-start"><i class="fa fa-search-plus"/> Click to preview</div>
+                                                    </div>
+                                                </t>
+                                            </t>
+                                            <input type="file" name="x_psm_0211_id_card_back" class="form-control form-control-sm" accept=".png,.jpg,.jpeg"/>
+                                            <img class="js_image_preview img-thumbnail mt-2 d-none" style="max-height: 150px;"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Personal History Group (1 of 4) -->
+                                <div class="mb-4 p-3 border rounded shadow-sm bg-white border-warning">
+                                    <label class="form-label fw-bold small text-uppercase">2. PERSONAL HISTORY DOCUMENTS <span class="text-danger">*</span></label>
+                                    <p class="text-primary x-small mb-3 fw-bold" style="font-size: 0.75rem;">REQUIRED: 1 of 4 documents (Curriculum Vitae / Residency Confirmation / Household Removal / Household Book).</p>
+                                    
+                                    <t t-if="partner.x_psm_0211_curriculum_vitae_filename">
+                                        <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded border border-info shadow-sm">
+                                            <span class="small overflow-hidden text-truncate me-2" t-esc="partner.x_psm_0211_curriculum_vitae_filename"/>
+                                            <div class="d-flex gap-2 align-items-center flex-shrink-0">
+                                                <t t-if="doc_is_image.get('x_psm_0211_curriculum_vitae')">
+                                                    <button type="button" class="btn btn-sm btn-link text-danger p-0 fw-bold small" 
+                                                            style="text-decoration: none;"
+                                                            data-bs-toggle="modal" data-bs-target="#imagePreviewModal" 
+                                                            t-attf-data-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_curriculum_vitae"
+                                                            t-att-data-title="'CURRICULUM VITAE'"><i class="fa fa-eye me-1"/>Preview</button>
+                                                    <span class="text-muted small">|</span>
+                                                </t>
+                                                <a t-attf-href="/web/content?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_curriculum_vitae&amp;filename={{ partner.x_psm_0211_curriculum_vitae_filename }}&amp;download=true" 
+                                                   class="btn btn-sm btn-link text-dark p-0 small" style="text-decoration: none;">
+                                                    <i class="fa fa-download me-1"/>Download
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <!-- Thumbnail for CV if image -->
+                                        <t t-if="doc_is_image.get('x_psm_0211_curriculum_vitae')">
+                                            <div class="mb-3 js_image_preview_container" style="cursor: pointer;" 
+                                                 data-bs-toggle="modal" data-bs-target="#imagePreviewModal" 
+                                                 t-attf-data-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_curriculum_vitae"
+                                                 t-att-data-title="'CURRICULUM VITAE'">
+                                                <img t-attf-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_curriculum_vitae" 
+                                                     class="img-thumbnail hover-elevate shadow-sm" style="max-height: 150px; width: auto; border: 2px solid #eee;"/>
+                                            </div>
+                                        </t>
+                                    </t>
+                                    <input type="file" name="x_psm_0211_curriculum_vitae" class="form-control form-control-sm" accept=".png,.jpg,.jpeg"/>
+                                    <img class="js_image_preview img-thumbnail mt-2 d-none" style="max-height: 150px;"/>
+                                </div>
+
+                                <!-- Health Certificate -->
+                                <div class="mb-4 p-3 border rounded shadow-sm bg-white">
+                                    <label class="form-label fw-bold small text-uppercase">3. HEALTH CERTIFICATE <span class="text-danger">*</span></label>
+                                    <p class="text-muted x-small mb-3" style="font-size: 0.8rem;">Physical examination certificate required for all employees.</p>
+                                    
+                                    <t t-if="partner.x_psm_0211_health_certificate_filename">
+                                        <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded border border-info shadow-sm">
+                                            <span class="small overflow-hidden text-truncate me-2" t-esc="partner.x_psm_0211_health_certificate_filename"/>
+                                            <div class="d-flex gap-2 align-items-center flex-shrink-0">
+                                                <t t-if="doc_is_image.get('x_psm_0211_health_certificate')">
+                                                    <button type="button" class="btn btn-sm btn-link text-danger p-0 fw-bold small" 
+                                                            style="text-decoration: none;"
+                                                            data-bs-toggle="modal" data-bs-target="#imagePreviewModal" 
+                                                            t-attf-data-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_health_certificate"
+                                                            t-att-data-title="'HEALTH CERTIFICATE'"><i class="fa fa-eye me-1"/>Preview</button>
+                                                    <span class="text-muted small">|</span>
+                                                </t>
+                                                <a t-attf-href="/web/content?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_health_certificate&amp;filename={{ partner.x_psm_0211_health_certificate_filename }}&amp;download=true" 
+                                                   class="btn btn-sm btn-link text-dark p-0 small" style="text-decoration: none;">
+                                                    <i class="fa fa-download me-1"/>Download
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <!-- Thumbnail for Health if image -->
+                                        <t t-if="doc_is_image.get('x_psm_0211_health_certificate')">
+                                            <div class="mb-3 js_image_preview_container" style="cursor: pointer;" 
+                                                 data-bs-toggle="modal" data-bs-target="#imagePreviewModal" 
+                                                 t-attf-data-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_health_certificate"
+                                                 t-att-data-title="'HEALTH CERTIFICATE'">
+                                                <img t-attf-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_health_certificate" 
+                                                     class="img-thumbnail hover-elevate shadow-sm" style="max-height: 150px; width: auto; border: 2px solid #eee;"/>
+                                            </div>
+                                        </t>
+                                    </t>
+                                    <input type="file" name="x_psm_0211_health_certificate" class="form-control form-control-sm" accept=".png,.jpg,.jpeg"/>
+                                    <img class="js_image_preview img-thumbnail mt-2 d-none" style="max-height: 150px;"/>
+                                </div>
+
+                                <!-- Profile Photo (Mandatory for FT) -->
+                                <t t-if="contract_type == 'fulltime'">
+                                    <div class="mb-4 p-3 border rounded shadow-sm bg-white">
+                                        <label class="form-label fw-bold small text-uppercase">4. PASSPORT PHOTO (3x4) <span class="text-danger">*</span></label>
+                                        <p class="text-muted x-small mb-3" style="font-size: 0.8rem;">Standard 3x4 portrait photo with white background.</p>
+                                        
+                                        <t t-if="partner.x_psm_0211_passport_photo_filename">
+                                            <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded border border-info shadow-sm">
+                                                <span class="small overflow-hidden text-truncate me-2" t-esc="partner.x_psm_0211_passport_photo_filename"/>
+                                                <div class="d-flex gap-2 align-items-center flex-shrink-0">
+                                                    <t t-if="doc_is_image.get('x_psm_0211_passport_photo')">
+                                                        <button type="button" class="btn btn-sm btn-link text-danger p-0 fw-bold small" 
+                                                                style="text-decoration: none;"
+                                                                data-bs-toggle="modal" data-bs-target="#imagePreviewModal" 
+                                                                t-attf-data-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_passport_photo"
+                                                                t-att-data-title="'PASSPORT PHOTO'"><i class="fa fa-eye me-1"/>Preview</button>
+                                                        <span class="text-muted small">|</span>
+                                                    </t>
+                                                    <a t-attf-href="/web/content?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_passport_photo&amp;filename={{ partner.x_psm_0211_passport_photo_filename }}&amp;download=true" 
+                                                       class="btn btn-sm btn-link text-dark p-0 small" style="text-decoration: none;">
+                                                        <i class="fa fa-download me-1"/>Download
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <!-- Thumbnail for Photo if image -->
+                                            <t t-if="doc_is_image.get('x_psm_0211_passport_photo')">
+                                                <div class="mb-3 js_image_preview_container" style="cursor: pointer;" 
+                                                     data-bs-toggle="modal" data-bs-target="#imagePreviewModal" 
+                                                     t-attf-data-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_passport_photo"
+                                                     t-att-data-title="'PASSPORT PHOTO'">
+                                                    <img t-attf-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_passport_photo" 
+                                                         class="img-thumbnail hover-elevate shadow-sm" style="max-height: 150px; width: auto; border: 2px solid #eee;"/>
+                                                </div>
+                                            </t>
+                                        </t>
+                                        <input type="file" name="x_psm_0211_passport_photo" class="form-control form-control-sm" accept=".png,.jpg,.jpeg"/>
+                                        <img class="js_image_preview img-thumbnail mt-2 d-none" style="max-height: 150px;"/>
+                                    </div>
+                                </t>
+                            </div>
+
+                            <!-- Right Column: Optional / Support info -->
+                            <t t-if="contract_type == 'fulltime'">
+                                <div class="col-lg-5">
+                                    <h4 class="mb-4 text-secondary border-start border-4 border-warning ps-3">ADDITIONAL DOCUMENTS</h4>
+                                    
+                                    <!-- Social Insurance -->
+                                    <div class="mb-3 p-3 border rounded bg-light border-dashed">
+                                        <label class="form-label fw-bold small text-uppercase text-muted">SOCIAL INSURANCE BOOK (IF ANY)</label>
+                                        <t t-if="partner.x_psm_0211_social_insurance_filename">
+                                            <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-white rounded border border-info shadow-sm">
+                                                <span class="x-small overflow-hidden text-truncate me-2" t-esc="partner.x_psm_0211_social_insurance_filename"/>
+                                                <div class="d-flex gap-2 align-items-center flex-shrink-0">
+                                                    <t t-if="doc_is_image.get('x_psm_0211_social_insurance')">
+                                                        <button type="button" class="btn btn-sm btn-link text-danger p-0 fw-bold x-small" 
+                                                                style="text-decoration: none;"
+                                                                data-bs-toggle="modal" data-bs-target="#imagePreviewModal" 
+                                                                t-attf-data-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_social_insurance"
+                                                                t-att-data-title="'SOCIAL INSURANCE BOOK'"><i class="fa fa-eye me-1"/>Preview</button>
+                                                        <span class="text-muted x-small">|</span>
+                                                    </t>
+                                                    <a t-attf-href="/web/content?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_social_insurance&amp;filename={{ partner.x_psm_0211_social_insurance_filename }}&amp;download=true" 
+                                                       class="btn btn-sm btn-link text-dark p-0 x-small" style="text-decoration: none;">
+                                                        <i class="fa fa-download me-1"/>Download
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <!-- Preview for Social Insurance -->
+                                            <t t-if="doc_is_image.get('x_psm_0211_social_insurance')">
+                                                <div class="mb-3 js_image_preview_container" style="cursor: pointer;" 
+                                                     data-bs-toggle="modal" data-bs-target="#imagePreviewModal" 
+                                                     t-attf-data-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_social_insurance"
+                                                     t-att-data-title="'SOCIAL INSURANCE BOOK'">
+                                                    <img t-attf-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_social_insurance" 
+                                                         class="img-thumbnail hover-elevate shadow-sm" style="max-height: 150px; width: auto; border: 2px solid #eee;"/>
+                                                </div>
+                                            </t>
+                                        </t>
+                                        <input type="file" name="x_psm_0211_social_insurance" class="form-control form-control-sm" accept=".png,.jpg,.jpeg"/>
+                                        <img class="js_image_preview img-thumbnail mt-2 d-none" style="max-height: 150px;"/>
+                                    </div>
+
+                                    <!-- Driving License (Conditional if delivery?) -->
+                                    <div class="mb-3 p-3 border rounded bg-light border-dashed">
+                                        <label class="form-label fw-bold small text-uppercase text-muted">DRIVING LICENSE (IF ANY)</label>
+                                        <p class="small text-muted" style="font-size: 0.75rem;">Required for delivery roles.</p>
+                                        <t t-if="partner.x_psm_0211_driving_license_filename">
+                                            <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-white rounded border border-info shadow-sm">
+                                                <span class="x-small overflow-hidden text-truncate me-2" t-esc="partner.x_psm_0211_driving_license_filename"/>
+                                                <div class="d-flex gap-2 align-items-center flex-shrink-0">
+                                                    <t t-if="doc_is_image.get('x_psm_0211_driving_license')">
+                                                        <button type="button" class="btn btn-sm btn-link text-danger p-0 fw-bold x-small" 
+                                                                style="text-decoration: none;"
+                                                                data-bs-toggle="modal" data-bs-target="#imagePreviewModal" 
+                                                                t-attf-data-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_driving_license"
+                                                                t-att-data-title="'DRIVING LICENSE'"><i class="fa fa-eye me-1"/>Preview</button>
+                                                        <span class="text-muted x-small">|</span>
+                                                    </t>
+                                                    <a t-attf-href="/web/content?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_driving_license&amp;filename={{ partner.x_psm_0211_driving_license_filename }}&amp;download=true" 
+                                                       class="btn btn-sm btn-link text-dark p-0 x-small" style="text-decoration: none;">
+                                                        <i class="fa fa-download me-1"/>Download
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <!-- Preview for Driving License -->
+                                            <t t-if="doc_is_image.get('x_psm_0211_driving_license')">
+                                                <div class="mb-3 js_image_preview_container" style="cursor: pointer;" 
+                                                     data-bs-toggle="modal" data-bs-target="#imagePreviewModal" 
+                                                     t-attf-data-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_driving_license"
+                                                     t-att-data-title="'DRIVING LICENSE'">
+                                                    <img t-attf-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_driving_license" 
+                                                         class="img-thumbnail hover-elevate shadow-sm" style="max-height: 150px; width: auto; border: 2px solid #eee;"/>
+                                                </div>
+                                            </t>
+                                        </t>
+                                        <input type="file" name="x_psm_0211_driving_license" class="form-control form-control-sm" accept=".png,.jpg,.jpeg"/>
+                                        <img class="js_image_preview img-thumbnail mt-2 d-none" style="max-height: 150px;"/>
+                                        
+                                    </div>
+
+                                    <!-- Professional Degree -->
+                                    <div class="mb-3 p-3 border rounded bg-light border-dashed">
+                                        <label class="form-label fw-bold small text-uppercase text-muted">ACADEMIC DEGREE / CERTIFICATE (IF ANY)</label>
+                                        <t t-if="partner.x_psm_0211_professional_certificate_filename">
+                                            <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-white rounded border border-info shadow-sm">
+                                                <span class="x-small overflow-hidden text-truncate me-2" t-esc="partner.x_psm_0211_professional_certificate_filename"/>
+                                                <div class="d-flex gap-2 align-items-center flex-shrink-0">
+                                                    <t t-if="doc_is_image.get('x_psm_0211_professional_certificate')">
+                                                        <button type="button" class="btn btn-sm btn-link text-danger p-0 fw-bold x-small" 
+                                                                style="text-decoration: none;"
+                                                                data-bs-toggle="modal" data-bs-target="#imagePreviewModal" 
+                                                                t-attf-data-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_professional_certificate"
+                                                                t-att-data-title="'ACADEMIC DEGREE / CERTIFICATE'"><i class="fa fa-eye me-1"/>Preview</button>
+                                                        <span class="text-muted x-small">|</span>
+                                                    </t>
+                                                    <a t-attf-href="/web/content?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_professional_certificate&amp;filename={{ partner.x_psm_0211_professional_certificate_filename }}&amp;download=true" 
+                                                       class="btn btn-sm btn-link text-dark p-0 x-small" style="text-decoration: none;">
+                                                        <i class="fa fa-download me-1"/>Download
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <!-- Preview for Degree -->
+                                            <t t-if="doc_is_image.get('x_psm_0211_professional_certificate')">
+                                                <div class="mb-3 js_image_preview_container" style="cursor: pointer;" 
+                                                     data-bs-toggle="modal" data-bs-target="#imagePreviewModal" 
+                                                     t-attf-data-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_professional_certificate"
+                                                     t-att-data-title="'ACADEMIC DEGREE / CERTIFICATE'">
+                                                    <img t-attf-src="/web/image?model=res.partner&amp;id={{ partner.id }}&amp;field=x_psm_0211_professional_certificate" 
+                                                         class="img-thumbnail hover-elevate shadow-sm" style="max-height: 150px; width: auto; border: 2px solid #eee;"/>
+                                                </div>
+                                            </t>
+                                        </t>
+                                        <input type="file" name="x_psm_0211_professional_certificate" class="form-control form-control-sm" accept=".png,.jpg,.jpeg"/>
+                                        <img class="js_image_preview img-thumbnail mt-2 d-none" style="max-height: 150px;"/>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+
+                        <!-- Footer Actions -->
+                        <div class="col-12 mt-5 mb-5 text-center">
+                            <button type="submit" class="btn btn-lg px-5 py-3 fw-bold" 
+                                    style="background-color: #DA291C; color: white; border-radius: 0;">
+                                <t t-if="partner.x_psm_portal_revision_count > 0">SUBMIT UPDATE</t>
+                                <t t-else="">SUBMIT FORM</t>
+                            </button>
+                        </div>
+                    </form>
+
+                     <!-- VIEW ONLY REMOVED TO ALLOW RE-UPLOAD -->
+
+                <!-- Back to Portal Link -->
+                <div class="text-center mt-5 mb-5">
+                    <a href="/my" class="text-decoration-none text-muted small border-bottom pb-1">RETURN TO DASHBOARD</a>
+                </div>
+            </div>
+            
+            <!-- MODAL CONFIRMATION -->
+            <div class="modal fade" id="submitConfirmModal" tabindex="-1" aria-labelledby="submitConfirmModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content overflow-hidden shadow-lg" style="border-radius: 20px; border: none;">
+                        <!-- Custom Gradient Header -->
+                        <div class="modal-header border-0 pt-4 pb-0" style="background: linear-gradient(135deg, #ffffff 0%, #fff8f8 100%);">
+                            <div class="text-center w-100 position-relative">
+                                <div class="mcd-logo-dot mx-auto mb-2" style="background: #DA291C; width: 12px; height: 12px; border-radius: 50%;"></div>
+                                <h4 class="modal-title fw-bold text-dark mb-0" id="submitConfirmModalLabel" style="letter-spacing: -0.5px;">CHECK YOUR DOCUMENTS</h4>
+                                <div class="x-small text-muted text-uppercase mt-1 fw-bold" style="letter-spacing: 1px;">Summary of your submission</div>
+                                <button type="button" class="btn-close position-absolute end-0 top-0 mt-n1" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                        </div>
+                        
+                        <div class="modal-body px-4 py-4">
+                            <div id="modal-summary-content" class="custom-modal-scroll" style="max-height: 450px; overflow-y: auto; scroll-behavior: smooth;">
+                                <!-- Content injected by JS will be styled by my custom CSS -->
+                            </div>
+                        </div>
+                        
+                        <!-- Premium Footer with Centered Gradient Buttons -->
+                        <div class="modal-footer border-0 justify-content-center gap-3 pb-5 pt-0 px-4">
+                            <button type="button" class="btn btn-lg px-5 py-3 fw-bold mcd-btn-outline-gold" data-bs-dismiss="modal" 
+                                    style="border-radius: 12px; font-size: 14px; min-width: 180px;">
+                                <i class="fa fa-arrow-left me-2 small"/>GO BACK
+                            </button>
+                            <button type="button" id="btn-final-confirm" class="btn btn-lg px-5 py-3 fw-bold mcd-btn-gradient-red" 
+                                    style="border-radius: 12px; font-size: 14px; min-width: 220px;">
+                                CONFIRM &amp; SUBMIT <i class="fa fa-paper-plane ms-2 small"/>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- IMAGE PREVIEW MODAL (LIGHTBOX) -->
+            <div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content border-0 shadow-lg" style="border-radius: 0; background: rgba(0,0,0,0.85);">
+                        <div class="modal-header border-0 pb-0">
+                            <h5 class="modal-title text-white fw-bold" id="modal-image-title">DOCUMENT PREVIEW</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-1 text-center">
+                            <img src="" id="modal-preview-image" class="img-fluid" style="max-height: 80vh; border: 3px solid white;"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Premium Custom CSS -->
+            <style>
+                /* Image Hover Effect */
+                .hover-elevate:hover {
+                    transform: scale(1.05);
+                    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.2) !important;
+                    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    z-index: 5;
+                }
+
+                /* McDonald's Red Gradient Button */
+                .mcd-btn-gradient-red {
+                    background: linear-gradient(135deg, #DA291C 0%, #B81D13 100%);
+                    color: white !important;
+                    border: none;
+                    box-shadow: 0 4px 15px rgba(218, 41, 28, 0.3);
+                    transition: all 0.3s ease;
+                }
+                .mcd-btn-gradient-red:hover {
+                    background: linear-gradient(135deg, #e43d31 0%, #DA291C 100%);
+                    box-shadow: 0 6px 20px rgba(218, 41, 28, 0.4);
+                    transform: translateY(-2px);
+                }
+                .mcd-btn-gradient-red:active {
+                    transform: translateY(0);
+                }
+
+                /* Gold Outline Button */
+                .mcd-btn-outline-gold {
+                    background: white;
+                    color: #DA291C !important;
+                    border: 2px solid #FFBC0D;
+                    transition: all 0.3s ease;
+                }
+                .mcd-btn-outline-gold:hover {
+                    background: #fffdf5;
+                    border-color: #DA291C;
+                    box-shadow: 0 4px 12px rgba(255, 188, 13, 0.2);
+                    transform: translateY(-2px);
+                }
+
+                /* Summary List Item Styling (Applied via CSS because JS injects HTML) */
+                #modal-summary-content > div {
+                    transition: all 0.2s ease;
+                    border: 1px solid #eee !important;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+                    border-radius: 12px !important;
+                    padding: 12px !important;
+                    margin-bottom: 12px !important;
+                    background: #fdfdfd !important;
+                }
+                #modal-summary-content > div:hover {
+                    border-color: #DA291C !important;
+                    background: #fff !important;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+                }
+
+                /* Custom Scrollbar for Modal */
+                .custom-modal-scroll::-webkit-scrollbar {
+                    width: 6px;
+                }
+                .custom-modal-scroll::-webkit-scrollbar-track {
+                    background: #f1f1f1;
+                    border-radius: 10px;
+                }
+                .custom-modal-scroll::-webkit-scrollbar-thumb {
+                    background: #DA291C;
+                    border-radius: 10px;
+                }
+                .custom-modal-scroll::-webkit-scrollbar-thumb:hover {
+                    background: #B81D13;
+                }
+            </style>
+        </t>
+    </template>
+
+    <template id="portal_onboard_info_success" name="Onboarding Success">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-5 text-center">
+                <div class="alert alert-success mt-4 p-5 shadow-sm border-0" role="alert" style="background-color: #f0fdf4;">
+                    <h2 class="fw-bold mb-4" style="color: #166534;">SUBMISSION SUCCESSFUL</h2>
+                    <p class="lead">Your onboarding documents have been received. Our HR team will review your application shortly.</p>
+                    <div class="mt-4 pt-3 border-top">
+                        <a href="/my/onboard_info" class="btn btn-dark px-4 me-2" style="border-radius: 0;">REVIEW DOCUMENTS</a>
+                        <a href="/my" class="btn btn-outline-secondary px-4" style="border-radius: 0;">PORTAL HOME</a>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+
+    <!-- Sidebar Link Inherit -->
+    <template id="portal_my_home_onboard_inherit" inherit_id="portal_custom.portal_my_home_inherit">
+        <xpath expr="//div[hasclass('social-card')]//div[normalize-space(.)='ỨNG DỤNG']" position="after">
+            <a href="/my/onboard_info" class="sidebar-link">
+                <div class="app-icon-wrapper me-3" style="background: #e1f5fe; color: #01579b;">
+                    <span style="font-size: 10px; font-weight: bold;">DOCS</span>
+                </div>
+                <span>Onboarding Documents</span>
+            </a>
+            <a href="/my/contract" class="sidebar-link">
+                <div class="app-icon-wrapper me-3" style="background: #fff3e0; color: #e65100;">
+                    <span style="font-size: 10px; font-weight: bold;">SIGN</span>
+                </div>
+                <span>Employment Contract</span>
+            </a>
+        </xpath>
+        <xpath expr="//div[hasclass('mobile-app-grid')]//a[@href='/my/update_info']" position="after">
+            <a href="/my/onboard_info" class="mobile-app-item">
+                <div class="mobile-app-icon" style="background: #DA291C;">
+                    <span style="font-size: 10px; font-weight: bold; color: white;">DOCS</span>
+                </div>
+                <span class="mobile-app-label">Onboarding</span>
+            </a>
+            <a href="/my/contract" class="mobile-app-item">
+                <div class="mobile-app-icon" style="background: #DA291C;">
+                    <span style="font-size: 10px; font-weight: bold; color: white;">SIGN</span>
+                </div>
+                <span class="mobile-app-label">Contract</span>
+            </a>
+        </xpath>
+    </template>
+
+
+    <!-- FORCE LOAD JS (Case Manifest Bundle not refreshing) -->
+    <template id="portal_onboard_assets" inherit_id="portal.portal_layout">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/M02_P0211/static/src/js/portal_onboarding.js"></script>
+        </xpath>
+    </template>
+</odoo>

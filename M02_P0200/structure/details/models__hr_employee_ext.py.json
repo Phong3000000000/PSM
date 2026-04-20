@@ -1,0 +1,51 @@
+{
+  "file": "models/hr_employee_ext.py",
+  "type": "python",
+  "bucket": "models",
+  "summary": "models: hr.employee; 1 classes; 2 fields",
+  "classes": [
+    {
+      "python_class": "HrEmployee",
+      "description": "Extends hr.employee in models/hr_employee_ext.py.",
+      "model": null,
+      "inherit": "hr.employee",
+      "order": null,
+      "rec_name": null,
+      "fields": [
+        {
+          "name": "legal_name",
+          "type": "Char",
+          "string": "Legal Name",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": "Full legal name of the employee as shown in ID/Passport"
+        },
+        {
+          "name": "private_phone",
+          "type": "Char",
+          "string": "Private Phone",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": "Private phone number of the employee"
+        }
+      ],
+      "methods": [],
+      "kind": "inherit_only"
+    }
+  ],
+  "routes": []
+}

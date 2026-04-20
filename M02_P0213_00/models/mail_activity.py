@@ -5,11 +5,8 @@ from odoo import models, fields, api, _
 class MailActivity(models.Model):
     _inherit = 'mail.activity'
 
-    # Ensure active field is visible (may already exist in 0214 if installed together)
-    active = fields.Boolean(default=True, string="Active")
-
-    # OPS specific display state (parallel to rst_display_state in 0214)
-    ops_display_state = fields.Selection([
+    # OPS specific display state (for offboarding checklist)
+    x_psm_0213_ops_display_state = fields.Selection([
         ('pending', 'Pending'),
         ('overdue', 'Overdue'),
         ('done', 'Done'),
@@ -21,18 +18,18 @@ class MailActivity(models.Model):
         today = fields.Date.today()
         for activity in self:
             if not activity.active:
-                activity.ops_display_state = 'done'
+                activity.x_psm_0213_ops_display_state = 'done'
             elif activity.date_deadline and activity.date_deadline < today:
-                activity.ops_display_state = 'overdue'
+                activity.x_psm_0213_ops_display_state = 'overdue'
             else:
-                activity.ops_display_state = 'pending'
+                activity.x_psm_0213_ops_display_state = 'pending'
 
     def unlink(self):
         """
         Ngăn xóa activities của OPS Offboarding.
         Thay vào đó archive (active=False) để giữ lại lịch sử checklist.
         """
-        ops_cat = self.env.ref('M02_P0213_00.approval_category_resignation', raise_if_not_found=False)
+        ops_cat = self.env.ref('M02_P0213_00.psm_0213_approval_category_resignation', raise_if_not_found=False)
 
         if not ops_cat:
             return super().unlink()
@@ -61,7 +58,7 @@ class MailActivity(models.Model):
             return req.exists() and req.category_id == ops_cat
         elif activity.res_model == 'hr.employee':
             req = self.env['approval.request'].sudo().search([
-                ('employee_id', '=', activity.res_id),
+                ('x_psm_0213_employee_id', '=', activity.res_id),
                 ('category_id', '=', ops_cat.id),
             ], limit=1)
             return bool(req)
@@ -72,19 +69,19 @@ class MailActivity(models.Model):
         if activity.res_model == 'approval.request':
             req = self.env['approval.request'].sudo().browse(activity.res_id)
             if req.exists():
-                req.modified(['employee_activity_ids'])
+                req.modified(['x_psm_0213_employee_activity_ids'])
         elif activity.res_model == 'hr.employee':
             reqs = self.env['approval.request'].sudo().search([
-                ('employee_id', '=', activity.res_id),
+                ('x_psm_0213_employee_id', '=', activity.res_id),
                 ('category_id', '=', ops_cat.id),
             ])
-            reqs.modified(['employee_activity_ids'])
+            reqs.modified(['x_psm_0213_employee_activity_ids'])
 
     def _action_done(self, feedback=False, attachment_ids=False):
         """
         Override để trigger recompute checklist sau khi Mark Done.
         """
-        ops_cat = self.env.ref('M02_P0213_00.approval_category_resignation', raise_if_not_found=False)
+        ops_cat = self.env.ref('M02_P0213_00.psm_0213_approval_category_resignation', raise_if_not_found=False)
 
         res = super()._action_done(feedback=feedback, attachment_ids=attachment_ids)
 
@@ -101,7 +98,7 @@ class MailActivity(models.Model):
                 ('category_id', '=', ops_cat.id),
             ]
             if activity.res_model == 'hr.employee':
-                domain.append(('employee_id', '=', activity.res_id))
+                domain.append(('x_psm_0213_employee_id', '=', activity.res_id))
             else:
                 domain.append(('id', '=', activity.res_id))
 
@@ -112,12 +109,12 @@ class MailActivity(models.Model):
                     ('active', '=', True),
                     '|',
                     '&', ('res_model', '=', 'approval.request'), ('res_id', '=', req.id),
-                    '&', ('res_model', '=', 'hr.employee'), ('res_id', '=', req.employee_id.id if req.employee_id else 0),
+                    '&', ('res_model', '=', 'hr.employee'), ('res_id', '=', req.x_psm_0213_employee_id.id if req.x_psm_0213_employee_id else 0),
                 ])
 
-                if pending_count == 0 and req.is_plan_launched:
+                if pending_count == 0 and req.x_psm_0213_is_plan_launched:
                     req.message_post(body=_("Hệ thống: Tất cả các công việc trong checklist đã được hoàn thành."))
 
-                req.sudo().modified(['employee_activity_ids'])
+                req.sudo().modified(['x_psm_0213_employee_activity_ids'])
 
         return res

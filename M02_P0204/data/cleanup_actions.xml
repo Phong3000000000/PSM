@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- Disable obsolete hr.job inherited views from legacy versions before loading current views. -->
+        <function model="hr.job" name="_x_psm_deactivate_legacy_hr_job_views"/>
+
+        <!-- Remove stale metadata of deprecated x_psm_hr_job_email_rule layer. -->
+        <function model="hr.job" name="_x_psm_cleanup_obsolete_email_rule_metadata"/>
+
+           <!-- Auto cleanup legacy stages on install/upgrade. -->
+        <function model="hr.recruitment.stage" name="_auto_cleanup_redundant_stages"/>
+
+        <!-- Archive obsolete manual cleanup server action kept from older versions. -->
+        <function model="hr.recruitment.stage" name="_x_psm_archive_obsolete_stage_cleanup_server_action"/>
+    </data>
+</odoo>

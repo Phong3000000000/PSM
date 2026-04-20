@@ -1,0 +1,56 @@
+{
+  "module_name": "M02_P0213_00",
+  "detail_file_count": 46,
+  "relation_count": 24,
+  "top_buckets": [
+    [
+      "07.04.26",
+      16
+    ],
+    [
+      "data",
+      9
+    ],
+    [
+      "docs",
+      4
+    ],
+    [
+      "models",
+      4
+    ],
+    [
+      "New_Phase_3103",
+      4
+    ],
+    [
+      "controllers",
+      2
+    ],
+    [
+      "security",
+      2
+    ],
+    [
+      "views",
+      2
+    ],
+    [
+      "python",
+      1
+    ],
+    [
+      "manifest",
+      1
+    ],
+    [
+      "convention",
+      1
+    ]
+  ],
+  "model_count": 4,
+  "view_count": 2,
+  "security_file_count": 2,
+  "controller_file_count": 2,
+  "sample_files": "07.04.26/code_review_M02_P0213_00.md, 07.04.26/DANH_SACH_FIELD_KE_THUA_VA_TAO_MOI_0213.md, 07.04.26/DANH_SACH_MODEL_KE_THUA_VA_TAO_MOI_0213.md, 07.04.26/DE_XUAT_MAPPING_GROUP_0200_CHO_0213.md, 07.04.26/DOI_CHIEU_BA_VS_CODE_0213.md, 07.04.26/KET_QUA_FIX_THEO_REVIEW_M02_P0213_00.md, 07.04.26/PHASE_0_CHOT_CHUAN_VA_MAPPING_REFACTOR_0213.md, 07.04.26/PHASE_1_BASELINE_VA_CHECKLIST_TEST_0213.md, 07.04.26/PHASE_2_KET_QUA_REFACTOR_FIELD_0213.md, 07.04.26/PHASE_4_KET_QUA_CHUAN_HOA_XML_ID_0213.md"
+}

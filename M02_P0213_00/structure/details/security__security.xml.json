@@ -1,0 +1,40 @@
+{
+  "file": "security/security.xml",
+  "type": "xml",
+  "bucket": "security",
+  "summary": "1 functions/rules",
+  "records": [
+    {
+      "id": "rule_psm_0213_survey_user_input_portal_own",
+      "model": "ir.rule",
+      "fields": {
+        "name": "0213 portal chi xem survey.user_input cua chinh minh",
+        "model_id": {
+          "ref": "survey.model_survey_user_input"
+        },
+        "groups": {
+          "eval": "[(4, ref('base.group_portal'))]"
+        },
+        "domain_force": "['|', ('partner_id', '=', user.partner_id.id), ('email', '=', user.email)]"
+      }
+    }
+  ],
+  "views": [],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [
+    {
+      "kind": "record_rule",
+      "id": "rule_psm_0213_survey_user_input_portal_own",
+      "name": "0213 portal chi xem survey.user_input cua chinh minh",
+      "model_ref": {
+        "ref": "survey.model_survey_user_input"
+      },
+      "domain": "['|', ('partner_id', '=', user.partner_id.id), ('email', '=', user.email)]"
+    }
+  ],
+  "referenced_models": [
+    "ir.rule"
+  ]
+}

@@ -1,8 +1,261 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="resignation_portal_template" name="Form yêu cầu nghỉ việc">
+    <template id="view_psm_0213_resignation_portal_template" name="Form yêu cầu nghỉ việc">
         <t t-call="portal.portal_layout">
-            <div id="wrap" class="container mt-4">
+            <style>
+                .psm-ops-resignation-portal {
+                    color: var(--foreground, #1f2937);
+                }
+
+                .psm-ops-resignation-portal .card,
+                .psm-ops-resignation-portal .alert,
+                .psm-ops-resignation-portal .form-control,
+                .psm-ops-resignation-portal .form-select {
+                    border-color: var(--border, #e5e7eb) !important;
+                }
+
+                .psm-ops-resignation-portal .card {
+                    background: var(--card, #ffffff) !important;
+                    color: var(--card-foreground, var(--foreground, #1f2937)) !important;
+                    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.08);
+                }
+
+                .psm-ops-resignation-portal .text-dark,
+                .psm-ops-resignation-portal .fw-bold.text-dark,
+                .psm-ops-resignation-portal .fw-semibold,
+                .psm-ops-resignation-portal h3,
+                .psm-ops-resignation-portal h4,
+                .psm-ops-resignation-portal h5,
+                .psm-ops-resignation-portal h6,
+                .psm-ops-resignation-portal label,
+                .psm-ops-resignation-portal strong {
+                    color: var(--foreground, #1f2937) !important;
+                }
+
+                .psm-ops-resignation-portal .text-muted,
+                .psm-ops-resignation-portal small {
+                    color: var(--muted-foreground, #6b7280) !important;
+                }
+
+                .psm-ops-resignation-portal .form-control,
+                .psm-ops-resignation-portal .form-select,
+                .psm-ops-resignation-portal input[type="text"],
+                .psm-ops-resignation-portal input[type="date"] {
+                    background: var(--card, #ffffff) !important;
+                    color: var(--foreground, #1f2937) !important;
+                }
+
+                .psm-ops-resignation-portal .bg-light {
+                    background: color-mix(in srgb, var(--card, #ffffff) 88%, var(--muted, #f3f4f6)) !important;
+                    color: var(--foreground, #1f2937) !important;
+                }
+
+                .psm-ops-resignation-portal .theme-task-card {
+                    overflow: hidden;
+                    background: var(--card, #ffffff) !important;
+                    color: var(--card-foreground, var(--foreground, #1f2937)) !important;
+                    border: 1px solid var(--border, #e5e7eb) !important;
+                }
+
+                .psm-ops-resignation-portal .theme-task-card .card-body,
+                .psm-ops-resignation-portal .theme-task-card .d-flex,
+                .psm-ops-resignation-portal .theme-task-card h6,
+                .psm-ops-resignation-portal .theme-task-card small,
+                .psm-ops-resignation-portal .theme-task-card .text-dark,
+                .psm-ops-resignation-portal .theme-task-card .text-muted {
+                    background: transparent !important;
+                }
+
+                .psm-ops-resignation-portal .theme-task-card-inactive {
+                    background: color-mix(in srgb, var(--card, #ffffff) 82%, var(--background, #fdfaf5) 18%) !important;
+                    color: var(--muted-foreground, #6b7280) !important;
+                    opacity: 1 !important;
+                }
+
+                .psm-ops-resignation-portal .theme-task-card-inactive .card-body,
+                .psm-ops-resignation-portal .theme-task-card-inactive h6,
+                .psm-ops-resignation-portal .theme-task-card-inactive small,
+                .psm-ops-resignation-portal .theme-task-card-inactive .text-muted,
+                .psm-ops-resignation-portal .theme-task-card-inactive .text-dark,
+                .psm-ops-resignation-portal .theme-task-card-inactive .theme-task-owner {
+                    background: transparent !important;
+                    color: var(--muted-foreground, #6b7280) !important;
+                }
+
+                .psm-ops-resignation-portal .theme-task-meta {
+                    background: color-mix(in srgb, var(--card, #ffffff) 82%, var(--background, #fdfaf5) 18%) !important;
+                    border: 1px solid var(--border, #e5e7eb);
+                    color: var(--muted-foreground, #6b7280) !important;
+                }
+
+                .psm-ops-resignation-portal .theme-task-owner {
+                    background: color-mix(in srgb, var(--card, #ffffff) 82%, var(--background, #fdfaf5) 18%) !important;
+                    color: var(--muted-foreground, #6b7280) !important;
+                    border: 1px solid var(--border, #e5e7eb);
+                    font-size: 0.7rem;
+                }
+
+                .psm-ops-resignation-portal .theme-survey-card {
+                    background: color-mix(in srgb, var(--card, #ffffff) 84%, var(--background, #fdfaf5) 16%) !important;
+                    border: 1px solid color-mix(in srgb, var(--primary, #bd0017) 18%, var(--border, #e5e7eb)) !important;
+                }
+
+                .psm-ops-resignation-portal .theme-survey-card .card-body,
+                .psm-ops-resignation-portal .theme-survey-card .text-primary,
+                .psm-ops-resignation-portal .theme-survey-card .card-title,
+                .psm-ops-resignation-portal .theme-survey-card .card-text {
+                    background: transparent !important;
+                }
+
+                .psm-ops-resignation-portal .theme-survey-title {
+                    color: var(--foreground, #1f2937) !important;
+                }
+
+                .psm-ops-resignation-portal .theme-commit-panel {
+                    border: 1px solid #f2d7ca;
+                    border-radius: 20px;
+                    background: linear-gradient(180deg, #fff8f4 0%, #ffffff 100%);
+                    box-shadow: 0 14px 36px rgba(128, 54, 22, 0.08);
+                    overflow: hidden;
+                }
+
+                .psm-ops-resignation-portal .theme-commit-panel-intro {
+                    color: #54423a;
+                }
+
+                .psm-ops-resignation-portal .theme-commit-item {
+                    border-radius: 16px;
+                    background: #fff;
+                    border: 1px solid #f1e3db;
+                }
+
+                .psm-ops-resignation-portal .theme-commit-item-text {
+                    line-height: 1.8;
+                    color: #2f241f;
+                }
+
+                html[data-theme='dark'] .psm-ops-resignation-portal,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal {
+                    color: #f5f5f4;
+                }
+
+                html[data-theme='dark'] .psm-ops-resignation-portal .card,
+                html[data-theme='dark'] .psm-ops-resignation-portal .alert,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .card,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .alert {
+                    background: linear-gradient(180deg, #2a2623 0%, #1b1917 100%) !important;
+                    color: #f5f5f4 !important;
+                    border-color: rgba(255, 255, 255, 0.08) !important;
+                    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+                }
+
+                html[data-theme='dark'] .psm-ops-resignation-portal .text-dark,
+                html[data-theme='dark'] .psm-ops-resignation-portal .fw-bold.text-dark,
+                html[data-theme='dark'] .psm-ops-resignation-portal .fw-semibold,
+                html[data-theme='dark'] .psm-ops-resignation-portal h3,
+                html[data-theme='dark'] .psm-ops-resignation-portal h4,
+                html[data-theme='dark'] .psm-ops-resignation-portal h5,
+                html[data-theme='dark'] .psm-ops-resignation-portal h6,
+                html[data-theme='dark'] .psm-ops-resignation-portal label,
+                html[data-theme='dark'] .psm-ops-resignation-portal strong,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .text-dark,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .fw-bold.text-dark,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .fw-semibold,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal h3,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal h4,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal h5,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal h6,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal label,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal strong {
+                    color: #f5f5f4 !important;
+                }
+
+                html[data-theme='dark'] .psm-ops-resignation-portal .text-muted,
+                html[data-theme='dark'] .psm-ops-resignation-portal small,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .text-muted,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal small {
+                    color: #d6d3d1 !important;
+                }
+
+                html[data-theme='dark'] .psm-ops-resignation-portal .form-control,
+                html[data-theme='dark'] .psm-ops-resignation-portal .form-select,
+                html[data-theme='dark'] .psm-ops-resignation-portal input[type="text"],
+                html[data-theme='dark'] .psm-ops-resignation-portal input[type="date"],
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .form-control,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .form-select,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal input[type="text"],
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal input[type="date"] {
+                    background: #4b4743 !important;
+                    color: #f5f5f4 !important;
+                    border-color: #6b655f !important;
+                }
+
+                html[data-theme='dark'] .psm-ops-resignation-portal .bg-light,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .bg-light {
+                    background: #3a3632 !important;
+                    color: #f5f5f4 !important;
+                }
+
+                html[data-theme='dark'] .psm-ops-resignation-portal .theme-task-card-inactive,
+                html[data-theme='dark'] .psm-ops-resignation-portal .theme-task-card-inactive .card-body,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .theme-task-card-inactive,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .theme-task-card-inactive .card-body {
+                    background: color-mix(in srgb, var(--card, #1f1b18) 88%, var(--background, #151413) 12%) !important;
+                    color: var(--muted-foreground, #d6d3d1) !important;
+                }
+
+                html[data-theme='dark'] .psm-ops-resignation-portal .theme-task-card-inactive h6,
+                html[data-theme='dark'] .psm-ops-resignation-portal .theme-task-card-inactive .text-muted,
+                html[data-theme='dark'] .psm-ops-resignation-portal .theme-task-card-inactive small,
+                html[data-theme='dark'] .psm-ops-resignation-portal .theme-task-card-inactive .badge,
+                html[data-theme='dark'] .psm-ops-resignation-portal .theme-task-card-inactive .theme-task-owner,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .theme-task-card-inactive h6,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .theme-task-card-inactive .text-muted,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .theme-task-card-inactive small,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .theme-task-card-inactive .badge,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .theme-task-card-inactive .theme-task-owner {
+                    color: var(--muted-foreground, #d6d3d1) !important;
+                }
+
+                html[data-theme='dark'] .psm-ops-resignation-portal .theme-survey-card,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .theme-survey-card {
+                    background: color-mix(in srgb, var(--card, #1f1b18) 90%, var(--background, #151413) 10%) !important;
+                    border-color: color-mix(in srgb, var(--primary, #da291c) 30%, rgba(255, 255, 255, 0.08)) !important;
+                }
+
+                html[data-theme='dark'] .psm-ops-resignation-portal .theme-survey-card .text-primary,
+                html[data-theme='dark'] .psm-ops-resignation-portal .theme-survey-title,
+                html[data-theme='dark'] .psm-ops-resignation-portal .theme-survey-card .card-text,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .theme-survey-card .text-primary,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .theme-survey-title,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .theme-survey-card .card-text {
+                    color: #f5f5f4 !important;
+                }
+
+                html[data-theme='dark'] .psm-ops-resignation-portal .theme-commit-panel,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .theme-commit-panel {
+                    background: linear-gradient(180deg, #2a2623 0%, #1b1917 100%);
+                    border-color: rgba(255, 255, 255, 0.08);
+                    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+                }
+
+                html[data-theme='dark'] .psm-ops-resignation-portal .theme-commit-panel-intro,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .theme-commit-panel-intro {
+                    color: #d6d3d1;
+                }
+
+                html[data-theme='dark'] .psm-ops-resignation-portal .theme-commit-item,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .theme-commit-item {
+                    background: rgba(255, 255, 255, 0.04);
+                    border-color: rgba(255, 255, 255, 0.08);
+                }
+
+                html[data-theme='dark'] .psm-ops-resignation-portal .theme-commit-item-text,
+                html[data-bs-theme='dark'] .psm-ops-resignation-portal .theme-commit-item-text {
+                    color: #f5f5f4;
+                }
+            </style>
+            <div id="wrap" class="container mt-4 psm-ops-resignation-portal">
                 <div class="card p-4 shadow-sm">
                     <h3 class="mb-4">
                         <i class="fa fa-sign-out text-danger me-2"/>
@@ -12,7 +265,7 @@
                     <t t-if="success or (resignation_request and resignation_request.request_status in ['pending', 'approved', 'done'])">
                         <div class="mb-4">
                             <div t-if="resignation_request.request_status == 'pending'" class="alert alert-info">
-                                <i class="fa fa-clock-o me-2"/> <strong>Đã gửi yêu cầu:</strong> Đơn của bạn đang chờ quản lý <strong><t t-esc="resignation_request.employee_id.parent_id.name"/></strong> phê duyệt.
+                                <i class="fa fa-clock-o me-2"/> <strong>Đã gửi yêu cầu:</strong> Đơn của bạn đang chờ quản lý <strong><t t-esc="resignation_request.x_psm_0213_employee_id.parent_id.name"/></strong> phê duyệt.
                             </div>
                             <div t-elif="resignation_request.request_status == 'approved'" class="alert alert-success">
                                 <i class="fa fa-check-circle me-2"/> <strong>Đã phê duyệt:</strong> Đơn nghỉ việc đã được chấp thuận. Vui lòng hoàn thành các đầu việc bên dưới.
@@ -29,10 +282,10 @@
                             </h4>
                             
                             <!-- Exit Survey Highlight -->
-                            <div t-if="survey_url" class="card border-primary mb-4 shadow-sm bg-light">
+                            <div t-if="survey_url" class="card border-primary mb-4 shadow-sm bg-light theme-survey-card">
                                 <div class="card-body d-flex justify-content-between align-items-center p-3">
                                     <div>
-                                        <h5 class="card-title text-primary fw-bold mb-1"><i class="fa fa-wpforms me-2"/>Khảo sát Nghỉ việc (Exit Interview)</h5>
+                                        <h5 class="card-title text-primary fw-bold mb-1 theme-survey-title"><i class="fa fa-wpforms me-2"/>Khảo sát Nghỉ việc (Exit Interview)</h5>
                                         <p class="card-text small text-muted mb-0">Vui lòng hoàn thành khảo sát này trước ngày nghỉ chính thức.</p>
                                     </div>
                                     <a t-att-href="survey_url" target="_blank" class="btn btn-primary d-flex align-items-center shadow-sm">
@@ -44,7 +297,7 @@
                             <div class="row g-3">
                                 <t t-foreach="activities" t-as="activity">
                                     <div class="col-12">
-                                        <div t-attf-class="card border-0 shadow-sm h-100 #{'bg-light opacity-75' if not activity.active else ''}" style="border-left: 4px solid #dee2e6 !important;">
+                                        <div t-attf-class="card border-0 shadow-sm h-100 theme-task-card #{'theme-task-card-inactive' if not activity.active else ''}" style="border-left: 4px solid #dee2e6 !important;">
                                             <t t-if="activity.active">
                                                 <t t-set="border_color" t-value="'#0d6efd' if activity.user_id == request.env.user else '#6c757d'"/>
                                                 <div t-attf-style="position: absolute; left: -4px; top: 0; bottom: 0; width: 4px; background-color: #{border_color}; border-radius: 4px 0 0 4px;"/>
@@ -61,7 +314,7 @@
 
                                                     <!-- Deadline & Action (Unified Unit) -->
                                                     <div class="d-flex align-items-center flex-shrink-0 ms-2" style="min-height: 24px;">
-                                                        <div class="d-flex align-items-center rounded-pill px-2 py-1" style="background-color: #f8f9fa; border: 1px solid #e9ecef;">
+                                                        <div class="d-flex align-items-center rounded-pill px-2 py-1 theme-task-meta">
                                                             <!-- Deadline Label -->
                                                             <small t-if="activity.date_deadline" t-attf-class="fw-normal mb-0 #{'text-danger fw-bold' if activity.state == 'overdue' and activity.active else 'text-dark'}" style="font-size: 0.75rem; white-space: nowrap;">
                                                                 <i class="fa fa-calendar-check-o me-1"/>Hạn: <t t-esc="activity.date_deadline"/>
@@ -98,7 +351,7 @@
                                                 
                                                 <!-- Responsible Badge -->
                                                 <div t-if="activity.user_id != request.env.user" class="d-flex">
-                                                    <span class="badge rounded-pill fw-normal px-2 py-1" style="background-color: #f8f9fa; color: #212529; font-size: 0.7rem; border: 1px solid #dee2e6;">
+                                                    <span class="badge rounded-pill fw-normal px-2 py-1 theme-task-owner">
                                                         <i class="fa fa-user-o me-1"/> Phụ trách: <t t-esc="activity.user_id.name"/>
                                                     </span>
                                                 </div>
@@ -205,58 +458,77 @@
                         <p class="mt-4 mb-4" style="font-size: 1rem;">
                             Nay tôi làm đơn này, kính xin quý công ty cho tôi được nghỉ việc.
                         </p>
+
+                        <h5 class="text-primary mt-4 mb-3">
+                            <i class="fa fa-edit me-2"/>Thông tin nghỉ việc
+                        </h5>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Ngày nghỉ dự kiến</label>
+                                <input type="date"
+                                    name="resignation_date"
+                                    class="form-control"
+                                    required="required"/>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Loại nghỉ việc</label>
+                                <select name="resignation_type_id" class="form-select" required="required">
+                                    <option value="">-- Chọn loại nghỉ việc --</option>
+                                    <t t-foreach="resignation_types" t-as="resignation_type">
+                                        <option t-att-value="resignation_type.id">
+                                            <t t-esc="resignation_type.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Mô tả lý do nghỉ việc</label>
+                            <textarea name="resignation_reason"
+                                class="form-control"
+                                rows="4"
+                                placeholder="Vui lòng nhập mô tả chi tiết cho lý do nghỉ việc đã chọn"
+                                required="required"/>
+                        </div>
                         
                         <!-- Lý do nghỉ việc -->
                         <h5 class="text-primary mt-4 mb-3">
-                            <i class="fa fa-edit me-2"/>Chi tiết nghỉ việc
-                        </h5>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-bold" for="resignation_type_id">
-                                Loại nghỉ việc <span class="text-danger">*</span>
-                            </label>
-                            <select name="resignation_type_id" id="resignation_type_id" class="form-select" required="required">
-                                <option value="">-- Chọn loại nghỉ việc --</option>
-                                <t t-foreach="resignation_types" t-as="res_type">
-                                    <option t-att-value="res_type.id"><t t-esc="res_type.name"/></option>
-                                </t>
-                            </select>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label fw-bold" for="resignation_reason">
-                                Lý do nghỉ việc <span class="text-danger">*</span>
-                            </label>
-                            <textarea name="resignation_reason" id="resignation_reason" 
-                                class="form-control" rows="5" 
-                                placeholder="Nhập lý do nghỉ việc của bạn..."
-                                required="required"></textarea>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-bold" for="resignation_date">
-                                Ngày nghỉ dự kiến <span class="text-danger">*</span>
-                            </label>
-                            <input type="date" name="resignation_date" id="resignation_date" 
-                                class="form-control" required="required"/>
-                        </div>
-
-
-                        <h5 class="text-primary mt-4 mb-3">
-                            <i class="fa fa-edit me-2"/>Tôi hiểu và đồng ý:
+                            <i class="fa fa-shield me-2"/>Xác nhận và cam kết
                         </h5>
 
                         <!-- Quy định và cam kết -->
-                        <div class="mt-4 mb-4 p-3" style="background-color: #f8f9fa; border-left: 4px solid #0d6efd; border-radius: 4px;">
-                            
-                            <div class="text-dark" style="font-size: 0.95rem; line-height: 1.8;">
-                                <p class="mb-2"><strong>1.</strong> Tuân thủ quy trình nghỉ việc của công ty và các trách nhiệm, chế độ thành toán khi chấm dứt hợp đồng lao động, bao gồm nhưng không giới hạn quy định hoàn trả động phúc, tài sản, quyết toán lương, nhân sổ/tờ rơi Bảo hiểm xã hội &amp; Quyết định nghỉ việc.</p>
-                                <p class="mb-2"><strong>2.</strong> Khi tôi chấm dứt hợp đồng lao động với công ty, tôi có quyền thực hiện các nghĩa vụ của Người lao động đơn phương chấm dứt hợp đồng lao động trái pháp luật, bao gồm nhưng không giới hạn việc khấu trừ vào bất kỳ khoản thanh toán nào của tôi một khoản tiền ưng với số ngày nghỉ trước hạn.</p>
-                                <p class="mb-2"><strong>3.</strong> Cho phép Công ty lưu trữ Dự liệu cá nhân sau khi các bên kết thúc mối quan hệ lao động, hoặc sau khi các bên chấm dứt hợp đồng là năm (5) năm, tùy trường hợp pháp luật yêu cầu một thời gian dài hơn.</p>
-                                <p class="mb-0"><strong>4.</strong> Cam kết thực hiện nghiêm túc các điều khoản tại Thỏa thuận Bảo mật thông tin đã ký tại thời điểm ký kết hợp đồng lao động với công ty, hoặc các thông tin mật, thông tin cần bảo mật mà có nhân được trong quá trình làm việc tại công ty.</p>
+                        <div class="mt-4 mb-4 theme-commit-panel">
+                            <div class="px-4 py-3" style="background: linear-gradient(90deg, #8f2635 0%, #b4462b 100%); color: #fff7f2;">
+                                <div style="font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.9;">Bước xác nhận cuối</div>
+                                <div class="fw-semibold" style="font-size: 1.1rem;">Vui lòng đọc kỹ các điều khoản trước khi gửi yêu cầu nghỉ việc</div>
+                            </div>
+                            <div class="p-4 p-md-4">
+                                <p class="mb-4 theme-commit-panel-intro" style="font-size: 0.98rem; line-height: 1.8;">
+                                    Nội dung dưới đây giữ nguyên ý nghĩa cam kết hiện tại, chỉ được trình bày lại rõ ràng hơn để bạn dễ đọc và xác nhận.
+                                </p>
+                                <div class="d-flex flex-column gap-3">
+                                    <div class="d-flex align-items-start gap-3 p-3 theme-commit-item">
+                                        <div class="flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; border-radius: 50%; background: #8f2635; color: #fff; font-weight: 700;">1</div>
+                                        <div class="theme-commit-item-text"><strong>Tuân thủ quy trình nghỉ việc</strong> của công ty và các trách nhiệm, chế độ thanh toán khi chấm dứt hợp đồng lao động, bao gồm nhưng không giới hạn quy định hoàn trả đồng phục, tài sản, quyết toán lương, nhận sổ/tờ rời BHXH &amp; Quyết định nghỉ việc.</div>
+                                    </div>
+                                    <div class="d-flex align-items-start gap-3 p-3 theme-commit-item">
+                                        <div class="flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; border-radius: 50%; background: #8f2635; color: #fff; font-weight: 700;">2</div>
+                                        <div class="theme-commit-item-text"><strong>Nếu chấm dứt làm việc trước thời hạn cho phép</strong>, công ty có quyền khấu trừ vào bất kỳ khoản thanh toán nào của tôi một khoản tương ứng với số ngày nghỉ trước hạn.</div>
+                                    </div>
+                                    <div class="d-flex align-items-start gap-3 p-3 theme-commit-item">
+                                        <div class="flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; border-radius: 50%; background: #8f2635; color: #fff; font-weight: 700;">3</div>
+                                        <div class="theme-commit-item-text"><strong>Cho phép Công ty lưu trữ Dữ liệu cá nhân</strong> sau khi các bên kết thúc mối quan hệ lao động, hoặc sau khi các bên chấm dứt hợp đồng là năm (5) năm, tùy trường hợp pháp luật yêu cầu một thời gian dài hơn.</div>
+                                    </div>
+                                    <div class="d-flex align-items-start gap-3 p-3 theme-commit-item">
+                                        <div class="flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; border-radius: 50%; background: #8f2635; color: #fff; font-weight: 700;">4</div>
+                                        <div class="theme-commit-item-text"><strong>Cam kết bảo mật thông tin</strong> theo Thỏa thuận Bảo mật thông tin đã ký tại thời điểm ký kết hợp đồng lao động với công ty, cũng như các thông tin mật hoặc thông tin cần bảo mật mà cá nhân có được trong quá trình làm việc tại công ty.</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        
+
                         <!-- Alert -->
                         <div class="alert alert-warning mt-4">
                             <i class="fa fa-exclamation-triangle me-2"/>
@@ -283,3 +555,4 @@
 
 
 </odoo>
+

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_psm_company_form_ceo_inherit" model="ir.ui.view">
+        <field name="name">res.company.form.ceo.inherit</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='currency_id']" position="after">
+                <field name="x_psm_0205_ceo_id" string="CEO"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_psm_0205_company_recruitment_config_form" model="ir.ui.view">
+        <field name="name">res.company.psm.0205.recruitment.config.form</field>
+        <field name="model">res.company</field>
+        <field name="arch" type="xml">
+            <form string="Cấu hình Tuyển dụng Khối Văn phòng">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Cấu hình Tuyển dụng Khối Văn phòng</h1>
+                        <div class="text-muted">
+                            Cấu hình các tham số nghiệp vụ Phase 1, Phase 2 và Phase 3 cho module 0205 trong phạm vi Recruitment.
+                        </div>
+                    </div>
+                    <group>
+                        <group string="Ngữ cảnh">
+                            <field name="name" readonly="1"/>
+                            <field name="x_psm_0205_ceo_id" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <group string="Nhận diện khối văn phòng" col="2">
+                        <group>
+                            <field name="x_psm_0205_office_block_codes" placeholder="RST, OPS-HO"/>
+                        </group>
+                        <group>
+                            <field name="x_psm_0205_office_block_names" placeholder="HEAD OFFICE"/>
+                        </group>
+                    </group>
+                    <group string="Email và lịch phỏng vấn mặc định" col="2">
+                        <group>
+                            <field name="x_psm_0205_default_recruitment_email_from" placeholder="recruitment@example.com"/>
+                            <field name="x_psm_0205_default_recruitment_noreply_email" placeholder="noreply@recruitment.com"/>
+                        </group>
+                        <group>
+                            <field name="x_psm_0205_default_interview_location" placeholder="Văn phòng công ty"/>
+                            <field name="x_psm_0205_default_recruitment_blog_id" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <group string="Interviewer mặc định" col="2">
+                        <group>
+                            <field name="x_psm_0205_include_department_manager_interviewer"/>
+                            <field name="x_psm_0205_include_ceo_interviewer"/>
+                        </group>
+                        <group>
+                            <field name="x_psm_0205_default_bod_interviewer_group_id" options="{'no_create': True}"/>
+                            <field name="x_psm_0205_default_abu_interviewer_group_id" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <group string="Approver mặc định" col="2">
+                        <group>
+                            <field name="x_psm_0205_hr_approval_group_id" options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="x_psm_0205_ceo_approval_group_id" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <group string="Luồng duyệt office" col="2">
+                        <group>
+                            <field name="x_psm_0205_enable_ceo_approval"/>
+                            <field name="x_psm_0205_hr_approval_sequence"/>
+                        </group>
+                        <group>
+                            <field name="x_psm_0205_ceo_approval_sequence" invisible="not x_psm_0205_enable_ceo_approval"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

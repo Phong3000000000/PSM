@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Thêm tab Documents vào contact form -->
+    <record id="view_psm_partner_form_documents" model="ir.ui.view">
+        <field name="name">res.partner.form.documents</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Thông tin cá nhân">
+                    <group string="Trạng thái hồ sơ">
+                        <field name="x_psm_0211_portal_last_update" widget="datetime" readonly="1"/>
+                        <field name="x_psm_0211_portal_updates_count" readonly="1"/>
+                    </group>
+                    
+                    <group string="Tài liệu cá nhân">
+                        <!-- Ảnh thẻ -->
+                        <group string="1. Ảnh thẻ">
+                            <field name="x_psm_0211_passport_photo" filename="x_psm_0211_passport_photo_filename"/>
+                        </group>
+                        
+                        <!-- CCCD/CMND -->
+                        <group string="2. Căn cước công dân">
+                            <field name="x_psm_0211_id_card_front" filename="x_psm_0211_id_card_front_filename"/>
+                            <field name="x_psm_0211_id_card_back" filename="x_psm_0211_id_card_back_filename"/>
+                        </group>
+                        
+                        <!-- Hộ khẩu -->
+                        <group string="3. Sổ hộ khẩu">
+                            <field name="x_psm_0211_household_registration" filename="x_psm_0211_household_registration_filename"/>
+                        </group>
+                        
+                        <!-- Lý lịch tư pháp -->
+                        <group string="4. Lý lịch tư pháp">
+                            <field name="x_psm_0211_judicial_record" filename="x_psm_0211_judicial_record_filename"/>
+                        </group>
+                        
+                        <!-- Bằng cấp -->
+                        <group string="5. Bằng cấp &amp; Chứng chỉ">
+                            <field name="x_psm_0211_professional_certificate" filename="x_psm_0211_professional_certificate_filename"/>
+                            <field name="x_psm_0211_additional_certificates" filename="x_psm_0211_additional_certificates_filename"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

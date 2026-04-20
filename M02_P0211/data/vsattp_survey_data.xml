@@ -1,0 +1,637 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Khởi tạo khảo sát VSATTP (Rút gọn) -->
+        <record id="survey_vsattp_mcd_final" model="survey.survey">
+            <field name="title">Bài kiểm tra kiến thức Vệ sinh An toàn Thực phẩm (VSATTP)</field>
+            <field name="access_mode">public</field>
+            <field name="scoring_type">scoring_with_answers</field>
+            <field name="scoring_success_min">80</field>
+            <field name="is_attempts_limited" eval="True"/>
+            <field name="attempts_limit">3</field>
+            <field name="questions_layout">one_page</field>
+            <field name="description" type="html">
+                <p>Vui lòng trả lời các câu hỏi dưới đây để hoàn tất kiến thức VSATTP.</p>
+            </field>
+        </record>
+
+
+        <!-- Câu 1 -->
+        <record id="vsattp_q1" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">1</field>
+            <field name="title">Câu 1: An toàn thực phẩm là việc bảo đảm để thực phẩm không gây hại đến sức khỏe, tính mạng con người?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q1_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q1"/>
+            <field name="value">a) Đúng</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q1_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q1"/>
+            <field name="value">b) Sai</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 2 -->
+        <record id="vsattp_q2" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">2</field>
+            <field name="title">Câu 2: Ngộ độc thực phẩm là tình trạng bệnh lý do ăn, uống thực phẩm bị ô nhiễm?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q2_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q2"/>
+            <field name="value">a) Đúng</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q2_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q2"/>
+            <field name="value">b) Sai</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 3 -->
+        <record id="vsattp_q3" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">3</field>
+            <field name="title">Câu 3: Ô nhiễm thực phẩm là sự xuất hiện các tác nhân gây hại đến sức khỏe con người?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q3_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q3"/>
+            <field name="value">a) Đúng</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q3_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q3"/>
+            <field name="value">b) Sai</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 4 -->
+        <record id="vsattp_q4" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">4</field>
+            <field name="title">Câu 4: Động vật chết do dịch bệnh có được dùng để chế biến thực phẩm không?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q4_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q4"/>
+            <field name="value">a) Có</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q4_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q4"/>
+            <field name="value">b) Không</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 5 -->
+        <record id="vsattp_q5" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">5</field>
+            <field name="title">Câu 5: Thực phẩm đã hết hạn sử dụng có được phép bán ra thị trường không?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q5_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q5"/>
+            <field name="value">a) Có</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q5_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q5"/>
+            <field name="value">b) Không</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 6 -->
+        <record id="vsattp_q6" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">6</field>
+            <field name="title">Câu 6: Có được phép sử dụng nguyên liệu không thuộc loại dùng cho thực phẩm để chế biến không?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q6_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q6"/>
+            <field name="value">a) Có</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q6_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q6"/>
+            <field name="value">b) Không</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 7 -->
+        <record id="vsattp_q7" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">7</field>
+            <field name="title">Câu 7: Có được phép sử dụng nguyên liệu đã quá hạn sử dụng để chế biến không?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q7_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q7"/>
+            <field name="value">a) Có</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q7_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q7"/>
+            <field name="value">b) Không</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 8 -->
+        <record id="vsattp_q8" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">8</field>
+            <field name="title">Câu 8: Khi phát hiện ngộ độc thực phẩm phải dừng ngay việc kinh doanh thực phẩm nghi ngờ?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q8_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q8"/>
+            <field name="value">a) Đúng</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q8_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q8"/>
+            <field name="value">b) Sai</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 9 -->
+        <record id="vsattp_q9" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">9</field>
+            <field name="title">Câu 9: Cơ sở kinh doanh thực phẩm bị ô nhiễm, gây ảnh hưởng đến sức khỏe người tiêu dùng
+có phải bồi thường thiệt hại hay không?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q9_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q9"/>
+            <field name="value">a) Có</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q9_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q9"/>
+            <field name="value">b) Không</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 10 -->
+        <record id="vsattp_q10" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">10</field>
+            <field name="title">Câu 10: Hành vi đăng tải, công bố thông tin sai lệch về an toàn thực phẩm gây bức xúc cho xã
+hội có bị cấm hay không?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q10_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q10"/>
+            <field name="value">a) Có</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q10_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q10"/>
+            <field name="value">b) Không</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 11 -->
+        <record id="vsattp_q11" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">11</field>
+            <field name="title">Câu 11: Cơ sở sản xuất, kinh doanh thực phẩm có phải bảo đảm có diện tích phù hợp với quy
+mô sản xuất, kinh doanh thực phẩm không?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q11_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q11"/>
+            <field name="value">a) Có</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q11_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q11"/>
+            <field name="value">b) Không</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 12 -->
+        <record id="vsattp_q12" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">12</field>
+            <field name="title">Câu 12: Cơ sở sản xuất, kinh doanh thực phẩm phải bảo đảm có khoảng cách an toàn đối với
+nguồn gây ô nhiễm thực phẩm?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q12_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q12"/>
+            <field name="value">a) Đúng</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q12_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q12"/>
+            <field name="value">b) Sai</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 13 -->
+        <record id="vsattp_q13" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">13</field>
+            <field name="title">Câu 13: Cơ sở sản xuất, kinh doanh thực phẩm phải vận hành thường xuyên hệ thống xử lý
+chất thải theo quy định của pháp luật về bảo vệ môi trường?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q13_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q13"/>
+            <field name="value">a) Đúng</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q13_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q13"/>
+            <field name="value">b) Sai</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 14 -->
+        <record id="vsattp_q14" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">14</field>
+            <field name="title">Câu 14: Cơ sở sản xuất thực phẩm phải có đủ nước sạch đạt quy chuẩn để sản xuất, kinh doanh thực phẩm?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q14_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q14"/>
+            <field name="value">a) Đúng</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q14_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q14"/>
+            <field name="value">b) Sai</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 15 -->
+        <record id="vsattp_q15" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">15</field>
+            <field name="title">Câu 15: Có được sử dụng hoá chất diệt chuột trong khu vực sản xuất thực phẩm không?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q15_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q15"/>
+            <field name="value">a) Có</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q15_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q15"/>
+            <field name="value">b) Không</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 16 -->
+        <record id="vsattp_q16" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">16</field>
+            <field name="title">Câu 16: Nơi bảo quản thực phẩm phải có diện tích đủ rộng để bảo quản từng loại thực phẩm
+riêng biệt?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q16_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q16"/>
+            <field name="value">a) Đúng</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q16_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q16"/>
+            <field name="value">b) Sai</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 17 -->
+        <record id="vsattp_q17" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">17</field>
+            <field name="title">Câu 17: Cơ sở sản xuất, kinh doanh thực phẩm phải có đủ trang thiết bị phù hợp để chế biến các loại thực phẩm khác nhau?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q17_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q17"/>
+            <field name="value">a) Đúng</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q17_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q17"/>
+            <field name="value">b) Sai</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 18 -->
+        <record id="vsattp_q18" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">18</field>
+            <field name="title">Câu 18:Trang thiết bị, dụng cụ tiếp xúc trực tiếp với thực phẩm phải đảm bảo không thôi
+nhiễm chất độc hại?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q18_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q18"/>
+            <field name="value">a) Đúng</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q18_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q18"/>
+            <field name="value">b) Sai</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 19 -->
+        <record id="vsattp_q19" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">19</field>
+            <field name="title">Câu 19: Phương tiện đã vận chuyển chất độc hại chưa được tẩy rửa sạch có được sử dụng để
+vận chuyển thực phẩm hay không?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q19_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q19"/>
+            <field name="value">a) Có</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q19_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q19"/>
+            <field name="value">b) Không</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 20 -->
+        <record id="vsattp_q20" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">20</field>
+            <field name="title">Câu 20: Người trực tiếp sản xuất, kinh doanh thực phẩm phải được tập huấn kiến thức an toàn
+thực phẩm?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q20_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q20"/>
+            <field name="value">a) Đúng</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q20_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q20"/>
+            <field name="value">b) Sai</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 21 -->
+        <record id="vsattp_q21" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">21</field>
+            <field name="title">Câu 21:Người đang mắc bệnh truyền nhiễm có được phép trực tiếp sản xuất, kinh doanh thực
+phẩm không?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q21_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q21"/>
+            <field name="value">a) Có</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q21_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q21"/>
+            <field name="value">b) Không</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 22 -->
+        <record id="vsattp_q22" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">22</field>
+            <field name="title">Câu 22: Cơ sở kinh doanh dịch vụ ăn uống có phải thực hiện lưu mẫu thức ăn theo hướng dẫn
+của Bộ Y tế hay không?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q22_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q22"/>
+            <field name="value">a) Có</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q22_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q22"/>
+            <field name="value">b) Không</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 23 -->
+        <record id="vsattp_q23" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">23</field>
+            <field name="title">Câu 23: Giấy chứng nhận cơ sở đủ điều kiện an toàn thực phẩm có hiệu lực bao nhiêu lâu?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q23_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q23"/>
+            <field name="value">a) 3 năm</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q23_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q23"/>
+            <field name="value">b) 5 năm</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 24 -->
+        <record id="vsattp_q24" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">24</field>
+            <field name="title">Câu 24: Nhà máy sản xuất thực phẩm bảo vệ sức khỏe bắt buộc phải có Giấy chứng nhận cơ sở
+đạt yêu cầu thực hành sản xuất tốt (GMP)?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q24_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q24"/>
+            <field name="value">a)Đúng</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q24_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q24"/>
+            <field name="value">b) Sai</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 25 -->
+        <record id="vsattp_q25" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">25</field>
+            <field name="title">Câu 25: Cơ quan nào cấp Giấy chứng nhận cơ sở đạt yêu cầu thực hành sản xuất tốt (GMP)
+cho nhà máy sản xuất thực phẩm bảo vệ sức khỏe?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q25_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q25"/>
+            <field name="value">a) Bộ Y tế - Cục An toàn thực phẩm</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q25_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q25"/>
+            <field name="value">b) Sở Y tế, Sở An toàn thực phẩm, Chi cục An toàn vệ sinh thực phẩm các
+tỉnh, thành phố</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 26 -->
+        <record id="vsattp_q26" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">26</field>
+            <field name="title">Câu 26:Tổ chức, cá nhân trước khi sản xuất, kinh doanh thực phẩm bảo vệ sức khỏe có phải
+đăng ký bản công bố sản phẩm không?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q26_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q26"/>
+            <field name="value">a) Có</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q26_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q26"/>
+            <field name="value">b) Không</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 27 -->
+        <record id="vsattp_q27" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">27</field>
+            <field name="title">Câu 27: Tổ chức, cá nhân kinh doanh sản phẩm nước uống đóng chai có phải lưu giữ hồ sơ tự
+công bố sản phẩm không?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q27_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q27"/>
+            <field name="value">a) Có</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q27_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q27"/>
+            <field name="value">b) Không</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 28 -->
+        <record id="vsattp_q28" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">28</field>
+            <field name="title">Câu 28: Sản phẩm dinh dưỡng dùng cho trẻ đến 36 tháng tuổi trước khi quảng cáo có phải
+đăng ký nội dung quảng cáo với cơ quan quản lý không?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q28_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q28"/>
+            <field name="value">a) Có</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q28_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q28"/>
+            <field name="value">b) Không</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 29 -->
+        <record id="vsattp_q29" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">29</field>
+            <field name="title">Câu 29: Trong quá trình sản xuất thực phẩm, phụ gia thực phẩm đã có trong danh mục cho
+phép sử dụng thì có được sử dụng quá liều quy định hay không?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q29_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q29"/>
+            <field name="value">a) Có</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q29_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q29"/>
+            <field name="value">b) Không</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!-- Câu 30 -->
+        <record id="vsattp_q30" model="survey.question">
+            <field name="survey_id" ref="survey_vsattp_mcd_final"/>
+            <field name="sequence">30</field>
+            <field name="title">Câu 30: Phụ gia thực phẩm có phải thực hiện quy định về ghi nhãn hàng hóa hay không?</field>
+            <field name="question_type">simple_choice</field>
+        </record>
+        <record id="vsattp_q30_a" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q30"/>
+            <field name="value">a) Có</field>
+            <field name="is_correct" eval="True"/>
+            <field name="answer_score">1</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="vsattp_q30_b" model="survey.question.answer">
+            <field name="question_id" ref="vsattp_q30"/>
+            <field name="value">b) Không</field>
+            <field name="sequence">2</field>
+        </record>
+    </data>
+</odoo>

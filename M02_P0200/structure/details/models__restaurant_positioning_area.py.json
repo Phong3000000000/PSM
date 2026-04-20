@@ -1,0 +1,66 @@
+{
+  "file": "models/restaurant_positioning_area.py",
+  "type": "python",
+  "bucket": "models",
+  "summary": "models: restaurant.positioning.area; 1 classes; 3 fields",
+  "classes": [
+    {
+      "python_class": "RestaurantPositioningArea",
+      "description": "Khu Vực Nhỏ Nhà Hàng",
+      "model": "restaurant.positioning.area",
+      "inherit": null,
+      "order": "area_id, name",
+      "rec_name": null,
+      "fields": [
+        {
+          "name": "name",
+          "type": "Char",
+          "string": "Tên Vị Trí",
+          "comodel": null,
+          "required": true,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "area_id",
+          "type": "Many2one",
+          "string": "Khu Vực Lớn",
+          "comodel": "restaurant.area",
+          "required": true,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "station_ids",
+          "type": "One2many",
+          "string": "Các Station",
+          "comodel": "restaurant.station",
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        }
+      ],
+      "methods": [],
+      "kind": "new_model"
+    }
+  ],
+  "routes": []
+}

@@ -1,0 +1,2029 @@
+{
+  "module_name": "M02_P0200",
+  "module_path": "D:\\odoo-19.0+e.20250918\\addons\\M02_P0200",
+  "manifest": {
+    "name": "M02_P0200 Master Data",
+    "version": "1.1",
+    "summary": "Master Data: Users, Employees, Hierarchy, Department Blocks, Restaurant Config",
+    "category": "Human Resources",
+    "author": "PSM",
+    "description": "\nM02_P0200: HR Master Data\n============================\nCreates standard users and employees with strict 1-to-1 linking and hierarchy.\nAlso adds 'x_is_portal_manager' field to Users to identify Portal Managers (DM, SM).\n\nFeatures:\n- Department Blocks (RST/OPS)\n- POS integration for OPS departments\n- Restaurant Area / Positioning Area / Station configuration\n- Shift (Ca làm) configuration\n\nHierarchy:\nRGM (Internal) -> DM (Portal) -> SM (Portal) -> Crew (Portal)\n    ",
+    "depends": [
+      "base",
+      "hr",
+      "hr_recruitment",
+      "mail",
+      "accountant",
+      "l10n_vn",
+      "approvals",
+      "point_of_sale",
+      "planning"
+    ],
+    "data": [
+      "security/security.xml",
+      "security/ir.model.access.csv",
+      "data/hr_job_level_data.xml",
+      "data/department_block_data.xml",
+      "data/rst_department_data.xml",
+      "data/hr_job_position_default_data.xml",
+      "data/rst_job_data.xml",
+      "data/hr_master_data.xml",
+      "views/portal_approval_views.xml",
+      "views/res_users_views.xml",
+      "views/department_block_views.xml",
+      "views/hr_department_views.xml",
+      "views/hr_job_views.xml",
+      "views/hr_job_position_default_views.xml",
+      "views/hr_job_level_views.xml",
+      "views/restaurant_config_views.xml",
+      "views/pos_config_views.xml",
+      "data/store_data.xml",
+      "data/shift_log_checklist_data.xml",
+      "wizard/shift_log_generate_wizard_views.xml",
+      "views/shift_log_views.xml",
+      "views/shift_log_checklist_views.xml"
+    ],
+    "assets": {
+      "web.assets_backend": [
+        "M02_P0200/static/src/mic_assignment_matrix/**/*"
+      ]
+    },
+    "installable": true,
+    "application": true,
+    "license": "OEEL-1"
+  },
+  "counts": {
+    "docs": 10,
+    "python": 1,
+    "manifest": 1,
+    "controllers": 2,
+    "convention": 1,
+    "data": 8,
+    "models": 17,
+    "security": 2,
+    "static": 3,
+    "views": 11,
+    "wizard": 3
+  },
+  "structure": {
+    "controllers": [
+      "controllers/__init__.py",
+      "controllers/approval_controller.py"
+    ],
+    "convention": [
+      "convention/QUY_UOC_DAT_TEN_VA_RULE.md"
+    ],
+    "data": [
+      "data/department_block_data.xml",
+      "data/hr_job_level_data.xml",
+      "data/hr_job_position_default_data.xml",
+      "data/hr_master_data.xml",
+      "data/rst_department_data.xml",
+      "data/rst_job_data.xml",
+      "data/shift_log_checklist_data.xml",
+      "data/store_data.xml"
+    ],
+    "docs": [
+      "08.04.26_NOTE_ADD_MANAGER_FINAL_RESIGNATION_ACTIONS_ON_PORTAL.md",
+      "08.04.26_NOTE_ADD_PORTAL_MY_ACTIVITIES_BLOCK_AND_PAGE.md",
+      "08.04.26_NOTE_CHANGE_APPROVAL_ACTIONS_TO_MODAL.md",
+      "08.04.26_NOTE_ENHANCE_PORTAL_APPROVALS_RESIGNATION_DISPLAY.md",
+      "08.04.26_NOTE_FIX_500_PORTAL_APPROVALS_REQUEST_METHOD.md",
+      "08.04.26_NOTE_FIX_PORTAL_APPROVALS_RESIGNATION_FIELD_MAPPING.md",
+      "08.04.26_NOTE_FIX_PORTAL_APPROVAL_ACTION_BUTTON_LAYOUT.md",
+      "08.04.26_NOTE_FIX_PORTAL_APPROVAL_MODAL_BOOTSTRAP_REFERENCE.md",
+      "08.04.26_NOTE_POLISH_PORTAL_APPROVAL_MODAL_UI.md",
+      "08.04.26_NOTE_RESTORE_PORTAL_APPROVAL_POPUP_WITHOUT_BOOTSTRAP_RUNTIME.md"
+    ],
+    "manifest": [
+      "__manifest__.py"
+    ],
+    "models": [
+      "models/__init__.py",
+      "models/department_block.py",
+      "models/hr_department_ext.py",
+      "models/hr_employee_ext.py",
+      "models/hr_job_ext.py",
+      "models/hr_job_level.py",
+      "models/hr_job_position_default.py",
+      "models/pos_config_ext.py",
+      "models/res_users_ext.py",
+      "models/restaurant_area.py",
+      "models/restaurant_positioning_area.py",
+      "models/restaurant_shift.py",
+      "models/restaurant_station.py",
+      "models/shift_log.py",
+      "models/shift_log_checklist.py",
+      "models/shift_log_checklist_line.py",
+      "models/shift_log_employee.py"
+    ],
+    "python": [
+      "__init__.py"
+    ],
+    "security": [
+      "security/ir.model.access.csv",
+      "security/security.xml"
+    ],
+    "static": [
+      "static/src/mic_assignment_matrix/mic_assignment_matrix.js",
+      "static/src/mic_assignment_matrix/mic_assignment_matrix.scss",
+      "static/src/mic_assignment_matrix/mic_assignment_matrix.xml"
+    ],
+    "views": [
+      "views/department_block_views.xml",
+      "views/hr_department_views.xml",
+      "views/hr_job_level_views.xml",
+      "views/hr_job_position_default_views.xml",
+      "views/hr_job_views.xml",
+      "views/portal_approval_views.xml",
+      "views/pos_config_views.xml",
+      "views/res_users_views.xml",
+      "views/restaurant_config_views.xml",
+      "views/shift_log_checklist_views.xml",
+      "views/shift_log_views.xml"
+    ],
+    "wizard": [
+      "wizard/__init__.py",
+      "wizard/shift_log_generate_wizard.py",
+      "wizard/shift_log_generate_wizard_views.xml"
+    ]
+  },
+  "models": [
+    {
+      "file": "models/department_block.py",
+      "python_class": "DepartmentBlock",
+      "model": "department.block",
+      "inherit": null,
+      "kind": "new_model",
+      "description": "Khối Phòng Ban",
+      "field_count": 3,
+      "method_count": 0,
+      "important_fields": [
+        "name",
+        "code",
+        "active"
+      ],
+      "actions": []
+    },
+    {
+      "file": "models/hr_department_ext.py",
+      "python_class": "HrDepartment",
+      "model": null,
+      "inherit": "hr.department",
+      "kind": "inherit_only",
+      "description": "Extends hr.department in models/hr_department_ext.py.",
+      "field_count": 4,
+      "method_count": 2,
+      "important_fields": [
+        "block_id",
+        "block_code",
+        "pos_config_id",
+        "user_id"
+      ],
+      "actions": [
+        "action_generate_positions"
+      ]
+    },
+    {
+      "file": "models/hr_employee_ext.py",
+      "python_class": "HrEmployee",
+      "model": null,
+      "inherit": "hr.employee",
+      "kind": "inherit_only",
+      "description": "Extends hr.employee in models/hr_employee_ext.py.",
+      "field_count": 2,
+      "method_count": 0,
+      "important_fields": [
+        "legal_name",
+        "private_phone"
+      ],
+      "actions": []
+    },
+    {
+      "file": "models/hr_job_ext.py",
+      "python_class": "HrJob",
+      "model": null,
+      "inherit": "hr.job",
+      "kind": "inherit_only",
+      "description": "Extends hr.job in models/hr_job_ext.py.",
+      "field_count": 3,
+      "method_count": 0,
+      "important_fields": [
+        "code",
+        "name_ll",
+        "level_id"
+      ],
+      "actions": []
+    },
+    {
+      "file": "models/hr_job_level.py",
+      "python_class": "HrJobLevel",
+      "model": "hr.job.level",
+      "inherit": null,
+      "kind": "new_model",
+      "description": "Cấp Bậc Công Việc",
+      "field_count": 4,
+      "method_count": 0,
+      "important_fields": [
+        "name",
+        "code",
+        "sequence",
+        "active"
+      ],
+      "actions": []
+    },
+    {
+      "file": "models/hr_job_position_default.py",
+      "python_class": "HrJobPositionDefault",
+      "model": "hr.job.position.default",
+      "inherit": null,
+      "kind": "new_model",
+      "description": "Vị Trí Công Việc Mặc Định",
+      "field_count": 8,
+      "method_count": 0,
+      "important_fields": [
+        "name",
+        "name_ll",
+        "code",
+        "block_id",
+        "contract_type_id",
+        "level_id",
+        "sequence",
+        "active"
+      ],
+      "actions": []
+    },
+    {
+      "file": "models/pos_config_ext.py",
+      "python_class": "PosConfigExt",
+      "model": null,
+      "inherit": "pos.config",
+      "kind": "inherit_only",
+      "description": "Extends pos.config in models/pos_config_ext.py.",
+      "field_count": 6,
+      "method_count": 1,
+      "important_fields": [
+        "store_code",
+        "opening_hour",
+        "closing_hour",
+        "main_shift_ids",
+        "secondary_shift_ids",
+        "department_id"
+      ],
+      "actions": []
+    },
+    {
+      "file": "models/res_users_ext.py",
+      "python_class": "ResUsers",
+      "model": null,
+      "inherit": "res.users",
+      "kind": "inherit_only",
+      "description": "Extends res.users in models/res_users_ext.py.",
+      "field_count": 1,
+      "method_count": 1,
+      "important_fields": [
+        "x_is_portal_manager"
+      ],
+      "actions": []
+    },
+    {
+      "file": "models/restaurant_area.py",
+      "python_class": "RestaurantArea",
+      "model": "restaurant.area",
+      "inherit": null,
+      "kind": "new_model",
+      "description": "Khu Vực Lớn Nhà Hàng",
+      "field_count": 3,
+      "method_count": 0,
+      "important_fields": [
+        "name",
+        "code",
+        "positioning_area_ids"
+      ],
+      "actions": []
+    },
+    {
+      "file": "models/restaurant_positioning_area.py",
+      "python_class": "RestaurantPositioningArea",
+      "model": "restaurant.positioning.area",
+      "inherit": null,
+      "kind": "new_model",
+      "description": "Khu Vực Nhỏ Nhà Hàng",
+      "field_count": 3,
+      "method_count": 0,
+      "important_fields": [
+        "name",
+        "area_id",
+        "station_ids"
+      ],
+      "actions": []
+    },
+    {
+      "file": "models/restaurant_shift.py",
+      "python_class": "RestaurantShift",
+      "model": "restaurant.shift",
+      "inherit": null,
+      "kind": "new_model",
+      "description": "Ca Làm Việc",
+      "field_count": 4,
+      "method_count": 0,
+      "important_fields": [
+        "name",
+        "code",
+        "hour_from",
+        "hour_to"
+      ],
+      "actions": []
+    },
+    {
+      "file": "models/restaurant_station.py",
+      "python_class": "RestaurantStation",
+      "model": "restaurant.station",
+      "inherit": null,
+      "kind": "new_model",
+      "description": "Vị Trí Chi Tiết Nhà Hàng",
+      "field_count": 4,
+      "method_count": 0,
+      "important_fields": [
+        "name",
+        "code",
+        "positioning_area_id",
+        "menu_type"
+      ],
+      "actions": []
+    },
+    {
+      "file": "models/shift_log.py",
+      "python_class": "ShiftLog",
+      "model": "shift.log",
+      "inherit": [
+        "mail.thread",
+        "mail.activity.mixin"
+      ],
+      "kind": "new_model_with_inherit",
+      "description": "Nhật Ký Ca Làm Việc",
+      "field_count": 19,
+      "method_count": 13,
+      "important_fields": [
+        "name",
+        "pos_config_id",
+        "date",
+        "shift_id",
+        "mic_id",
+        "department_id",
+        "start_datetime",
+        "end_datetime",
+        "state",
+        "gc_projected",
+        "gc_actual",
+        "sales_projected"
+      ],
+      "actions": [
+        "action_prepare",
+        "action_start",
+        "action_evaluate",
+        "action_done",
+        "action_reset_draft",
+        "action_pull_employees",
+        "action_bulk_assign_mic",
+        "action_copy_day_schedule"
+      ]
+    },
+    {
+      "file": "models/shift_log_checklist.py",
+      "python_class": "ShiftLogChecklist",
+      "model": "shift.log.checklist",
+      "inherit": null,
+      "kind": "new_model",
+      "description": "Master Checklist Ca Làm",
+      "field_count": 5,
+      "method_count": 0,
+      "important_fields": [
+        "name",
+        "shift_phase",
+        "category",
+        "sequence",
+        "description"
+      ],
+      "actions": []
+    },
+    {
+      "file": "models/shift_log_checklist_line.py",
+      "python_class": "ShiftLogChecklistLine",
+      "model": "shift.log.checklist.line",
+      "inherit": null,
+      "kind": "new_model",
+      "description": "Dòng Checklist Ca Làm",
+      "field_count": 8,
+      "method_count": 0,
+      "important_fields": [
+        "shift_log_id",
+        "checklist_id",
+        "shift_phase",
+        "sequence",
+        "is_done",
+        "responsible_id",
+        "result",
+        "notes"
+      ],
+      "actions": []
+    },
+    {
+      "file": "models/shift_log_employee.py",
+      "python_class": "ShiftLogEmployee",
+      "model": "shift.log.employee",
+      "inherit": null,
+      "kind": "new_model",
+      "description": "Nhân Viên Trong Ca",
+      "field_count": 5,
+      "method_count": 0,
+      "important_fields": [
+        "shift_log_id",
+        "employee_id",
+        "working_hours",
+        "attendance_status",
+        "notes"
+      ],
+      "actions": []
+    }
+  ],
+  "views": [
+    {
+      "id": "view_department_block_tree",
+      "model": "department.block",
+      "name": "department.block.tree",
+      "inherit_id": null,
+      "file": "views/department_block_views.xml"
+    },
+    {
+      "id": "view_department_block_form",
+      "model": "department.block",
+      "name": "department.block.form",
+      "inherit_id": null,
+      "file": "views/department_block_views.xml"
+    },
+    {
+      "id": "view_hr_department_form_inherit_block",
+      "model": "hr.department",
+      "name": "hr.department.form.inherit.block",
+      "inherit_id": "hr.view_department_form",
+      "file": "views/hr_department_views.xml"
+    },
+    {
+      "id": "view_hr_job_level_tree",
+      "model": "hr.job.level",
+      "name": "hr.job.level.tree",
+      "inherit_id": null,
+      "file": "views/hr_job_level_views.xml"
+    },
+    {
+      "id": "view_hr_job_level_form",
+      "model": "hr.job.level",
+      "name": "hr.job.level.form",
+      "inherit_id": null,
+      "file": "views/hr_job_level_views.xml"
+    },
+    {
+      "id": "view_hr_job_position_default_tree",
+      "model": "hr.job.position.default",
+      "name": "hr.job.position.default.tree",
+      "inherit_id": null,
+      "file": "views/hr_job_position_default_views.xml"
+    },
+    {
+      "id": "view_hr_job_position_default_form",
+      "model": "hr.job.position.default",
+      "name": "hr.job.position.default.form",
+      "inherit_id": null,
+      "file": "views/hr_job_position_default_views.xml"
+    },
+    {
+      "id": "view_hr_job_position_default_search",
+      "model": "hr.job.position.default",
+      "name": "hr.job.position.default.search",
+      "inherit_id": null,
+      "file": "views/hr_job_position_default_views.xml"
+    },
+    {
+      "id": "view_hr_job_form_inherit_level",
+      "model": "hr.job",
+      "name": "hr.job.form.inherit.level",
+      "inherit_id": "hr.view_hr_job_form",
+      "file": "views/hr_job_views.xml"
+    },
+    {
+      "id": "view_hr_job_tree_inherit_level",
+      "model": "hr.job",
+      "name": "hr.job.tree.inherit.level",
+      "inherit_id": "hr.view_hr_job_tree",
+      "file": "views/hr_job_views.xml"
+    },
+    {
+      "id": "view_pos_config_form_store_code",
+      "model": "pos.config",
+      "name": "pos.config.form.store_code",
+      "inherit_id": "point_of_sale.pos_config_view_form",
+      "file": "views/pos_config_views.xml"
+    },
+    {
+      "id": "view_users_simple_form_inherit_custom",
+      "model": "res.users",
+      "name": "res.users.simple.form.inherit.custom",
+      "inherit_id": "base.view_users_simple_form",
+      "file": "views/res_users_views.xml"
+    },
+    {
+      "id": "view_restaurant_area_tree",
+      "model": "restaurant.area",
+      "name": "restaurant.area.tree",
+      "inherit_id": null,
+      "file": "views/restaurant_config_views.xml"
+    },
+    {
+      "id": "view_restaurant_area_form",
+      "model": "restaurant.area",
+      "name": "restaurant.area.form",
+      "inherit_id": null,
+      "file": "views/restaurant_config_views.xml"
+    },
+    {
+      "id": "view_restaurant_positioning_area_tree",
+      "model": "restaurant.positioning.area",
+      "name": "restaurant.positioning.area.tree",
+      "inherit_id": null,
+      "file": "views/restaurant_config_views.xml"
+    },
+    {
+      "id": "view_restaurant_positioning_area_form",
+      "model": "restaurant.positioning.area",
+      "name": "restaurant.positioning.area.form",
+      "inherit_id": null,
+      "file": "views/restaurant_config_views.xml"
+    },
+    {
+      "id": "view_restaurant_station_tree",
+      "model": "restaurant.station",
+      "name": "restaurant.station.tree",
+      "inherit_id": null,
+      "file": "views/restaurant_config_views.xml"
+    },
+    {
+      "id": "view_restaurant_station_form",
+      "model": "restaurant.station",
+      "name": "restaurant.station.form",
+      "inherit_id": null,
+      "file": "views/restaurant_config_views.xml"
+    },
+    {
+      "id": "view_restaurant_shift_tree",
+      "model": "restaurant.shift",
+      "name": "restaurant.shift.tree",
+      "inherit_id": null,
+      "file": "views/restaurant_config_views.xml"
+    },
+    {
+      "id": "view_restaurant_shift_form",
+      "model": "restaurant.shift",
+      "name": "restaurant.shift.form",
+      "inherit_id": null,
+      "file": "views/restaurant_config_views.xml"
+    },
+    {
+      "id": "view_shift_log_checklist_tree",
+      "model": "shift.log.checklist",
+      "name": "shift.log.checklist.tree",
+      "inherit_id": null,
+      "file": "views/shift_log_checklist_views.xml"
+    },
+    {
+      "id": "view_shift_log_checklist_form",
+      "model": "shift.log.checklist",
+      "name": "shift.log.checklist.form",
+      "inherit_id": null,
+      "file": "views/shift_log_checklist_views.xml"
+    },
+    {
+      "id": "view_shift_log_form",
+      "model": "shift.log",
+      "name": "shift.log.form",
+      "inherit_id": null,
+      "file": "views/shift_log_views.xml"
+    },
+    {
+      "id": "view_shift_log_tree",
+      "model": "shift.log",
+      "name": "shift.log.tree",
+      "inherit_id": null,
+      "file": "views/shift_log_views.xml"
+    },
+    {
+      "id": "view_shift_log_search",
+      "model": "shift.log",
+      "name": "shift.log.search",
+      "inherit_id": null,
+      "file": "views/shift_log_views.xml"
+    },
+    {
+      "id": "view_shift_log_gantt",
+      "model": "shift.log",
+      "name": "shift.log.gantt",
+      "inherit_id": null,
+      "file": "views/shift_log_views.xml"
+    },
+    {
+      "id": "view_shift_log_calendar",
+      "model": "shift.log",
+      "name": "shift.log.calendar",
+      "inherit_id": null,
+      "file": "views/shift_log_views.xml"
+    }
+  ],
+  "security": [
+    {
+      "file": "security/ir.model.access.csv",
+      "summary": "12 access rules",
+      "access_rules": [
+        {
+          "id": "access_department_block_user",
+          "name": "department.block.user",
+          "model_id": "model_department_block",
+          "group_id": "base.group_user",
+          "model": "department.block",
+          "perm_read": true,
+          "perm_write": true,
+          "perm_create": true,
+          "perm_unlink": true
+        },
+        {
+          "id": "access_restaurant_area_user",
+          "name": "restaurant.area.user",
+          "model_id": "model_restaurant_area",
+          "group_id": "base.group_user",
+          "model": "restaurant.area",
+          "perm_read": true,
+          "perm_write": true,
+          "perm_create": true,
+          "perm_unlink": true
+        },
+        {
+          "id": "access_restaurant_positioning_area_user",
+          "name": "restaurant.positioning.area.user",
+          "model_id": "model_restaurant_positioning_area",
+          "group_id": "base.group_user",
+          "model": "restaurant.positioning.area",
+          "perm_read": true,
+          "perm_write": true,
+          "perm_create": true,
+          "perm_unlink": true
+        },
+        {
+          "id": "access_restaurant_station_user",
+          "name": "restaurant.station.user",
+          "model_id": "model_restaurant_station",
+          "group_id": "base.group_user",
+          "model": "restaurant.station",
+          "perm_read": true,
+          "perm_write": true,
+          "perm_create": true,
+          "perm_unlink": true
+        },
+        {
+          "id": "access_restaurant_shift_user",
+          "name": "restaurant.shift.user",
+          "model_id": "model_restaurant_shift",
+          "group_id": "base.group_user",
+          "model": "restaurant.shift",
+          "perm_read": true,
+          "perm_write": true,
+          "perm_create": true,
+          "perm_unlink": true
+        },
+        {
+          "id": "access_shift_log_user",
+          "name": "shift.log.user",
+          "model_id": "model_shift_log",
+          "group_id": "base.group_user",
+          "model": "shift.log",
+          "perm_read": true,
+          "perm_write": true,
+          "perm_create": true,
+          "perm_unlink": true
+        },
+        {
+          "id": "access_shift_log_employee_user",
+          "name": "shift.log.employee.user",
+          "model_id": "model_shift_log_employee",
+          "group_id": "base.group_user",
+          "model": "shift.log.employee",
+          "perm_read": true,
+          "perm_write": true,
+          "perm_create": true,
+          "perm_unlink": true
+        },
+        {
+          "id": "access_shift_log_checklist_user",
+          "name": "shift.log.checklist.user",
+          "model_id": "model_shift_log_checklist",
+          "group_id": "base.group_user",
+          "model": "shift.log.checklist",
+          "perm_read": true,
+          "perm_write": true,
+          "perm_create": true,
+          "perm_unlink": true
+        },
+        {
+          "id": "access_shift_log_checklist_line_user",
+          "name": "shift.log.checklist.line.user",
+          "model_id": "model_shift_log_checklist_line",
+          "group_id": "base.group_user",
+          "model": "shift.log.checklist.line",
+          "perm_read": true,
+          "perm_write": true,
+          "perm_create": true,
+          "perm_unlink": true
+        },
+        {
+          "id": "access_hr_job_position_default_user",
+          "name": "hr.job.position.default.user",
+          "model_id": "model_hr_job_position_default",
+          "group_id": "base.group_user",
+          "model": "hr.job.position.default",
+          "perm_read": true,
+          "perm_write": true,
+          "perm_create": true,
+          "perm_unlink": true
+        },
+        {
+          "id": "access_shift_log_generate_wizard_user",
+          "name": "shift.log.generate.wizard.user",
+          "model_id": "model_shift_log_generate_wizard",
+          "group_id": "base.group_user",
+          "model": "shift.log.generate.wizard",
+          "perm_read": true,
+          "perm_write": true,
+          "perm_create": true,
+          "perm_unlink": true
+        },
+        {
+          "id": "access_hr_job_level_user",
+          "name": "hr.job.level.user",
+          "model_id": "model_hr_job_level",
+          "group_id": "base.group_user",
+          "model": "hr.job.level",
+          "perm_read": true,
+          "perm_write": true,
+          "perm_create": true,
+          "perm_unlink": true
+        }
+      ]
+    },
+    {
+      "file": "security/security.xml",
+      "summary": "XML data file.",
+      "record_rules": []
+    }
+  ],
+  "controllers": [
+    {
+      "file": "controllers/__init__.py",
+      "summary": "Python source file.",
+      "routes": []
+    },
+    {
+      "file": "controllers/approval_controller.py",
+      "summary": "1 classes; 0 fields",
+      "routes": [
+        {
+          "method": "portal_approvals",
+          "route": [
+            [
+              "/my/approvals"
+            ]
+          ],
+          "options": {
+            "type": "http",
+            "auth": "user",
+            "website": true
+          }
+        },
+        {
+          "method": "portal_finalize_resignation",
+          "route": [
+            [
+              "/my/approvals/finalize-resignation"
+            ]
+          ],
+          "options": {
+            "type": "json",
+            "auth": "user"
+          }
+        },
+        {
+          "method": "portal_my_activities",
+          "route": [
+            [
+              "/my/activities"
+            ]
+          ],
+          "options": {
+            "type": "http",
+            "auth": "user",
+            "website": true
+          }
+        },
+        {
+          "method": "portal_my_activity_done",
+          "route": [
+            [
+              "/my/activities/done"
+            ]
+          ],
+          "options": {
+            "type": "http",
+            "auth": "user",
+            "methods": [
+              "POST"
+            ],
+            "website": true,
+            "csrf": true
+          }
+        },
+        {
+          "method": "portal_approve_shift",
+          "route": [
+            [
+              "/my/approvals/approve-shift"
+            ]
+          ],
+          "options": {
+            "type": "json",
+            "auth": "user"
+          }
+        },
+        {
+          "method": "portal_reject_shift",
+          "route": [
+            [
+              "/my/approvals/reject-shift"
+            ]
+          ],
+          "options": {
+            "type": "json",
+            "auth": "user"
+          }
+        },
+        {
+          "method": "portal_approve_request",
+          "route": [
+            [
+              "/my/approvals/approve-request"
+            ]
+          ],
+          "options": {
+            "type": "json",
+            "auth": "user"
+          }
+        },
+        {
+          "method": "portal_reject_request",
+          "route": [
+            [
+              "/my/approvals/reject-request"
+            ]
+          ],
+          "options": {
+            "type": "json",
+            "auth": "user"
+          }
+        },
+        {
+          "method": "portal_leave_replacement_candidates",
+          "route": [
+            [
+              "/my/approvals/leave-replacement-candidates"
+            ]
+          ],
+          "options": {
+            "type": "json",
+            "auth": "user"
+          }
+        },
+        {
+          "method": "portal_upload_attachment",
+          "route": [
+            [
+              "/my/approvals/upload_attachment"
+            ]
+          ],
+          "options": {
+            "type": "http",
+            "auth": "user",
+            "methods": [
+              "POST"
+            ],
+            "website": true,
+            "csrf": true
+          }
+        }
+      ]
+    }
+  ],
+  "data": [
+    {
+      "file": "data/department_block_data.xml",
+      "summary": "XML data file.",
+      "record_count": 50,
+      "function_count": 0
+    },
+    {
+      "file": "data/hr_job_level_data.xml",
+      "summary": "XML data file.",
+      "record_count": 7,
+      "function_count": 0
+    },
+    {
+      "file": "data/hr_job_position_default_data.xml",
+      "summary": "XML data file.",
+      "record_count": 21,
+      "function_count": 0
+    },
+    {
+      "file": "data/hr_master_data.xml",
+      "summary": "1 functions/rules",
+      "record_count": 11,
+      "function_count": 1
+    },
+    {
+      "file": "data/rst_department_data.xml",
+      "summary": "XML data file.",
+      "record_count": 14,
+      "function_count": 0
+    },
+    {
+      "file": "data/rst_job_data.xml",
+      "summary": "XML data file.",
+      "record_count": 130,
+      "function_count": 0
+    },
+    {
+      "file": "data/shift_log_checklist_data.xml",
+      "summary": "XML data file.",
+      "record_count": 15,
+      "function_count": 0
+    },
+    {
+      "file": "data/store_data.xml",
+      "summary": "XML data file.",
+      "record_count": 92,
+      "function_count": 0
+    }
+  ],
+  "relations": [
+    {
+      "from": "models/hr_department_ext.py",
+      "to_model": "hr.department",
+      "type": "inherits_model",
+      "model": "hr.department"
+    },
+    {
+      "from": "models/hr_department_ext.py",
+      "to_model": "department.block",
+      "type": "field_relation",
+      "field": "block_id"
+    },
+    {
+      "from": "models/hr_department_ext.py",
+      "to_model": "pos.config",
+      "type": "field_relation",
+      "field": "pos_config_id"
+    },
+    {
+      "from": "models/hr_department_ext.py",
+      "to_model": "res.users",
+      "type": "field_relation",
+      "field": "user_id"
+    },
+    {
+      "from": "models/hr_employee_ext.py",
+      "to_model": "hr.employee",
+      "type": "inherits_model",
+      "model": "hr.employee"
+    },
+    {
+      "from": "models/hr_job_ext.py",
+      "to_model": "hr.job",
+      "type": "inherits_model",
+      "model": "hr.job"
+    },
+    {
+      "from": "models/hr_job_ext.py",
+      "to_model": "hr.job.level",
+      "type": "field_relation",
+      "field": "level_id"
+    },
+    {
+      "from": "models/hr_job_position_default.py",
+      "to_model": "department.block",
+      "type": "field_relation",
+      "field": "block_id"
+    },
+    {
+      "from": "models/hr_job_position_default.py",
+      "to_model": "hr.contract.type",
+      "type": "field_relation",
+      "field": "contract_type_id"
+    },
+    {
+      "from": "models/hr_job_position_default.py",
+      "to_model": "hr.job.level",
+      "type": "field_relation",
+      "field": "level_id"
+    },
+    {
+      "from": "models/pos_config_ext.py",
+      "to_model": "pos.config",
+      "type": "inherits_model",
+      "model": "pos.config"
+    },
+    {
+      "from": "models/pos_config_ext.py",
+      "to_model": "restaurant.shift",
+      "type": "field_relation",
+      "field": "main_shift_ids"
+    },
+    {
+      "from": "models/pos_config_ext.py",
+      "to_model": "restaurant.shift",
+      "type": "field_relation",
+      "field": "secondary_shift_ids"
+    },
+    {
+      "from": "models/pos_config_ext.py",
+      "to_model": "hr.department",
+      "type": "field_relation",
+      "field": "department_id"
+    },
+    {
+      "from": "models/res_users_ext.py",
+      "to_model": "res.users",
+      "type": "inherits_model",
+      "model": "res.users"
+    },
+    {
+      "from": "models/restaurant_area.py",
+      "to_model": "restaurant.positioning.area",
+      "type": "field_relation",
+      "field": "positioning_area_ids"
+    },
+    {
+      "from": "models/restaurant_positioning_area.py",
+      "to_model": "restaurant.area",
+      "type": "field_relation",
+      "field": "area_id"
+    },
+    {
+      "from": "models/restaurant_positioning_area.py",
+      "to_model": "restaurant.station",
+      "type": "field_relation",
+      "field": "station_ids"
+    },
+    {
+      "from": "models/restaurant_station.py",
+      "to_model": "restaurant.positioning.area",
+      "type": "field_relation",
+      "field": "positioning_area_id"
+    },
+    {
+      "from": "models/shift_log.py",
+      "to_model": "mail.thread",
+      "type": "inherits_model",
+      "model": "shift.log"
+    },
+    {
+      "from": "models/shift_log.py",
+      "to_model": "mail.activity.mixin",
+      "type": "inherits_model",
+      "model": "shift.log"
+    },
+    {
+      "from": "models/shift_log.py",
+      "to_model": "pos.config",
+      "type": "field_relation",
+      "field": "pos_config_id"
+    },
+    {
+      "from": "models/shift_log.py",
+      "to_model": "restaurant.shift",
+      "type": "field_relation",
+      "field": "shift_id"
+    },
+    {
+      "from": "models/shift_log.py",
+      "to_model": "hr.employee",
+      "type": "field_relation",
+      "field": "mic_id"
+    },
+    {
+      "from": "models/shift_log.py",
+      "to_model": "hr.department",
+      "type": "field_relation",
+      "field": "department_id"
+    },
+    {
+      "from": "models/shift_log.py",
+      "to_model": "shift.log.employee",
+      "type": "field_relation",
+      "field": "employee_line_ids"
+    },
+    {
+      "from": "models/shift_log.py",
+      "to_model": "shift.log.checklist.line",
+      "type": "field_relation",
+      "field": "checklist_line_ids"
+    },
+    {
+      "from": "models/shift_log.py",
+      "to_model": "hr.employee",
+      "type": "field_relation",
+      "field": "best_employee_id"
+    },
+    {
+      "from": "models/shift_log_checklist_line.py",
+      "to_model": "shift.log",
+      "type": "field_relation",
+      "field": "shift_log_id"
+    },
+    {
+      "from": "models/shift_log_checklist_line.py",
+      "to_model": "shift.log.checklist",
+      "type": "field_relation",
+      "field": "checklist_id"
+    },
+    {
+      "from": "models/shift_log_checklist_line.py",
+      "to_model": "hr.employee",
+      "type": "field_relation",
+      "field": "responsible_id"
+    },
+    {
+      "from": "models/shift_log_employee.py",
+      "to_model": "shift.log",
+      "type": "field_relation",
+      "field": "shift_log_id"
+    },
+    {
+      "from": "models/shift_log_employee.py",
+      "to_model": "hr.employee",
+      "type": "field_relation",
+      "field": "employee_id"
+    },
+    {
+      "from": "security/ir.model.access.csv",
+      "to": "models/department_block.py",
+      "to_model": "department.block",
+      "type": "grants_access",
+      "group": "base.group_user"
+    },
+    {
+      "from": "security/ir.model.access.csv",
+      "to": "models/restaurant_area.py",
+      "to_model": "restaurant.area",
+      "type": "grants_access",
+      "group": "base.group_user"
+    },
+    {
+      "from": "security/ir.model.access.csv",
+      "to": "models/restaurant_positioning_area.py",
+      "to_model": "restaurant.positioning.area",
+      "type": "grants_access",
+      "group": "base.group_user"
+    },
+    {
+      "from": "security/ir.model.access.csv",
+      "to": "models/restaurant_station.py",
+      "to_model": "restaurant.station",
+      "type": "grants_access",
+      "group": "base.group_user"
+    },
+    {
+      "from": "security/ir.model.access.csv",
+      "to": "models/restaurant_shift.py",
+      "to_model": "restaurant.shift",
+      "type": "grants_access",
+      "group": "base.group_user"
+    },
+    {
+      "from": "security/ir.model.access.csv",
+      "to": "models/shift_log.py",
+      "to_model": "shift.log",
+      "type": "grants_access",
+      "group": "base.group_user"
+    },
+    {
+      "from": "security/ir.model.access.csv",
+      "to": "models/shift_log_employee.py",
+      "to_model": "shift.log.employee",
+      "type": "grants_access",
+      "group": "base.group_user"
+    },
+    {
+      "from": "security/ir.model.access.csv",
+      "to": "models/shift_log_checklist.py",
+      "to_model": "shift.log.checklist",
+      "type": "grants_access",
+      "group": "base.group_user"
+    },
+    {
+      "from": "security/ir.model.access.csv",
+      "to": "models/shift_log_checklist_line.py",
+      "to_model": "shift.log.checklist.line",
+      "type": "grants_access",
+      "group": "base.group_user"
+    },
+    {
+      "from": "security/ir.model.access.csv",
+      "to": "models/hr_job_position_default.py",
+      "to_model": "hr.job.position.default",
+      "type": "grants_access",
+      "group": "base.group_user"
+    },
+    {
+      "from": "security/ir.model.access.csv",
+      "to": "wizard/shift_log_generate_wizard.py",
+      "to_model": "shift.log.generate.wizard",
+      "type": "grants_access",
+      "group": "base.group_user"
+    },
+    {
+      "from": "security/ir.model.access.csv",
+      "to": "models/hr_job_level.py",
+      "to_model": "hr.job.level",
+      "type": "grants_access",
+      "group": "base.group_user"
+    },
+    {
+      "from": "views/department_block_views.xml",
+      "to": "models/department_block.py",
+      "to_model": "department.block",
+      "type": "uses_model",
+      "view_id": "view_department_block_tree"
+    },
+    {
+      "from": "views/department_block_views.xml",
+      "to": "models/department_block.py",
+      "to_model": "department.block",
+      "type": "uses_model",
+      "view_id": "view_department_block_form"
+    },
+    {
+      "from": "views/department_block_views.xml",
+      "to": "models/department_block.py",
+      "to_model": "department.block",
+      "type": "opens_model",
+      "action_id": "action_department_block"
+    },
+    {
+      "from": "views/department_block_views.xml",
+      "to_action": "action_department_block",
+      "type": "menu_action",
+      "menu_id": "menu_department_block"
+    },
+    {
+      "from": "views/hr_department_views.xml",
+      "to": "models/hr_department_ext.py",
+      "to_model": "hr.department",
+      "type": "uses_model",
+      "view_id": "view_hr_department_form_inherit_block"
+    },
+    {
+      "from": "views/hr_job_level_views.xml",
+      "to": "models/hr_job_level.py",
+      "to_model": "hr.job.level",
+      "type": "uses_model",
+      "view_id": "view_hr_job_level_tree"
+    },
+    {
+      "from": "views/hr_job_level_views.xml",
+      "to": "models/hr_job_level.py",
+      "to_model": "hr.job.level",
+      "type": "uses_model",
+      "view_id": "view_hr_job_level_form"
+    },
+    {
+      "from": "views/hr_job_level_views.xml",
+      "to": "models/hr_job_level.py",
+      "to_model": "hr.job.level",
+      "type": "opens_model",
+      "action_id": "action_hr_job_level"
+    },
+    {
+      "from": "views/hr_job_level_views.xml",
+      "to_action": "action_hr_job_level",
+      "type": "menu_action",
+      "menu_id": "menu_hr_job_level"
+    },
+    {
+      "from": "views/hr_job_position_default_views.xml",
+      "to": "models/hr_job_position_default.py",
+      "to_model": "hr.job.position.default",
+      "type": "uses_model",
+      "view_id": "view_hr_job_position_default_tree"
+    },
+    {
+      "from": "views/hr_job_position_default_views.xml",
+      "to": "models/hr_job_position_default.py",
+      "to_model": "hr.job.position.default",
+      "type": "uses_model",
+      "view_id": "view_hr_job_position_default_form"
+    },
+    {
+      "from": "views/hr_job_position_default_views.xml",
+      "to": "models/hr_job_position_default.py",
+      "to_model": "hr.job.position.default",
+      "type": "uses_model",
+      "view_id": "view_hr_job_position_default_search"
+    },
+    {
+      "from": "views/hr_job_position_default_views.xml",
+      "to": "models/hr_job_position_default.py",
+      "to_model": "hr.job.position.default",
+      "type": "opens_model",
+      "action_id": "action_hr_job_position_default"
+    },
+    {
+      "from": "views/hr_job_position_default_views.xml",
+      "to_action": "action_hr_job_position_default",
+      "type": "menu_action",
+      "menu_id": "menu_hr_job_position_default"
+    },
+    {
+      "from": "views/hr_job_views.xml",
+      "to": "models/hr_job_ext.py",
+      "to_model": "hr.job",
+      "type": "uses_model",
+      "view_id": "view_hr_job_form_inherit_level"
+    },
+    {
+      "from": "views/hr_job_views.xml",
+      "to": "models/hr_job_ext.py",
+      "to_model": "hr.job",
+      "type": "uses_model",
+      "view_id": "view_hr_job_tree_inherit_level"
+    },
+    {
+      "from": "views/pos_config_views.xml",
+      "to": "models/pos_config_ext.py",
+      "to_model": "pos.config",
+      "type": "uses_model",
+      "view_id": "view_pos_config_form_store_code"
+    },
+    {
+      "from": "views/res_users_views.xml",
+      "to": "models/res_users_ext.py",
+      "to_model": "res.users",
+      "type": "uses_model",
+      "view_id": "view_users_simple_form_inherit_custom"
+    },
+    {
+      "from": "views/restaurant_config_views.xml",
+      "to": "models/restaurant_area.py",
+      "to_model": "restaurant.area",
+      "type": "uses_model",
+      "view_id": "view_restaurant_area_tree"
+    },
+    {
+      "from": "views/restaurant_config_views.xml",
+      "to": "models/restaurant_area.py",
+      "to_model": "restaurant.area",
+      "type": "uses_model",
+      "view_id": "view_restaurant_area_form"
+    },
+    {
+      "from": "views/restaurant_config_views.xml",
+      "to": "models/restaurant_positioning_area.py",
+      "to_model": "restaurant.positioning.area",
+      "type": "uses_model",
+      "view_id": "view_restaurant_positioning_area_tree"
+    },
+    {
+      "from": "views/restaurant_config_views.xml",
+      "to": "models/restaurant_positioning_area.py",
+      "to_model": "restaurant.positioning.area",
+      "type": "uses_model",
+      "view_id": "view_restaurant_positioning_area_form"
+    },
+    {
+      "from": "views/restaurant_config_views.xml",
+      "to": "models/restaurant_station.py",
+      "to_model": "restaurant.station",
+      "type": "uses_model",
+      "view_id": "view_restaurant_station_tree"
+    },
+    {
+      "from": "views/restaurant_config_views.xml",
+      "to": "models/restaurant_station.py",
+      "to_model": "restaurant.station",
+      "type": "uses_model",
+      "view_id": "view_restaurant_station_form"
+    },
+    {
+      "from": "views/restaurant_config_views.xml",
+      "to": "models/restaurant_shift.py",
+      "to_model": "restaurant.shift",
+      "type": "uses_model",
+      "view_id": "view_restaurant_shift_tree"
+    },
+    {
+      "from": "views/restaurant_config_views.xml",
+      "to": "models/restaurant_shift.py",
+      "to_model": "restaurant.shift",
+      "type": "uses_model",
+      "view_id": "view_restaurant_shift_form"
+    },
+    {
+      "from": "views/restaurant_config_views.xml",
+      "to": "models/restaurant_area.py",
+      "to_model": "restaurant.area",
+      "type": "opens_model",
+      "action_id": "action_restaurant_area"
+    },
+    {
+      "from": "views/restaurant_config_views.xml",
+      "to": "models/restaurant_positioning_area.py",
+      "to_model": "restaurant.positioning.area",
+      "type": "opens_model",
+      "action_id": "action_restaurant_positioning_area"
+    },
+    {
+      "from": "views/restaurant_config_views.xml",
+      "to": "models/restaurant_station.py",
+      "to_model": "restaurant.station",
+      "type": "opens_model",
+      "action_id": "action_restaurant_station"
+    },
+    {
+      "from": "views/restaurant_config_views.xml",
+      "to": "models/restaurant_shift.py",
+      "to_model": "restaurant.shift",
+      "type": "opens_model",
+      "action_id": "action_restaurant_shift"
+    },
+    {
+      "from": "views/restaurant_config_views.xml",
+      "to_action": "action_restaurant_area",
+      "type": "menu_action",
+      "menu_id": "menu_restaurant_area"
+    },
+    {
+      "from": "views/restaurant_config_views.xml",
+      "to_action": "action_restaurant_positioning_area",
+      "type": "menu_action",
+      "menu_id": "menu_restaurant_positioning_area"
+    },
+    {
+      "from": "views/restaurant_config_views.xml",
+      "to_action": "action_restaurant_station",
+      "type": "menu_action",
+      "menu_id": "menu_restaurant_station"
+    },
+    {
+      "from": "views/restaurant_config_views.xml",
+      "to_action": "action_restaurant_shift",
+      "type": "menu_action",
+      "menu_id": "menu_restaurant_shift"
+    },
+    {
+      "from": "views/shift_log_checklist_views.xml",
+      "to": "models/shift_log_checklist.py",
+      "to_model": "shift.log.checklist",
+      "type": "uses_model",
+      "view_id": "view_shift_log_checklist_tree"
+    },
+    {
+      "from": "views/shift_log_checklist_views.xml",
+      "to": "models/shift_log_checklist.py",
+      "to_model": "shift.log.checklist",
+      "type": "uses_model",
+      "view_id": "view_shift_log_checklist_form"
+    },
+    {
+      "from": "views/shift_log_checklist_views.xml",
+      "to": "models/shift_log_checklist.py",
+      "to_model": "shift.log.checklist",
+      "type": "opens_model",
+      "action_id": "action_shift_log_checklist"
+    },
+    {
+      "from": "views/shift_log_checklist_views.xml",
+      "to_action": "action_shift_log_checklist",
+      "type": "menu_action",
+      "menu_id": "menu_shift_log_checklist"
+    },
+    {
+      "from": "views/shift_log_views.xml",
+      "to": "models/shift_log.py",
+      "to_model": "shift.log",
+      "type": "uses_model",
+      "view_id": "view_shift_log_form"
+    },
+    {
+      "from": "views/shift_log_views.xml",
+      "to": "models/shift_log.py",
+      "to_model": "shift.log",
+      "type": "uses_model",
+      "view_id": "view_shift_log_tree"
+    },
+    {
+      "from": "views/shift_log_views.xml",
+      "to": "models/shift_log.py",
+      "to_model": "shift.log",
+      "type": "uses_model",
+      "view_id": "view_shift_log_search"
+    },
+    {
+      "from": "views/shift_log_views.xml",
+      "to": "models/shift_log.py",
+      "to_model": "shift.log",
+      "type": "uses_model",
+      "view_id": "view_shift_log_gantt"
+    },
+    {
+      "from": "views/shift_log_views.xml",
+      "to": "models/shift_log.py",
+      "to_model": "shift.log",
+      "type": "uses_model",
+      "view_id": "view_shift_log_calendar"
+    },
+    {
+      "from": "views/shift_log_views.xml",
+      "to": "models/shift_log.py",
+      "to_model": "shift.log",
+      "type": "opens_model",
+      "action_id": "action_shift_log"
+    },
+    {
+      "from": "views/shift_log_views.xml",
+      "to_action": "action_mic_matrix",
+      "type": "menu_action",
+      "menu_id": "menu_mic_matrix"
+    },
+    {
+      "from": "views/shift_log_views.xml",
+      "to_action": "action_shift_log",
+      "type": "menu_action",
+      "menu_id": "menu_shift_log"
+    },
+    {
+      "from": "views/shift_log_views.xml",
+      "to_action": "action_shift_log_generate_wizard",
+      "type": "menu_action",
+      "menu_id": "menu_shift_log_generate"
+    },
+    {
+      "from": "wizard/shift_log_generate_wizard.py",
+      "to_model": "pos.config",
+      "type": "field_relation",
+      "field": "pos_config_ids"
+    },
+    {
+      "from": "wizard/shift_log_generate_wizard.py",
+      "to_model": "pos.config",
+      "type": "field_relation",
+      "field": "available_pos_config_ids"
+    },
+    {
+      "from": "wizard/shift_log_generate_wizard_views.xml",
+      "to": "wizard/shift_log_generate_wizard.py",
+      "to_model": "shift.log.generate.wizard",
+      "type": "uses_model",
+      "view_id": "view_shift_log_generate_wizard_form"
+    },
+    {
+      "from": "wizard/shift_log_generate_wizard_views.xml",
+      "to": "wizard/shift_log_generate_wizard.py",
+      "to_model": "shift.log.generate.wizard",
+      "type": "opens_model",
+      "action_id": "action_shift_log_generate_wizard"
+    }
+  ],
+  "feature_summary": [
+    "Portal and website controllers for recruitment pages and application flow.",
+    "Dedicated recruitment groups, access rules, and security bridges.",
+    "Seed data for sequences, stages, approval categories, mail templates, cron jobs, and surveys."
+  ],
+  "detail_index": [
+    {
+      "file": "08.04.26_NOTE_ADD_MANAGER_FINAL_RESIGNATION_ACTIONS_ON_PORTAL.md",
+      "detail_json": "details/08.04.26_NOTE_ADD_MANAGER_FINAL_RESIGNATION_ACTIONS_ON_PORTAL.md.json",
+      "type": "document",
+      "bucket": "docs",
+      "summary": "# NOTE: Bổ sung block quản lý xử lý bước cuối quy trình nghỉ việc trên Portal ## 1. Bối cảnh Trước lần chỉnh sửa này, màn hình `/my/approvals` chỉ hỗ trợ: - ..."
+    },
+    {
+      "file": "08.04.26_NOTE_ADD_PORTAL_MY_ACTIVITIES_BLOCK_AND_PAGE.md",
+      "detail_json": "details/08.04.26_NOTE_ADD_PORTAL_MY_ACTIVITIES_BLOCK_AND_PAGE.md.json",
+      "type": "document",
+      "bucket": "docs",
+      "summary": "# NOTE ADD PORTAL MY ACTIVITIES BLOCK AND PAGE ## Mục tiêu Bổ sung một khối chức năng dùng chung cho mọi user portal để: - xem các `mail.activity` được gán c..."
+    },
+    {
+      "file": "08.04.26_NOTE_CHANGE_APPROVAL_ACTIONS_TO_MODAL.md",
+      "detail_json": "details/08.04.26_NOTE_CHANGE_APPROVAL_ACTIONS_TO_MODAL.md.json",
+      "type": "document",
+      "bucket": "docs",
+      "summary": "# Ghi chú đổi thao tác duyệt / từ chối từ nút trực tiếp sang popup ## Bối cảnh - Màn hình: `/my/approvals` - Module giao diện view: `M02_P0200` - Module x..."
+    },
+    {
+      "file": "08.04.26_NOTE_ENHANCE_PORTAL_APPROVALS_RESIGNATION_DISPLAY.md",
+      "detail_json": "details/08.04.26_NOTE_ENHANCE_PORTAL_APPROVALS_RESIGNATION_DISPLAY.md.json",
+      "type": "document",
+      "bucket": "docs",
+      "summary": "# Ghi chú bổ sung hiển thị thông tin đơn nghỉ việc trên `/my/approvals` ## Bối cảnh - Module hiển thị portal manager approvals: `M02_P0200` - Flow dữ liệu..."
+    },
+    {
+      "file": "08.04.26_NOTE_FIX_500_PORTAL_APPROVALS_REQUEST_METHOD.md",
+      "detail_json": "details/08.04.26_NOTE_FIX_500_PORTAL_APPROVALS_REQUEST_METHOD.md.json",
+      "type": "document",
+      "bucket": "docs",
+      "summary": "# Ghi chú sửa lỗi 500 trang `/my/approvals` ## Bối cảnh - Module: `M02_P0200` - Màn hình: `/my/approvals` - Thời điểm phát sinh: khi có `approval.request`..."
+    },
+    {
+      "file": "08.04.26_NOTE_FIX_PORTAL_APPROVAL_ACTION_BUTTON_LAYOUT.md",
+      "detail_json": "details/08.04.26_NOTE_FIX_PORTAL_APPROVAL_ACTION_BUTTON_LAYOUT.md.json",
+      "type": "document",
+      "bucket": "docs",
+      "summary": "# Ghi chú sửa layout nút duyệt / từ chối trên `/my/approvals` ## Bối cảnh - Module: `M02_P0200` - Màn hình: `/my/approvals` - Thành phần bị ảnh hưởng: cụm..."
+    },
+    {
+      "file": "08.04.26_NOTE_FIX_PORTAL_APPROVAL_MODAL_BOOTSTRAP_REFERENCE.md",
+      "detail_json": "details/08.04.26_NOTE_FIX_PORTAL_APPROVAL_MODAL_BOOTSTRAP_REFERENCE.md.json",
+      "type": "document",
+      "bucket": "docs",
+      "summary": "# NOTE FIX PORTAL APPROVAL MODAL BOOTSTRAP REFERENCE ## Mục tiêu Sửa lỗi JavaScript khi bấm `Duyệt` hoặc `Từ chối` trên màn hình Portal Approvals `/my/approv..."
+    },
+    {
+      "file": "08.04.26_NOTE_FIX_PORTAL_APPROVALS_RESIGNATION_FIELD_MAPPING.md",
+      "detail_json": "details/08.04.26_NOTE_FIX_PORTAL_APPROVALS_RESIGNATION_FIELD_MAPPING.md.json",
+      "type": "document",
+      "bucket": "docs",
+      "summary": "# NOTE FIX PORTAL APPROVALS RESIGNATION FIELD MAPPING ## Mục tiêu Sửa logic hiển thị dữ liệu đơn nghỉ việc trên màn hình Portal Approvals `/my/approvals` để:..."
+    },
+    {
+      "file": "08.04.26_NOTE_POLISH_PORTAL_APPROVAL_MODAL_UI.md",
+      "detail_json": "details/08.04.26_NOTE_POLISH_PORTAL_APPROVAL_MODAL_UI.md.json",
+      "type": "document",
+      "bucket": "docs",
+      "summary": "# NOTE POLISH PORTAL APPROVAL MODAL UI ## Mục tiêu Làm lại giao diện popup `Duyệt` / `Từ chối` trên màn hình Portal Approvals `/my/approvals` theo hướng đẹp ..."
+    },
+    {
+      "file": "08.04.26_NOTE_RESTORE_PORTAL_APPROVAL_POPUP_WITHOUT_BOOTSTRAP_RUNTIME.md",
+      "detail_json": "details/08.04.26_NOTE_RESTORE_PORTAL_APPROVAL_POPUP_WITHOUT_BOOTSTRAP_RUNTIME.md.json",
+      "type": "document",
+      "bucket": "docs",
+      "summary": "# NOTE RESTORE PORTAL APPROVAL POPUP WITHOUT BOOTSTRAP RUNTIME ## Mục tiêu Khôi phục popup duyệt/từ chối trên màn hình Portal Approvals `/my/approvals` trong..."
+    },
+    {
+      "file": "__init__.py",
+      "detail_json": "details/__init__.py.json",
+      "type": "python",
+      "bucket": "python",
+      "summary": "Python source file."
+    },
+    {
+      "file": "__manifest__.py",
+      "detail_json": "details/__manifest__.py.json",
+      "type": "file",
+      "bucket": "manifest",
+      "summary": "# -*- coding: utf-8 -*- { 'name': 'M02_P0200 Master Data', 'version': '1.1', 'summary': 'Master Data: Users, Employees, Hierarchy, Department Blocks, Restaur..."
+    },
+    {
+      "file": "controllers/__init__.py",
+      "detail_json": "details/controllers____init__.py.json",
+      "type": "python",
+      "bucket": "controllers",
+      "summary": "Python source file."
+    },
+    {
+      "file": "controllers/approval_controller.py",
+      "detail_json": "details/controllers__approval_controller.py.json",
+      "type": "python",
+      "bucket": "controllers",
+      "summary": "1 classes; 0 fields"
+    },
+    {
+      "file": "convention/QUY_UOC_DAT_TEN_VA_RULE.md",
+      "detail_json": "details/convention__QUY_UOC_DAT_TEN_VA_RULE.md.json",
+      "type": "document",
+      "bucket": "convention",
+      "summary": "# Quy Ước Đặt Tên Và Rule Tài liệu này tổng hợp các quy ước cần lưu ý khi phát triển module. ## 1. Quy ước đặt tên ### 1.1. Manifest - Cấu trúc tên module tr..."
+    },
+    {
+      "file": "data/department_block_data.xml",
+      "detail_json": "details/data__department_block_data.xml.json",
+      "type": "xml",
+      "bucket": "data",
+      "summary": "XML data file."
+    },
+    {
+      "file": "data/hr_job_level_data.xml",
+      "detail_json": "details/data__hr_job_level_data.xml.json",
+      "type": "xml",
+      "bucket": "data",
+      "summary": "XML data file."
+    },
+    {
+      "file": "data/hr_job_position_default_data.xml",
+      "detail_json": "details/data__hr_job_position_default_data.xml.json",
+      "type": "xml",
+      "bucket": "data",
+      "summary": "XML data file."
+    },
+    {
+      "file": "data/hr_master_data.xml",
+      "detail_json": "details/data__hr_master_data.xml.json",
+      "type": "xml",
+      "bucket": "data",
+      "summary": "1 functions/rules"
+    },
+    {
+      "file": "data/rst_department_data.xml",
+      "detail_json": "details/data__rst_department_data.xml.json",
+      "type": "xml",
+      "bucket": "data",
+      "summary": "XML data file."
+    },
+    {
+      "file": "data/rst_job_data.xml",
+      "detail_json": "details/data__rst_job_data.xml.json",
+      "type": "xml",
+      "bucket": "data",
+      "summary": "XML data file."
+    },
+    {
+      "file": "data/shift_log_checklist_data.xml",
+      "detail_json": "details/data__shift_log_checklist_data.xml.json",
+      "type": "xml",
+      "bucket": "data",
+      "summary": "XML data file."
+    },
+    {
+      "file": "data/store_data.xml",
+      "detail_json": "details/data__store_data.xml.json",
+      "type": "xml",
+      "bucket": "data",
+      "summary": "XML data file."
+    },
+    {
+      "file": "models/__init__.py",
+      "detail_json": "details/models____init__.py.json",
+      "type": "python",
+      "bucket": "models",
+      "summary": "Python source file."
+    },
+    {
+      "file": "models/department_block.py",
+      "detail_json": "details/models__department_block.py.json",
+      "type": "python",
+      "bucket": "models",
+      "summary": "models: department.block; 1 classes; 3 fields"
+    },
+    {
+      "file": "models/hr_department_ext.py",
+      "detail_json": "details/models__hr_department_ext.py.json",
+      "type": "python",
+      "bucket": "models",
+      "summary": "models: hr.department; 1 classes; 4 fields; 1 actions"
+    },
+    {
+      "file": "models/hr_employee_ext.py",
+      "detail_json": "details/models__hr_employee_ext.py.json",
+      "type": "python",
+      "bucket": "models",
+      "summary": "models: hr.employee; 1 classes; 2 fields"
+    },
+    {
+      "file": "models/hr_job_ext.py",
+      "detail_json": "details/models__hr_job_ext.py.json",
+      "type": "python",
+      "bucket": "models",
+      "summary": "models: hr.job; 1 classes; 3 fields"
+    },
+    {
+      "file": "models/hr_job_level.py",
+      "detail_json": "details/models__hr_job_level.py.json",
+      "type": "python",
+      "bucket": "models",
+      "summary": "models: hr.job.level; 1 classes; 4 fields"
+    },
+    {
+      "file": "models/hr_job_position_default.py",
+      "detail_json": "details/models__hr_job_position_default.py.json",
+      "type": "python",
+      "bucket": "models",
+      "summary": "models: hr.job.position.default; 1 classes; 8 fields"
+    },
+    {
+      "file": "models/pos_config_ext.py",
+      "detail_json": "details/models__pos_config_ext.py.json",
+      "type": "python",
+      "bucket": "models",
+      "summary": "models: pos.config; 1 classes; 6 fields"
+    },
+    {
+      "file": "models/res_users_ext.py",
+      "detail_json": "details/models__res_users_ext.py.json",
+      "type": "python",
+      "bucket": "models",
+      "summary": "models: res.users; 1 classes; 1 fields"
+    },
+    {
+      "file": "models/restaurant_area.py",
+      "detail_json": "details/models__restaurant_area.py.json",
+      "type": "python",
+      "bucket": "models",
+      "summary": "models: restaurant.area; 1 classes; 3 fields"
+    },
+    {
+      "file": "models/restaurant_positioning_area.py",
+      "detail_json": "details/models__restaurant_positioning_area.py.json",
+      "type": "python",
+      "bucket": "models",
+      "summary": "models: restaurant.positioning.area; 1 classes; 3 fields"
+    },
+    {
+      "file": "models/restaurant_shift.py",
+      "detail_json": "details/models__restaurant_shift.py.json",
+      "type": "python",
+      "bucket": "models",
+      "summary": "models: restaurant.shift; 1 classes; 4 fields"
+    },
+    {
+      "file": "models/restaurant_station.py",
+      "detail_json": "details/models__restaurant_station.py.json",
+      "type": "python",
+      "bucket": "models",
+      "summary": "models: restaurant.station; 1 classes; 4 fields"
+    },
+    {
+      "file": "models/shift_log.py",
+      "detail_json": "details/models__shift_log.py.json",
+      "type": "python",
+      "bucket": "models",
+      "summary": "models: shift.log; 1 classes; 19 fields; 8 actions"
+    },
+    {
+      "file": "models/shift_log_checklist.py",
+      "detail_json": "details/models__shift_log_checklist.py.json",
+      "type": "python",
+      "bucket": "models",
+      "summary": "models: shift.log.checklist; 1 classes; 5 fields"
+    },
+    {
+      "file": "models/shift_log_checklist_line.py",
+      "detail_json": "details/models__shift_log_checklist_line.py.json",
+      "type": "python",
+      "bucket": "models",
+      "summary": "models: shift.log.checklist.line; 1 classes; 8 fields"
+    },
+    {
+      "file": "models/shift_log_employee.py",
+      "detail_json": "details/models__shift_log_employee.py.json",
+      "type": "python",
+      "bucket": "models",
+      "summary": "models: shift.log.employee; 1 classes; 5 fields"
+    },
+    {
+      "file": "security/ir.model.access.csv",
+      "detail_json": "details/security__ir.model.access.csv.json",
+      "type": "security_csv",
+      "bucket": "security",
+      "summary": "12 access rules"
+    },
+    {
+      "file": "security/security.xml",
+      "detail_json": "details/security__security.xml.json",
+      "type": "xml",
+      "bucket": "security",
+      "summary": "XML data file."
+    },
+    {
+      "file": "static/src/mic_assignment_matrix/mic_assignment_matrix.js",
+      "detail_json": "details/static__src__mic_assignment_matrix__mic_assignment_matrix.js.json",
+      "type": "file",
+      "bucket": "static",
+      "summary": ".js file"
+    },
+    {
+      "file": "static/src/mic_assignment_matrix/mic_assignment_matrix.scss",
+      "detail_json": "details/static__src__mic_assignment_matrix__mic_assignment_matrix.scss.json",
+      "type": "file",
+      "bucket": "static",
+      "summary": ".scss file"
+    },
+    {
+      "file": "static/src/mic_assignment_matrix/mic_assignment_matrix.xml",
+      "detail_json": "details/static__src__mic_assignment_matrix__mic_assignment_matrix.xml.json",
+      "type": "xml",
+      "bucket": "static",
+      "summary": "XML data file."
+    },
+    {
+      "file": "views/department_block_views.xml",
+      "detail_json": "details/views__department_block_views.xml.json",
+      "type": "xml",
+      "bucket": "views",
+      "summary": "2 views, 1 actions, 1 menus"
+    },
+    {
+      "file": "views/hr_department_views.xml",
+      "detail_json": "details/views__hr_department_views.xml.json",
+      "type": "xml",
+      "bucket": "views",
+      "summary": "1 views"
+    },
+    {
+      "file": "views/hr_job_level_views.xml",
+      "detail_json": "details/views__hr_job_level_views.xml.json",
+      "type": "xml",
+      "bucket": "views",
+      "summary": "2 views, 1 actions, 1 menus"
+    },
+    {
+      "file": "views/hr_job_position_default_views.xml",
+      "detail_json": "details/views__hr_job_position_default_views.xml.json",
+      "type": "xml",
+      "bucket": "views",
+      "summary": "3 views, 1 actions, 2 menus"
+    },
+    {
+      "file": "views/hr_job_views.xml",
+      "detail_json": "details/views__hr_job_views.xml.json",
+      "type": "xml",
+      "bucket": "views",
+      "summary": "2 views"
+    },
+    {
+      "file": "views/portal_approval_views.xml",
+      "detail_json": "details/views__portal_approval_views.xml.json",
+      "type": "xml",
+      "bucket": "views",
+      "summary": "2 templates"
+    },
+    {
+      "file": "views/pos_config_views.xml",
+      "detail_json": "details/views__pos_config_views.xml.json",
+      "type": "xml",
+      "bucket": "views",
+      "summary": "1 views"
+    },
+    {
+      "file": "views/res_users_views.xml",
+      "detail_json": "details/views__res_users_views.xml.json",
+      "type": "xml",
+      "bucket": "views",
+      "summary": "1 views"
+    },
+    {
+      "file": "views/restaurant_config_views.xml",
+      "detail_json": "details/views__restaurant_config_views.xml.json",
+      "type": "xml",
+      "bucket": "views",
+      "summary": "8 views, 4 actions, 5 menus"
+    },
+    {
+      "file": "views/shift_log_checklist_views.xml",
+      "detail_json": "details/views__shift_log_checklist_views.xml.json",
+      "type": "xml",
+      "bucket": "views",
+      "summary": "2 views, 1 actions, 1 menus"
+    },
+    {
+      "file": "views/shift_log_views.xml",
+      "detail_json": "details/views__shift_log_views.xml.json",
+      "type": "xml",
+      "bucket": "views",
+      "summary": "5 views, 1 actions, 3 menus"
+    },
+    {
+      "file": "wizard/__init__.py",
+      "detail_json": "details/wizard____init__.py.json",
+      "type": "python",
+      "bucket": "wizard",
+      "summary": "Python source file."
+    },
+    {
+      "file": "wizard/shift_log_generate_wizard.py",
+      "detail_json": "details/wizard__shift_log_generate_wizard.py.json",
+      "type": "python",
+      "bucket": "wizard",
+      "summary": "models: shift.log.generate.wizard; 1 classes; 4 fields; 1 actions"
+    },
+    {
+      "file": "wizard/shift_log_generate_wizard_views.xml",
+      "detail_json": "details/wizard__shift_log_generate_wizard_views.xml.json",
+      "type": "xml",
+      "bucket": "wizard",
+      "summary": "1 views, 1 actions"
+    }
+  ]
+}

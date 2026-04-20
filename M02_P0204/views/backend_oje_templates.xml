@@ -1,0 +1,817 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="backend_oje_internal_page" name="Backend OJE Internal Page">
+        <t t-call="website.layout">
+            <div class="container oje-backend-page py-4">
+                <div class="d-flex justify-content-between align-items-center mb-3 oje-page-head">
+                    <h2 class="mb-0">Đánh giá OJE nội bộ</h2>
+                    <a href="/web" class="btn btn-outline-secondary">Quay lại Backend</a>
+                </div>
+
+                <div class="alert alert-success" role="alert" t-if="success_message">
+                    <t t-esc="success_message"/>
+                </div>
+                <div class="alert alert-danger" role="alert" t-if="error_message">
+                    <t t-esc="error_message"/>
+                </div>
+
+                <t t-if="evaluation">
+                    <t t-if="evaluation.template_scope == 'store_staff'">
+                        <t t-call="M02_P0204.backend_oje_staff_form"/>
+                    </t>
+                    <t t-elif="evaluation.template_scope == 'store_management'">
+                        <t t-call="M02_P0204.backend_oje_management_form"/>
+                    </t>
+                    <t t-else="">
+                        <div class="alert alert-warning" role="alert">
+                            Phiếu này đang dùng template legacy. Vui lòng mở bằng form Odoo mặc định.
+                        </div>
+                    </t>
+                </t>
+            </div>
+        </t>
+    </template>
+
+    <template id="backend_oje_staff_form" name="Backend OJE Staff Form">
+        <form t-att-action="'/recruitment/oje/internal/%s/submit' % evaluation.id"
+              method="post"
+              class="oje-form oje-staff-form"
+              data-oje-scope="store_staff">
+            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h3 class="oje-main-title">MẪU ĐÁNH GIÁ THỬ VIỆC</h3>
+
+                    <div class="row g-3 mb-3 oje-meta-grid">
+                        <div class="col-md-6">
+                            <label class="form-label">Tên ứng viên</label>
+                            <input type="text" class="form-control oje-line-input" readonly="readonly"
+                                   t-att-value="evaluation.applicant_id.partner_name or evaluation.applicant_id.name or ''"/>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Ngày thử việc</label>
+                            <input type="date" name="trial_date" class="form-control oje-line-input"
+                                   t-att-value="evaluation.trial_date or ''"
+                                   t-att-disabled="'disabled' if is_readonly else None"/>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Thời gian thử việc</label>
+                            <input type="text" name="trial_time" class="form-control oje-line-input"
+                                   t-att-value="evaluation.trial_time or ''"
+                                   t-att-disabled="'disabled' if is_readonly else None"/>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Nhà hàng</label>
+                            <input type="text" name="restaurant_name" class="form-control oje-line-input"
+                                   t-att-value="evaluation.restaurant_name or evaluation.applicant_id.department_id.name or ''"
+                                   t-att-disabled="'disabled' if is_readonly else None"/>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Operation Consultant</label>
+                            <input type="text" name="operation_consultant_name" class="form-control oje-line-input"
+                                   t-att-value="evaluation.operation_consultant_name or evaluation.evaluator_user_id.name or ''"
+                                   t-att-disabled="'disabled' if is_readonly else None"/>
+                        </div>
+                    </div>
+
+                    <p class="oje-intro-text">
+                        Vui lòng đánh giá khả năng của ứng viên đáp ứng năng lực theo yêu cầu, bằng cách sử dụng hiệu suất của một nhân viên mới đã làm cơ sở.
+                        Ứng viên phải ghi được điểm tối thiểu là GD trong tất cả các mục để được xem xét là phù hợp cho vị trí công việc.
+                    </p>
+
+                    <t t-foreach="staff_sections" t-as="section">
+                        <div class="oje-table-scroll">
+                            <table class="table table-bordered oje-staff-table mb-4">
+                                <colgroup>
+                                    <col style="width: 60px;"/>
+                                    <col/>
+                                    <col style="width: 56px;"/>
+                                    <col style="width: 56px;"/>
+                                    <col style="width: 56px;"/>
+                                    <col style="width: 56px;"/>
+                                    <col style="width: 240px;"/>
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th colspan="7" class="oje-section-header"><t t-esc="section.name"/></th>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-center" style="width: 60px;">STT</th>
+                                        <th>Nội dung</th>
+                                        <th class="text-center" style="width: 56px;">NI</th>
+                                        <th class="text-center" style="width: 56px;">GD</th>
+                                        <th class="text-center" style="width: 56px;">EX</th>
+                                        <th class="text-center" style="width: 56px;">OS</th>
+                                        <th style="width: 240px;">Ghi chú</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-set="row_no" t-value="0"/>
+                                    <t t-foreach="section.line_ids.filtered(lambda l: l.is_active and l.line_kind == 'staff_question').sorted('sequence')" t-as="line">
+                                        <t t-set="row_no" t-value="row_no + 1"/>
+                                        <tr>
+                                            <td class="text-center"><t t-esc="row_no"/></td>
+                                            <td><t t-esc="line.question_text or line.name"/></td>
+                                            <td class="text-center">
+                                                <input type="radio"
+                                                       t-att-name="'line_%s_rating' % line.id"
+                                                       value="ni"
+                                                       t-att-checked="'checked' if line.staff_rating == 'ni' else None"
+                                                       t-att-disabled="'disabled' if is_readonly else None"/>
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="radio"
+                                                       t-att-name="'line_%s_rating' % line.id"
+                                                       value="gd"
+                                                       t-att-checked="'checked' if line.staff_rating == 'gd' else None"
+                                                       t-att-disabled="'disabled' if is_readonly else None"/>
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="radio"
+                                                       t-att-name="'line_%s_rating' % line.id"
+                                                       value="ex"
+                                                       t-att-checked="'checked' if line.staff_rating == 'ex' else None"
+                                                       t-att-disabled="'disabled' if is_readonly else None"/>
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="radio"
+                                                       t-att-name="'line_%s_rating' % line.id"
+                                                       value="os"
+                                                       t-att-checked="'checked' if line.staff_rating == 'os' else None"
+                                                       t-att-disabled="'disabled' if is_readonly else None"/>
+                                            </td>
+                                            <td>
+                                                <input type="text"
+                                                       class="form-control form-control-sm oje-line-input"
+                                                       t-att-name="'line_%s_comment' % line.id"
+                                                       t-att-value="line.line_comment or ''"
+                                                       t-att-disabled="'disabled' if is_readonly else None"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+
+                    <div class="oje-table-scroll">
+                        <table class="table table-bordered oje-staff-table oje-staff-summary-table mb-3">
+                            <colgroup>
+                                <col style="width: 60px;"/>
+                                <col/>
+                                <col style="width: 56px;"/>
+                                <col style="width: 56px;"/>
+                                <col style="width: 56px;"/>
+                                <col style="width: 56px;"/>
+                                <col style="width: 240px;"/>
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td colspan="2" class="fw-bold">Tổng đánh giá</td>
+                                    <td class="text-center">
+                                        <input id="staff_count_ni" type="text" class="form-control form-control-sm text-center oje-staff-count-input" readonly="readonly" t-att-value="evaluation.staff_ni_count"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <input id="staff_count_gd" type="text" class="form-control form-control-sm text-center oje-staff-count-input" readonly="readonly" t-att-value="evaluation.staff_gd_count"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <input id="staff_count_ex" type="text" class="form-control form-control-sm text-center oje-staff-count-input" readonly="readonly" t-att-value="evaluation.staff_ex_count"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <input id="staff_count_os" type="text" class="form-control form-control-sm text-center oje-staff-count-input" readonly="readonly" t-att-value="evaluation.staff_os_count"/>
+                                    </td>
+                                    <td>
+                                        <div id="staff_ni_warning" class="alert alert-warning mb-0 py-2" t-att-class="'alert alert-warning mb-0 py-2 %s' % ('d-none' if not evaluation.has_any_ni else '')">
+                                            Có ít nhất 1 dòng NI, kết quả sẽ Fail.
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-header fw-bold">TỔNG THỂ</div>
+                        <div class="card-body">
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <label class="form-label d-block">Từ chối</label>
+                                    <input type="radio"
+                                           name="staff_decision"
+                                           value="reject"
+                                           t-att-checked="'checked' if evaluation.staff_decision == 'reject' else None"
+                                           t-att-disabled="'disabled' if is_readonly else None"/>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label d-block">Đề nghị tuyển</label>
+                                    <input type="radio"
+                                           name="staff_decision"
+                                           value="hire"
+                                           t-att-checked="'checked' if evaluation.staff_decision == 'hire' else None"
+                                           t-att-disabled="'disabled' if is_readonly else None"/>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label d-block">Đề nghị vị trí khác</label>
+                                    <input type="radio"
+                                           name="staff_decision"
+                                           value="other_position"
+                                           t-att-checked="'checked' if evaluation.staff_decision == 'other_position' else None"
+                                           t-att-disabled="'disabled' if is_readonly else None"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Ghi chú từ người phỏng vấn</label>
+                        <textarea name="interviewer_note"
+                                  class="form-control"
+                                  rows="3"
+                                  t-att-disabled="'disabled' if is_readonly else None"><t t-esc="evaluation.interviewer_note or ''"/></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Quản lý ký và ghi tên</label>
+                        <input type="text" name="manager_signature_name" class="form-control oje-line-input"
+                               t-att-value="evaluation.manager_signature_name or ''"
+                               t-att-disabled="'disabled' if is_readonly else None"/>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 oje-form-actions">
+                        <a t-att-href="'/recruitment/oje/internal/%s' % evaluation.id" class="btn btn-secondary">Làm mới</a>
+                        <button type="submit" class="btn btn-primary" t-if="not is_readonly">Nộp kết quả OJE</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </template>
+
+    <template id="backend_oje_management_form" name="Backend OJE Management Form">
+        <form t-att-action="'/recruitment/oje/internal/%s/submit' % evaluation.id"
+              method="post"
+              class="oje-form oje-management-form"
+              data-oje-scope="store_management">
+            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h3 class="oje-main-title">OJE ACTIVITY GUIDE &amp; EVALUATION FORM</h3>
+
+                    <div class="row g-3 mb-3 oje-meta-grid">
+                        <div class="col-md-6">
+                            <label class="form-label">Operation Consultant</label>
+                            <input type="text" name="operation_consultant_name" class="form-control oje-line-input"
+                                   t-att-value="evaluation.operation_consultant_name or evaluation.evaluator_user_id.name or ''"
+                                   t-att-disabled="'disabled' if is_readonly else None"/>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Candidate</label>
+                            <input type="text" class="form-control oje-line-input" readonly="readonly"
+                                   t-att-value="evaluation.applicant_id.partner_name or evaluation.applicant_id.name or ''"/>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">OJE Restaurant</label>
+                            <input type="text" name="restaurant_name" class="form-control oje-line-input"
+                                   t-att-value="evaluation.restaurant_name or evaluation.applicant_id.department_id.name or ''"
+                                   t-att-disabled="'disabled' if is_readonly else None"/>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">OJE Date</label>
+                            <input type="date" name="trial_date" class="form-control oje-line-input"
+                                   t-att-value="evaluation.trial_date or ''"
+                                   t-att-disabled="'disabled' if is_readonly else None"/>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Shift Schedule</label>
+                            <input type="text" name="shift_schedule" class="form-control oje-line-input"
+                                   t-att-value="evaluation.shift_schedule or ''"
+                                   t-att-disabled="'disabled' if is_readonly else None"/>
+                        </div>
+                    </div>
+
+                    <t t-set="dimension_no" t-value="0"/>
+                    <t t-foreach="management_sections" t-as="section">
+                        <t t-set="dimension_no" t-value="dimension_no + 1"/>
+                        <div class="oje-management-dimension mb-4" t-att-data-management-dimension-id="section.id">
+                            <h5 class="mb-2"><t t-esc="dimension_no"/>. <t t-esc="section.name"/></h5>
+
+                            <p t-if="section.objective_text"><strong>OBJECTIVE:</strong> <t t-esc="section.objective_text"/></p>
+                            <div t-if="section.hint_html" class="mb-2">
+                                <strong>Hints for evaluation:</strong>
+                                <div t-raw="section.hint_html"/>
+                            </div>
+                            <div t-if="section.behavior_html" class="mb-2">
+                                <strong>Does the candidate:</strong>
+                                <div t-raw="section.behavior_html"/>
+                            </div>
+
+                            <div class="oje-table-scroll">
+                                <table class="table table-bordered oje-management-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 50px;" class="text-center">No</th>
+                                            <th>TASKS</th>
+                                            <th class="text-center" style="width: 42px;">1</th>
+                                            <th class="text-center" style="width: 42px;">2</th>
+                                            <th class="text-center" style="width: 42px;">3</th>
+                                            <th class="text-center" style="width: 42px;">4</th>
+                                            <th class="text-center" style="width: 42px;">5</th>
+                                            <th style="width: 260px;">Comments</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-set="task_no" t-value="0"/>
+                                        <t t-foreach="section.line_ids.filtered(lambda l: l.is_active and l.line_kind == 'management_task').sorted('sequence')" t-as="line">
+                                            <t t-set="task_no" t-value="task_no + 1"/>
+                                            <tr>
+                                                <td class="text-center"><t t-esc="task_no"/></td>
+                                                <td><t t-esc="line.question_text or line.name"/></td>
+                                                <td class="text-center"><input type="radio" t-att-name="'line_%s_score' % line.id" value="1" t-att-checked="'checked' if line.management_score == 1 else None" t-att-disabled="'disabled' if is_readonly else None"/></td>
+                                                <td class="text-center"><input type="radio" t-att-name="'line_%s_score' % line.id" value="2" t-att-checked="'checked' if line.management_score == 2 else None" t-att-disabled="'disabled' if is_readonly else None"/></td>
+                                                <td class="text-center"><input type="radio" t-att-name="'line_%s_score' % line.id" value="3" t-att-checked="'checked' if line.management_score == 3 else None" t-att-disabled="'disabled' if is_readonly else None"/></td>
+                                                <td class="text-center"><input type="radio" t-att-name="'line_%s_score' % line.id" value="4" t-att-checked="'checked' if line.management_score == 4 else None" t-att-disabled="'disabled' if is_readonly else None"/></td>
+                                                <td class="text-center"><input type="radio" t-att-name="'line_%s_score' % line.id" value="5" t-att-checked="'checked' if line.management_score == 5 else None" t-att-disabled="'disabled' if is_readonly else None"/></td>
+                                                <td>
+                                                    <input type="text"
+                                                           class="form-control form-control-sm oje-line-input"
+                                                           t-att-name="'line_%s_comment' % line.id"
+                                                           t-att-value="line.line_comment or ''"
+                                                           t-att-disabled="'disabled' if is_readonly else None"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="row g-2 align-items-end">
+                                <div class="col-md-4">
+                                    <label class="form-label">Dimension rating (auto)</label>
+                                    <input type="text"
+                                           class="form-control text-center"
+                                           readonly="readonly"
+                                           data-management-section-rating-input="1"
+                                           t-att-data-management-section-id="section.id"
+                                           t-att-value="'%.2f' % (section.section_rating or 0.0)"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Overall comments (unusual circumstances, doubts, questions)</label>
+                        <textarea name="overall_comments" class="form-control" rows="3" t-att-disabled="'disabled' if is_readonly else None"><t t-esc="evaluation.overall_comments or ''"/></textarea>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-header fw-bold">OM &amp; OC'S EVALUATION SHEET</div>
+                        <div class="card-body">
+                            <div class="oje-table-scroll">
+                                <table class="table table-bordered mb-3 oje-management-summary-table">
+                                    <thead>
+                                        <tr>
+                                            <th>DIMENSION</th>
+                                            <th style="width: 160px;" class="text-center">RATING</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="management_sections" t-as="section">
+                                            <tr>
+                                                <td><t t-esc="section.name"/></td>
+                                                <td class="text-center">
+                                                    <span class="fw-semibold"
+                                                          t-att-id="'management_summary_section_%s' % section.id"
+                                                          t-att-data-management-summary-section-id="section.id">
+                                                        <t t-esc="'%.2f' % (section.section_rating or 0.0)"/>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                        <tr>
+                                            <td class="fw-bold">OVERALL RATING</td>
+                                            <td>
+                                                <input type="text"
+                                                       id="management_overall_rating"
+                                                       class="form-control text-center"
+                                                       readonly="readonly"
+                                                       t-att-value="'%.2f' % (evaluation.management_overall_rating or 0.0)"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="alert alert-info py-2 mb-0">
+                                Passed OJE (Overall &gt;= 3):
+                                <strong id="management_result_label">
+                                    <t t-if="(evaluation.management_overall_rating or 0) &gt;= 3">HIRE</t>
+                                    <t t-else="">REJECT</t>
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-header fw-bold">X-FACTOR</div>
+                        <div class="card-body">
+                            <p class="mb-2">Go through the following X-Factors and tick Y/N for each observed behavior.</p>
+                            <div class="oje-table-scroll">
+                                <table class="table table-bordered oje-management-xfactor-table mb-3">
+                                    <thead>
+                                        <tr>
+                                            <th>Criteria</th>
+                                            <th class="text-center" style="width: 64px;">Y</th>
+                                            <th class="text-center" style="width: 64px;">N</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="xfactor_lines" t-as="line">
+                                            <tr>
+                                                <td><t t-esc="line.question_text or line.name"/></td>
+                                                <td class="text-center">
+                                                    <input type="radio" t-att-name="'line_%s_yn' % line.id" value="y" t-att-checked="'checked' if line.yes_no_answer == 'y' else None" t-att-disabled="'disabled' if is_readonly else None"/>
+                                                </td>
+                                                <td class="text-center">
+                                                    <input type="radio" t-att-name="'line_%s_yn' % line.id" value="n" t-att-checked="'checked' if line.yes_no_answer == 'n' else None" t-att-disabled="'disabled' if is_readonly else None"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="row g-2 align-items-center">
+                                <div class="col-md-4 fw-bold">Applicant for:</div>
+                                <div class="col-md-4">
+                                    <label class="form-label d-block">HIRE</label>
+                                    <input id="management_applicant_hire" type="radio" disabled="disabled" name="management_applicant_preview" value="hire" t-att-checked="'checked' if evaluation.management_final_display == 'hire' else None"/>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label d-block">REJECT</label>
+                                    <input id="management_applicant_reject" type="radio" disabled="disabled" name="management_applicant_preview" value="reject" t-att-checked="'checked' if evaluation.management_final_display == 'reject' else None"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Ghi chú từ người phỏng vấn</label>
+                        <textarea name="interviewer_note"
+                                  class="form-control"
+                                  rows="3"
+                                  t-att-disabled="'disabled' if is_readonly else None"><t t-esc="evaluation.interviewer_note or ''"/></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Quản lý ký và ghi tên</label>
+                        <input type="text" name="manager_signature_name" class="form-control oje-line-input"
+                               t-att-value="evaluation.manager_signature_name or ''"
+                               t-att-disabled="'disabled' if is_readonly else None"/>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 oje-form-actions">
+                        <a t-att-href="'/recruitment/oje/internal/%s' % evaluation.id" class="btn btn-secondary">Làm mới</a>
+                        <button type="submit" class="btn btn-primary" t-if="not is_readonly">Nộp kết quả OJE</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </template>
+
+    <template id="backend_oje_template_preview_page" name="Backend OJE Template Preview Page">
+        <t t-call="website.layout">
+            <div class="container oje-backend-page py-4">
+                <div class="d-flex justify-content-between align-items-center mb-3 oje-page-head">
+                    <h2 class="mb-0"><t t-esc="preview_title"/></h2>
+                    <a t-att-href="back_url" class="btn btn-outline-secondary">Quay lại cấu hình</a>
+                </div>
+
+                <div class="alert alert-info" role="alert">
+                    Đây là màn hình xem trước form OJE theo cấu hình hiện tại, không lưu dữ liệu đánh giá.
+                </div>
+
+                <t t-if="preview_scope == 'store_staff'">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h3 class="oje-main-title">MẪU ĐÁNH GIÁ THỬ VIỆC (PREVIEW)</h3>
+
+                            <div class="row g-3 mb-3 oje-meta-grid">
+                                <div class="col-md-6">
+                                    <label class="form-label">Tên ứng viên</label>
+                                    <input type="text" class="form-control oje-line-input" value="Ứng viên preview" disabled="disabled"/>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Ngày thử việc</label>
+                                    <input type="date" class="form-control oje-line-input" disabled="disabled"/>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Thời gian thử việc</label>
+                                    <input type="text" class="form-control oje-line-input" value="" disabled="disabled"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Nhà hàng</label>
+                                    <input type="text" class="form-control oje-line-input" value="Nhà hàng preview" disabled="disabled"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Operation Consultant</label>
+                                    <input type="text" class="form-control oje-line-input" value="Người đánh giá preview" disabled="disabled"/>
+                                </div>
+                            </div>
+
+                            <p class="oje-intro-text">
+                                Vui lòng đánh giá khả năng của ứng viên đáp ứng năng lực theo yêu cầu, bằng cách sử dụng hiệu suất của một nhân viên mới đã làm cơ sở.
+                                Ứng viên phải ghi được điểm tối thiểu là GD trong tất cả các mục để được xem xét là phù hợp cho vị trí công việc.
+                            </p>
+
+                            <t t-foreach="preview_staff_sections" t-as="section">
+                                <div class="oje-table-scroll">
+                                    <table class="table table-bordered oje-staff-table mb-4">
+                                        <colgroup>
+                                            <col style="width: 60px;"/>
+                                            <col/>
+                                            <col style="width: 56px;"/>
+                                            <col style="width: 56px;"/>
+                                            <col style="width: 56px;"/>
+                                            <col style="width: 56px;"/>
+                                            <col style="width: 240px;"/>
+                                        </colgroup>
+                                        <thead>
+                                            <tr>
+                                                <th colspan="7" class="oje-section-header"><t t-esc="section['name']"/></th>
+                                            </tr>
+                                            <tr>
+                                                <th class="text-center" style="width: 60px;">STT</th>
+                                                <th>Nội dung</th>
+                                                <th class="text-center" style="width: 56px;">NI</th>
+                                                <th class="text-center" style="width: 56px;">GD</th>
+                                                <th class="text-center" style="width: 56px;">EX</th>
+                                                <th class="text-center" style="width: 56px;">OS</th>
+                                                <th style="width: 240px;">Ghi chú</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="section['lines']" t-as="line">
+                                                <tr>
+                                                    <td class="text-center"><t t-esc="line['index']"/></td>
+                                                    <td><t t-esc="line['text']"/></td>
+                                                    <td class="text-center"><input type="radio" disabled="disabled"/></td>
+                                                    <td class="text-center"><input type="radio" disabled="disabled"/></td>
+                                                    <td class="text-center"><input type="radio" disabled="disabled"/></td>
+                                                    <td class="text-center"><input type="radio" disabled="disabled"/></td>
+                                                    <td><input type="text" class="form-control form-control-sm oje-line-input" disabled="disabled"/></td>
+                                                </tr>
+                                            </t>
+                                            <tr t-if="not section['lines']">
+                                                <td colspan="7" class="text-muted">Chưa có câu hỏi trong section này.</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </t>
+
+                            <div class="oje-table-scroll">
+                                <table class="table table-bordered oje-staff-table oje-staff-summary-table mb-3">
+                                    <colgroup>
+                                        <col style="width: 60px;"/>
+                                        <col/>
+                                        <col style="width: 56px;"/>
+                                        <col style="width: 56px;"/>
+                                        <col style="width: 56px;"/>
+                                        <col style="width: 56px;"/>
+                                        <col style="width: 240px;"/>
+                                    </colgroup>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="2" class="fw-bold">Tổng đánh giá</td>
+                                            <td class="text-center">
+                                                <input type="text" class="form-control form-control-sm text-center oje-staff-count-input" value="0" readonly="readonly"/>
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="text" class="form-control form-control-sm text-center oje-staff-count-input" value="0" readonly="readonly"/>
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="text" class="form-control form-control-sm text-center oje-staff-count-input" value="0" readonly="readonly"/>
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="text" class="form-control form-control-sm text-center oje-staff-count-input" value="0" readonly="readonly"/>
+                                            </td>
+                                            <td>
+                                                <div class="alert alert-warning mb-0 py-2 d-none">
+                                                    Có ít nhất 1 dòng NI, kết quả sẽ Fail.
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="card mb-3">
+                                <div class="card-header fw-bold">TỔNG THỂ</div>
+                                <div class="card-body">
+                                    <div class="row g-2">
+                                        <div class="col-md-4">
+                                            <label class="form-label d-block">Từ chối</label>
+                                            <input type="radio" disabled="disabled"/>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label d-block">Đề nghị tuyển</label>
+                                            <input type="radio" disabled="disabled"/>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label d-block">Đề nghị vị trí khác</label>
+                                            <input type="radio" disabled="disabled"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Ghi chú từ người phỏng vấn</label>
+                                <textarea class="form-control" rows="3" disabled="disabled"/>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Quản lý ký và ghi tên</label>
+                                <input type="text" class="form-control oje-line-input" disabled="disabled"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+
+                <t t-elif="preview_scope == 'store_management'">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h3 class="oje-main-title">OJE ACTIVITY GUIDE &amp; EVALUATION FORM (PREVIEW)</h3>
+
+                            <div class="row g-3 mb-3 oje-meta-grid">
+                                <div class="col-md-6">
+                                    <label class="form-label">Operation Consultant</label>
+                                    <input type="text" class="form-control oje-line-input" value="Người đánh giá preview" disabled="disabled"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Candidate</label>
+                                    <input type="text" class="form-control oje-line-input" value="Ứng viên preview" disabled="disabled"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">OJE Restaurant</label>
+                                    <input type="text" class="form-control oje-line-input" value="Nhà hàng preview" disabled="disabled"/>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">OJE Date</label>
+                                    <input type="date" class="form-control oje-line-input" disabled="disabled"/>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Shift Schedule</label>
+                                    <input type="text" class="form-control oje-line-input" value="" disabled="disabled"/>
+                                </div>
+                            </div>
+
+                            <div t-if="preview_intro_html" class="mb-3" t-raw="preview_intro_html"/>
+
+                            <t t-set="dimension_no" t-value="0"/>
+                            <t t-foreach="preview_management_sections" t-as="section">
+                                <t t-set="dimension_no" t-value="dimension_no + 1"/>
+                                <div class="oje-management-dimension mb-4">
+                                    <h5 class="mb-2"><t t-esc="dimension_no"/>. <t t-esc="section['name']"/></h5>
+
+                                    <p t-if="section['objective_text']"><strong>OBJECTIVE:</strong> <t t-esc="section['objective_text']"/></p>
+                                    <div t-if="section['hint_html']" class="mb-2">
+                                        <strong>Hints for evaluation:</strong>
+                                        <div t-raw="section['hint_html']"/>
+                                    </div>
+                                    <div t-if="section['behavior_html']" class="mb-2">
+                                        <strong>Does the candidate:</strong>
+                                        <div t-raw="section['behavior_html']"/>
+                                    </div>
+
+                                    <div class="oje-table-scroll">
+                                        <table class="table table-bordered oje-management-table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 50px;" class="text-center">No</th>
+                                                    <th>TASKS</th>
+                                                    <th class="text-center" style="width: 42px;">1</th>
+                                                    <th class="text-center" style="width: 42px;">2</th>
+                                                    <th class="text-center" style="width: 42px;">3</th>
+                                                    <th class="text-center" style="width: 42px;">4</th>
+                                                    <th class="text-center" style="width: 42px;">5</th>
+                                                    <th style="width: 260px;">Comments</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="section['lines']" t-as="line">
+                                                    <tr>
+                                                        <td class="text-center"><t t-esc="line['index']"/></td>
+                                                        <td><t t-esc="line['text']"/></td>
+                                                        <td class="text-center"><input type="radio" disabled="disabled"/></td>
+                                                        <td class="text-center"><input type="radio" disabled="disabled"/></td>
+                                                        <td class="text-center"><input type="radio" disabled="disabled"/></td>
+                                                        <td class="text-center"><input type="radio" disabled="disabled"/></td>
+                                                        <td class="text-center"><input type="radio" disabled="disabled"/></td>
+                                                        <td><input type="text" class="form-control form-control-sm oje-line-input" disabled="disabled"/></td>
+                                                    </tr>
+                                                </t>
+                                                <tr t-if="not section['lines']">
+                                                    <td colspan="8" class="text-muted">Chưa có task trong dimension này.</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="row g-2 align-items-end">
+                                        <div class="col-md-4">
+                                            <label class="form-label">Dimension rating (auto)</label>
+                                            <input type="text" class="form-control text-center" value="0.00" readonly="readonly" disabled="disabled"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Overall comments (unusual circumstances, doubts, questions)</label>
+                                <textarea class="form-control" rows="3" disabled="disabled"/>
+                            </div>
+
+                            <div class="card mb-3">
+                                <div class="card-header fw-bold">OM &amp; OC'S EVALUATION SHEET</div>
+                                <div class="card-body">
+                                    <div class="oje-table-scroll">
+                                        <table class="table table-bordered mb-3 oje-management-summary-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>DIMENSION</th>
+                                                    <th style="width: 160px;" class="text-center">RATING</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="preview_management_sections" t-as="section">
+                                                    <tr>
+                                                        <td><t t-esc="section['name']"/></td>
+                                                        <td class="text-center">0.00</td>
+                                                    </tr>
+                                                </t>
+                                                <tr>
+                                                    <td class="fw-bold">OVERALL RATING</td>
+                                                    <td>
+                                                        <input type="text" class="form-control text-center" value="0.00" readonly="readonly" disabled="disabled"/>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="alert alert-info py-2 mb-0">
+                                        Passed OJE (Overall &gt;= 3):
+                                        <strong>REJECT</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card mb-3">
+                                <div class="card-header fw-bold">X-FACTOR</div>
+                                <div class="card-body">
+                                    <p class="mb-2">Go through the following X-Factors and tick Y/N for each observed behavior.</p>
+                                    <div class="oje-table-scroll">
+                                        <table class="table table-bordered oje-management-xfactor-table mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Criteria</th>
+                                                    <th class="text-center" style="width: 64px;">Y</th>
+                                                    <th class="text-center" style="width: 64px;">N</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="preview_xfactor_lines" t-as="line">
+                                                    <tr>
+                                                        <td><t t-esc="line['text']"/></td>
+                                                        <td class="text-center"><input type="radio" disabled="disabled"/></td>
+                                                        <td class="text-center"><input type="radio" disabled="disabled"/></td>
+                                                    </tr>
+                                                </t>
+                                                <tr t-if="not preview_xfactor_lines">
+                                                    <td colspan="3" class="text-muted">Chưa có dòng X-Factor.</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Ghi chú từ người phỏng vấn</label>
+                                <textarea class="form-control" rows="3" disabled="disabled"/>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Quản lý ký và ghi tên</label>
+                                <input type="text" class="form-control oje-line-input" disabled="disabled"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="alert alert-warning" role="alert">
+                        Chỉ hỗ trợ preview cho template Store Staff hoặc Store Management.
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+</odoo>

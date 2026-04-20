@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_psm_hr_training_config_tree" model="ir.ui.view">
+        <field name="name">x_psm.hr.training.config.tree</field>
+        <field name="model">x_psm.hr.training.config</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="x_psm_staff_type"/>
+                <field name="x_psm_code"/>
+                <field name="x_psm_days_after_start"/>
+                <field name="x_psm_description"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_psm_hr_training_config_search" model="ir.ui.view">
+        <field name="name">x_psm.hr.training.config.search</field>
+        <field name="model">x_psm.hr.training.config</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="x_psm_code"/>
+                <filter string="Khối áp dụng" name="group_by_staff_type" context="{'group_by': 'x_psm_staff_type'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_psm_hr_training_config" model="ir.actions.act_window">
+        <field name="name">Cấu hình Đào tạo</field>
+        <field name="res_model">x_psm.hr.training.config</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_psm_hr_training_config_search"/>
+        <field name="context">{'search_default_group_by_staff_type': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Thêm mới Cấu hình lộ trình đào tạo Onboarding!
+            </p>
+            <p>
+                Quản lý các sự kiện đào tạo tự động diễn ra sau khi nhân viên bắt đầu lộ trình đào tạo.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Gốc cho các cấu hình onboarding -->
+    <menuitem id="menu_hr_training_config_root"
+              name="Cấu hình Onboarding"
+              parent="hr.menu_human_resources_configuration"
+              sequence="100"/>
+
+    <!-- Menu Đào tạo thực tế -->
+    <menuitem id="menu_hr_training_config_item"
+              name="Cấu hình Đào tạo"
+              parent="menu_hr_training_config_root"
+              action="action_psm_hr_training_config"
+              sequence="10"/>
+</odoo>

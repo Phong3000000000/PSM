@@ -1,0 +1,79 @@
+{
+  "file": "data/hr_job_level_data.xml",
+  "type": "xml",
+  "bucket": "data",
+  "summary": "XML data file.",
+  "records": [
+    {
+      "id": "job_level_employee",
+      "model": "hr.job.level",
+      "fields": {
+        "name": "Employee",
+        "code": "EMPLOYEE",
+        "sequence": "10"
+      }
+    },
+    {
+      "id": "job_level_assistant",
+      "model": "hr.job.level",
+      "fields": {
+        "name": "Assistant",
+        "code": "ASSISTANT",
+        "sequence": "20"
+      }
+    },
+    {
+      "id": "job_level_coordinator",
+      "model": "hr.job.level",
+      "fields": {
+        "name": "Coordinator",
+        "code": "COORDINATOR",
+        "sequence": "30"
+      }
+    },
+    {
+      "id": "job_level_specialist",
+      "model": "hr.job.level",
+      "fields": {
+        "name": "Specialist",
+        "code": "SPECIALIST",
+        "sequence": "40"
+      }
+    },
+    {
+      "id": "job_level_consultant",
+      "model": "hr.job.level",
+      "fields": {
+        "name": "Consultant",
+        "code": "CONSULTANT",
+        "sequence": "50"
+      }
+    },
+    {
+      "id": "job_level_manager",
+      "model": "hr.job.level",
+      "fields": {
+        "name": "Manager",
+        "code": "MANAGER",
+        "sequence": "60"
+      }
+    },
+    {
+      "id": "job_level_head_of_department",
+      "model": "hr.job.level",
+      "fields": {
+        "name": "Head of Department",
+        "code": "HEAD_OF_DEPT",
+        "sequence": "70"
+      }
+    }
+  ],
+  "views": [],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "hr.job.level"
+  ]
+}

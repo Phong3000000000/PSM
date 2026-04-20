@@ -1,0 +1,157 @@
+{
+  "file": "views/shift_log_views.xml",
+  "type": "xml",
+  "bucket": "views",
+  "summary": "5 views, 1 actions, 3 menus",
+  "records": [
+    {
+      "id": "view_shift_log_form",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "shift.log.form",
+        "model": "shift.log",
+        "arch": ""
+      }
+    },
+    {
+      "id": "view_shift_log_tree",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "shift.log.tree",
+        "model": "shift.log",
+        "arch": ""
+      }
+    },
+    {
+      "id": "view_shift_log_search",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "shift.log.search",
+        "model": "shift.log",
+        "arch": ""
+      }
+    },
+    {
+      "id": "view_shift_log_gantt",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "shift.log.gantt",
+        "model": "shift.log",
+        "arch": ""
+      }
+    },
+    {
+      "id": "view_shift_log_calendar",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "shift.log.calendar",
+        "model": "shift.log",
+        "arch": ""
+      }
+    },
+    {
+      "id": "action_mic_matrix",
+      "model": "ir.actions.client",
+      "fields": {
+        "name": "Bảng Gán MIC",
+        "tag": "mic_assignment_matrix",
+        "target": "main"
+      }
+    },
+    {
+      "id": "action_shift_log",
+      "model": "ir.actions.act_window",
+      "fields": {
+        "name": "Nhật Ký Ca Làm",
+        "res_model": "shift.log",
+        "view_mode": "gantt,calendar,list,form",
+        "search_view_id": {
+          "ref": "view_shift_log_search"
+        },
+        "context": "{}",
+        "help": ""
+      }
+    }
+  ],
+  "views": [
+    {
+      "id": "view_shift_log_form",
+      "model": "shift.log",
+      "name": "shift.log.form",
+      "inherit_id": null,
+      "file": "views/shift_log_views.xml"
+    },
+    {
+      "id": "view_shift_log_tree",
+      "model": "shift.log",
+      "name": "shift.log.tree",
+      "inherit_id": null,
+      "file": "views/shift_log_views.xml"
+    },
+    {
+      "id": "view_shift_log_search",
+      "model": "shift.log",
+      "name": "shift.log.search",
+      "inherit_id": null,
+      "file": "views/shift_log_views.xml"
+    },
+    {
+      "id": "view_shift_log_gantt",
+      "model": "shift.log",
+      "name": "shift.log.gantt",
+      "inherit_id": null,
+      "file": "views/shift_log_views.xml"
+    },
+    {
+      "id": "view_shift_log_calendar",
+      "model": "shift.log",
+      "name": "shift.log.calendar",
+      "inherit_id": null,
+      "file": "views/shift_log_views.xml"
+    }
+  ],
+  "actions": [
+    {
+      "id": "action_shift_log",
+      "name": "Nhật Ký Ca Làm",
+      "res_model": "shift.log",
+      "view_mode": "gantt,calendar,list,form",
+      "domain": null,
+      "file": "views/shift_log_views.xml"
+    }
+  ],
+  "menus": [
+    {
+      "id": "menu_mic_matrix",
+      "name": "Bảng Gán MIC",
+      "parent": "point_of_sale.menu_point_of_sale",
+      "action": "action_mic_matrix",
+      "groups": null,
+      "file": "views/shift_log_views.xml"
+    },
+    {
+      "id": "menu_shift_log",
+      "name": "Nhật Ký Ca Làm",
+      "parent": "point_of_sale.menu_point_of_sale",
+      "action": "action_shift_log",
+      "groups": null,
+      "file": "views/shift_log_views.xml"
+    },
+    {
+      "id": "menu_shift_log_generate",
+      "name": "Generate Shift Log Tháng",
+      "parent": "point_of_sale.menu_point_of_sale",
+      "action": "action_shift_log_generate_wizard",
+      "groups": null,
+      "file": "views/shift_log_views.xml"
+    }
+  ],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "ir.actions.act_window",
+    "ir.actions.client",
+    "ir.ui.view",
+    "shift.log"
+  ]
+}

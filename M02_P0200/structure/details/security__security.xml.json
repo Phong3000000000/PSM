@@ -1,0 +1,271 @@
+{
+  "file": "security/security.xml",
+  "type": "xml",
+  "bucket": "security",
+  "summary": "XML data file.",
+  "records": [
+    {
+      "id": "module_category_gdh_organization",
+      "model": "ir.module.category",
+      "fields": {
+        "name": "GDH Organization Groups",
+        "description": "Organization-wide groups for role-based access control.",
+        "sequence": "100"
+      }
+    },
+    {
+      "id": "res_groups_privilege_gdh",
+      "model": "res.groups.privilege",
+      "fields": {
+        "name": "GDH System Access",
+        "category_id": {
+          "ref": "module_category_gdh_organization"
+        },
+        "sequence": "10"
+      }
+    },
+    {
+      "id": "GDH_RST_ALL_BASE_S",
+      "model": "res.groups",
+      "fields": {
+        "name": "Người dùng hệ thống (Odoo Base)",
+        "privilege_id": {
+          "ref": "res_groups_privilege_gdh"
+        },
+        "implied_ids": {
+          "eval": "[(4, ref('base.group_user'))]"
+        }
+      }
+    },
+    {
+      "id": "GDH_RST_HR_RECRUITMENT_S",
+      "model": "res.groups",
+      "fields": {
+        "name": "Nhân viên tuyển dụng",
+        "privilege_id": {
+          "ref": "res_groups_privilege_gdh"
+        }
+      }
+    },
+    {
+      "id": "GDH_RST_HR_CNB_S",
+      "model": "res.groups",
+      "fields": {
+        "name": "Nhân viên tính lương",
+        "privilege_id": {
+          "ref": "res_groups_privilege_gdh"
+        }
+      }
+    },
+    {
+      "id": "GDH_RST_HR_HRBP_S",
+      "model": "res.groups",
+      "fields": {
+        "name": "Nhân viên BP",
+        "privilege_id": {
+          "ref": "res_groups_privilege_gdh"
+        }
+      }
+    },
+    {
+      "id": "GDH_RST_HR_ADMIN_S",
+      "model": "res.groups",
+      "fields": {
+        "name": "Nhân viên admin",
+        "privilege_id": {
+          "ref": "res_groups_privilege_gdh"
+        }
+      }
+    },
+    {
+      "id": "GDH_RST_HR_RECRUITMENT_M",
+      "model": "res.groups",
+      "fields": {
+        "name": "Quản lý tuyển dụng",
+        "privilege_id": {
+          "ref": "res_groups_privilege_gdh"
+        },
+        "implied_ids": {
+          "eval": "[(4, ref('GDH_RST_HR_RECRUITMENT_S'))]"
+        }
+      }
+    },
+    {
+      "id": "GDH_RST_HR_CNB_M",
+      "model": "res.groups",
+      "fields": {
+        "name": "Quản lý tính lương",
+        "privilege_id": {
+          "ref": "res_groups_privilege_gdh"
+        },
+        "implied_ids": {
+          "eval": "[(4, ref('GDH_RST_HR_CNB_S'))]"
+        }
+      }
+    },
+    {
+      "id": "GDH_RST_HR_HRBP_M",
+      "model": "res.groups",
+      "fields": {
+        "name": "Quản lý BP",
+        "privilege_id": {
+          "ref": "res_groups_privilege_gdh"
+        },
+        "implied_ids": {
+          "eval": "[(4, ref('GDH_RST_HR_HRBP_S')), (4, ref('GDH_RST_HR_ADMIN_S'))]"
+        }
+      }
+    },
+    {
+      "id": "GDH_RST_HR_ADMIN_M",
+      "model": "res.groups",
+      "fields": {
+        "name": "Quản lý admin",
+        "privilege_id": {
+          "ref": "res_groups_privilege_gdh"
+        }
+      }
+    },
+    {
+      "id": "GDH_RST_HR_HEAD_M",
+      "model": "res.groups",
+      "fields": {
+        "name": "Trưởng phòng nhân sự",
+        "privilege_id": {
+          "ref": "res_groups_privilege_gdh"
+        },
+        "implied_ids": {
+          "eval": "[             (4, ref('GDH_RST_HR_RECRUITMENT_M')),              (4, ref('GDH_RST_HR_CNB_M')),              (4, ref('GDH_RST_HR_ADMIN_M')),              (4, ref('GDH_RST_HR_HRBP_M'))         ]"
+        }
+      }
+    },
+    {
+      "id": "GDH_OPS_STORE_CREW_S",
+      "model": "res.groups",
+      "fields": {
+        "name": "Crew",
+        "privilege_id": {
+          "ref": "res_groups_privilege_gdh"
+        }
+      }
+    },
+    {
+      "id": "GDH_OPS_STORE_TRAINER_S",
+      "model": "res.groups",
+      "fields": {
+        "name": "Crew trainer",
+        "privilege_id": {
+          "ref": "res_groups_privilege_gdh"
+        }
+      }
+    },
+    {
+      "id": "GDH_OPS_STORE_GEL_M",
+      "model": "res.groups",
+      "fields": {
+        "name": "GEL",
+        "privilege_id": {
+          "ref": "res_groups_privilege_gdh"
+        }
+      }
+    },
+    {
+      "id": "GDH_OPS_STORE_SM_M",
+      "model": "res.groups",
+      "fields": {
+        "name": "Shift manager",
+        "privilege_id": {
+          "ref": "res_groups_privilege_gdh"
+        }
+      }
+    },
+    {
+      "id": "GDH_OPS_STORE_ST_M",
+      "model": "res.groups",
+      "fields": {
+        "name": "System manager",
+        "privilege_id": {
+          "ref": "res_groups_privilege_gdh"
+        }
+      }
+    },
+    {
+      "id": "GDH_OPS_STORE_PM_M",
+      "model": "res.groups",
+      "fields": {
+        "name": "People manager",
+        "privilege_id": {
+          "ref": "res_groups_privilege_gdh"
+        }
+      }
+    },
+    {
+      "id": "GDH_OPS_STORE_RGM_M",
+      "model": "res.groups",
+      "fields": {
+        "name": "Cửa hàng trưởng",
+        "privilege_id": {
+          "ref": "res_groups_privilege_gdh"
+        },
+        "implied_ids": {
+          "eval": "[             (4, ref('GDH_OPS_STORE_CREW_S')),              (4, ref('GDH_OPS_STORE_TRAINER_S')),              (4, ref('GDH_OPS_STORE_GEL_M')),              (4, ref('GDH_OPS_STORE_SM_M')),              (4, ref('GDH_OPS_STORE_ST_M')),              (4, ref('GDH_OPS_STORE_PM_M'))         ]"
+        }
+      }
+    },
+    {
+      "id": "GDH_RST_OPS_OC_S",
+      "model": "res.groups",
+      "fields": {
+        "name": "Operation consultant",
+        "privilege_id": {
+          "ref": "res_groups_privilege_gdh"
+        }
+      }
+    },
+    {
+      "id": "GDH_RST_OPS_OM_M",
+      "model": "res.groups",
+      "fields": {
+        "name": "Operation consultant manager",
+        "privilege_id": {
+          "ref": "res_groups_privilege_gdh"
+        },
+        "implied_ids": {
+          "eval": "[(4, ref('GDH_RST_OPS_OC_S'))]"
+        }
+      }
+    },
+    {
+      "id": "GDH_RST_HR_HEAD_M",
+      "model": "res.groups",
+      "fields": {
+        "implied_ids": {
+          "eval": "[(4, ref('GDH_OPS_STORE_RGM_M')), (4, ref('GDH_RST_OPS_OM_M'))]"
+        }
+      }
+    },
+    {
+      "id": "GDH_RST_SYSTEM_ST_M",
+      "model": "res.groups",
+      "fields": {
+        "name": "Quản lý hệ thống",
+        "privilege_id": {
+          "ref": "res_groups_privilege_gdh"
+        },
+        "implied_ids": {
+          "eval": "[(4, ref('GDH_RST_ALL_BASE_S')), (4, ref('GDH_RST_HR_HEAD_M'))]"
+        }
+      }
+    }
+  ],
+  "views": [],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "ir.module.category",
+    "res.groups",
+    "res.groups.privilege"
+  ]
+}

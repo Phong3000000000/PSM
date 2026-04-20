@@ -1,0 +1,102 @@
+{
+  "file": "models/hr_department_ext.py",
+  "type": "python",
+  "bucket": "models",
+  "summary": "models: hr.department; 1 classes; 4 fields; 1 actions",
+  "classes": [
+    {
+      "python_class": "HrDepartment",
+      "description": "Extends hr.department in models/hr_department_ext.py.",
+      "model": null,
+      "inherit": "hr.department",
+      "order": null,
+      "rec_name": null,
+      "fields": [
+        {
+          "name": "block_id",
+          "type": "Many2one",
+          "string": "Khối",
+          "comodel": "department.block",
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": "Khối phòng ban: Văn phòng (RST) hoặc Vận hành (OPS)"
+        },
+        {
+          "name": "block_code",
+          "type": "Char",
+          "string": "Mã Khối",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": false,
+          "related": "block_id.code",
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "pos_config_id",
+          "type": "Many2one",
+          "string": "POS",
+          "comodel": "pos.config",
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": "Cửa hàng POS gắn với phòng ban (chỉ dành cho khối OPS)"
+        },
+        {
+          "name": "user_id",
+          "type": "Many2one",
+          "string": "Tài Khoản",
+          "comodel": "res.users",
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": "Tài khoản người dùng gắn với phòng ban/cửa hàng (quan hệ 1-1)"
+        }
+      ],
+      "methods": [
+        {
+          "name": "_onchange_block_id",
+          "type": "onchange",
+          "decorators": [
+            {
+              "call": "api.onchange",
+              "args": [
+                "block_id"
+              ],
+              "keywords": {}
+            }
+          ],
+          "summary": "Xóa POS khi chuyển khối không phải OPS."
+        },
+        {
+          "name": "action_generate_positions",
+          "type": "action",
+          "decorators": [],
+          "summary": "Tạo các vị trí công việc (hr.job) dựa trên danh sách mặc định\ncủa khối mà phòng ban thuộc về. Bỏ qua các vị trí đã tồn tại\n(kiểm tra theo code + department_id)."
+        }
+      ],
+      "kind": "inherit_only"
+    }
+  ],
+  "routes": []
+}

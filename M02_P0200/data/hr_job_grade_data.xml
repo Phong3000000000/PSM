@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="job_grade_6" model="hr.job.grade">
+            <field name="name">6</field>
+            <field name="global_grade">G6</field>
+            <field name="mercer_min">60</field>
+            <field name="mercer_max">63</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="job_grade_5a" model="hr.job.grade">
+            <field name="name">5a</field>
+            <field name="global_grade">G5</field>
+            <field name="mercer_min">58</field>
+            <field name="mercer_max">59</field>
+            <field name="sequence">20</field>
+            <field name="parent_id" ref="job_grade_6"/>
+        </record>
+        <record id="job_grade_5b" model="hr.job.grade">
+            <field name="name">5b</field>
+            <field name="global_grade">G5</field>
+            <field name="mercer_min">57</field>
+            <field name="mercer_max">57</field>
+            <field name="sequence">30</field>
+            <field name="parent_id" ref="job_grade_5a"/>
+        </record>
+
+        <record id="job_grade_4a" model="hr.job.grade">
+            <field name="name">4a</field>
+            <field name="global_grade">G4</field>
+            <field name="mercer_min">56</field>
+            <field name="mercer_max">56</field>
+            <field name="sequence">40</field>
+            <field name="parent_id" ref="job_grade_5b"/>
+        </record>
+        <record id="job_grade_4b" model="hr.job.grade">
+            <field name="name">4b</field>
+            <field name="global_grade">G4</field>
+            <field name="mercer_min">55</field>
+            <field name="mercer_max">55</field>
+            <field name="sequence">50</field>
+            <field name="parent_id" ref="job_grade_4a"/>
+        </record>
+        <record id="job_grade_4c" model="hr.job.grade">
+            <field name="name">4c</field>
+            <field name="global_grade">G4</field>
+            <field name="mercer_min">54</field>
+            <field name="mercer_max">54</field>
+            <field name="sequence">60</field>
+            <field name="parent_id" ref="job_grade_4b"/>
+        </record>
+
+        <record id="job_grade_3a" model="hr.job.grade">
+            <field name="name">3a</field>
+            <field name="global_grade">G3</field>
+            <field name="mercer_min">53</field>
+            <field name="mercer_max">53</field>
+            <field name="sequence">70</field>
+            <field name="parent_id" ref="job_grade_4c"/>
+        </record>
+        <record id="job_grade_3b" model="hr.job.grade">
+            <field name="name">3b</field>
+            <field name="global_grade">G3</field>
+            <field name="mercer_min">52</field>
+            <field name="mercer_max">52</field>
+            <field name="sequence">80</field>
+            <field name="parent_id" ref="job_grade_3a"/>
+        </record>
+
+        <record id="job_grade_2a" model="hr.job.grade">
+            <field name="name">2a</field>
+            <field name="global_grade">G2</field>
+            <field name="mercer_min">51</field>
+            <field name="mercer_max">51</field>
+            <field name="sequence">90</field>
+            <field name="parent_id" ref="job_grade_3b"/>
+        </record>
+        <record id="job_grade_2b" model="hr.job.grade">
+            <field name="name">2b</field>
+            <field name="global_grade">G2</field>
+            <field name="mercer_min">50</field>
+            <field name="mercer_max">50</field>
+            <field name="sequence">100</field>
+            <field name="parent_id" ref="job_grade_2a"/>
+        </record>
+
+        <record id="job_grade_1a" model="hr.job.grade">
+            <field name="name">1a</field>
+            <field name="global_grade">G1</field>
+            <field name="mercer_min">49</field>
+            <field name="mercer_max">49</field>
+            <field name="sequence">110</field>
+            <field name="parent_id" ref="job_grade_2b"/>
+        </record>
+        <record id="job_grade_1b" model="hr.job.grade">
+            <field name="name">1b</field>
+            <field name="global_grade">G1</field>
+            <field name="mercer_min">48</field>
+            <field name="mercer_max">48</field>
+            <field name="sequence">120</field>
+            <field name="parent_id" ref="job_grade_1a"/>
+        </record>
+        <record id="job_grade_1c" model="hr.job.grade">
+            <field name="name">1c</field>
+            <field name="global_grade">G1</field>
+            <field name="mercer_min">47</field>
+            <field name="mercer_max">47</field>
+            <field name="sequence">130</field>
+            <field name="parent_id" ref="job_grade_1b"/>
+        </record>
+        <record id="job_grade_1d" model="hr.job.grade">
+            <field name="name">1d</field>
+            <field name="global_grade">G1</field>
+            <field name="mercer_min">46</field>
+            <field name="mercer_max">46</field>
+            <field name="sequence">140</field>
+            <field name="parent_id" ref="job_grade_1c"/>
+        </record>
+    </data>
+</odoo>

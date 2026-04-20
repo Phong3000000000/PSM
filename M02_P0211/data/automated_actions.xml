@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 1. CÁC HÀNH ĐỘNG TỰ ĐỘNG (AUTOMATED ACTIONS) -->
+    <record id="action_server_send_training_reminder" model="ir.actions.server">
+        <field name="name">Gửi email nhắc lịch đào tạo</field>
+        <field name="model_id" ref="hr.model_hr_employee"/>
+        <field name="state">code</field>
+        <field name="code">
+template = env.ref('M02_P0211.email_template_training_reminder')
+for rec in records:
+    template.send_mail(rec.id, force_send=True)
+        </field>
+    </record>
+
+    <record id="base_automation_training_reminder" model="base.automation">
+        <field name="name">Onboarding: Nhắc lịch đào tạo</field>
+        <field name="model_id" ref="hr.model_hr_employee"/>
+        <field name="trigger">on_time</field>
+        <field name="trg_date_id" ref="M02_P0211.field_hr_employee__x_psm_0211_training_start_date"/>
+        <field name="trg_date_range">1</field>
+        <field name="trg_date_range_mode">before</field>
+        <field name="trg_date_range_type">day</field>
+        <field name="filter_domain">[('x_psm_0211_training_started', '=', True)]</field>
+        <field name="action_server_ids" eval="[(4, ref('action_server_send_training_reminder'))]"/>
+    </record>
+
+    <record id="action_server_send_welcome_email" model="ir.actions.server">
+        <field name="name">Onboarding: Gửi email chào mừng nhân viên mới</field>
+        <field name="model_id" ref="hr.model_hr_employee"/>
+        <field name="state">code</field>
+        <field name="code">records.action_psm_automated_onboarding_setup()</field>
+    </record>
+
+    <!-- TỰ ĐỘNG GỬI MAIL ĐÃ ĐƯỢC CHUYỂN VÀO PYTHON ĐỂ TRÁNH GỬI TRÙNG KHI FAIL THỬ VIỆC -->
+    <!-- 
+    <record id="action_server_send_refused_email" model="ir.actions.server"> ... </record>
+    <record id="base_automation_onboarding_refused" model="base.automation"> ... </record>
+    -->
+
+    <!-- 2. CÁC BẢN MẪU HOẠT ĐỘNG (PLAN TEMPLATES) - Noupdate để HR tùy chỉnh -->
+    <data noupdate="1">
+        <!-- Bước 2: Cấp quyền Portal — Manager xác nhận -->
+        <record id="onboarding_psm_portal_access" model="mail.activity.plan.template">
+            <field name="sequence">2</field>
+            <field name="summary">Xác nhận nhân viên đã nhận được email và có thể đăng nhập portal</field>
+            <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+            <field name="responsible_type">manager</field>
+            <field name="delay_count">1</field>
+            <field name="delay_unit">days</field>
+            <field name="delay_from">after_plan_date</field>
+            <field name="plan_id" ref="hr.onboarding_plan"/>
+            <field name="note">Liên hệ nhân viên xác nhận đã nhận được email và đăng nhập được vào cổng thông tin /my/onboard_info để nộp 5 loại giấy tờ.</field>
+        </record>
+
+        <!-- Bước 5: Tạo mã nhân viên — Manager -->
+        <record id="onboarding_psm_employee_id" model="mail.activity.plan.template">
+            <field name="sequence">5</field>
+            <field name="summary">Tạo mã nhân viên (Employee ID / Badge ID)</field>
+            <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+            <field name="responsible_type">manager</field>
+            <field name="delay_count">0</field>
+            <field name="delay_unit">days</field>
+            <field name="delay_from">after_plan_date</field>
+            <field name="plan_id" ref="hr.onboarding_plan"/>
+            <field name="note">Tạo mã nhân viên và cập nhật vào Odoo: Employee → tab Settings → Badge ID.</field>
+        </record>
+
+        <!-- Bước 6: Đăng ký vân tay — Manager -->
+        <record id="onboarding_psm_fingerprint" model="mail.activity.plan.template">
+            <field name="sequence">6</field>
+            <field name="summary">Đăng ký vân tay / thẻ từ chấm công</field>
+            <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+            <field name="responsible_type">manager</field>
+            <field name="delay_count">0</field>
+            <field name="delay_unit">days</field>
+            <field name="delay_from">after_plan_date</field>
+            <field name="plan_id" ref="hr.onboarding_plan"/>
+        </record>
+
+        <!-- Bước 7: Cấp đồng phục — Manager -->
+        <record id="onboarding_psm_uniform" model="mail.activity.plan.template">
+            <field name="sequence">7</field>
+            <field name="summary">Cấp phát đồng phục</field>
+            <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
+            <field name="responsible_type">manager</field>
+            <field name="delay_count">0</field>
+            <field name="delay_unit">days</field>
+            <field name="delay_from">after_plan_date</field>
+            <field name="plan_id" ref="hr.onboarding_plan"/>
+        </record>
+    </data>
+</odoo>

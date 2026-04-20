@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_psm_mail_activity_schedule_form_0211" model="ir.ui.view">
+        <field name="name">mail.activity.schedule.view.form.ext.0211</field>
+        <field name="model">mail.activity.schedule</field>
+        <field name="inherit_id" ref="mail.mail_activity_schedule_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='plan_on_demand_user_id']" position="before">
+                <field name="x_psm_0211_bp_user_id" 
+                       string="Phụ trách Onboarding"
+                       widget="many2one_avatar_user"
+                       invisible="not x_psm_0211_is_onboarding_plan or not x_psm_0211_has_office_employee"
+                       required="x_psm_0211_is_onboarding_plan and x_psm_0211_has_office_employee"/>
+            </xpath>
+            <xpath expr="//field[@name='plan_on_demand_user_id']" position="attributes">
+                <attribute name="invisible">not x_psm_0211_is_onboarding_plan or not x_psm_0211_has_office_employee</attribute>
+                <attribute name="required">x_psm_0211_is_onboarding_plan and x_psm_0211_has_office_employee</attribute>
+                <attribute name="string">Phụ trách IT/Digital</attribute>
+            </xpath>
+            <xpath expr="//field[@name='plan_on_demand_user_id']" position="after">
+                <field name="x_psm_0211_is_onboarding_plan" invisible="1"/>
+                <field name="x_psm_0211_has_ops_employee" invisible="1"/>
+                <field name="x_psm_0211_has_office_employee" invisible="1"/>
+                <field name="x_psm_0211_vsattp_survey_id" 
+                       string="Bài kiểm tra VSATTP"
+                       invisible="not x_psm_0211_is_onboarding_plan or not x_psm_0211_has_ops_employee" 
+                       required="x_psm_0211_is_onboarding_plan and x_psm_0211_has_ops_employee"
+                       options="{'no_create': True}"
+                       context="{'default_survey_type': 'assessment'}"/>
+                <field name="x_psm_0211_3P_email" string="Email 3P" 
+                       invisible="not x_psm_0211_is_onboarding_plan"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

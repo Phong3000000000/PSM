@@ -1,0 +1,156 @@
+{
+  "file": "data/hr_master_data.xml",
+  "type": "xml",
+  "bucket": "data",
+  "summary": "1 functions/rules",
+  "records": [
+    {
+      "id": "user_rgm_master",
+      "model": "res.users",
+      "fields": {
+        "name": "Nguyen Van RGM",
+        "login": "rgm@master.com",
+        "password": "1",
+        "email": "rgm@master.com"
+      }
+    },
+    {
+      "id": "emp_rgm_master",
+      "model": "hr.employee",
+      "fields": {
+        "name": "Nguyen Van RGM",
+        "user_id": {
+          "ref": "user_rgm_master"
+        },
+        "work_email": "rgm@master.com",
+        "job_title": "Regional General Manager"
+      }
+    },
+    {
+      "id": "user_dm_master",
+      "model": "res.users",
+      "fields": {
+        "name": "Tran Thi DM",
+        "login": "dm@master.com",
+        "password": "1",
+        "email": "dm@master.com",
+        "x_is_portal_manager": {
+          "eval": "True"
+        }
+      }
+    },
+    {
+      "id": "emp_dm_master",
+      "model": "hr.employee",
+      "fields": {
+        "name": "Tran Thi DM",
+        "user_id": {
+          "ref": "user_dm_master"
+        },
+        "parent_id": {
+          "ref": "emp_rgm_master"
+        },
+        "work_email": "dm@master.com",
+        "job_title": "District Manager"
+      }
+    },
+    {
+      "id": "user_sm_master",
+      "model": "res.users",
+      "fields": {
+        "name": "Le Van SM",
+        "login": "sm@master.com",
+        "password": "1",
+        "email": "sm@master.com",
+        "x_is_portal_manager": {
+          "eval": "True"
+        }
+      }
+    },
+    {
+      "id": "emp_sm_master",
+      "model": "hr.employee",
+      "fields": {
+        "name": "Le Van SM",
+        "user_id": {
+          "ref": "user_sm_master"
+        },
+        "parent_id": {
+          "ref": "emp_dm_master"
+        },
+        "work_email": "sm@master.com",
+        "job_title": "Store Manager"
+      }
+    },
+    {
+      "id": "user_crew_master",
+      "model": "res.users",
+      "fields": {
+        "name": "Pham Van Crew",
+        "login": "crew@master.com",
+        "password": "1",
+        "email": "crew@master.com",
+        "x_is_portal_manager": {
+          "eval": "False"
+        }
+      }
+    },
+    {
+      "id": "emp_crew_master",
+      "model": "hr.employee",
+      "fields": {
+        "name": "Pham Van Crew",
+        "user_id": {
+          "ref": "user_crew_master"
+        },
+        "parent_id": {
+          "ref": "emp_sm_master"
+        },
+        "work_email": "crew@master.com",
+        "job_title": "Crew Member"
+      }
+    },
+    {
+      "id": "user_dm_master",
+      "model": "res.users",
+      "fields": {
+        "group_ids": {
+          "eval": "[(6, 0, [ref('base.group_portal')])]"
+        }
+      }
+    },
+    {
+      "id": "user_sm_master",
+      "model": "res.users",
+      "fields": {
+        "group_ids": {
+          "eval": "[(6, 0, [ref('base.group_portal')])]"
+        }
+      }
+    },
+    {
+      "id": "user_crew_master",
+      "model": "res.users",
+      "fields": {
+        "group_ids": {
+          "eval": "[(6, 0, [ref('base.group_portal')])]"
+        }
+      }
+    }
+  ],
+  "views": [],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [
+    {
+      "kind": "function",
+      "model": "res.users",
+      "name": "_fix_portal_groups"
+    }
+  ],
+  "referenced_models": [
+    "hr.employee",
+    "res.users"
+  ]
+}

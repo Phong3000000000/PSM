@@ -1,0 +1,1027 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* M02_P0211
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0+e-20250918\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-06 10:24+0000\n"
+"PO-Revision-Date: 2026-03-06 10:24+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "1. Passport Photo (Ảnh thẻ) <span class=\"text-danger\">*</span>"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_applicant_view_form_inherit_documents
+#: model_terms:ir.ui.view,arch_db:M02_P0211.view_partner_form_documents
+msgid "1. Ảnh thẻ"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "1. Ảnh thẻ (Passport Photo)"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_applicant_view_form_inherit_documents
+#: model_terms:ir.ui.view,arch_db:M02_P0211.view_partner_form_documents
+msgid "2. Căn cước công dân"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "2. Căn cước công dân (CCCD/CMND)"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "2. ID Card (CCCD/CMND) <span class=\"text-danger\">*</span>"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid ""
+"3. Household Registration (Hộ khẩu bản sao) <span class=\"text-"
+"danger\">*</span>"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_applicant_view_form_inherit_documents
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+#: model_terms:ir.ui.view,arch_db:M02_P0211.view_partner_form_documents
+msgid "3. Sổ hộ khẩu"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "4. Judicial Record (Lý lịch tư pháp) <span class=\"text-danger\">*</span>"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_applicant_view_form_inherit_documents
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+#: model_terms:ir.ui.view,arch_db:M02_P0211.view_partner_form_documents
+msgid "4. Lý lịch tư pháp"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_applicant_view_form_inherit_documents
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+#: model_terms:ir.ui.view,arch_db:M02_P0211.view_partner_form_documents
+msgid "5. Bằng cấp & Chứng chỉ"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid ""
+"5. Professional Certificates (Bằng cấp chuyên môn) <span class=\"text-"
+"danger\">*</span>"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "<br/><small>Upload new file to replace</small>"
+msgstr ""
+
+#. module: M02_P0211
+#: model:mail.template,body_html:M02_P0211.email_template_onboarding_welcome
+msgid ""
+"<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n"
+"\n"
+"    <div style=\"background-color: #DA291C; padding: 30px 20px; text-align: center;\">\n"
+"        <h1 style=\"color: #FFC72C; margin: 0; font-size: 28px;\">McDonald's</h1>\n"
+"        <p style=\"color: #fff; margin: 8px 0 0; font-size: 14px;\">Chào mừng bạn gia nhập đội ngũ!</p>\n"
+"    </div>\n"
+"\n"
+"    <div style=\"padding: 30px 20px; background: #fff;\">\n"
+"        <p>Kính chào <strong>{{ object.name }}</strong>,</p>\n"
+"\n"
+"        <p>Chúc mừng bạn đã được chọn tham gia vào đội ngũ <strong>McDonald's</strong>!\n"
+"        Để hoàn tất quá trình onboarding, vui lòng đăng nhập vào hệ thống và nộp các giấy tờ cần thiết.</p>\n"
+"\n"
+"        <!-- Thông tin tài khoản -->\n"
+"        <div style=\"background: #fff8e1; border: 1px solid #FFC72C; border-radius: 8px; padding: 20px; margin: 20px 0;\">\n"
+"            <h3 style=\"margin: 0 0 12px; color: #DA291C;\">Thông tin tài khoản của bạn</h3>\n"
+"            <table style=\"width: 100%; border-collapse: collapse;\">\n"
+"                <tr>\n"
+"                    <td style=\"padding: 6px 0; color: #666; width: 140px;\"><strong>Tên đăng nhập:</strong></td>\n"
+"                    <td style=\"padding: 6px 0;\"><x_psm_0211_code style=\"background:#f1f1f1; padding: 3px 8px; border-radius:4px;\">{{ ctx.get('employee_login') or object.work_email or '' }}</x_psm_0211_code></td>\n"
+"                </tr>\n"
+"                <tr>\n"
+"                    <td style=\"padding: 6px 0; color: #666;\"><strong>Mật khẩu:</strong></td>\n"
+"                    <td style=\"padding: 6px 0; color: #888;\">Nhấn nút bên dưới để tự đặt mật khẩu lần đầu</td>\n"
+"                </tr>\n"
+"            </table>\n"
+"\n"
+"            <div style=\"text-align: center; margin-top: 16px;\">\n"
+"                <a href=\"{{ ctx.get('signup_url') or ctx.get('base_url', '') + '/my/onboard_info' }}\" style=\"background: #DA291C; color: #fff; padding: 12px 28px;&#10;                          text-decoration: none; border-radius: 6px; font-size: 15px; font-weight: bold;\">\n"
+"                    Đặt mật khẩu và đăng nhập\n"
+"                </a>\n"
+"            </div>\n"
+"            <p style=\"color: #999; font-size: 12px; margin: 10px 0 0; text-align: center;\">\n"
+"                Link co hieu luc trong 24 gio. Neu het han, lien he nhan su de duoc cap lai.\n"
+"            </p>\n"
+"        </div>\n"
+"\n"
+"        <div style=\"background: #f8f9fa; border-left: 4px solid #DA291C; padding: 15px 20px; margin: 20px 0;\">\n"
+"            <strong>5 loai giay to can nop sau khi dang nhap:</strong>\n"
+"            <ol style=\"margin: 10px 0 0; padding-left: 20px;\">\n"
+"                <li>Anh the (Passport Photo) — JPG/PNG, toi da 5MB</li>\n"
+"                <li>CCCD/CMND mat truoc — JPG/PNG/PDF</li>\n"
+"                <li>CCCD/CMND mat sau — JPG/PNG/PDF</li>\n"
+"                <li>Ho khau ban sao — JPG/PNG/PDF</li>\n"
+"                <li>Ly lich tu phap — JPG/PNG/PDF</li>\n"
+"            </ol>\n"
+"        </div>\n"
+"\n"
+"        <p style=\"color: #666; font-size: 13px;\">\n"
+"            Neu ban gap kho khan khi dang nhap, vui long lien he bo phan nhan su de duoc ho tro.\n"
+"        </p>\n"
+"    </div>\n"
+"\n"
+"    <div style=\"background: #f1f1f1; padding: 15px; text-align: center; font-size: 12px; color: #999;\">\n"
+"        Email nay duoc gui tu dong tu he thong McDonald's. Vui long khong tra loi email nay.\n"
+"    </div>\n"
+"</div>\n"
+"        "
+msgstr ""
+
+#. module: M02_P0211
+#: model:mail.template,body_html:M02_P0211.email_template_onboarding_refused
+msgid ""
+"<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n"
+"\n"
+"    <div style=\"background-color: #DA291C; padding: 30px 20px; text-align: center;\">\n"
+"        <h1 style=\"color: #FFC72C; margin: 0; font-size: 28px;\">McDonald's</h1>\n"
+"    </div>\n"
+"\n"
+"    <div style=\"padding: 30px 20px; background: #fff;\">\n"
+"        <p>Kinh chao <strong>{{ object.name }}</strong>,</p>\n"
+"\n"
+"        <p>Cam on ban da danh thoi gian tham gia vao qua trinh onboarding tai <strong>McDonald's</strong>.</p>\n"
+"\n"
+"        <p>Sau khi xem xet ho so, chung toi rat tiec phai thong bao rang ho so cua ban\n"
+"        chua dap ung day du cac yeu cau tai thoi diem nay.</p>\n"
+"\n"
+"        <p>Chung toi tran trong su quan tam cua ban va chuc ban thanh cong trong tuong lai.</p>\n"
+"\n"
+"        <p>Tran trong,<br/><strong>Bo phan Nhan su McDonald's</strong></p>\n"
+"    </div>\n"
+"\n"
+"    <div style=\"background: #f1f1f1; padding: 15px; text-align: center; font-size: 12px; color: #999;\">\n"
+"        Email nay duoc gui tu dong tu he thong McDonald's.\n"
+"    </div>\n"
+"</div>\n"
+"        "
+msgstr ""
+
+#. module: M02_P0211
+#: model:mail.template,body_html:M02_P0211.email_template_vsattp_invite
+msgid ""
+"<div style=\"margin: 0px; padding: 0px; font-size: 14px;\">\n"
+"    <p style=\"margin: 0px; padding: 0px; font-size: 14px;\">\n"
+"        Kính gửi <t t-out=\"object.partner_id.name or 'Bạn'\">Bạn</t>,<br/><br/>\n"
+"        <t t-if=\"object.survey_id.certification\">\n"
+"            Bạn vừa nhận được lời mời tham gia một Bài kiểm tra sát hạch mới.\n"
+"        </t>\n"
+"        <t t-else=\"\">\n"
+"            Chúng tôi đang tổ chức Bài khảo sát kiến thức và rất mong nhận được phản hồi từ bạn.\n"
+"        </t>\n"
+"        </p><div style=\"margin: 16px 0px 16px 0px;\">\n"
+"            <a t-att-href=\"(object.get_start_url())\" t-attf-style=\"background-color: {{user.company_id.email_secondary_color or '#875A7B'}}; padding: 8px 16px 8px 16px; text-decoration: none; color: {{user.company_id.email_primary_color or '#FFFFFF'}}; border-radius: 5px; font-size:13px; font-weight: bold;\">\n"
+"                <t t-if=\"object.survey_id.certification\">\n"
+"                    BẮT ĐẦU BÀI KIỂM TRA\n"
+"                </t>\n"
+"                <t t-else=\"\">\n"
+"                    BẮT ĐẦU BÀI KHẢO SÁT\n"
+"                </t>\n"
+"            </a>\n"
+"        </div>\n"
+"        <t t-if=\"object.deadline\">\n"
+"            Vui lòng hoàn thành bài làm này trước ngày: <t t-out=\"format_date(object.deadline) or ''\"/>.<br/><br/>\n"
+"        </t>\n"
+"        <t t-if=\"object.survey_id.certification\">\n"
+"            Chúc bạn hoàn thành tốt bài kiểm tra!\n"
+"        </t>\n"
+"        <t t-else=\"\">\n"
+"            Xin trân trọng cảm ơn bạn đã hợp tác và tham gia bài khảo sát của chúng tôi.\n"
+"        </t>\n"
+"    \n"
+"</div>\n"
+"        "
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "<i class=\"fa fa-check me-1\"/> Xác nhận và Nộp"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid ""
+"<i class=\"fa fa-check-circle fa-2x text-success\"/>\n"
+"                        <strong>Tất cả tài liệu đã được nộp đầy đủ!</strong>"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "<i class=\"fa fa-download\"/> Tải về"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid ""
+"<i class=\"fa fa-exclamation-triangle me-1\"/>\n"
+"                                    <small>Sau khi xác nhận, tài liệu sẽ được lưu vào hệ thống.</small>"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "<i class=\"fa fa-search me-2\"/> Xem lại trước khi nộp"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "<i class=\"fa fa-times me-1\"/> Huỷ"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "<i class=\"fa fa-upload me-2\"/> Upload All Documents"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid ""
+"<small class=\"form-text text-muted\">\n"
+"                                Format: JPG, PNG | Max: 5MB | Required\n"
+"                            </small>"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid ""
+"<small class=\"form-text text-muted\">\n"
+"                                Format: JPG, PNG, PDF | Max: 10MB\n"
+"                            </small>"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid ""
+"<small class=\"form-text text-muted\">\n"
+"                                Format: JPG, PNG, PDF | Max: 10MB | Required\n"
+"                            </small>"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid ""
+"<small class=\"form-text text-muted\">\n"
+"                                Format: JPG, PNG, PDF, DOC, DOCX | Max: 10MB\n"
+"                            </small>"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "<span class=\"o_stat_text text-wrap\">Tiến độ Onboarding</span>"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid ""
+"<span class=\"text-muted fw-bold text-uppercase\" style=\"font-size: "
+"0.85rem; letter-spacing: 0.5px;\">Overall Progress</span>"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid ""
+"<span class=\"text-muted small\">\n"
+"                                Vui lòng tải lên các tài liệu được đánh dấu <span class=\"text-danger fw-bold\">*</span> bên dưới.\n"
+"                            </span>"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_vsattp_payroll
+msgid ""
+"<span class=\"text-muted\" invisible=\"x_psm_0211_vsattp_user_input_id\">(Chưa "
+"gửi)</span>"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "<span><i class=\"fa fa-check-circle me-2\"/>Bằng cấp bổ sung</span>"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "<span><i class=\"fa fa-check-circle me-2\"/>Bằng cấp chính</span>"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "<span><i class=\"fa fa-check-circle me-2\"/>CCCD/CMND - Mặt sau</span>"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "<span><i class=\"fa fa-check-circle me-2\"/>CCCD/CMND - Mặt trước</span>"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "<span><i class=\"fa fa-check-circle me-2\"/>Hộ khẩu bản sao</span>"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "<span><i class=\"fa fa-check-circle me-2\"/>Lý lịch tư pháp</span>"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid ""
+"<span><i class=\"fa fa-check-circle me-2\"/>Ảnh thẻ (Passport Photo)</span>"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid ""
+"<strong class=\"d-block\">Hồ sơ đã được nộp</strong>\n"
+"                            <span class=\"text-muted small\">Tài liệu của bạn đã được ghi nhận. Bạn không thể tải lên lại. Vui lòng liên hệ nhân sự nếu cần điều chỉnh.</span>"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model,name:M02_P0211.model_mail_activity_schedule
+msgid "Activity schedule plan Wizard"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "Additional Certificates (Bằng cấp bổ sung)"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "All required documents are complete!"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "An error occurred. Please try again."
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model,name:M02_P0211.model_hr_applicant
+msgid "Applicant"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model,website_form_label:M02_P0211.model_hr_applicant
+msgid "Apply for a Job"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "Back Side (Mặt sau)"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "Back to Portal"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__vsattp_survey_id
+msgid "Bài khảo sát VSATTP"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,help:M02_P0211.field_hr_employee__vsattp_survey_id
+msgid "Bài khảo sát VSATTP dành cho nhân sự"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_applicant__professional_certificate
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__professional_certificate
+#: model:ir.model.fields,field_description:M02_P0211.field_res_partner__professional_certificate
+#: model:ir.model.fields,field_description:M02_P0211.field_res_users__professional_certificate
+msgid "Bằng cấp chuyên môn"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_applicant__id_card_back
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__id_card_back
+#: model:ir.model.fields,field_description:M02_P0211.field_res_partner__id_card_back
+#: model:ir.model.fields,field_description:M02_P0211.field_res_users__id_card_back
+msgid "CCCD - Mặt sau"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_applicant__id_card_front
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__id_card_front
+#: model:ir.model.fields,field_description:M02_P0211.field_res_partner__id_card_front
+#: model:ir.model.fields,field_description:M02_P0211.field_res_users__id_card_front
+msgid "CCCD - Mặt trước"
+msgstr ""
+
+#. module: M02_P0211
+#: model:mail.template,subject:M02_P0211.email_template_onboarding_refused
+msgid "Cam on ban da ung tuyen tai McDonald's"
+msgstr ""
+
+#. module: M02_P0211
+#: model:mail.template,subject:M02_P0211.email_template_onboarding_welcome
+msgid "Chào mừng bạn đến McDonald's – Hướng dẫn nộp hồ sơ onboarding"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields.selection,name:M02_P0211.selection__hr_applicant__document_approval_status__pending
+msgid "Chờ duyệt"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields.selection,name:M02_P0211.selection__hr_employee__onboarding_state__pending
+msgid "Chờ hoàn thiện hồ sơ"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_applicant__additional_certificates
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__additional_certificates
+#: model:ir.model.fields,field_description:M02_P0211.field_res_partner__additional_certificates
+#: model:ir.model.fields,field_description:M02_P0211.field_res_users__additional_certificates
+msgid "Chứng chỉ khác"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "Close"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields.selection,name:M02_P0211.selection__hr_employee__vsattp_survey_state__done
+msgid "Completed"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "Completed Documents"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model,name:M02_P0211.model_res_partner
+msgid "Contact"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "Current:"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "Currently:"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_onboard_info_success
+msgid "Cảm ơn bạn. Hồ sơ và tài liệu của bạn đã được ghi nhận trên hệ thống."
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_applicant__portal_last_update
+#: model:ir.model.fields,field_description:M02_P0211.field_res_partner__portal_last_update
+#: model:ir.model.fields,field_description:M02_P0211.field_res_users__portal_last_update
+msgid "Cập nhật lần cuối"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__portal_last_update
+msgid "Cập nhật lần cuối (Portal)"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_applicant__display_name
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__display_name
+#: model:ir.model.fields,field_description:M02_P0211.field_mail_activity_schedule__display_name
+#: model:ir.model.fields,field_description:M02_P0211.field_res_partner__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "Document Completion Status"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_applicant_view_form_inherit_documents
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Duyệt hồ sơ"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_mail_activity_schedule__adecco_email
+msgid "Email thông báo"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model,name:M02_P0211.model_hr_employee
+msgid "Employee"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "Front Side (Mặt trước)"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Giấy tờ do ứng viên nộp qua Cổng thông tin"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Gửi Email Chào Mừng"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_vsattp_payroll
+msgid "Gửi Khảo sát VSATTP"
+msgstr ""
+
+#. module: M02_P0211
+#: model:mail.template,x_psm_0211_description:M02_P0211.email_template_vsattp_invite
+msgid "Gửi tới ứng viên lời mời thông báo khảo sát"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid ""
+"Hệ thống sẽ Gửi Email Chào mừng kèm link đăng nhập (đặt mật khẩu) Portal cho"
+" nhân viên. Tiếp tục?"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_applicant__id
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__id
+#: model:ir.model.fields,field_description:M02_P0211.field_mail_activity_schedule__id
+#: model:ir.model.fields,field_description:M02_P0211.field_res_partner__id
+msgid "ID"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields.selection,name:M02_P0211.selection__hr_employee__vsattp_survey_state__in_progress
+msgid "In Progress"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_mail_activity_schedule__is_onboarding_plan
+msgid "Is Onboarding Plan"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields.selection,name:M02_P0211.selection__hr_applicant__document_approval_status__refused
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_applicant_view_form_inherit_documents
+msgid "Không duyệt"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_onboard_info_success
+msgid "Không thể tải lên tài liệu của bạn lúc này. Vui lòng thử lại."
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_applicant_view_kanban_inherit_documents
+msgid "Không đạt"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_vsattp_payroll
+msgid "Khảo sát VSATTP"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Kiểm tra & Thẩm định"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__vsattp_survey_url
+msgid "Link làm bài"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Loại hợp đồng (Contract Type)"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_applicant__judicial_record
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__judicial_record
+#: model:ir.model.fields,field_description:M02_P0211.field_res_partner__judicial_record
+#: model:ir.model.fields,field_description:M02_P0211.field_res_users__judicial_record
+msgid "Lý lịch tư pháp"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__vsattp_user_input_id
+msgid "Lần làm gần nhất"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "Main Certificate (Bằng cấp chính)"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "My Personal Documents"
+msgstr ""
+
+#. module: M02_P0211
+#: model:mail.template,subject:M02_P0211.email_template_vsattp_invite
+msgid ""
+"Mời tham gia bài kiểm tra / khảo sát: {{ object.survey_id.display_name }}"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_vsattp_payroll
+msgid "Mở bài làm"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Mở danh sách công việc"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_onboard_info_success
+msgid "Nhân sự sẽ duyệt hồ sơ của bạn trong thời gian sớm nhất."
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "No documents uploaded yet"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields.selection,name:M02_P0211.selection__hr_employee__vsattp_survey_state__new
+msgid "Not started yet"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__onboarding_done_count
+msgid "Onboarding Done Count"
+msgstr ""
+
+#. module: M02_P0211
+#: model:mail.template,name:M02_P0211.email_template_onboarding_refused
+msgid "Onboarding OPS: Email cam on (Ho so khong dat)"
+msgstr ""
+
+#. module: M02_P0211
+#: model:mail.template,name:M02_P0211.email_template_onboarding_welcome
+msgid "Onboarding OPS: Email chào mừng nhân viên mới"
+msgstr ""
+
+#. module: M02_P0211
+#: model:mail.template,name:M02_P0211.email_template_vsattp_invite
+msgid "Onboarding OPS: Mời làm khảo sát VSATTP"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__onboarding_pending_count
+msgid "Onboarding Pending Count"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__onboarding_total_count
+msgid "Onboarding Total Count"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.actions.server,name:M02_P0211.action_server_send_welcome_email
+msgid "Onboarding: Gửi email chào mừng nhân viên mới"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.actions.server,name:M02_P0211.action_server_send_refused_email
+msgid "Onboarding: Gửi email cảm ơn (hồ sơ không đạt)"
+msgstr ""
+
+#. module: M02_P0211
+#: model:base.automation,name:M02_P0211.base_automation_onboarding_refused
+msgid "Onboarding: Gửi email cảm ơn khi hồ sơ bị từ chối"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "Pending Documents"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_res_partner__portal_url
+#: model:ir.model.fields,field_description:M02_P0211.field_res_users__portal_url
+msgid "Portal URL"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "Preview"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_applicant__portal_updates_count
+#: model:ir.model.fields,field_description:M02_P0211.field_res_partner__portal_updates_count
+#: model:ir.model.fields,field_description:M02_P0211.field_res_users__portal_updates_count
+msgid "Số lần cập nhật"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__portal_updates_count
+msgid "Số lần cập nhật (Portal)"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_applicant__household_registration
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__household_registration
+#: model:ir.model.fields,field_description:M02_P0211.field_res_partner__household_registration
+#: model:ir.model.fields,field_description:M02_P0211.field_res_users__household_registration
+msgid "Sổ hộ khẩu"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_applicant_view_form_inherit_documents
+#: model_terms:ir.ui.view,arch_db:M02_P0211.view_partner_form_documents
+msgid "Thông tin cá nhân"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Thời gian cập nhật giấy tờ"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_onboard_info_success
+msgid "Thử lại"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__onboarding_progress
+msgid "Tiến độ Onboarding"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Tiến độ công việc"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_vsattp_payroll
+msgid "Tiếp nhận thẻ & VSATTP (Bước 6 & 9)"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_onboard_info_success
+msgid "Trang chủ Portal"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__onboarding_state
+msgid "Trạng thái Onboarding"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_applicant__document_approval_status
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_applicant_view_form_inherit_documents
+#: model_terms:ir.ui.view,arch_db:M02_P0211.view_partner_form_documents
+msgid "Trạng thái hồ sơ"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__vsattp_survey_state
+msgid "Trạng thái làm bài"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Hồ sơ nhân viên"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_applicant_view_form_inherit_documents
+#: model_terms:ir.ui.view,arch_db:M02_P0211.view_partner_form_documents
+msgid "Tài liệu cá nhân"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_applicant__professional_certificate_filename
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__professional_certificate_filename
+#: model:ir.model.fields,field_description:M02_P0211.field_res_partner__professional_certificate_filename
+#: model:ir.model.fields,field_description:M02_P0211.field_res_users__professional_certificate_filename
+msgid "Tên file Bằng cấp"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_applicant__id_card_back_filename
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__id_card_back_filename
+#: model:ir.model.fields,field_description:M02_P0211.field_res_partner__id_card_back_filename
+#: model:ir.model.fields,field_description:M02_P0211.field_res_users__id_card_back_filename
+msgid "Tên file CCCD sau"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_applicant__id_card_front_filename
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__id_card_front_filename
+#: model:ir.model.fields,field_description:M02_P0211.field_res_partner__id_card_front_filename
+#: model:ir.model.fields,field_description:M02_P0211.field_res_users__id_card_front_filename
+msgid "Tên file CCCD trước"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_applicant__additional_certificates_filename
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__additional_certificates_filename
+#: model:ir.model.fields,field_description:M02_P0211.field_res_partner__additional_certificates_filename
+#: model:ir.model.fields,field_description:M02_P0211.field_res_users__additional_certificates_filename
+msgid "Tên file Chứng chỉ khác"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_applicant__judicial_record_filename
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__judicial_record_filename
+#: model:ir.model.fields,field_description:M02_P0211.field_res_partner__judicial_record_filename
+#: model:ir.model.fields,field_description:M02_P0211.field_res_users__judicial_record_filename
+msgid "Tên file Lý lịch tư pháp"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_applicant__household_registration_filename
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__household_registration_filename
+#: model:ir.model.fields,field_description:M02_P0211.field_res_partner__household_registration_filename
+#: model:ir.model.fields,field_description:M02_P0211.field_res_users__household_registration_filename
+msgid "Tên file Sổ hộ khẩu"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_applicant__passport_photo_filename
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__passport_photo_filename
+#: model:ir.model.fields,field_description:M02_P0211.field_res_partner__passport_photo_filename
+#: model:ir.model.fields,field_description:M02_P0211.field_res_users__passport_photo_filename
+msgid "Tên file Ảnh thẻ"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Tải Bằng cấp chuyên môn"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Tải Chứng chỉ khác"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Tải Lý lịch tư pháp"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Tải Mặt sau"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Tải Mặt trước"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Tải Sổ hộ khẩu"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Tải file gốc"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields.selection,name:M02_P0211.selection__hr_employee__onboarding_state__refused
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Từ chối"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_onboard_info_success
+msgid "Update Successful"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "View Detailed Status"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_onboard_info_success
+msgid "Xem lại tài liệu"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "Your documents have been uploaded successfully!"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_contact_form
+msgid "tài liệu còn thiếu"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__vsattp_survey_score
+msgid "Điểm số (%)"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields.selection,name:M02_P0211.selection__hr_applicant__document_approval_status__approved
+#: model:ir.model.fields.selection,name:M02_P0211.selection__hr_employee__onboarding_state__approved
+msgid "Đã duyệt"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields.selection,name:M02_P0211.selection__hr_employee__onboarding_state__submitted
+msgid "Đã nộp hồ sơ"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_res_partner__portal_submitted
+#: model:ir.model.fields,field_description:M02_P0211.field_res_users__portal_submitted
+msgid "Đã nộp hồ sơ portal"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_onboard_info_success
+msgid "Đã nộp hồ sơ thành công!"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.portal_onboard_info_success
+msgid "Đã xảy ra lỗi!"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Ảnh Bằng cấp chuyên môn"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Ảnh Chứng chỉ khác"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Ảnh Lý lịch tư pháp"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Ảnh Mặt sau"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Ảnh Mặt trước"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_employee_view_form_onboarding
+msgid "Ảnh Sổ hộ khẩu"
+msgstr ""
+
+#. module: M02_P0211
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_applicant__passport_photo
+#: model:ir.model.fields,field_description:M02_P0211.field_hr_employee__passport_photo
+#: model:ir.model.fields,field_description:M02_P0211.field_res_partner__passport_photo
+#: model:ir.model.fields,field_description:M02_P0211.field_res_users__passport_photo
+msgid "Ảnh thẻ"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_applicant_view_form_inherit_documents
+msgid "✅ Hồ sơ đã được duyệt"
+msgstr ""
+
+#. module: M02_P0211
+#: model_terms:ir.ui.view,arch_db:M02_P0211.hr_applicant_view_form_inherit_documents
+msgid "❌ Hồ sơ không đạt"
+msgstr ""

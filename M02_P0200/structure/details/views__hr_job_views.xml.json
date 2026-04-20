@@ -1,0 +1,56 @@
+{
+  "file": "views/hr_job_views.xml",
+  "type": "xml",
+  "bucket": "views",
+  "summary": "2 views",
+  "records": [
+    {
+      "id": "view_hr_job_form_inherit_level",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "hr.job.form.inherit.level",
+        "model": "hr.job",
+        "inherit_id": {
+          "ref": "hr.view_hr_job_form"
+        },
+        "arch": ""
+      }
+    },
+    {
+      "id": "view_hr_job_tree_inherit_level",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "hr.job.tree.inherit.level",
+        "model": "hr.job",
+        "inherit_id": {
+          "ref": "hr.view_hr_job_tree"
+        },
+        "arch": ""
+      }
+    }
+  ],
+  "views": [
+    {
+      "id": "view_hr_job_form_inherit_level",
+      "model": "hr.job",
+      "name": "hr.job.form.inherit.level",
+      "inherit_id": "hr.view_hr_job_form",
+      "file": "views/hr_job_views.xml"
+    },
+    {
+      "id": "view_hr_job_tree_inherit_level",
+      "model": "hr.job",
+      "name": "hr.job.tree.inherit.level",
+      "inherit_id": "hr.view_hr_job_tree",
+      "file": "views/hr_job_views.xml"
+    }
+  ],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "hr.job",
+    "ir.ui.view"
+  ]
+}

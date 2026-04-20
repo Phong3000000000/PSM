@@ -1,0 +1,81 @@
+{
+  "file": "models/hr_job_level.py",
+  "type": "python",
+  "bucket": "models",
+  "summary": "models: hr.job.level; 1 classes; 4 fields",
+  "classes": [
+    {
+      "python_class": "HrJobLevel",
+      "description": "Cấp Bậc Công Việc",
+      "model": "hr.job.level",
+      "inherit": null,
+      "order": "sequence, name",
+      "rec_name": null,
+      "fields": [
+        {
+          "name": "name",
+          "type": "Char",
+          "string": "Tên Cấp Bậc",
+          "comodel": null,
+          "required": true,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "code",
+          "type": "Char",
+          "string": "Mã Cấp Bậc",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "sequence",
+          "type": "Integer",
+          "string": "Thứ Tự",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": 10,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "active",
+          "type": "Boolean",
+          "string": "Hoạt Động",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": true,
+          "tracking": null,
+          "help": null
+        }
+      ],
+      "methods": [],
+      "kind": "new_model"
+    }
+  ],
+  "routes": []
+}

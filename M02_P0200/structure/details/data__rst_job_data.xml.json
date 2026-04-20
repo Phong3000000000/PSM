@@ -1,0 +1,2356 @@
+{
+  "file": "data/rst_job_data.xml",
+  "type": "xml",
+  "bucket": "data",
+  "summary": "XML data file.",
+  "records": [
+    {
+      "id": "job_rst_maintenance_manager",
+      "model": "hr.job",
+      "fields": {
+        "name": "Maintenance Manager",
+        "name_ll": "Quản lý bộ phân bảo trì",
+        "code": "MAINT_MGR",
+        "department_id": {
+          "ref": "dept_rst_maintenance"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_asst_maintenance_manager",
+      "model": "hr.job",
+      "fields": {
+        "name": "Assistant Maintenance Manager",
+        "name_ll": "Assistant Maintenance Manager",
+        "code": "ASST_MAINT_MGR",
+        "department_id": {
+          "ref": "dept_rst_maintenance"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_maintenance_crew_jr",
+      "model": "hr.job",
+      "fields": {
+        "name": "Maintenance Crew (Junior)",
+        "name_ll": "Nhân viên bảo trì (CMT Junior)",
+        "code": "MAINT_CREW_JR",
+        "department_id": {
+          "ref": "dept_rst_maintenance"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_equipment_coordinator",
+      "model": "hr.job",
+      "fields": {
+        "name": "Equipment Coordinator",
+        "name_ll": "Điều phối viên Thiết bị",
+        "code": "EQUIP_COORD",
+        "department_id": {
+          "ref": "dept_rst_maintenance"
+        },
+        "level_id": {
+          "ref": "job_level_coordinator"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_maintenance_lead",
+      "model": "hr.job",
+      "fields": {
+        "name": "Maintenance Lead",
+        "name_ll": "Maintenance Lead",
+        "code": "MAINT_LEAD",
+        "department_id": {
+          "ref": "dept_rst_maintenance"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_maintenance_supervisor",
+      "model": "hr.job",
+      "fields": {
+        "name": "Maintenance Supervisor",
+        "name_ll": "Giám sát bảo trì",
+        "code": "MAINT_SUP",
+        "department_id": {
+          "ref": "dept_rst_maintenance"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_equipment_specialist",
+      "model": "hr.job",
+      "fields": {
+        "name": "Equipment Specialist",
+        "name_ll": "Equipment Specialist",
+        "code": "EQUIP_SPEC",
+        "department_id": {
+          "ref": "dept_rst_maintenance"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_maintenance_crew_sr",
+      "model": "hr.job",
+      "fields": {
+        "name": "Maintenance Crew (Senior)",
+        "name_ll": "Nhân viên bảo trì (CMT Senior)",
+        "code": "MAINT_CREW_SR",
+        "department_id": {
+          "ref": "dept_rst_maintenance"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_maintenance_supervisor_sr",
+      "model": "hr.job",
+      "fields": {
+        "name": "Maintenance Supervisor (Senior)",
+        "name_ll": "Giám sát bảo trì (Senior)",
+        "code": "MAINT_SUP_SR",
+        "department_id": {
+          "ref": "dept_rst_maintenance"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_mechanical_electrical_eng",
+      "model": "hr.job",
+      "fields": {
+        "name": "Mechanical & Electrical Engineer",
+        "name_ll": "Kỹ sư cơ điện",
+        "code": "ME_ENG",
+        "department_id": {
+          "ref": "dept_rst_maintenance"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_equipment_consultant",
+      "model": "hr.job",
+      "fields": {
+        "name": "Equipment Consultant",
+        "name_ll": "Cố vấn thiết bị",
+        "code": "EQUIP_CONS",
+        "department_id": {
+          "ref": "dept_rst_maintenance"
+        },
+        "level_id": {
+          "ref": "job_level_consultant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_equipment_manager",
+      "model": "hr.job",
+      "fields": {
+        "name": "Equipment Manager",
+        "name_ll": "Trưởng nhóm Thiết bị",
+        "code": "EQUIP_MGR",
+        "department_id": {
+          "ref": "dept_rst_maintenance"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_general_manager",
+      "model": "hr.job",
+      "fields": {
+        "name": "General Manager",
+        "name_ll": "Giám đốc điều hành",
+        "code": "GM",
+        "department_id": {
+          "ref": "dept_rst_management"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_vice_president",
+      "model": "hr.job",
+      "fields": {
+        "name": "Vice President",
+        "name_ll": "Vice President",
+        "code": "VP",
+        "department_id": {
+          "ref": "dept_rst_management"
+        },
+        "level_id": {
+          "ref": "job_level_head_of_department"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_pmo_assistant",
+      "model": "hr.job",
+      "fields": {
+        "name": "PMO Assistant",
+        "name_ll": "PMO Assistant",
+        "code": "PMO_ASST",
+        "department_id": {
+          "ref": "dept_rst_management"
+        },
+        "level_id": {
+          "ref": "job_level_assistant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_general_director",
+      "model": "hr.job",
+      "fields": {
+        "name": "General Director",
+        "name_ll": "Tổng Giám đốc",
+        "code": "GD",
+        "department_id": {
+          "ref": "dept_rst_management"
+        },
+        "level_id": {
+          "ref": "job_level_head_of_department"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_head_hr_admin",
+      "model": "hr.job",
+      "fields": {
+        "name": "Head of HR & Admin",
+        "name_ll": "Trưởng phòng Nhân sự - Hành chính",
+        "code": "HEAD_HR",
+        "department_id": {
+          "ref": "dept_rst_human_resource"
+        },
+        "level_id": {
+          "ref": "job_level_head_of_department"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_admin_manager",
+      "model": "hr.job",
+      "fields": {
+        "name": "Administration Manager",
+        "name_ll": "Administration Manager",
+        "code": "ADMIN_MGR",
+        "department_id": {
+          "ref": "dept_rst_human_resource"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_driver",
+      "model": "hr.job",
+      "fields": {
+        "name": "Driver",
+        "name_ll": "Nhân viên lái xe",
+        "code": "DRIVER",
+        "department_id": {
+          "ref": "dept_rst_human_resource"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_admin_officer",
+      "model": "hr.job",
+      "fields": {
+        "name": "Administration Officer",
+        "name_ll": "Administration Officer",
+        "code": "ADMIN_OFF",
+        "department_id": {
+          "ref": "dept_rst_human_resource"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_hr_specialist",
+      "model": "hr.job",
+      "fields": {
+        "name": "Human Resource Specialist",
+        "name_ll": "Chuyên viên Nhân sự",
+        "code": "HR_SPEC",
+        "department_id": {
+          "ref": "dept_rst_human_resource"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_hr_assistant",
+      "model": "hr.job",
+      "fields": {
+        "name": "Human Resource Assistant",
+        "name_ll": "Trợ lý Nhân sự",
+        "code": "HR_ASST",
+        "department_id": {
+          "ref": "dept_rst_human_resource"
+        },
+        "level_id": {
+          "ref": "job_level_assistant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_admin_executive",
+      "model": "hr.job",
+      "fields": {
+        "name": "Admin Executive",
+        "name_ll": "Admin Executive",
+        "code": "ADMIN_EXEC",
+        "department_id": {
+          "ref": "dept_rst_human_resource"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_admin_assistant",
+      "model": "hr.job",
+      "fields": {
+        "name": "Admin Assistant",
+        "name_ll": "Trợ lý hành chính",
+        "code": "ADMIN_ASST",
+        "department_id": {
+          "ref": "dept_rst_human_resource"
+        },
+        "level_id": {
+          "ref": "job_level_assistant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_hr_coordinator",
+      "model": "hr.job",
+      "fields": {
+        "name": "HR Coordinator",
+        "name_ll": "Điều phối viên Nhân sự",
+        "code": "HR_COORD",
+        "department_id": {
+          "ref": "dept_rst_human_resource"
+        },
+        "level_id": {
+          "ref": "job_level_coordinator"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_hr_consultant",
+      "model": "hr.job",
+      "fields": {
+        "name": "Human Resources Consultant",
+        "name_ll": "Chuyên viên Nhân sự Cấp cao",
+        "code": "HR_CONS",
+        "department_id": {
+          "ref": "dept_rst_human_resource"
+        },
+        "level_id": {
+          "ref": "job_level_consultant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_admin_receptionist",
+      "model": "hr.job",
+      "fields": {
+        "name": "Admin cum Receptionist",
+        "name_ll": "Admin cum Receptionist",
+        "code": "ADMIN_RECEP",
+        "department_id": {
+          "ref": "dept_rst_human_resource"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_hrbp_consultant",
+      "model": "hr.job",
+      "fields": {
+        "name": "HRBP Consultant",
+        "name_ll": "Cố vấn Nhân sự (HRBP)",
+        "code": "HRBP_CONS",
+        "department_id": {
+          "ref": "dept_rst_human_resource"
+        },
+        "level_id": {
+          "ref": "job_level_consultant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_hr_manager",
+      "model": "hr.job",
+      "fields": {
+        "name": "HR Manager",
+        "name_ll": "Trưởng phòng Nhân sự",
+        "code": "HR_MGR",
+        "department_id": {
+          "ref": "dept_rst_human_resource"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_graphic_designer",
+      "model": "hr.job",
+      "fields": {
+        "name": "Graphic Designer",
+        "name_ll": "Nhân viên thiết kế đồ họa",
+        "code": "GFX_DESIGN",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_pr_manager",
+      "model": "hr.job",
+      "fields": {
+        "name": "Public Relation Manager",
+        "name_ll": "Trưởng phòng truyền thông và quan hệ công chúng",
+        "code": "PR_MGR",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_head_marketing",
+      "model": "hr.job",
+      "fields": {
+        "name": "Head of Marketing",
+        "name_ll": "Trưởng phòng Marketing",
+        "code": "HEAD_MKT",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_head_of_department"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_market_research",
+      "model": "hr.job",
+      "fields": {
+        "name": "Market Research",
+        "name_ll": "Market Research",
+        "code": "MKT_RES",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_lsm_assistant",
+      "model": "hr.job",
+      "fields": {
+        "name": "LSM Assistant",
+        "name_ll": "Trợ lý Marketing",
+        "code": "LSM_ASST",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_assistant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_marketing_specialist",
+      "model": "hr.job",
+      "fields": {
+        "name": "Marketing Specialist",
+        "name_ll": "Chuyên viên Marketing",
+        "code": "MKT_SPEC",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_cbi_specialist",
+      "model": "hr.job",
+      "fields": {
+        "name": "CBI Specialist",
+        "name_ll": "Chuyên viên CBI",
+        "code": "CBI_SPEC",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_brand_ext_manager",
+      "model": "hr.job",
+      "fields": {
+        "name": "Brand Extension Manager",
+        "name_ll": "Brand Extension Manager",
+        "code": "BRAND_EXT_MGR",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_lsm_coordinator",
+      "model": "hr.job",
+      "fields": {
+        "name": "LSM Coordinator",
+        "name_ll": "LSM Coordinator",
+        "code": "LSM_COORD",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_coordinator"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_brand_manager",
+      "model": "hr.job",
+      "fields": {
+        "name": "Brand Manager",
+        "name_ll": "Brand Manager",
+        "code": "BRAND_MGR",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_cbi_consultant",
+      "model": "hr.job",
+      "fields": {
+        "name": "CBI Consultant",
+        "name_ll": "CBI Consultant",
+        "code": "CBI_CONS",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_consultant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_digital_mkt_specialist",
+      "model": "hr.job",
+      "fields": {
+        "name": "Digital Marketing Specialist",
+        "name_ll": "Chuyên viên Truyền thông Kỹ Thuật số",
+        "code": "DIGI_MKT_SPEC",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_marketing_consultant",
+      "model": "hr.job",
+      "fields": {
+        "name": "Marketing Consultant",
+        "name_ll": "Cố vấn Marketing",
+        "code": "MKT_CONS",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_consultant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_head_strategy_insights",
+      "model": "hr.job",
+      "fields": {
+        "name": "Head of Strategy & Insights",
+        "name_ll": "Trưởng phòng Hoạch định & chiến lược",
+        "code": "HEAD_SI",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_head_of_department"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_pr_specialist",
+      "model": "hr.job",
+      "fields": {
+        "name": "PR Specialist",
+        "name_ll": "PR Specialist",
+        "code": "PR_SPEC",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_digital_mkt_consultant",
+      "model": "hr.job",
+      "fields": {
+        "name": "Digital Marketing Consultant",
+        "name_ll": "Digital Marketing Consultant",
+        "code": "DIGI_MKT_CONS",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_consultant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_pr_consultant",
+      "model": "hr.job",
+      "fields": {
+        "name": "Public Relation Consultant",
+        "name_ll": "Cố vấn truyền thông",
+        "code": "PR_CONS",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_consultant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_digital_mkt_manager",
+      "model": "hr.job",
+      "fields": {
+        "name": "Digital Marketing Manager",
+        "name_ll": "Trưởng phòng Tiếp thị số",
+        "code": "DIGI_MKT_MGR",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_cmo",
+      "model": "hr.job",
+      "fields": {
+        "name": "Chief Marketing Officer",
+        "name_ll": "Giám đốc Tiếp thị",
+        "code": "CMO",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_head_of_department"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_brand_mkt_executive",
+      "model": "hr.job",
+      "fields": {
+        "name": "Brand Marketing Executive",
+        "name_ll": "Chuyên viên Tiếp thị Thương hiệu",
+        "code": "BRAND_MKT_EXEC",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_imc_manager",
+      "model": "hr.job",
+      "fields": {
+        "name": "Integrated Marketing Communication Manager",
+        "name_ll": "Trưởng phòng Truyền thông tiếp thị tích hợp",
+        "code": "IMC_MGR",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_restaurant_mkt_lead",
+      "model": "hr.job",
+      "fields": {
+        "name": "Restaurant Marketing Lead",
+        "name_ll": "Trưởng nhóm Tiếp thị Nhà hàng",
+        "code": "REST_MKT_LEAD",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_lsm_specialist",
+      "model": "hr.job",
+      "fields": {
+        "name": "LSM Specialist",
+        "name_ll": "LSM Specialist",
+        "code": "LSM_SPEC",
+        "department_id": {
+          "ref": "dept_rst_marketing"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_head_supply_chain",
+      "model": "hr.job",
+      "fields": {
+        "name": "Head of Supply Chain",
+        "name_ll": "Trưởng phòng Cung ứng",
+        "code": "HEAD_SC",
+        "department_id": {
+          "ref": "dept_rst_supply_chain"
+        },
+        "level_id": {
+          "ref": "job_level_head_of_department"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_qa_coordinator",
+      "model": "hr.job",
+      "fields": {
+        "name": "Quality Assurance Coordinator",
+        "name_ll": "Điều phối viên Quản lý chất lượng",
+        "code": "QA_COORD",
+        "department_id": {
+          "ref": "dept_rst_supply_chain"
+        },
+        "level_id": {
+          "ref": "job_level_coordinator"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_sc_assistant",
+      "model": "hr.job",
+      "fields": {
+        "name": "Supply Chain Assistant",
+        "name_ll": "Trợ lý Chuỗi cung ứng",
+        "code": "SC_ASST",
+        "department_id": {
+          "ref": "dept_rst_supply_chain"
+        },
+        "level_id": {
+          "ref": "job_level_assistant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_qa_specialist",
+      "model": "hr.job",
+      "fields": {
+        "name": "Quality Assurance Specialist",
+        "name_ll": "Chuyên viên quản lý chất lượng",
+        "code": "QA_SPEC",
+        "department_id": {
+          "ref": "dept_rst_supply_chain"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_sc_coordinator",
+      "model": "hr.job",
+      "fields": {
+        "name": "Supply Chain Coordinator",
+        "name_ll": "Điều phối viên Chuỗi cung ứng",
+        "code": "SC_COORD",
+        "department_id": {
+          "ref": "dept_rst_supply_chain"
+        },
+        "level_id": {
+          "ref": "job_level_coordinator"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_field_sc_specialist",
+      "model": "hr.job",
+      "fields": {
+        "name": "Field Supply Chain Specialist",
+        "name_ll": "Chuyên viên chuỗi cung ứng",
+        "code": "FIELD_SC_SPEC",
+        "department_id": {
+          "ref": "dept_rst_supply_chain"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_menu_sourcing_specialist",
+      "model": "hr.job",
+      "fields": {
+        "name": "Menu & Strategic Sourcing Specialist",
+        "name_ll": "Menu & Strategic Sourcing Specialist",
+        "code": "MENU_SRC_SPEC",
+        "department_id": {
+          "ref": "dept_rst_supply_chain"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_qa_consultant",
+      "model": "hr.job",
+      "fields": {
+        "name": "Quality Assurance Consultant",
+        "name_ll": "Cố vấn Quản lý chất lượng",
+        "code": "QA_CONS",
+        "department_id": {
+          "ref": "dept_rst_supply_chain"
+        },
+        "level_id": {
+          "ref": "job_level_consultant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_field_sc_consultant",
+      "model": "hr.job",
+      "fields": {
+        "name": "Field Supply Chain Consultant",
+        "name_ll": "Cố vấn Chuỗi cung ứng",
+        "code": "FIELD_SC_CONS",
+        "department_id": {
+          "ref": "dept_rst_supply_chain"
+        },
+        "level_id": {
+          "ref": "job_level_consultant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_data_analyst",
+      "model": "hr.job",
+      "fields": {
+        "name": "Data Analyst",
+        "name_ll": "Chuyên viên phân tích chuỗi cung ứng",
+        "code": "DATA_ANALYST",
+        "department_id": {
+          "ref": "dept_rst_supply_chain"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_procurement",
+      "model": "hr.job",
+      "fields": {
+        "name": "Procurement",
+        "name_ll": "Procurement",
+        "code": "PROCURE",
+        "department_id": {
+          "ref": "dept_rst_supply_chain"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_sourcing_specialist",
+      "model": "hr.job",
+      "fields": {
+        "name": "Sourcing Specialist",
+        "name_ll": "Chuyên viên Thu mua chuỗi cung ứng",
+        "code": "SRC_SPEC",
+        "department_id": {
+          "ref": "dept_rst_supply_chain"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_qa_manager",
+      "model": "hr.job",
+      "fields": {
+        "name": "Quality Assurance Manager",
+        "name_ll": "Trưởng phòng Quản lý chất lượng sản phẩm",
+        "code": "QA_MGR",
+        "department_id": {
+          "ref": "dept_rst_supply_chain"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_sc_director",
+      "model": "hr.job",
+      "fields": {
+        "name": "Supply Chain Director",
+        "name_ll": "Giám đốc Cung ứng",
+        "code": "SC_DIR",
+        "department_id": {
+          "ref": "dept_rst_supply_chain"
+        },
+        "level_id": {
+          "ref": "job_level_head_of_department"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_sourcing_consultant",
+      "model": "hr.job",
+      "fields": {
+        "name": "Sourcing Consultant",
+        "name_ll": "Cố vấn Thu mua Chuỗi cung ứng",
+        "code": "SRC_CONS",
+        "department_id": {
+          "ref": "dept_rst_supply_chain"
+        },
+        "level_id": {
+          "ref": "job_level_consultant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_field_sc_manager",
+      "model": "hr.job",
+      "fields": {
+        "name": "Field Supply Chain Manager",
+        "name_ll": "Quản lý chuỗi cung ứng",
+        "code": "FIELD_SC_MGR",
+        "department_id": {
+          "ref": "dept_rst_supply_chain"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_head_it",
+      "model": "hr.job",
+      "fields": {
+        "name": "Head of IT",
+        "name_ll": "Trưởng phòng Công nghệ thông tin",
+        "code": "HEAD_IT",
+        "department_id": {
+          "ref": "dept_rst_it"
+        },
+        "level_id": {
+          "ref": "job_level_head_of_department"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_it_support_deploy_mgr",
+      "model": "hr.job",
+      "fields": {
+        "name": "IT Support and Deployment Manager",
+        "name_ll": "IT Support and Deployment Manager",
+        "code": "IT_SUP_DEP_MGR",
+        "department_id": {
+          "ref": "dept_rst_it"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_it_rest_support",
+      "model": "hr.job",
+      "fields": {
+        "name": "IT Restaurant Support & Service Coordinator",
+        "name_ll": "IT Restaurant Support & Service Coordinator",
+        "code": "IT_REST_SUP",
+        "department_id": {
+          "ref": "dept_rst_it"
+        },
+        "level_id": {
+          "ref": "job_level_coordinator"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_it_specialist",
+      "model": "hr.job",
+      "fields": {
+        "name": "IT Specialist",
+        "name_ll": "IT Specialist",
+        "code": "IT_SPEC",
+        "department_id": {
+          "ref": "dept_rst_it"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_it_consultant",
+      "model": "hr.job",
+      "fields": {
+        "name": "IT Consultant",
+        "name_ll": "Cố vấn Công nghệ thông tin",
+        "code": "IT_CONS",
+        "department_id": {
+          "ref": "dept_rst_it"
+        },
+        "level_id": {
+          "ref": "job_level_consultant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_sr_network_eng",
+      "model": "hr.job",
+      "fields": {
+        "name": "Senior Network Engineer",
+        "name_ll": "Chuyên viên Công nghệ thông tin",
+        "code": "SR_NET_ENG",
+        "department_id": {
+          "ref": "dept_rst_it"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_it_deploy_lead",
+      "model": "hr.job",
+      "fields": {
+        "name": "IT Deployment Lead",
+        "name_ll": "IT Deployment Lead",
+        "code": "IT_DEP_LEAD",
+        "department_id": {
+          "ref": "dept_rst_it"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_it_support_tl",
+      "model": "hr.job",
+      "fields": {
+        "name": "IT Support Team Leader",
+        "name_ll": "IT Support Team Leader",
+        "code": "IT_SUP_TL",
+        "department_id": {
+          "ref": "dept_rst_it"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_system_engineer",
+      "model": "hr.job",
+      "fields": {
+        "name": "System Engineer",
+        "name_ll": "System Engineer",
+        "code": "SYS_ENG",
+        "department_id": {
+          "ref": "dept_rst_it"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_it_support_staff",
+      "model": "hr.job",
+      "fields": {
+        "name": "IT Support Staff",
+        "name_ll": "Nhân viên Hỗ trợ IT",
+        "code": "IT_SUP_STAFF",
+        "department_id": {
+          "ref": "dept_rst_it"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_it_sys_engineer",
+      "model": "hr.job",
+      "fields": {
+        "name": "IT System Engineer",
+        "name_ll": "Kỹ sư Công nghệ thông tin",
+        "code": "IT_SYS_ENG",
+        "department_id": {
+          "ref": "dept_rst_it"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_it_network_eng",
+      "model": "hr.job",
+      "fields": {
+        "name": "IT Network Engineer",
+        "name_ll": "Kĩ sư Công nghệ thông tin",
+        "code": "IT_NET_ENG",
+        "department_id": {
+          "ref": "dept_rst_it"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_it_operation_lead",
+      "model": "hr.job",
+      "fields": {
+        "name": "IT Operation Lead",
+        "name_ll": "Cố vấn Vận hành Công nghệ thông tin",
+        "code": "IT_OP_LEAD",
+        "department_id": {
+          "ref": "dept_rst_it"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_network_engineering",
+      "model": "hr.job",
+      "fields": {
+        "name": "Network Engineering",
+        "name_ll": "Kĩ sư mạng công nghệ thông tin",
+        "code": "NET_ENG",
+        "department_id": {
+          "ref": "dept_rst_it"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_it_deployment",
+      "model": "hr.job",
+      "fields": {
+        "name": "IT Deployment",
+        "name_ll": "Kĩ sư phát triển Công nghệ thông tin",
+        "code": "IT_DEPLOY",
+        "department_id": {
+          "ref": "dept_rst_it"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_it_manager",
+      "model": "hr.job",
+      "fields": {
+        "name": "IT Manager",
+        "name_ll": "IT Manager",
+        "code": "IT_MGR",
+        "department_id": {
+          "ref": "dept_rst_it"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_head_development",
+      "model": "hr.job",
+      "fields": {
+        "name": "Head of Development",
+        "name_ll": "Trưởng phòng Phát triển",
+        "code": "HEAD_DEV",
+        "department_id": {
+          "ref": "dept_rst_development"
+        },
+        "level_id": {
+          "ref": "job_level_head_of_department"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_construction_manager",
+      "model": "hr.job",
+      "fields": {
+        "name": "Construction Manager",
+        "name_ll": "Construction Manager",
+        "code": "CONST_MGR",
+        "department_id": {
+          "ref": "dept_rst_development"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_store_planner",
+      "model": "hr.job",
+      "fields": {
+        "name": "Store Planner",
+        "name_ll": "Store Planner",
+        "code": "STORE_PLAN",
+        "department_id": {
+          "ref": "dept_rst_development"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_project_manager",
+      "model": "hr.job",
+      "fields": {
+        "name": "Project Manager",
+        "name_ll": "Project Manager",
+        "code": "PROJ_MGR",
+        "department_id": {
+          "ref": "dept_rst_development"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_store_dev_manager",
+      "model": "hr.job",
+      "fields": {
+        "name": "Store Development Manager",
+        "name_ll": "Store Development Manager",
+        "code": "STORE_DEV_MGR",
+        "department_id": {
+          "ref": "dept_rst_development"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_re_dev_rep",
+      "model": "hr.job",
+      "fields": {
+        "name": "Real Estate Development Representative",
+        "name_ll": "Real Estate Development Representative",
+        "code": "RE_DEV_REP",
+        "department_id": {
+          "ref": "dept_rst_development"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_re_dev_specialist",
+      "model": "hr.job",
+      "fields": {
+        "name": "Real Estate Development Specialist",
+        "name_ll": "Chuyên viên Phát triển Bất động sản",
+        "code": "RE_DEV_SPEC",
+        "department_id": {
+          "ref": "dept_rst_development"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_re_lead",
+      "model": "hr.job",
+      "fields": {
+        "name": "Real Estate Lead",
+        "name_ll": "Real Estate Lead",
+        "code": "RE_LEAD",
+        "department_id": {
+          "ref": "dept_rst_development"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_project_admin",
+      "model": "hr.job",
+      "fields": {
+        "name": "Project Administrator",
+        "name_ll": "Trợ lý Dự án",
+        "code": "PROJ_ADMIN",
+        "department_id": {
+          "ref": "dept_rst_development"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_architect_planner",
+      "model": "hr.job",
+      "fields": {
+        "name": "Architect|Site Planner",
+        "name_ll": "Chuyên viên Thiết kế nhà hàng",
+        "code": "ARCH_PLAN",
+        "department_id": {
+          "ref": "dept_rst_development"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_nso_lead",
+      "model": "hr.job",
+      "fields": {
+        "name": "NSO Lead",
+        "name_ll": "NSO Lead",
+        "code": "NSO_LEAD",
+        "department_id": {
+          "ref": "dept_rst_development"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_quantity_surveyor",
+      "model": "hr.job",
+      "fields": {
+        "name": "Quantity Surveyor",
+        "name_ll": "Kỹ sư dự toán",
+        "code": "QTY_SURV",
+        "department_id": {
+          "ref": "dept_rst_development"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_site_supervisor_design",
+      "model": "hr.job",
+      "fields": {
+        "name": "Site Supervisor & Design",
+        "name_ll": "Thiết kế và giám sát công trình",
+        "code": "SITE_SUP_DES",
+        "department_id": {
+          "ref": "dept_rst_development"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_cdo",
+      "model": "hr.job",
+      "fields": {
+        "name": "Chief Development Officer",
+        "name_ll": "Giám đốc Phát triển",
+        "code": "CDO",
+        "department_id": {
+          "ref": "dept_rst_development"
+        },
+        "level_id": {
+          "ref": "job_level_head_of_department"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_head_finance",
+      "model": "hr.job",
+      "fields": {
+        "name": "Head of Finance",
+        "name_ll": "Trưởng phòng Tài chính",
+        "code": "HEAD_FIN",
+        "department_id": {
+          "ref": "dept_rst_finance"
+        },
+        "level_id": {
+          "ref": "job_level_head_of_department"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_general_accountant",
+      "model": "hr.job",
+      "fields": {
+        "name": "General Accountant",
+        "name_ll": "Kế toán tổng hợp",
+        "code": "GEN_ACCT",
+        "department_id": {
+          "ref": "dept_rst_finance"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_accountant",
+      "model": "hr.job",
+      "fields": {
+        "name": "Accountant",
+        "name_ll": "Nhân viên kế toán",
+        "code": "ACCT",
+        "department_id": {
+          "ref": "dept_rst_finance"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_chief_accountant",
+      "model": "hr.job",
+      "fields": {
+        "name": "Chief Accountant",
+        "name_ll": "Kế toán trưởng",
+        "code": "CHIEF_ACCT",
+        "department_id": {
+          "ref": "dept_rst_finance"
+        },
+        "level_id": {
+          "ref": "job_level_head_of_department"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_accounting_manager",
+      "model": "hr.job",
+      "fields": {
+        "name": "Accounting Manager",
+        "name_ll": "Trưởng phòng Kế toán",
+        "code": "ACCT_MGR",
+        "department_id": {
+          "ref": "dept_rst_finance"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_cfo",
+      "model": "hr.job",
+      "fields": {
+        "name": "Chief Financial Officer",
+        "name_ll": "Giám đốc Tài chính",
+        "code": "CFO",
+        "department_id": {
+          "ref": "dept_rst_finance"
+        },
+        "level_id": {
+          "ref": "job_level_head_of_department"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_senior_accountant",
+      "model": "hr.job",
+      "fields": {
+        "name": "Senior Accountant",
+        "name_ll": "Senior Accountant",
+        "code": "SR_ACCT",
+        "department_id": {
+          "ref": "dept_rst_finance"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_legal_counsel",
+      "model": "hr.job",
+      "fields": {
+        "name": "Legal Counsel",
+        "name_ll": "Chuyên viên pháp lý cao cấp",
+        "code": "LEGAL_COUN",
+        "department_id": {
+          "ref": "dept_rst_legal"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_legal_executive",
+      "model": "hr.job",
+      "fields": {
+        "name": "Legal executive",
+        "name_ll": "Chuyên viên pháp lý",
+        "code": "LEGAL_EXEC",
+        "department_id": {
+          "ref": "dept_rst_legal"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_rsg_manager",
+      "model": "hr.job",
+      "fields": {
+        "name": "RSG Manager",
+        "name_ll": "RSG Manager",
+        "code": "RSG_MGR",
+        "department_id": {
+          "ref": "dept_rst_rsg"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_rsg_specialist",
+      "model": "hr.job",
+      "fields": {
+        "name": "RSG Specialist",
+        "name_ll": "RSG Specialist",
+        "code": "RSG_SPEC",
+        "department_id": {
+          "ref": "dept_rst_rsg"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_rsg_consultant",
+      "model": "hr.job",
+      "fields": {
+        "name": "RSG Consultant",
+        "name_ll": "RSG Consultant",
+        "code": "RSG_CONS",
+        "department_id": {
+          "ref": "dept_rst_rsg"
+        },
+        "level_id": {
+          "ref": "job_level_consultant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_head_ld",
+      "model": "hr.job",
+      "fields": {
+        "name": "Head of L&D",
+        "name_ll": "Trưởng phòng Đào tạo và phát triển",
+        "code": "HEAD_LD",
+        "department_id": {
+          "ref": "dept_rst_ld"
+        },
+        "level_id": {
+          "ref": "job_level_head_of_department"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_ld_rsg_coordinator",
+      "model": "hr.job",
+      "fields": {
+        "name": "L&D cum RSG Coordinator",
+        "name_ll": "L&D cum RSG Coordinator",
+        "code": "LD_RSG_COORD",
+        "department_id": {
+          "ref": "dept_rst_ld"
+        },
+        "level_id": {
+          "ref": "job_level_coordinator"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_ld_manager",
+      "model": "hr.job",
+      "fields": {
+        "name": "Learning & Development Manager",
+        "name_ll": "Trưởng nhóm Đào tạo & Phát triển",
+        "code": "LD_MGR",
+        "department_id": {
+          "ref": "dept_rst_ld"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_menu_mgmt_specialist",
+      "model": "hr.job",
+      "fields": {
+        "name": "Menu Management Specialist",
+        "name_ll": "Chuyên viên Quản lý Thực đơn",
+        "code": "MENU_MGMT_SPEC",
+        "department_id": {
+          "ref": "dept_rst_menu"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_menu_mgmt_consultant",
+      "model": "hr.job",
+      "fields": {
+        "name": "Menu Management Consultant",
+        "name_ll": "Cố vấn Tiếp thị - Quản lý thực đơn",
+        "code": "MENU_MGMT_CONS",
+        "department_id": {
+          "ref": "dept_rst_menu"
+        },
+        "level_id": {
+          "ref": "job_level_consultant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_si_analyst",
+      "model": "hr.job",
+      "fields": {
+        "name": "S&I Analyst",
+        "name_ll": "Chuyên viên Hoạch định & Chiến lược",
+        "code": "SI_ANALYST",
+        "department_id": {
+          "ref": "dept_rst_strategy_insights"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_si_assistant",
+      "model": "hr.job",
+      "fields": {
+        "name": "S&I Assistant",
+        "name_ll": "Trợ lý Hoạch định & chiến lược",
+        "code": "SI_ASST",
+        "department_id": {
+          "ref": "dept_rst_strategy_insights"
+        },
+        "level_id": {
+          "ref": "job_level_assistant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_head_digital",
+      "model": "hr.job",
+      "fields": {
+        "name": "Head of Digital",
+        "name_ll": "Trưởng phòng Kỹ thuật số",
+        "code": "HEAD_DIGITAL",
+        "department_id": {
+          "ref": "dept_rst_strategy_insights"
+        },
+        "level_id": {
+          "ref": "job_level_head_of_department"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_si_coordinator",
+      "model": "hr.job",
+      "fields": {
+        "name": "S&I Coordinator",
+        "name_ll": "Điều phối viên Hoạch địch & Chiến lược",
+        "code": "SI_COORD",
+        "department_id": {
+          "ref": "dept_rst_strategy_insights"
+        },
+        "level_id": {
+          "ref": "job_level_coordinator"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_si_menu_consultant",
+      "model": "hr.job",
+      "fields": {
+        "name": "S&I cum Menu Management Consultant",
+        "name_ll": "Cố vấn Hoạch định chiến lược và Quản lý thực đơn",
+        "code": "SI_MENU_CONS",
+        "department_id": {
+          "ref": "dept_rst_strategy_insights"
+        },
+        "level_id": {
+          "ref": "job_level_consultant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_customer_insight_lead",
+      "model": "hr.job",
+      "fields": {
+        "name": "Customer Insight Lead",
+        "name_ll": "Trưởng nhóm Phân tích chỉ số khách hàng",
+        "code": "CUST_INS_LEAD",
+        "department_id": {
+          "ref": "dept_rst_strategy_insights"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_operation_manager",
+      "model": "hr.job",
+      "fields": {
+        "name": "Operation Manager",
+        "name_ll": "Quản lý bộ phận vận hành chuỗi nhà hàng",
+        "code": "OP_MGR",
+        "department_id": {
+          "ref": "dept_rst_operation"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_operations_assistant",
+      "model": "hr.job",
+      "fields": {
+        "name": "Operations Assistant",
+        "name_ll": "Trợ lý Bộ phận vận hành nhà hàng",
+        "code": "OPS_ASST",
+        "department_id": {
+          "ref": "dept_rst_operation"
+        },
+        "level_id": {
+          "ref": "job_level_assistant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_operation_consultant",
+      "model": "hr.job",
+      "fields": {
+        "name": "Operation Consultant",
+        "name_ll": "Cố vấn Bộ phận vận hành chuỗi nhà hàng",
+        "code": "OP_CONS",
+        "department_id": {
+          "ref": "dept_rst_operation"
+        },
+        "level_id": {
+          "ref": "job_level_consultant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_ops_training_support_spec",
+      "model": "hr.job",
+      "fields": {
+        "name": "Operations Training Support Specialist",
+        "name_ll": "Chuyên viên Đào tạo",
+        "code": "OPS_TRN_SPEC",
+        "department_id": {
+          "ref": "dept_rst_operation"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_national_ops_manager",
+      "model": "hr.job",
+      "fields": {
+        "name": "National Operations Manager",
+        "name_ll": "Trưởng phòng Vận hành Chuỗi nhà hàng Toàn quốc",
+        "code": "NAT_OPS_MGR",
+        "department_id": {
+          "ref": "dept_rst_operation"
+        },
+        "level_id": {
+          "ref": "job_level_head_of_department"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_ops_admin_coordinator",
+      "model": "hr.job",
+      "fields": {
+        "name": "Operations Administrative Coordinator",
+        "name_ll": "Điều phối viên Bộ phận vận hành chuỗi nhà hàng",
+        "code": "OPS_ADMIN_COORD",
+        "department_id": {
+          "ref": "dept_rst_operation"
+        },
+        "level_id": {
+          "ref": "job_level_coordinator"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_ops_training_support_cons",
+      "model": "hr.job",
+      "fields": {
+        "name": "Operations Training Support Consultant",
+        "name_ll": "Cố vấn Đào tạo khối nhà hàng",
+        "code": "OPS_TRN_CONS",
+        "department_id": {
+          "ref": "dept_rst_operation"
+        },
+        "level_id": {
+          "ref": "job_level_consultant"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_growth_ops_specialist",
+      "model": "hr.job",
+      "fields": {
+        "name": "Growth Operations Specialist",
+        "name_ll": "Chuyên viên Phát triển vận hành",
+        "code": "GROW_OPS_SPEC",
+        "department_id": {
+          "ref": "dept_rst_operation"
+        },
+        "level_id": {
+          "ref": "job_level_specialist"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "job_rst_head_ops_brand_ext",
+      "model": "hr.job",
+      "fields": {
+        "name": "Head of Operations & Brand Extension",
+        "name_ll": "Trưởng phòng Vận hành & Phát triển thương hiệu nhà hàng",
+        "code": "HEAD_OPS_BRAND",
+        "department_id": {
+          "ref": "dept_rst_operation"
+        },
+        "level_id": {
+          "ref": "job_level_head_of_department"
+        },
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    }
+  ],
+  "views": [],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "hr.job"
+  ]
+}

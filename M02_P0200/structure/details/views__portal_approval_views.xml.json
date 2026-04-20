@@ -1,0 +1,26 @@
+{
+  "file": "views/portal_approval_views.xml",
+  "type": "xml",
+  "bucket": "views",
+  "summary": "2 templates",
+  "records": [],
+  "views": [],
+  "actions": [],
+  "menus": [],
+  "templates": [
+    {
+      "id": "portal_approvals_page",
+      "name": "Portal Approvals Page",
+      "inherit_id": null,
+      "file": "views/portal_approval_views.xml"
+    },
+    {
+      "id": "portal_my_activities_page",
+      "name": "Portal My Activities Page",
+      "inherit_id": null,
+      "file": "views/portal_approval_views.xml"
+    }
+  ],
+  "functions": [],
+  "referenced_models": []
+}

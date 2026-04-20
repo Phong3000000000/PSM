@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_hr_employee_form_inherit_job_grade_level" model="ir.ui.view">
+        <field name="name">hr.employee.form.inherit.job.grade.level</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <!-- 1. Thêm Job Level vào tab Work (sau Job Title) -->
+            <xpath expr="//field[@name='job_title']" position="after">
+                <field name="job_level_id" options="{'no_create': True}"/>
+            </xpath>
+
+            <!-- 2. Thêm Job Grade vào tab Payroll (sau cụm ngày hợp đồng) -->
+            <xpath expr="//page[@name='payroll_information']//div[@name='contract_dates']" position="after">
+                <field name="job_grade_id" options="{'no_create': True}"/>
+            </xpath>
+
+            <!-- 3. Đảm bảo contract_date_start hiển thị (nếu có module nào ẩn nó) -->
+            <xpath expr="//field[@name='contract_date_start']" position="attributes">
+                <attribute name="invisible">0</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

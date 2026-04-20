@@ -1,0 +1,37 @@
+{
+  "file": "views/res_users_views.xml",
+  "type": "xml",
+  "bucket": "views",
+  "summary": "1 views",
+  "records": [
+    {
+      "id": "view_users_simple_form_inherit_custom",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "res.users.simple.form.inherit.custom",
+        "model": "res.users",
+        "inherit_id": {
+          "ref": "base.view_users_simple_form"
+        },
+        "arch": ""
+      }
+    }
+  ],
+  "views": [
+    {
+      "id": "view_users_simple_form_inherit_custom",
+      "model": "res.users",
+      "name": "res.users.simple.form.inherit.custom",
+      "inherit_id": "base.view_users_simple_form",
+      "file": "views/res_users_views.xml"
+    }
+  ],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "ir.ui.view",
+    "res.users"
+  ]
+}

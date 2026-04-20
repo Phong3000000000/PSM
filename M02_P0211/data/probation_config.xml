@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Tham số cấu hình chung -->
+        <record id="probation_duration_days_param" model="ir.config_parameter">
+            <field name="key">M02_P0211.probation_duration_days</field>
+            <field name="value">30</field>
+        </record>
+
+        <record id="evaluation_threshold_param" model="ir.config_parameter">
+            <field name="key">M02_P0211.evaluation_threshold</field>
+            <field name="value">80.0</field>
+        </record>
+
+        <!-- Cấu hình mặc định cho khối Cửa hàng (Adecco) -->
+        <record id="default_adecco_config" model="x_psm.hr.adecco.config">
+            <field name="name">Cấu hình Adecco (OPS)</field>
+            <field name="x_psm_email">bebong12hminecraft@gmail.com</field> <!-- Thay đổi email thực tế của Adecco tại đây -->
+            <field name="x_psm_agency_type">adecco</field>
+            <field name="x_psm_cooperate_with_3p">1</field>
+        </record>
+
+        <!-- Cấu hình mặc định cho khối Văn phòng (Good Day) -->
+        <record id="default_goodday_config" model="x_psm.hr.adecco.config">
+            <field name="name">Cấu hình Good Day (RST)</field>
+            <field name="x_psm_email">bebong12hminecraft@gmail.com</field>
+            <field name="x_psm_agency_type">good_day</field>
+            <field name="x_psm_cooperate_with_3p">1</field>
+        </record>
+    </data>
+</odoo>

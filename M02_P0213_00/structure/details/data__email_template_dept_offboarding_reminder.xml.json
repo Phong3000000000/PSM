@@ -1,0 +1,29 @@
+{
+  "file": "data/email_template_dept_offboarding_reminder.xml",
+  "type": "xml",
+  "bucket": "data",
+  "summary": "XML data file.",
+  "records": [
+    {
+      "id": "psm_0213_email_template_dept_offboarding_reminder",
+      "model": "mail.template",
+      "fields": {
+        "name": "Nhắc nhở công việc Offboarding (Bộ phận)",
+        "model_id": {
+          "ref": "approvals.model_approval_request"
+        },
+        "subject": "REMINDER: Bạn có công việc trễ hạn trong đơn nghỉ việc của {{ object.x_psm_0213_employee_id.name }}",
+        "email_from": "{{ (user.email or user.company_id.email) }}",
+        "body_html": "<div style=\"margin: 0px; padding: 0px; font-family: Arial, sans-serif;\">\n    <p>Chào bạn,</p>\n    <p>Bạn đang có nhiệm vụ trong quy trình nghỉ việc của nhân viên <strong>{{ object.x_psm_0213_employee_id.name }}</strong> (Mã NV: {{ object.x_psm_0213_employee_id.barcode or 'N/A' }}) hiện đang bị trễ hạn xử lý.</p>\n    \n    <div style=\"margin: 16px 0px; padding: 12px; border-left: 4px solid #DA291C; background-color: #F8F9FA;\">\n        <strong>Chi tiết công việc cần xử lý:</strong><br/>\n        - Vui lòng rà soát và hoàn tất các hạng mục do bạn phụ trách trên hệ thống Odoo.<br/>\n        - <strong>Lưu ý quan trọng:</strong> Hệ thống đã tự động gia hạn thêm 4 ngày cho tiêu đề công việc này để bạn có thời gian hoàn tất.\n    </div>\n\n    <p>Rất mong bạn sớm hoàn thành để quy trình nghỉ việc được suôn sẻ.</p>\n    <p>Trân trọng,<br/>Phòng Nhân sự</p>\n</div>"
+      }
+    }
+  ],
+  "views": [],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "mail.template"
+  ]
+}

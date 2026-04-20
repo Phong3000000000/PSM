@@ -1,0 +1,179 @@
+{
+  "file": "controllers/main.py",
+  "type": "python",
+  "bucket": "controllers",
+  "summary": "1 classes; 0 fields",
+  "classes": [
+    {
+      "python_class": "PortalResignation",
+      "description": "Python helper class PortalResignation.",
+      "model": null,
+      "inherit": null,
+      "order": null,
+      "rec_name": null,
+      "fields": [],
+      "methods": [
+        {
+          "name": "_get_portal_employee",
+          "type": "helper",
+          "decorators": [],
+          "summary": "helper"
+        },
+        {
+          "name": "_get_resignation_category",
+          "type": "helper",
+          "decorators": [],
+          "summary": "helper"
+        },
+        {
+          "name": "_get_latest_resignation_request",
+          "type": "helper",
+          "decorators": [],
+          "summary": "helper"
+        },
+        {
+          "name": "_get_owned_resignation_request_by_id",
+          "type": "helper",
+          "decorators": [],
+          "summary": "helper"
+        },
+        {
+          "name": "_get_resignation_types",
+          "type": "helper",
+          "decorators": [],
+          "summary": "helper"
+        },
+        {
+          "name": "_get_resignation_activities",
+          "type": "helper",
+          "decorators": [],
+          "summary": "helper"
+        },
+        {
+          "name": "_get_or_create_exit_survey_url",
+          "type": "helper",
+          "decorators": [],
+          "summary": "helper"
+        },
+        {
+          "name": "portal_resignation_form",
+          "type": "method",
+          "decorators": [
+            {
+              "call": "http.route",
+              "args": [
+                [
+                  "/my/resignation/ops"
+                ]
+              ],
+              "keywords": {
+                "type": "http",
+                "auth": "user",
+                "website": true
+              }
+            }
+          ],
+          "summary": "Hiển thị form yêu cầu nghỉ việc hoặc trạng thái đơn đang xử lý."
+        },
+        {
+          "name": "portal_activity_done",
+          "type": "method",
+          "decorators": [
+            {
+              "call": "http.route",
+              "args": [
+                [
+                  "/my/resignation/ops/activity/done"
+                ]
+              ],
+              "keywords": {
+                "type": "http",
+                "auth": "user",
+                "methods": [
+                  "POST"
+                ],
+                "website": true,
+                "csrf": true
+              }
+            }
+          ],
+          "summary": "Đánh dấu hoàn thành công việc từ Portal."
+        },
+        {
+          "name": "portal_resignation_submit",
+          "type": "method",
+          "decorators": [
+            {
+              "call": "http.route",
+              "args": [
+                [
+                  "/my/resignation/submit"
+                ]
+              ],
+              "keywords": {
+                "type": "http",
+                "auth": "user",
+                "methods": [
+                  "POST"
+                ],
+                "website": true,
+                "csrf": true
+              }
+            }
+          ],
+          "summary": "Xử lý submit yêu cầu nghỉ việc."
+        }
+      ],
+      "kind": "python_class"
+    }
+  ],
+  "routes": [
+    {
+      "method": "portal_resignation_form",
+      "route": [
+        [
+          "/my/resignation/ops"
+        ]
+      ],
+      "options": {
+        "type": "http",
+        "auth": "user",
+        "website": true
+      }
+    },
+    {
+      "method": "portal_activity_done",
+      "route": [
+        [
+          "/my/resignation/ops/activity/done"
+        ]
+      ],
+      "options": {
+        "type": "http",
+        "auth": "user",
+        "methods": [
+          "POST"
+        ],
+        "website": true,
+        "csrf": true
+      }
+    },
+    {
+      "method": "portal_resignation_submit",
+      "route": [
+        [
+          "/my/resignation/submit"
+        ]
+      ],
+      "options": {
+        "type": "http",
+        "auth": "user",
+        "methods": [
+          "POST"
+        ],
+        "website": true,
+        "csrf": true
+      }
+    }
+  ]
+}

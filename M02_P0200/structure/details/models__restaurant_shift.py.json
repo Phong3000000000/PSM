@@ -1,0 +1,81 @@
+{
+  "file": "models/restaurant_shift.py",
+  "type": "python",
+  "bucket": "models",
+  "summary": "models: restaurant.shift; 1 classes; 4 fields",
+  "classes": [
+    {
+      "python_class": "RestaurantShift",
+      "description": "Ca Làm Việc",
+      "model": "restaurant.shift",
+      "inherit": null,
+      "order": "hour_from",
+      "rec_name": null,
+      "fields": [
+        {
+          "name": "name",
+          "type": "Char",
+          "string": "Tên Ca",
+          "comodel": null,
+          "required": true,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "code",
+          "type": "Char",
+          "string": "Mã Ca",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "hour_from",
+          "type": "Float",
+          "string": "Giờ Bắt Đầu",
+          "comodel": null,
+          "required": true,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "hour_to",
+          "type": "Float",
+          "string": "Giờ Kết Thúc",
+          "comodel": null,
+          "required": true,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        }
+      ],
+      "methods": [],
+      "kind": "new_model"
+    }
+  ],
+  "routes": []
+}

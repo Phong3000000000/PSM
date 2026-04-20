@@ -1,0 +1,14 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_department_block_user,department.block.user,model_department_block,base.group_user,1,1,1,1
+access_restaurant_area_user,restaurant.area.user,model_restaurant_area,base.group_user,1,1,1,1
+access_restaurant_positioning_area_user,restaurant.positioning.area.user,model_restaurant_positioning_area,base.group_user,1,1,1,1
+access_restaurant_station_user,restaurant.station.user,model_restaurant_station,base.group_user,1,1,1,1
+access_restaurant_shift_user,restaurant.shift.user,model_restaurant_shift,base.group_user,1,1,1,1
+access_shift_log_user,shift.log.user,model_shift_log,base.group_user,1,1,1,1
+access_shift_log_employee_user,shift.log.employee.user,model_shift_log_employee,base.group_user,1,1,1,1
+access_shift_log_checklist_user,shift.log.checklist.user,model_shift_log_checklist,base.group_user,1,1,1,1
+access_shift_log_checklist_line_user,shift.log.checklist.line.user,model_shift_log_checklist_line,base.group_user,1,1,1,1
+access_hr_job_position_default_user,hr.job.position.default.user,model_hr_job_position_default,base.group_user,1,1,1,1
+access_shift_log_generate_wizard_user,shift.log.generate.wizard.user,model_shift_log_generate_wizard,base.group_user,1,1,1,1
+access_hr_job_level_user,hr.job.level.user,model_hr_job_level,base.group_user,1,1,1,1
+access_hr_job_grade_user,hr.job.grade.user,model_hr_job_grade,base.group_user,1,1,1,1

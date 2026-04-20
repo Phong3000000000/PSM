@@ -1,0 +1,20 @@
+{
+  "file": "views/resignation_portal_template.xml",
+  "type": "xml",
+  "bucket": "views",
+  "summary": "1 templates",
+  "records": [],
+  "views": [],
+  "actions": [],
+  "menus": [],
+  "templates": [
+    {
+      "id": "view_psm_0213_resignation_portal_template",
+      "name": "Form yêu cầu nghỉ việc",
+      "inherit_id": null,
+      "file": "views/resignation_portal_template.xml"
+    }
+  ],
+  "functions": [],
+  "referenced_models": []
+}

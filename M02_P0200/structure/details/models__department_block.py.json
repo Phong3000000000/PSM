@@ -1,0 +1,66 @@
+{
+  "file": "models/department_block.py",
+  "type": "python",
+  "bucket": "models",
+  "summary": "models: department.block; 1 classes; 3 fields",
+  "classes": [
+    {
+      "python_class": "DepartmentBlock",
+      "description": "Khối Phòng Ban",
+      "model": "department.block",
+      "inherit": null,
+      "order": "name",
+      "rec_name": null,
+      "fields": [
+        {
+          "name": "name",
+          "type": "Char",
+          "string": "Tên Khối",
+          "comodel": null,
+          "required": true,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "code",
+          "type": "Char",
+          "string": "Mã Viết Tắt",
+          "comodel": null,
+          "required": true,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "active",
+          "type": "Boolean",
+          "string": "Hoạt Động",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": true,
+          "tracking": null,
+          "help": null
+        }
+      ],
+      "methods": [],
+      "kind": "new_model"
+    }
+  ],
+  "routes": []
+}

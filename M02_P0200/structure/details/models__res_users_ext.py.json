@@ -1,0 +1,45 @@
+{
+  "file": "models/res_users_ext.py",
+  "type": "python",
+  "bucket": "models",
+  "summary": "models: res.users; 1 classes; 1 fields",
+  "classes": [
+    {
+      "python_class": "ResUsers",
+      "description": "Extends res.users in models/res_users_ext.py.",
+      "model": null,
+      "inherit": "res.users",
+      "order": null,
+      "rec_name": null,
+      "fields": [
+        {
+          "name": "x_is_portal_manager",
+          "type": "Boolean",
+          "string": "Is Portal Manager",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": "Check this box if this portal user manages other users (e.g. DM, SM)."
+        }
+      ],
+      "methods": [
+        {
+          "name": "_fix_portal_groups",
+          "type": "helper",
+          "decorators": [
+            "api.model"
+          ],
+          "summary": "Cleanup groups for portal users before update to avoid\n'The user cannot have more than one user types' error."
+        }
+      ],
+      "kind": "inherit_only"
+    }
+  ],
+  "routes": []
+}

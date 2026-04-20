@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_recruitment_stage_form_inherit" model="ir.ui.view">
+        <field name="name">hr.recruitment.stage.form.inherit</field>
+        <field name="model">hr.recruitment.stage</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_recruitment_stage_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='stage_definition']" position="after">
+                <group string="PSM Stage Configuration" name="psm_stage_configuration">
+                    <group>
+                        <field name="recruitment_type" widget="radio"/>
+                        <field name="office_pipeline_visible" invisible="recruitment_type != 'office'"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+    
+    <record id="hr_recruitment_stage_tree_inherit" model="ir.ui.view">
+        <field name="name">hr.recruitment.stage.tree.inherit</field>
+        <field name="model">hr.recruitment.stage</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_recruitment_stage_tree"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="recruitment_type" widget="badge" decoration-info="recruitment_type == 'office'" decoration-success="recruitment_type == 'staff'" decoration-warning="recruitment_type == 'management'"/>
+            </field>
+        </field>
+    </record>
+</odoo>

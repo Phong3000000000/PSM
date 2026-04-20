@@ -1,0 +1,30 @@
+{
+  "file": "data/ir_cron_data.xml",
+  "type": "xml",
+  "bucket": "data",
+  "summary": "XML data file.",
+  "records": [
+    {
+      "id": "action_psm_0213_offboarding_reminder_cron",
+      "model": "ir.cron",
+      "fields": {
+        "name": "Offboarding: Remind Pending Activities",
+        "model_id": {
+          "ref": "approvals.model_approval_request"
+        },
+        "state": "code",
+        "code": "model._cron_send_offboarding_reminders()",
+        "interval_number": "3",
+        "interval_type": "days"
+      }
+    }
+  ],
+  "views": [],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "ir.cron"
+  ]
+}

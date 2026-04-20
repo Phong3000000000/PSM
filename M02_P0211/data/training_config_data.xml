@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="training_config_bsoc_appr" model="x_psm.hr.training.config">
+        <field name="name">APPEARANCE</field>
+        <field name="x_psm_code">APPR</field>
+        <field name="x_psm_description">Training on personal grooming, uniform standards, and appearance guidelines.</field>
+        <field name="x_psm_days_after_start">1</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="training_config_bsoc_fs" model="x_psm.hr.training.config">
+        <field name="name">FOOD SAFETY</field>
+        <field name="x_psm_code">FS</field>
+        <field name="x_psm_description">Essential food handling rules, hygiene standards, and food safety protocols.</field>
+        <field name="x_psm_days_after_start">1</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="training_config_bsoc_hptlt" model="x_psm.hr.training.config">
+        <field name="name">HOSPITALITY</field>
+        <field name="x_psm_code">HPTLT</field>
+        <field name="x_psm_description">Introduction to hospitality culture and guest service excellence.</field>
+        <field name="x_psm_days_after_start">2</field>
+        <field name="sequence">30</field>
+    </record>
+
+    <record id="training_config_bsoc_sft" model="x_psm.hr.training.config">
+        <field name="name">SAFETY</field>
+        <field name="x_psm_code">SFT</field>
+        <field name="x_psm_description">Workplace safety standards and emergency procedures.</field>
+        <field name="x_psm_days_after_start">2</field>
+        <field name="sequence">40</field>
+    </record>
+
+    <record id="training_config_bsoc_scrt" model="x_psm.hr.training.config">
+        <field name="name">SECURITY</field>
+        <field name="x_psm_code">SCRT</field>
+        <field name="x_psm_description">Store security measures and information protection policies.</field>
+        <field name="x_psm_days_after_start">3</field>
+        <field name="sequence">50</field>
+    </record>
+
+    <record id="training_config_bsoc_tw" model="x_psm.hr.training.config">
+        <field name="name">TEAMWORK</field>
+        <field name="x_psm_code">TW</field>
+        <field name="x_psm_description">Effective teamwork skills and collaboration basics.</field>
+        <field name="x_psm_days_after_start">3</field>
+        <field name="sequence">60</field>
+    </record>
+</odoo>

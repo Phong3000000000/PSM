@@ -1,0 +1,81 @@
+{
+  "file": "models/restaurant_station.py",
+  "type": "python",
+  "bucket": "models",
+  "summary": "models: restaurant.station; 1 classes; 4 fields",
+  "classes": [
+    {
+      "python_class": "RestaurantStation",
+      "description": "Vị Trí Chi Tiết Nhà Hàng",
+      "model": "restaurant.station",
+      "inherit": null,
+      "order": "positioning_area_id, name",
+      "rec_name": null,
+      "fields": [
+        {
+          "name": "name",
+          "type": "Char",
+          "string": "Tên Station",
+          "comodel": null,
+          "required": true,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "code",
+          "type": "Char",
+          "string": "Positioning Code",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "positioning_area_id",
+          "type": "Many2one",
+          "string": "Khu Vực Nhỏ",
+          "comodel": "restaurant.positioning.area",
+          "required": true,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "menu_type",
+          "type": "Selection",
+          "string": "Menu Type",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": "[[\"breakfast\", \"Breakfast\"], [\"regular\", \"Regular\"], [\"all\", \"All\"]]",
+          "default": null,
+          "tracking": null,
+          "help": null
+        }
+      ],
+      "methods": [],
+      "kind": "new_model"
+    }
+  ],
+  "routes": []
+}

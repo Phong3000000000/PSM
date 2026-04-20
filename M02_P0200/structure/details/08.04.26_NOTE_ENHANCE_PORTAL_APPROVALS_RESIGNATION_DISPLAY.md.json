@@ -1,0 +1,6 @@
+{
+  "file": "08.04.26_NOTE_ENHANCE_PORTAL_APPROVALS_RESIGNATION_DISPLAY.md",
+  "type": "document",
+  "bucket": "docs",
+  "summary": "# Ghi chú bổ sung hiển thị thông tin đơn nghỉ việc trên `/my/approvals` ## Bối cảnh - Module hiển thị portal manager approvals: `M02_P0200` - Flow dữ liệu..."
+}

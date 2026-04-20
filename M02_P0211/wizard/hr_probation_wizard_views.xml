@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_probation_wizard_view_form" model="ir.ui.view">
+        <field name="name">hr.probation.wizard.form</field>
+        <field name="model">hr.probation.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Đánh giá kết quả thử việc">
+                <sheet>
+                    <group>
+                        <field name="employee_id" readonly="1"/>
+                        <field name="evaluation_result" widget="radio"/>
+                        <field name="refusal_reason" 
+                               placeholder="Ghi nhận xét hoặc lý do tại đây..."
+                               invisible="evaluation_result == 'pass'"
+                               required="evaluation_result == 'fail'"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_confirm" string="Xác nhận" type="object" class="btn-primary"/>
+                    <button string="Hủy" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_hr_probation_wizard" model="ir.actions.act_window">
+        <field name="name">Đánh giá thử việc</field>
+        <field name="res_model">hr.probation.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

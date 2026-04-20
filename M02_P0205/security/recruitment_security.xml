@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Restore upstream multi-company rule and remove website_published backend bypass. -->
+    <function model="ir.rule" name="write">
+        <value eval="[ref('hr.hr_job_comp_rule')]" />
+        <value
+            eval="{'domain_force': '[(\'company_id\', \'in\', company_ids + [False])]', 'name': 'Job multi company rule'}" />
+    </function>
+
+    <!-- Disable upstream broad Recruitment rules that open all jobs/applicants for recruitment users. -->
+    <record id="hr_recruitment.hr_job_user_rule" model="ir.rule">
+        <field name="active" eval="False"/>
+    </record>
+
+    <record id="hr_recruitment.hr_applicant_user_rule" model="ir.rule">
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- Replace broad user visibility with office department-scoped rules. -->
+    <record id="rule_hr_job_office_department_0205" model="ir.rule">
+        <field name="name">HR Job: Office by Department (0205)</field>
+        <field name="model_id" ref="hr.model_hr_job"/>
+        <field name="groups" eval="[(6, 0, [ref('hr_recruitment.group_hr_recruitment_user')])]"/>
+        <field name="domain_force">[('x_psm_0205_is_office_job', '=', True), ('department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+    </record>
+
+    <record id="rule_hr_applicant_office_department_0205" model="ir.rule">
+        <field name="name">HR Applicant: Office by Department (0205)</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="groups" eval="[(6, 0, [ref('hr_recruitment.group_hr_recruitment_user')])]"/>
+        <field name="domain_force">[('x_psm_0205_recruitment_type', '=', 'office'), ('department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+    </record>
+
+    <record id="rule_hr_department_office_department_0205" model="ir.rule">
+        <field name="name">HR Department: Office by Department (0205)</field>
+        <field name="model_id" ref="hr.model_hr_department"/>
+        <field name="groups" eval="[(6, 0, [ref('hr_recruitment.group_hr_recruitment_user')])]"/>
+        <field name="domain_force">[('id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- HR manager role: broad visibility to override department-scoped store/office rules by OR-domain. -->
+    <record id="rule_hr_job_all_hr_manager_0205" model="ir.rule">
+        <field name="name">HR Job: All Departments for HR Manager (0205)</field>
+        <field name="model_id" ref="hr.model_hr_job"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_M')])]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_hr_applicant_all_hr_manager_0205" model="ir.rule">
+        <field name="name">HR Applicant: All Departments for HR Manager (0205)</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_M')])]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_hr_department_all_hr_manager_0205" model="ir.rule">
+        <field name="name">HR Department: All Departments for HR Manager (0205)</field>
+        <field name="model_id" ref="hr.model_hr_department"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_M')])]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_hr_employee_public_all_hr_manager_0205" model="ir.rule">
+        <field name="name">HR Employee Public: All Departments for HR Manager (0205)</field>
+        <field name="model_id" ref="hr.model_hr_employee_public"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_M')])]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Optional broad HR rules for 0204 sub-models to avoid cross-department runtime errors. -->
+    <record id="rule_interview_schedule_all_hr_manager_0205" model="ir.rule">
+        <field name="name">Interview Schedule: All Departments for HR Manager (0205)</field>
+        <field name="model_id" ref="M02_P0204.model_x_psm_interview_schedule"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_M')])]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_hr_applicant_interview_evaluation_all_hr_manager_0205" model="ir.rule">
+        <field name="name">Interview Evaluation: All Departments for HR Manager (0205)</field>
+        <field name="model_id" ref="M02_P0204.model_x_psm_hr_applicant_interview_evaluation"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_M')])]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_hr_applicant_interview_evaluation_section_all_hr_manager_0205" model="ir.rule">
+        <field name="name">Interview Evaluation Section: All Departments for HR Manager (0205)</field>
+        <field name="model_id" ref="M02_P0204.model_x_psm_hr_applicant_interview_evaluation_section"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_M')])]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_hr_applicant_interview_evaluation_line_all_hr_manager_0205" model="ir.rule">
+        <field name="name">Interview Evaluation Line: All Departments for HR Manager (0205)</field>
+        <field name="model_id" ref="M02_P0204.model_x_psm_hr_applicant_interview_evaluation_line"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_M')])]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_hr_applicant_oje_evaluation_all_hr_manager_0205" model="ir.rule">
+        <field name="name">OJE Evaluation: All Departments for HR Manager (0205)</field>
+        <field name="model_id" ref="M02_P0204.model_x_psm_hr_applicant_oje_evaluation"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_M')])]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_hr_applicant_oje_evaluation_section_all_hr_manager_0205" model="ir.rule">
+        <field name="name">OJE Evaluation Section: All Departments for HR Manager (0205)</field>
+        <field name="model_id" ref="M02_P0204.model_x_psm_hr_applicant_oje_evaluation_section"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_M')])]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_hr_applicant_oje_evaluation_line_all_hr_manager_0205" model="ir.rule">
+        <field name="name">OJE Evaluation Line: All Departments for HR Manager (0205)</field>
+        <field name="model_id" ref="M02_P0204.model_x_psm_hr_applicant_oje_evaluation_line"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_M')])]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_refuse_reason_line_all_hr_manager_0205" model="ir.rule">
+        <field name="name">Refuse Reason Line: All Departments for HR Manager (0205)</field>
+        <field name="model_id" ref="M02_P0204.model_x_psm_applicant_get_refuse_reason_line"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_M')])]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- RGM scope: only own department + own-department store applicants. -->
+    <record id="rule_hr_department_store_rgm_scope_0205" model="ir.rule">
+        <field name="name">HR Department: Store RGM by Department (0205)</field>
+        <field name="model_id" ref="hr.model_hr_department"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_OPS_STORE_RGM_M')])]"/>
+        <field name="domain_force">[('id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_hr_applicant_store_rgm_scope_0205" model="ir.rule">
+        <field name="name">HR Applicant: Store RGM by Department (0205)</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_OPS_STORE_RGM_M')])]"/>
+        <field name="domain_force">[('recruitment_type', '=', 'store'), ('department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Legacy scoped rules kept as xmlid anchors but disabled to remove HR department lock. -->
+    <record id="rule_hr_employee_public_department_scope_0205" model="ir.rule">
+        <field name="name">HR Employee Public: Legacy HR by Department (0205 - Disabled)</field>
+        <field name="model_id" ref="hr.model_hr_employee_public"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_HEAD_M'), ref('M02_P0200.GDH_RST_HR_RECRUITMENT_M')])]"/>
+        <field name="active" eval="False"/>
+        <field name="domain_force">[('department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_hr_department_department_scope_0205" model="ir.rule">
+        <field name="name">HR Department: Legacy HR by Department (0205 - Disabled)</field>
+        <field name="model_id" ref="hr.model_hr_department"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_HEAD_M'), ref('M02_P0200.GDH_RST_HR_RECRUITMENT_M')])]"/>
+        <field name="active" eval="False"/>
+        <field name="domain_force">[('id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- CEO/BOD/ABU office roles: keep department/employee scope to own department only. -->
+    <record id="rule_hr_department_office_department_ceo_bod_0205" model="ir.rule">
+        <field name="name">HR Department: Office CEO/BOD by Department (0205)</field>
+        <field name="model_id" ref="hr.model_hr_department"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_ceo'), ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_bod'), ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_abu')])]"/>
+        <field name="domain_force">[('id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_hr_employee_public_office_department_ceo_bod_0205" model="ir.rule">
+        <field name="name">HR Employee Public: Office CEO/BOD by Department (0205)</field>
+        <field name="model_id" ref="hr.model_hr_employee_public"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_ceo'), ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_bod'), ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_abu')])]"/>
+        <field name="domain_force">[('department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_hr_employee_office_department_bod_0205" model="ir.rule">
+        <field name="name">HR Employee: Office BOD by Department (0205)</field>
+        <field name="model_id" ref="hr.model_hr_employee"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_bod')])]"/>
+        <field name="domain_force">[('department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_hr_employee_office_department_abu_0205" model="ir.rule">
+        <field name="name">HR Employee: Office ABU by Department (0205)</field>
+        <field name="model_id" ref="hr.model_hr_employee"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_abu')])]"/>
+        <field name="domain_force">[('department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_interview_schedule_office_department_ceo_bod_0205" model="ir.rule">
+        <field name="name">Interview Schedule: Office by Department (0205)</field>
+        <field name="model_id" ref="M02_P0204.model_x_psm_interview_schedule"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_ceo'), ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_bod'), ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_abu')])]"/>
+        <field name="domain_force">[('department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_recruitment_request_office_department_ceo_bod_0205" model="ir.rule">
+        <field name="name">Recruitment Request: Office CEO/BOD by Department (0205)</field>
+        <field name="model_id" ref="model_x_psm_recruitment_request"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_ceo'), ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_bod'), ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_abu')])]"/>
+        <field name="domain_force">[('recruitment_block', '=', 'office'), ('department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_recruitment_request_line_office_department_ceo_bod_0205" model="ir.rule">
+        <field name="name">Recruitment Request Line: Office CEO/BOD by Department (0205)</field>
+        <field name="model_id" ref="model_x_psm_recruitment_request_line"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_ceo'), ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_bod'), ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_abu')])]"/>
+        <field name="domain_force">[('request_id.recruitment_block', '=', 'office'), ('request_id.department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_applicant_evaluation_office_department_ceo_0205" model="ir.rule">
+        <field name="name">Applicant Evaluation: Office CEO by Department (0205)</field>
+        <field name="model_id" ref="model_x_psm_applicant_evaluation"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_ceo')])]"/>
+        <field name="domain_force">[('applicant_id.x_psm_0205_recruitment_type', '=', 'office'), ('applicant_id.department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_applicant_evaluation_line_office_department_ceo_0205" model="ir.rule">
+        <field name="name">Applicant Evaluation Line: Office CEO by Department (0205)</field>
+        <field name="model_id" ref="model_x_psm_applicant_evaluation_line"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_ceo')])]"/>
+        <field name="domain_force">[('evaluation_id.applicant_id.x_psm_0205_recruitment_type', '=', 'office'), ('evaluation_id.applicant_id.department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_applicant_evaluation_office_department_bod_0205" model="ir.rule">
+        <field name="name">Applicant Evaluation: Office BOD by Department (0205)</field>
+        <field name="model_id" ref="model_x_psm_applicant_evaluation"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_bod')])]"/>
+        <field name="domain_force">[('applicant_id.x_psm_0205_recruitment_type', '=', 'office'), ('applicant_id.department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_applicant_evaluation_office_department_abu_0205" model="ir.rule">
+        <field name="name">Applicant Evaluation: Office ABU by Department (0205)</field>
+        <field name="model_id" ref="model_x_psm_applicant_evaluation"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_abu')])]"/>
+        <field name="domain_force">[('applicant_id.x_psm_0205_recruitment_type', '=', 'office'), ('applicant_id.department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_applicant_evaluation_line_office_department_bod_0205" model="ir.rule">
+        <field name="name">Applicant Evaluation Line: Office BOD by Department (0205)</field>
+        <field name="model_id" ref="model_x_psm_applicant_evaluation_line"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_bod')])]"/>
+        <field name="domain_force">[('evaluation_id.applicant_id.x_psm_0205_recruitment_type', '=', 'office'), ('evaluation_id.applicant_id.department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_applicant_evaluation_line_office_department_abu_0205" model="ir.rule">
+        <field name="name">Applicant Evaluation Line: Office ABU by Department (0205)</field>
+        <field name="model_id" ref="model_x_psm_applicant_evaluation_line"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_abu')])]"/>
+        <field name="domain_force">[('evaluation_id.applicant_id.x_psm_0205_recruitment_type', '=', 'office'), ('evaluation_id.applicant_id.department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</odoo>

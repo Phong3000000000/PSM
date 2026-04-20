@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 
+        Kế thừa Search View của hr.employee để thêm bộ lọc tùy chỉnh.
+        Việc này giúp chúng ta có thể gọi chúng bằng context trong action.
+    -->
+    <record id="view_psm_employee_filter_inherit_contract_report" model="ir.ui.view">
+        <field name="name">hr.employee.select.inherit.contract.report</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <!-- Bộ lọc theo trạng thái Onboarding / Thử việc -->
+                <separator/>
+                <filter string="Ứng tuyển/Đang Onboarding" name="onboarding_in_progress" domain="[('x_psm_0211_onboarding_state', 'in', ('pending', 'submitted', 'approved', 'probation'))]"/>
+                <filter string="Đã hoàn thành thử việc" name="probation_passed" domain="[('x_psm_0211_onboarding_state', '=', 'done')]"/>
+                <filter string="Bị từ chối" name="onboarding_refused" domain="[('x_psm_0211_onboarding_state', '=', 'refused')]"/>
+                
+                <separator/>
+                <!-- Group by để nhóm nhân viên theo nội dung thống kê -->
+                <filter string="Loại hợp đồng" name="group_by_contract_type" context="{'group_by': 'contract_type_id'}"/>
+                <filter string="Trạng thái Onboarding" name="group_by_onboarding_state" context="{'group_by': 'x_psm_0211_onboarding_state'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 
+        Action Window cho báo cáo hợp đồng.
+    -->
+    <record id="action_psm_hr_employee_contract_report" model="ir.actions.act_window">
+        <field name="name">Thống kê Hợp đồng nhân sự</field>
+        <field name="res_model">hr.employee</field>
+        <field name="view_mode">list,kanban,form,pivot,graph</field>
+        <field name="search_view_id" ref="hr.view_employee_filter"/>
+        <field name="context">{
+            'search_default_my_department': 1,
+            'search_default_group_by_contract_type': 1
+        }</field>
+    </record>
+
+    <!-- 
+        Action Window cho báo cáo HOÀN THÀNH THỬ VIỆC.
+    -->
+    <record id="action_psm_hr_employee_probation_passed_report" model="ir.actions.act_window">
+        <field name="name">Thống kê hoàn thành thử việc</field>
+        <field name="res_model">hr.employee</field>
+        <field name="view_mode">list,kanban,form,pivot,graph</field>
+        <field name="search_view_id" ref="hr.view_employee_filter"/>
+        <field name="context">{
+            'search_default_my_department': 1,
+            'search_default_probation_passed': 1,
+            'search_default_group_by_contract_type': 1
+        }</field>
+    </record>
+
+    <!-- 
+        Tạo MENU con trong "Reporting"
+    -->
+    <menuitem
+        id="menu_hr_employee_contract_report"
+        name="Thống kê hợp đồng nhân sự"
+        parent="hr.hr_menu_hr_reports"
+        action="action_psm_hr_employee_contract_report"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_hr_employee_probation_passed_report"
+        name="Thống kê hoàn thành thử việc"
+        parent="hr.hr_menu_hr_reports"
+        action="action_psm_hr_employee_probation_passed_report"
+        sequence="11"/>
+</odoo>

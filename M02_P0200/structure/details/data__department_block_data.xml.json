@@ -1,0 +1,586 @@
+{
+  "file": "data/department_block_data.xml",
+  "type": "xml",
+  "bucket": "data",
+  "summary": "XML data file.",
+  "records": [
+    {
+      "id": "block_rst",
+      "model": "department.block",
+      "fields": {
+        "name": "HEAD OFFICE",
+        "code": "RST"
+      }
+    },
+    {
+      "id": "block_ops",
+      "model": "department.block",
+      "fields": {
+        "name": "OPERATION",
+        "code": "OPS"
+      }
+    },
+    {
+      "id": "block_sv",
+      "model": "department.block",
+      "fields": {
+        "name": "SERVICE",
+        "code": "SV"
+      }
+    },
+    {
+      "id": "area_kitchen",
+      "model": "restaurant.area",
+      "fields": {
+        "name": "KITCHEN AREA",
+        "code": "KITCHEN"
+      }
+    },
+    {
+      "id": "area_service",
+      "model": "restaurant.area",
+      "fields": {
+        "name": "Service",
+        "code": "SERVICE"
+      }
+    },
+    {
+      "id": "area_mdsd_3po",
+      "model": "restaurant.area",
+      "fields": {
+        "name": "MDS/3PO",
+        "code": "MDSD"
+      }
+    },
+    {
+      "id": "area_mccafe",
+      "model": "restaurant.area",
+      "fields": {
+        "name": "McCafe",
+        "code": "MCCAFE"
+      }
+    },
+    {
+      "id": "pos_area_kitchen",
+      "model": "restaurant.positioning.area",
+      "fields": {
+        "name": "Kitchen",
+        "area_id": {
+          "ref": "area_kitchen"
+        }
+      }
+    },
+    {
+      "id": "pos_area_frontcounter",
+      "model": "restaurant.positioning.area",
+      "fields": {
+        "name": "Front Counter",
+        "area_id": {
+          "ref": "area_service"
+        }
+      }
+    },
+    {
+      "id": "pos_area_drive_thru",
+      "model": "restaurant.positioning.area",
+      "fields": {
+        "name": "Drive Thru",
+        "area_id": {
+          "ref": "area_service"
+        }
+      }
+    },
+    {
+      "id": "pos_area_togo",
+      "model": "restaurant.positioning.area",
+      "fields": {
+        "name": "Togo",
+        "area_id": {
+          "ref": "area_service"
+        }
+      }
+    },
+    {
+      "id": "pos_area_mds3po",
+      "model": "restaurant.positioning.area",
+      "fields": {
+        "name": "MDS/3PO",
+        "area_id": {
+          "ref": "area_mdsd_3po"
+        }
+      }
+    },
+    {
+      "id": "pos_area_mccafe",
+      "model": "restaurant.positioning.area",
+      "fields": {
+        "name": "McCafe",
+        "area_id": {
+          "ref": "area_mccafe"
+        }
+      }
+    },
+    {
+      "id": "shift_am",
+      "model": "restaurant.shift",
+      "fields": {
+        "name": "AM",
+        "code": "AM",
+        "hour_from": {
+          "eval": "6.0"
+        },
+        "hour_to": {
+          "eval": "14.5"
+        }
+      }
+    },
+    {
+      "id": "shift_pm",
+      "model": "restaurant.shift",
+      "fields": {
+        "name": "PM",
+        "code": "PM",
+        "hour_from": {
+          "eval": "14.0"
+        },
+        "hour_to": {
+          "eval": "22.5"
+        }
+      }
+    },
+    {
+      "id": "shift_on",
+      "model": "restaurant.shift",
+      "fields": {
+        "name": "ON",
+        "code": "ON",
+        "hour_from": {
+          "eval": "22.0"
+        },
+        "hour_to": {
+          "eval": "6.75"
+        }
+      }
+    },
+    {
+      "id": "station_rini",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "Reg Menu - Initiator Station",
+        "code": "RINI",
+        "positioning_area_id": {
+          "ref": "pos_area_kitchen"
+        },
+        "menu_type": "regular"
+      }
+    },
+    {
+      "id": "station_rass",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "Reg Menu - Assembler Station",
+        "code": "RASS",
+        "positioning_area_id": {
+          "ref": "pos_area_kitchen"
+        },
+        "menu_type": "regular"
+      }
+    },
+    {
+      "id": "station_bini",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "Brk Menu - Initiator Station",
+        "code": "BINI",
+        "positioning_area_id": {
+          "ref": "pos_area_kitchen"
+        },
+        "menu_type": "breakfast"
+      }
+    },
+    {
+      "id": "station_bass",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "Brk Menu - Assembler Station",
+        "code": "BASS",
+        "positioning_area_id": {
+          "ref": "pos_area_kitchen"
+        },
+        "menu_type": "breakfast"
+      }
+    },
+    {
+      "id": "station_sweet_corn",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "Sweet Corn",
+        "code": "RASS",
+        "positioning_area_id": {
+          "ref": "pos_area_kitchen"
+        },
+        "menu_type": "regular"
+      }
+    },
+    {
+      "id": "station_rice",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "Rice Station",
+        "code": "BICa",
+        "positioning_area_id": {
+          "ref": "pos_area_kitchen"
+        },
+        "menu_type": "regular"
+      }
+    },
+    {
+      "id": "station_rgp",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "Reg Menu - Grill Station",
+        "code": "RGP",
+        "positioning_area_id": {
+          "ref": "pos_area_kitchen"
+        },
+        "menu_type": "regular"
+      }
+    },
+    {
+      "id": "station_bgp",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "Brk Menu - Grill Station",
+        "code": "BGP",
+        "positioning_area_id": {
+          "ref": "pos_area_kitchen"
+        },
+        "menu_type": "breakfast"
+      }
+    },
+    {
+      "id": "station_fried",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "Fried Station",
+        "code": "FP",
+        "positioning_area_id": {
+          "ref": "pos_area_kitchen"
+        },
+        "menu_type": "all"
+      }
+    },
+    {
+      "id": "station_egg",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "Egg Station",
+        "code": "BGP",
+        "positioning_area_id": {
+          "ref": "pos_area_kitchen"
+        },
+        "menu_type": "breakfast"
+      }
+    },
+    {
+      "id": "station_bic_prepping",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "BIC Prepping",
+        "code": "BICb",
+        "positioning_area_id": {
+          "ref": "pos_area_kitchen"
+        },
+        "menu_type": "all"
+      }
+    },
+    {
+      "id": "station_bic_breading",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "BIC Breading",
+        "code": "BICb",
+        "positioning_area_id": {
+          "ref": "pos_area_kitchen"
+        },
+        "menu_type": "all"
+      }
+    },
+    {
+      "id": "station_bic_cooking",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "BIC Cooking, Warming - Assembling",
+        "code": "BICa",
+        "positioning_area_id": {
+          "ref": "pos_area_kitchen"
+        },
+        "menu_type": "all"
+      }
+    },
+    {
+      "id": "station_shake_salad",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "Shake Shake Salad",
+        "code": "RASS",
+        "positioning_area_id": {
+          "ref": "pos_area_kitchen"
+        },
+        "menu_type": "regular"
+      }
+    },
+    {
+      "id": "station_hash_browns",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "Hash Browns",
+        "code": "HB",
+        "positioning_area_id": {
+          "ref": "pos_area_frontcounter"
+        },
+        "menu_type": "breakfast"
+      }
+    },
+    {
+      "id": "station_french_fries",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "French Fries",
+        "code": "FF",
+        "positioning_area_id": {
+          "ref": "pos_area_frontcounter"
+        },
+        "menu_type": "regular"
+      }
+    },
+    {
+      "id": "station_lobby",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "Lobby",
+        "code": "LOB",
+        "positioning_area_id": {
+          "ref": "pos_area_frontcounter"
+        },
+        "menu_type": "all"
+      }
+    },
+    {
+      "id": "station_beverage_dessert",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "Beverage & Dessert",
+        "code": "CBC",
+        "positioning_area_id": {
+          "ref": "pos_area_frontcounter"
+        },
+        "menu_type": "all"
+      }
+    },
+    {
+      "id": "station_fc_otc",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "FC OTC (Order Taker Cashier)",
+        "code": "FCOT",
+        "positioning_area_id": {
+          "ref": "pos_area_frontcounter"
+        },
+        "menu_type": "all"
+      }
+    },
+    {
+      "id": "station_fc_erp",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "FC ERP (Expo/Runner/Presenter)",
+        "code": "FCEXP",
+        "positioning_area_id": {
+          "ref": "pos_area_frontcounter"
+        },
+        "menu_type": "all"
+      }
+    },
+    {
+      "id": "station_table_server",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "Table Server",
+        "code": "TS",
+        "positioning_area_id": {
+          "ref": "pos_area_frontcounter"
+        },
+        "menu_type": "all"
+      }
+    },
+    {
+      "id": "station_kiosk_host",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "Kiosk Host",
+        "code": "SOK H",
+        "positioning_area_id": {
+          "ref": "pos_area_frontcounter"
+        },
+        "menu_type": "all"
+      }
+    },
+    {
+      "id": "station_dt_otc",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "DT OTC (Order Taker Cashier)",
+        "code": "DTOT",
+        "positioning_area_id": {
+          "ref": "pos_area_drive_thru"
+        },
+        "menu_type": "all"
+      }
+    },
+    {
+      "id": "station_dt_erp",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "DT ERP (Expo/Runner/Presenter)",
+        "code": "DTEXP",
+        "positioning_area_id": {
+          "ref": "pos_area_drive_thru"
+        },
+        "menu_type": "all"
+      }
+    },
+    {
+      "id": "station_tg_otc",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "TG OTC (Order Taker Cashier)",
+        "code": "WT OT",
+        "positioning_area_id": {
+          "ref": "pos_area_togo"
+        },
+        "menu_type": "all"
+      }
+    },
+    {
+      "id": "station_tg_erp",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "TG ERP (Expo/Runner/Presenter)",
+        "code": "WTR",
+        "positioning_area_id": {
+          "ref": "pos_area_togo"
+        },
+        "menu_type": "all"
+      }
+    },
+    {
+      "id": "station_mds_rider",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "MDS - Rider",
+        "code": "MDS R",
+        "positioning_area_id": {
+          "ref": "pos_area_mds3po"
+        },
+        "menu_type": "all"
+      }
+    },
+    {
+      "id": "station_mds_ge_erp",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "MDS, GE ERP",
+        "code": "MDSEXP",
+        "positioning_area_id": {
+          "ref": "pos_area_mds3po"
+        },
+        "menu_type": "all"
+      }
+    },
+    {
+      "id": "station_mds_expo_ge",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "MDS - Expo (Grab Express)",
+        "code": "MDSEXP",
+        "positioning_area_id": {
+          "ref": "pos_area_mds3po"
+        },
+        "menu_type": "all"
+      }
+    },
+    {
+      "id": "station_3po_udp_erp",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "3PO UDP ERP",
+        "code": "3POEXP",
+        "positioning_area_id": {
+          "ref": "pos_area_mds3po"
+        },
+        "menu_type": "all"
+      }
+    },
+    {
+      "id": "station_mds_walker",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "MDS - Walker",
+        "code": "MDS R",
+        "positioning_area_id": {
+          "ref": "pos_area_mds3po"
+        },
+        "menu_type": "all"
+      }
+    },
+    {
+      "id": "station_cake",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "Cake",
+        "code": "MCFF",
+        "positioning_area_id": {
+          "ref": "pos_area_mccafe"
+        },
+        "menu_type": "all"
+      }
+    },
+    {
+      "id": "station_mccafe_hot",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "McCafe hot drink",
+        "code": "MCFF",
+        "positioning_area_id": {
+          "ref": "pos_area_mccafe"
+        },
+        "menu_type": "all"
+      }
+    },
+    {
+      "id": "station_mccafe_cold",
+      "model": "restaurant.station",
+      "fields": {
+        "name": "McCafe cold drink",
+        "code": "MCFF",
+        "positioning_area_id": {
+          "ref": "pos_area_mccafe"
+        },
+        "menu_type": "all"
+      }
+    }
+  ],
+  "views": [],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "department.block",
+    "restaurant.area",
+    "restaurant.positioning.area",
+    "restaurant.shift",
+    "restaurant.station"
+  ]
+}

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_reject_applicant_wizard_form" model="ir.ui.view">
+        <field name="name">x_psm_reject_applicant_wizard.form</field>
+        <field name="model">x_psm_reject_applicant_wizard</field>
+        <field name="arch" type="xml">
+            <form string="Lý do từ chối ứng viên">
+                <group>
+                    <field name="applicant_id" invisible="1"/>
+                    <field name="source_action" invisible="1"/>
+                    <field name="reason" placeholder="Nhập lý do từ chối cụ thể tại đây..." required="1"/>
+                </group>
+                <footer>
+                    <button name="action_confirm_reject" string="Xác nhận từ chối" type="object" class="btn-danger"/>
+                    <button string="Hủy" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

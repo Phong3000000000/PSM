@@ -1,0 +1,100 @@
+{
+  "file": "wizard/shift_log_generate_wizard.py",
+  "type": "python",
+  "bucket": "wizard",
+  "summary": "models: shift.log.generate.wizard; 1 classes; 4 fields; 1 actions",
+  "classes": [
+    {
+      "python_class": "ShiftLogGenerateWizard",
+      "description": "Wizard Tạo Shift Log Cả Tháng",
+      "model": "shift.log.generate.wizard",
+      "inherit": null,
+      "order": null,
+      "rec_name": null,
+      "fields": [
+        {
+          "name": "pos_config_ids",
+          "type": "Many2many",
+          "string": "Cửa Hàng",
+          "comodel": "pos.config",
+          "required": true,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": "Chọn cửa hàng OPS để tạo shift log"
+        },
+        {
+          "name": "available_pos_config_ids",
+          "type": "Many2many",
+          "string": "Available POS Configs",
+          "comodel": "pos.config",
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": "_compute_available_pos_config_ids",
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "month",
+          "type": "Selection",
+          "string": "Tháng",
+          "comodel": null,
+          "required": true,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": "[[\"1\", \"Tháng 1\"], [\"2\", \"Tháng 2\"], [\"3\", \"Tháng 3\"], [\"4\", \"Tháng 4\"], [\"5\", \"Tháng 5\"], [\"6\", \"Tháng 6\"], [\"7\", \"T...",
+          "default": "lambda",
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "year",
+          "type": "Integer",
+          "string": "Năm",
+          "comodel": null,
+          "required": true,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": "lambda",
+          "tracking": null,
+          "help": null
+        }
+      ],
+      "methods": [
+        {
+          "name": "_compute_available_pos_config_ids",
+          "type": "compute",
+          "decorators": [
+            {
+              "call": "api.depends",
+              "args": [],
+              "keywords": {}
+            }
+          ],
+          "summary": "Chỉ hiển thị các POS thuộc phòng ban khối OPS."
+        },
+        {
+          "name": "action_generate",
+          "type": "action",
+          "decorators": [],
+          "summary": "Tạo shift.log cho tất cả ngày × tất cả ca × tất cả cửa hàng đã chọn.\nBỏ qua bản ghi đã tồn tại (trùng pos_config_id + date + shift_id)."
+        }
+      ],
+      "kind": "new_model"
+    }
+  ],
+  "routes": []
+}

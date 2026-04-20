@@ -1,0 +1,37 @@
+{
+  "file": "views/hr_department_views.xml",
+  "type": "xml",
+  "bucket": "views",
+  "summary": "1 views",
+  "records": [
+    {
+      "id": "view_hr_department_form_inherit_block",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "hr.department.form.inherit.block",
+        "model": "hr.department",
+        "inherit_id": {
+          "ref": "hr.view_department_form"
+        },
+        "arch": ""
+      }
+    }
+  ],
+  "views": [
+    {
+      "id": "view_hr_department_form_inherit_block",
+      "model": "hr.department",
+      "name": "hr.department.form.inherit.block",
+      "inherit_id": "hr.view_department_form",
+      "file": "views/hr_department_views.xml"
+    }
+  ],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "hr.department",
+    "ir.ui.view"
+  ]
+}

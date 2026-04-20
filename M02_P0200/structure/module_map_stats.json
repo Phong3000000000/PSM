@@ -1,0 +1,56 @@
+{
+  "module_name": "M02_P0200",
+  "detail_file_count": 59,
+  "relation_count": 96,
+  "top_buckets": [
+    [
+      "models",
+      17
+    ],
+    [
+      "views",
+      11
+    ],
+    [
+      "docs",
+      10
+    ],
+    [
+      "data",
+      8
+    ],
+    [
+      "static",
+      3
+    ],
+    [
+      "wizard",
+      3
+    ],
+    [
+      "controllers",
+      2
+    ],
+    [
+      "security",
+      2
+    ],
+    [
+      "python",
+      1
+    ],
+    [
+      "manifest",
+      1
+    ],
+    [
+      "convention",
+      1
+    ]
+  ],
+  "model_count": 16,
+  "view_count": 27,
+  "security_file_count": 2,
+  "controller_file_count": 2,
+  "sample_files": "08.04.26_NOTE_ADD_MANAGER_FINAL_RESIGNATION_ACTIONS_ON_PORTAL.md, 08.04.26_NOTE_ADD_PORTAL_MY_ACTIVITIES_BLOCK_AND_PAGE.md, 08.04.26_NOTE_CHANGE_APPROVAL_ACTIONS_TO_MODAL.md, 08.04.26_NOTE_ENHANCE_PORTAL_APPROVALS_RESIGNATION_DISPLAY.md, 08.04.26_NOTE_FIX_500_PORTAL_APPROVALS_REQUEST_METHOD.md, 08.04.26_NOTE_FIX_PORTAL_APPROVAL_ACTION_BUTTON_LAYOUT.md, 08.04.26_NOTE_FIX_PORTAL_APPROVAL_MODAL_BOOTSTRAP_REFERENCE.md, 08.04.26_NOTE_FIX_PORTAL_APPROVALS_RESIGNATION_FIELD_MAPPING.md, 08.04.26_NOTE_POLISH_PORTAL_APPROVAL_MODAL_UI.md, 08.04.26_NOTE_RESTORE_PORTAL_APPROVAL_POPUP_WITHOUT_BOOTSTRAP_RUNTIME.md"
+}

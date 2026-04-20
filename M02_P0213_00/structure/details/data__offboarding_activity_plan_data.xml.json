@@ -1,0 +1,126 @@
+{
+  "file": "data/offboarding_activity_plan_data.xml",
+  "type": "xml",
+  "bucket": "data",
+  "summary": "XML data file.",
+  "records": [
+    {
+      "id": "psm_0213_offboarding_activity_plan",
+      "model": "mail.activity.plan",
+      "fields": {
+        "name": "Quy trình nghỉ việc",
+        "res_model": "hr.employee",
+        "active": {
+          "eval": "True"
+        },
+        "company_id": {
+          "ref": "base.main_company"
+        }
+      }
+    },
+    {
+      "id": "psm_0213_offboarding_template_asset_recovery",
+      "model": "mail.activity.plan.template",
+      "fields": {
+        "plan_id": {
+          "ref": "psm_0213_offboarding_activity_plan"
+        },
+        "sequence": "10",
+        "activity_type_id": {
+          "ref": "mail.mail_activity_data_todo"
+        },
+        "summary": "Thu hồi tài sản công ty (laptop, điện thoại, thẻ nhân viên, chìa khóa...)",
+        "note": "<p>Kiểm tra và thu hồi tất cả tài sản công ty đã cấp cho nhân viên:</p>\n<ul>\n    <li>Laptop/Máy tính</li>\n    <li>Điện thoại công ty</li>\n    <li>Thẻ nhân viên</li>\n    <li>Chìa khóa văn phòng</li>\n    <li>Các thiết bị khác</li>\n</ul>",
+        "delay_count": "0",
+        "delay_unit": "days",
+        "delay_from": "before_plan_date",
+        "responsible_type": "manager"
+      }
+    },
+    {
+      "id": "psm_0213_offboarding_template_damage_assessment",
+      "model": "mail.activity.plan.template",
+      "fields": {
+        "plan_id": {
+          "ref": "psm_0213_offboarding_activity_plan"
+        },
+        "sequence": "20",
+        "activity_type_id": {
+          "ref": "mail.mail_activity_data_todo"
+        },
+        "summary": "Đánh giá tình trạng và hư hại tài sản thu hồi",
+        "note": "<p>Kiểm tra tình trạng các tài sản đã thu hồi:</p>\n<ul>\n    <li>Đánh giá mức độ hư hại (nếu có)</li>\n    <li>Xác định chi phí sửa chữa/thay thế</li>\n    <li>Lập biên bản bàn giao tài sản</li>\n    <li>Thông báo cho bộ phận kế toán nếu cần trừ lương</li>\n</ul>",
+        "delay_count": "0",
+        "delay_unit": "days",
+        "delay_from": "before_plan_date",
+        "responsible_type": "manager"
+      }
+    },
+    {
+      "id": "psm_0213_offboarding_template_deactive_email",
+      "model": "mail.activity.plan.template",
+      "fields": {
+        "plan_id": {
+          "ref": "psm_0213_offboarding_activity_plan"
+        },
+        "sequence": "30",
+        "activity_type_id": {
+          "ref": "mail.mail_activity_data_todo"
+        },
+        "summary": "Vô hiệu hóa tài khoản email và hệ thống",
+        "note": "<p>Vô hiệu hóa các tài khoản của nhân viên:</p>\n<ul>\n    <li>Tài khoản email công ty</li>\n    <li>Tài khoản Active Directory/LDAP</li>\n    <li>Tài khoản ERP/Odoo</li>\n    <li>Các tài khoản hệ thống nội bộ khác</li>\n    <li>Thu hồi quyền truy cập VPN</li>\n</ul>",
+        "delay_count": "0",
+        "delay_unit": "days",
+        "delay_from": "after_plan_date",
+        "responsible_type": "on_demand"
+      }
+    },
+    {
+      "id": "psm_0213_offboarding_template_expense_claim",
+      "model": "mail.activity.plan.template",
+      "fields": {
+        "plan_id": {
+          "ref": "psm_0213_offboarding_activity_plan"
+        },
+        "sequence": "40",
+        "activity_type_id": {
+          "ref": "mail.mail_activity_data_todo"
+        },
+        "summary": "Hoàn tất các đề nghị thanh toán chi phí (Expense Claim)",
+        "note": "<p>Xử lý các expense claim còn tồn đọng:</p>\n<ul>\n    <li>Kiểm tra các expense report chưa nộp</li>\n    <li>Duyệt/từ chối các expense claim đang chờ</li>\n    <li>Hoàn tất thanh toán các expense đã duyệt</li>\n    <li>Thông báo nhân viên về tình trạng thanh toán cuối cùng</li>\n</ul>",
+        "delay_count": "0",
+        "delay_unit": "days",
+        "delay_from": "before_plan_date",
+        "responsible_type": "employee"
+      }
+    },
+    {
+      "id": "psm_0213_offboarding_template_exit_interview",
+      "model": "mail.activity.plan.template",
+      "fields": {
+        "plan_id": {
+          "ref": "psm_0213_offboarding_activity_plan"
+        },
+        "sequence": "50",
+        "activity_type_id": {
+          "ref": "mail.mail_activity_data_todo"
+        },
+        "summary": "Hoàn thành Exit Interview",
+        "note": "<p>Nhân viên cần hoàn thành khảo sát Exit Interview.</p>",
+        "delay_count": "0",
+        "delay_unit": "days",
+        "delay_from": "after_plan_date",
+        "responsible_type": "employee"
+      }
+    }
+  ],
+  "views": [],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "mail.activity.plan",
+    "mail.activity.plan.template"
+  ]
+}

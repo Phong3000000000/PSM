@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_applicant_oje_evaluation_view_form" model="ir.ui.view">
+        <field name="name">x_psm_hr_applicant_oje_evaluation.view.form</field>
+        <field name="model">x_psm_hr_applicant_oje_evaluation</field>
+        <field name="arch" type="xml">
+            <form string="Phiếu Đánh Giá OJE" create="false" edit="false">
+                <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="applicant_id" readonly="1"/>
+                        </h1>
+                        <h2>
+                            <field name="job_id" readonly="1"/>
+                        </h2>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="evaluator_user_id" readonly="1"/>
+                            <field name="submitted_at" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="total_score" readonly="1"/>
+                            <field name="pass_score_snapshot" readonly="1"/>
+                            <field name="result" widget="badge" 
+                                   decoration-success="result == 'pass'" 
+                                   decoration-danger="result == 'fail'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Chi tiết đánh giá">
+                            <field name="line_ids">
+                                <list>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="field_type"/>
+                                    <field name="text_value" invisible="field_type != 'text'"/>
+                                    <field name="text_score" invisible="field_type != 'text'"/>
+                                    <field name="checkbox_value" invisible="field_type != 'checkbox'"/>
+                                    <field name="checkbox_score" invisible="field_type != 'checkbox'"/>
+                                    <field name="selected_option_id" invisible="field_type != 'radio'"/>
+                                    <field name="selected_option_score" invisible="field_type != 'radio'"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="hr_applicant_oje_evaluation_view_form_edit" model="ir.ui.view">
+        <field name="name">x_psm_hr_applicant_oje_evaluation.view.form.edit</field>
+        <field name="model">x_psm_hr_applicant_oje_evaluation</field>
+        <field name="arch" type="xml">
+            <form string="Phiếu Đánh Giá OJE" create="false">
+                <header>
+                    <button name="action_submit"
+                            string="Nộp kết quả OJE"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state == 'done'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="new,in_progress,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="applicant_id" readonly="1"/></h1>
+                        <h2><field name="job_id" readonly="1"/></h2>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="evaluator_user_id" readonly="1"/>
+                            <field name="submitted_at" readonly="1" invisible="state != 'done'"/>
+                        </group>
+                        <group>
+                            <field name="total_score" readonly="1"/>
+                            <field name="pass_score_snapshot" readonly="1"/>
+                            <field name="result" readonly="1" widget="badge"
+                                   decoration-success="result == 'pass'"
+                                   decoration-danger="result == 'fail'"/>
+                        </group>
+                    </group>
+                    <field name="line_ids" nolabel="1">
+                        <list editable="bottom" create="false" delete="false">
+                            <field name="sequence" widget="handle"/>
+                            <field name="name" readonly="1"/>
+                            <field name="field_type" readonly="1"/>
+                            <field name="text_value" invisible="field_type != 'text'"/>
+                            <field name="text_score" invisible="field_type != 'text'"/>
+                            <field name="text_max_score" invisible="field_type != 'text'" readonly="1"/>
+                            <field name="checkbox_value" invisible="field_type != 'checkbox'"/>
+                            <field name="checkbox_score" invisible="field_type != 'checkbox'" readonly="1"/>
+                            <field name="selected_option_id"
+                                   invisible="field_type != 'radio'"
+                                domain="[('question_id', '=', template_line_id)]"/>
+                            <field name="selected_option_score" invisible="1"/>
+                            <field name="awarded_score" readonly="1"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="hr_applicant_oje_evaluation_view_list" model="ir.ui.view">
+        <field name="name">x_psm_hr_applicant_oje_evaluation.view.list</field>
+        <field name="model">x_psm_hr_applicant_oje_evaluation</field>
+        <field name="arch" type="xml">
+            <list string="Danh sách Đánh giá OJE" create="false">
+                <field name="applicant_id"/>
+                <field name="job_id"/>
+                <field name="evaluator_user_id"/>
+                <field name="submitted_at"/>
+                <field name="total_score"/>
+                <field name="pass_score_snapshot"/>
+                <field name="result" widget="badge" 
+                       decoration-success="result == 'pass'" 
+                       decoration-danger="result == 'fail'"/>
+                <field name="state" widget="badge" 
+                       decoration-info="state == 'in_progress'" 
+                       decoration-success="state == 'done'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="hr_applicant_oje_evaluation_action" model="ir.actions.act_window">
+        <field name="name">Đánh giá OJE</field>
+        <field name="res_model">x_psm_hr_applicant_oje_evaluation</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- XML ID alias: action chuẩn hóa theo quy ước mới, giữ nguyên record gốc -->
+    <record id="alias_action_psm_applicant_oje_evaluation" model="ir.model.data">
+        <field name="module">M02_P0204</field>
+        <field name="name">action_psm_applicant_oje_evaluation</field>
+        <field name="model">ir.actions.act_window</field>
+        <field name="res_id" eval="ref('hr_applicant_oje_evaluation_action')"/>
+        <field name="noupdate" eval="1"/>
+    </record>
+</odoo>

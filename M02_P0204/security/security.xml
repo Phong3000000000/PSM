@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Keep only 0200 HR manager as backend authority in 0204 (store scope by department). -->
+
+    <!-- Re-enable upstream multi-company applicant rule if an older 0204 version disabled it. -->
+    <record id="hr_recruitment.hr_applicant_comp_rule" model="ir.rule">
+        <field name="active" eval="True"/>
+    </record>
+
+    <record id="hr_applicant_comp_rule_custom" model="ir.rule">
+        <field name="name">Applicant multi company rule (Custom - Disabled)</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="global" eval="True"/>
+        <field name="active" eval="False"/>
+        <field name="domain_force">['|', ('company_id', 'in', company_ids), ('company_id', '=', False)]</field>
+    </record>
+
+    <!-- Store Interview Schedule: recruitment staff scope by own department. -->
+    <record id="rule_interview_schedule_department_hierarchy" model="ir.rule">
+        <field name="name">Interview Schedule: Store HR by Department</field>
+        <field name="model_id" ref="model_x_psm_interview_schedule"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_S')])]"/>
+        <field name="domain_force">[('department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">1</field>
+    </record>
+
+    <!-- Store Job: recruitment staff scope by own department. -->
+    <record id="rule_hr_job_store_department_manager" model="ir.rule">
+        <field name="name">HR Job: Store HR by Department</field>
+        <field name="model_id" ref="hr.model_hr_job"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_S')])]"/>
+        <field name="domain_force">[('recruitment_type', '=', 'store'), ('department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+    <!-- Store Applicant: recruitment staff scope by own department. -->
+    <record id="rule_hr_applicant_department_hierarchy" model="ir.rule">
+        <field name="name">HR Applicant: Store HR by Department</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_S')])]"/>
+        <field name="active" eval="True"/>
+        <field name="domain_force">[('recruitment_type', '=', 'store'), ('department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+    <!-- Store Interview Evaluation: recruitment staff scope by applicant department. -->
+    <record id="rule_hr_applicant_interview_evaluation_store_department_manager" model="ir.rule">
+        <field name="name">Interview Evaluation: Store HR by Department</field>
+        <field name="model_id" ref="model_x_psm_hr_applicant_interview_evaluation"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_S')])]"/>
+        <field name="domain_force">[('applicant_id.recruitment_type', '=', 'store'), ('applicant_id.department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+    <record id="rule_hr_applicant_interview_evaluation_section_store_department_manager" model="ir.rule">
+        <field name="name">Interview Evaluation Section: Store HR by Department</field>
+        <field name="model_id" ref="model_x_psm_hr_applicant_interview_evaluation_section"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_S')])]"/>
+        <field name="domain_force">[('evaluation_id.applicant_id.recruitment_type', '=', 'store'), ('evaluation_id.applicant_id.department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+    <record id="rule_hr_applicant_interview_evaluation_line_store_department_manager" model="ir.rule">
+        <field name="name">Interview Evaluation Line: Store HR by Department</field>
+        <field name="model_id" ref="model_x_psm_hr_applicant_interview_evaluation_line"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_S')])]"/>
+        <field name="domain_force">[('evaluation_id.applicant_id.recruitment_type', '=', 'store'), ('evaluation_id.applicant_id.department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+    <!-- Store OJE Evaluation backend staff scope (kept for HR backend compatibility). -->
+    <record id="rule_hr_applicant_oje_evaluation_store_department_manager" model="ir.rule">
+        <field name="name">OJE Evaluation: Store HR by Department</field>
+        <field name="model_id" ref="model_x_psm_hr_applicant_oje_evaluation"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_S')])]"/>
+        <field name="domain_force">[('applicant_id.recruitment_type', '=', 'store'), ('applicant_id.department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+    <record id="rule_hr_applicant_oje_evaluation_section_store_department_manager" model="ir.rule">
+        <field name="name">OJE Evaluation Section: Store HR by Department</field>
+        <field name="model_id" ref="model_x_psm_hr_applicant_oje_evaluation_section"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_S')])]"/>
+        <field name="domain_force">[('evaluation_id.applicant_id.recruitment_type', '=', 'store'), ('evaluation_id.applicant_id.department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+    <record id="rule_hr_applicant_oje_evaluation_line_store_department_manager" model="ir.rule">
+        <field name="name">OJE Evaluation Line: Store HR by Department</field>
+        <field name="model_id" ref="model_x_psm_hr_applicant_oje_evaluation_line"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_S')])]"/>
+        <field name="domain_force">[('evaluation_id.applicant_id.recruitment_type', '=', 'store'), ('evaluation_id.applicant_id.department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+    <!-- Store Refuse Reason line by owning Job department (staff scope). -->
+    <record id="rule_refuse_reason_line_store_department_manager" model="ir.rule">
+        <field name="name">Refuse Reason Line: Store HR by Department</field>
+        <field name="model_id" ref="model_x_psm_applicant_get_refuse_reason_line"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_S')])]"/>
+        <field name="domain_force">[('job_refuse_reason_id.job_id.recruitment_type', '=', 'store'), ('job_refuse_reason_id.job_id.department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+    <!-- Keep these legacy rules inactive so old DBs are cleaned up on module upgrade. -->
+    <record id="rule_interview_schedule_hr_all" model="ir.rule">
+        <field name="name">Legacy Interview Schedule Rule (Disabled)</field>
+        <field name="model_id" ref="model_x_psm_interview_schedule"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_M')])]"/>
+        <field name="active" eval="False"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">1</field>
+    </record>
+
+    <record id="rule_interview_schedule_hr_manager_all" model="ir.rule">
+        <field name="name">Legacy Interview Schedule Manager Rule (Disabled)</field>
+        <field name="model_id" ref="model_x_psm_interview_schedule"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_M')])]"/>
+        <field name="active" eval="False"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">1</field>
+    </record>
+
+    <record id="rule_hr_applicant_user_all" model="ir.rule">
+        <field name="name">Legacy HR Applicant User Rule (Disabled)</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_M')])]"/>
+        <field name="active" eval="False"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">1</field>
+    </record>
+
+    <record id="rule_hr_applicant_interviewer" model="ir.rule">
+        <field name="name">Legacy Interviewer Applicant Rule (Disabled)</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_M')])]"/>
+        <field name="active" eval="False"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">0</field>
+        <field name="perm_create">0</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+    <record id="rule_hr_department_hierarchy" model="ir.rule">
+        <field name="name">Legacy Department Hierarchy Rule (Disabled)</field>
+        <field name="model_id" ref="hr.model_hr_department"/>
+        <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_M')])]"/>
+        <field name="active" eval="False"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">0</field>
+        <field name="perm_create">0</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+    <record id="rule_hr_employee_global_department" model="ir.rule">
+        <field name="name">Legacy HR Employee Global Rule (Disabled)</field>
+        <field name="model_id" ref="hr.model_hr_employee"/>
+        <field name="global" eval="True"/>
+        <field name="active" eval="False"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+    <record id="rule_hr_job_global_department" model="ir.rule">
+        <field name="name">Legacy HR Job Global Rule (Disabled)</field>
+        <field name="model_id" ref="hr.model_hr_job"/>
+        <field name="global" eval="True"/>
+        <field name="active" eval="False"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+</odoo>

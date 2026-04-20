@@ -1,0 +1,54 @@
+{
+  "file": "wizard/shift_log_generate_wizard_views.xml",
+  "type": "xml",
+  "bucket": "wizard",
+  "summary": "1 views, 1 actions",
+  "records": [
+    {
+      "id": "view_shift_log_generate_wizard_form",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "shift.log.generate.wizard.form",
+        "model": "shift.log.generate.wizard",
+        "arch": ""
+      }
+    },
+    {
+      "id": "action_shift_log_generate_wizard",
+      "model": "ir.actions.act_window",
+      "fields": {
+        "name": "Generate Shift Log Cả Tháng",
+        "res_model": "shift.log.generate.wizard",
+        "view_mode": "form",
+        "target": "new"
+      }
+    }
+  ],
+  "views": [
+    {
+      "id": "view_shift_log_generate_wizard_form",
+      "model": "shift.log.generate.wizard",
+      "name": "shift.log.generate.wizard.form",
+      "inherit_id": null,
+      "file": "wizard/shift_log_generate_wizard_views.xml"
+    }
+  ],
+  "actions": [
+    {
+      "id": "action_shift_log_generate_wizard",
+      "name": "Generate Shift Log Cả Tháng",
+      "res_model": "shift.log.generate.wizard",
+      "view_mode": "form",
+      "domain": null,
+      "file": "wizard/shift_log_generate_wizard_views.xml"
+    }
+  ],
+  "menus": [],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "ir.actions.act_window",
+    "ir.ui.view",
+    "shift.log.generate.wizard"
+  ]
+}

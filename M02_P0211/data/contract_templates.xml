@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Dashboard Placeholder Attachment - LOADING FROM PHYSICAL FILE -->
+        <record id="contract_template_attachment" model="ir.attachment">
+            <field name="name">HDLD_Adecoo_Template.pdf</field>
+            <field name="type">binary</field>
+            <field name="datas" type="base64" file="M02_P0211/data/pdf/HDLD_Adecoo_Template.pdf"/>
+            <field name="mimetype">application/pdf</field>
+        </record>
+
+        <record id="sign_item_role_employee_onboarding" model="sign.item.role">
+            <field name="name">Employee</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="sign_template_contract" model="sign.template">
+            <field name="active">True</field>
+            <field name="name">Standard Employment Agreement Template</field>
+        </record>
+
+        <record id="sign_document_contract" model="sign.document">
+            <field name="template_id" ref="sign_template_contract"/>
+            <field name="attachment_id" ref="contract_template_attachment"/>
+        </record>
+
+        <!-- SIGN ITEMS (PLACEHOLDERS) -->
+        <record id="sign_item_company_name" model="sign.item">
+            <field name="template_id" ref="sign_template_contract"/>
+            <field name="type_id" ref="sign.sign_item_type_company"/>
+            <field name="name">Company Name</field>
+            <field name="required">True</field>
+            <field name="responsible_id" ref="sign_item_role_employee_onboarding"/>
+            <field name="document_id" ref="sign_document_contract"/>
+            <field name="page">7</field>
+            <field name="posX">0.150</field>
+            <field name="posY">0.300</field>
+            <field name="width">0.300</field>
+            <field name="height">0.030</field>
+        </record>
+
+        <record id="sign_item_employee_name_signature" model="sign.item">
+            <field name="template_id" ref="sign_template_contract"/>
+            <field name="type_id" ref="sign.sign_item_type_name"/>
+            <field name="name">Employee Name (Signature)</field>
+            <field name="required">True</field>
+            <field name="responsible_id" ref="sign_item_role_employee_onboarding"/>
+            <field name="document_id" ref="sign_document_contract"/>
+            <field name="page">7</field>
+            <field name="posX">0.650</field>
+            <field name="posY">0.300</field>
+            <field name="width">0.300</field>
+            <field name="height">0.030</field>
+        </record>
+
+        <record id="email_template_contract_invitation" model="mail.template">
+            <field name="name">Sign: Contract Invitation (Portal Link)</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="subject">Employment Contract Signature Invitation: {{ object.name }}</field>
+            <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px;">
+    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+        Dear <t t-out="object.name"/>,<br/><br/>
+        Congratulations on successfully completing your probation period. 
+        We are pleased to invite you to review and electronically sign your employment contract. 
+        Please click the button below to access your contract on the employee portal:
+        <br/><br/>
+        <div style="margin: 16px 0px 16px 0px;">
+            <a t-attf-href="{{ object.get_base_url() }}/my/contract" 
+               style="background-color: #DA291C; padding: 12px 24px 12px 24px; text-decoration: none; color: #fff; border-radius: 0px; font-weight: bold; text-transform: uppercase;">
+                Review and Sign Contract
+            </a>
+        </div>
+        <br/>
+        If you have any questions regarding the contract terms, please contact the HR Department.
+        <br/><br/>
+        Best regards,
+    </p>
+</div>
+            </field>
+        </record>
+    </data>
+</odoo>

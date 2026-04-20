@@ -1,0 +1,25 @@
+{
+  "file": "data/approval_category_data.xml",
+  "type": "xml",
+  "bucket": "data",
+  "summary": "XML data file.",
+  "records": [
+    {
+      "id": "psm_0213_approval_category_resignation",
+      "model": "approval.category",
+      "fields": {
+        "name": "Yêu cầu nghỉ việc",
+        "description": "Yêu cầu nghỉ việc từ nhân viên qua",
+        "manager_approval": "required"
+      }
+    }
+  ],
+  "views": [],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "approval.category"
+  ]
+}

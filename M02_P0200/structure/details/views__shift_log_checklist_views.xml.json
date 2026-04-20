@@ -1,0 +1,78 @@
+{
+  "file": "views/shift_log_checklist_views.xml",
+  "type": "xml",
+  "bucket": "views",
+  "summary": "2 views, 1 actions, 1 menus",
+  "records": [
+    {
+      "id": "view_shift_log_checklist_tree",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "shift.log.checklist.tree",
+        "model": "shift.log.checklist",
+        "arch": ""
+      }
+    },
+    {
+      "id": "view_shift_log_checklist_form",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "shift.log.checklist.form",
+        "model": "shift.log.checklist",
+        "arch": ""
+      }
+    },
+    {
+      "id": "action_shift_log_checklist",
+      "model": "ir.actions.act_window",
+      "fields": {
+        "name": "Master Checklist",
+        "res_model": "shift.log.checklist",
+        "view_mode": "list,form"
+      }
+    }
+  ],
+  "views": [
+    {
+      "id": "view_shift_log_checklist_tree",
+      "model": "shift.log.checklist",
+      "name": "shift.log.checklist.tree",
+      "inherit_id": null,
+      "file": "views/shift_log_checklist_views.xml"
+    },
+    {
+      "id": "view_shift_log_checklist_form",
+      "model": "shift.log.checklist",
+      "name": "shift.log.checklist.form",
+      "inherit_id": null,
+      "file": "views/shift_log_checklist_views.xml"
+    }
+  ],
+  "actions": [
+    {
+      "id": "action_shift_log_checklist",
+      "name": "Master Checklist",
+      "res_model": "shift.log.checklist",
+      "view_mode": "list,form",
+      "domain": null,
+      "file": "views/shift_log_checklist_views.xml"
+    }
+  ],
+  "menus": [
+    {
+      "id": "menu_shift_log_checklist",
+      "name": "Master Checklist",
+      "parent": "menu_restaurant_config_root",
+      "action": "action_shift_log_checklist",
+      "groups": null,
+      "file": "views/shift_log_checklist_views.xml"
+    }
+  ],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "ir.actions.act_window",
+    "ir.ui.view",
+    "shift.log.checklist"
+  ]
+}

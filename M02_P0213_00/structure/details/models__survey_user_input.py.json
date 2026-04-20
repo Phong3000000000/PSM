@@ -1,0 +1,33 @@
+{
+  "file": "models/survey_user_input.py",
+  "type": "python",
+  "bucket": "models",
+  "summary": "models: survey.user_input; 1 classes; 0 fields",
+  "classes": [
+    {
+      "python_class": "SurveyUserInput",
+      "description": "Extends survey.user_input in models/survey_user_input.py.",
+      "model": null,
+      "inherit": "survey.user_input",
+      "order": null,
+      "rec_name": null,
+      "fields": [],
+      "methods": [
+        {
+          "name": "write",
+          "type": "override",
+          "decorators": [],
+          "summary": "override"
+        },
+        {
+          "name": "_check_and_mark_exit_interview_done",
+          "type": "helper",
+          "decorators": [],
+          "summary": "helper"
+        }
+      ],
+      "kind": "inherit_only"
+    }
+  ],
+  "routes": []
+}

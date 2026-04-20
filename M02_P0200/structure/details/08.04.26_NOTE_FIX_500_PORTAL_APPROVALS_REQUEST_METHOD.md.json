@@ -1,0 +1,6 @@
+{
+  "file": "08.04.26_NOTE_FIX_500_PORTAL_APPROVALS_REQUEST_METHOD.md",
+  "type": "document",
+  "bucket": "docs",
+  "summary": "# Ghi chú sửa lỗi 500 trang `/my/approvals` ## Bối cảnh - Module: `M02_P0200` - Màn hình: `/my/approvals` - Thời điểm phát sinh: khi có `approval.request`..."
+}

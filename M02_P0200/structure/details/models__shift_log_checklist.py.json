@@ -1,0 +1,96 @@
+{
+  "file": "models/shift_log_checklist.py",
+  "type": "python",
+  "bucket": "models",
+  "summary": "models: shift.log.checklist; 1 classes; 5 fields",
+  "classes": [
+    {
+      "python_class": "ShiftLogChecklist",
+      "description": "Master Checklist Ca Làm",
+      "model": "shift.log.checklist",
+      "inherit": null,
+      "order": "shift_phase, sequence, id",
+      "rec_name": null,
+      "fields": [
+        {
+          "name": "name",
+          "type": "Char",
+          "string": "Tên Công Việc",
+          "comodel": null,
+          "required": true,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "shift_phase",
+          "type": "Selection",
+          "string": "Giai Đoạn",
+          "comodel": null,
+          "required": true,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": "[[\"preshift\", \"Pre-shift\"], [\"during\", \"During Shift\"], [\"postshift\", \"Post-shift\"]]",
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "category",
+          "type": "Char",
+          "string": "Phân Loại",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "sequence",
+          "type": "Integer",
+          "string": "Thứ Tự",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": 10,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "description",
+          "type": "Text",
+          "string": "Mô Tả",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        }
+      ],
+      "methods": [],
+      "kind": "new_model"
+    }
+  ],
+  "routes": []
+}

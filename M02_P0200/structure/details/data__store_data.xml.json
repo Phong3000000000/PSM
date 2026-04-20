@@ -1,0 +1,983 @@
+{
+  "file": "data/store_data.xml",
+  "type": "xml",
+  "bucket": "data",
+  "summary": "XML data file.",
+  "records": [
+    {
+      "id": "pos_4170001",
+      "model": "pos.config",
+      "fields": {
+        "name": "Da Kao",
+        "store_code": "4170001"
+      }
+    },
+    {
+      "id": "dept_4170001",
+      "model": "hr.department",
+      "fields": {
+        "name": "Da Kao",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170001"
+        }
+      }
+    },
+    {
+      "id": "pos_4170005",
+      "model": "pos.config",
+      "fields": {
+        "name": "Vivo City",
+        "store_code": "4170005"
+      }
+    },
+    {
+      "id": "dept_4170005",
+      "model": "hr.department",
+      "fields": {
+        "name": "Vivo City",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170005"
+        }
+      }
+    },
+    {
+      "id": "pos_4170006",
+      "model": "pos.config",
+      "fields": {
+        "name": "Nguyen Hue",
+        "store_code": "4170006"
+      }
+    },
+    {
+      "id": "dept_4170006",
+      "model": "hr.department",
+      "fields": {
+        "name": "Nguyen Hue",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170006"
+        }
+      }
+    },
+    {
+      "id": "pos_4170007",
+      "model": "pos.config",
+      "fields": {
+        "name": "Vincom Megamall",
+        "store_code": "4170007"
+      }
+    },
+    {
+      "id": "dept_4170007",
+      "model": "hr.department",
+      "fields": {
+        "name": "Vincom Megamall",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170007"
+        }
+      }
+    },
+    {
+      "id": "pos_4170009",
+      "model": "pos.config",
+      "fields": {
+        "name": "SG Supermarket",
+        "store_code": "4170009"
+      }
+    },
+    {
+      "id": "dept_4170009",
+      "model": "hr.department",
+      "fields": {
+        "name": "SG Supermarket",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170009"
+        }
+      }
+    },
+    {
+      "id": "pos_4170010",
+      "model": "pos.config",
+      "fields": {
+        "name": "SG Center",
+        "store_code": "4170010"
+      }
+    },
+    {
+      "id": "dept_4170010",
+      "model": "hr.department",
+      "fields": {
+        "name": "SG Center",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170010"
+        }
+      }
+    },
+    {
+      "id": "pos_4170011",
+      "model": "pos.config",
+      "fields": {
+        "name": "Tan Son Nhat",
+        "store_code": "4170011"
+      }
+    },
+    {
+      "id": "dept_4170011",
+      "model": "hr.department",
+      "fields": {
+        "name": "Tan Son Nhat",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170011"
+        }
+      }
+    },
+    {
+      "id": "pos_4170012",
+      "model": "pos.config",
+      "fields": {
+        "name": "Hoang Dieu",
+        "store_code": "4170012"
+      }
+    },
+    {
+      "id": "dept_4170012",
+      "model": "hr.department",
+      "fields": {
+        "name": "Hoang Dieu",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170012"
+        }
+      }
+    },
+    {
+      "id": "pos_4170013",
+      "model": "pos.config",
+      "fields": {
+        "name": "Pham Hung",
+        "store_code": "4170013"
+      }
+    },
+    {
+      "id": "dept_4170013",
+      "model": "hr.department",
+      "fields": {
+        "name": "Pham Hung",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170013"
+        }
+      }
+    },
+    {
+      "id": "pos_4170015",
+      "model": "pos.config",
+      "fields": {
+        "name": "Au Co",
+        "store_code": "4170015"
+      }
+    },
+    {
+      "id": "dept_4170015",
+      "model": "hr.department",
+      "fields": {
+        "name": "Au Co",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170015"
+        }
+      }
+    },
+    {
+      "id": "pos_4170017",
+      "model": "pos.config",
+      "fields": {
+        "name": "Ho Guom",
+        "store_code": "4170017"
+      }
+    },
+    {
+      "id": "dept_4170017",
+      "model": "hr.department",
+      "fields": {
+        "name": "Ho Guom",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170017"
+        }
+      }
+    },
+    {
+      "id": "pos_4170018",
+      "model": "pos.config",
+      "fields": {
+        "name": "Aeon Tan Phu",
+        "store_code": "4170018"
+      }
+    },
+    {
+      "id": "dept_4170018",
+      "model": "hr.department",
+      "fields": {
+        "name": "Aeon Tan Phu",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170018"
+        }
+      }
+    },
+    {
+      "id": "pos_4170019",
+      "model": "pos.config",
+      "fields": {
+        "name": "Hoang Dao Thuy",
+        "store_code": "4170019"
+      }
+    },
+    {
+      "id": "dept_4170019",
+      "model": "hr.department",
+      "fields": {
+        "name": "Hoang Dao Thuy",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170019"
+        }
+      }
+    },
+    {
+      "id": "pos_4170020",
+      "model": "pos.config",
+      "fields": {
+        "name": "Gigamall Thu Duc",
+        "store_code": "4170020"
+      }
+    },
+    {
+      "id": "dept_4170020",
+      "model": "hr.department",
+      "fields": {
+        "name": "Gigamall Thu Duc",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170020"
+        }
+      }
+    },
+    {
+      "id": "pos_4170021",
+      "model": "pos.config",
+      "fields": {
+        "name": "Vincom Tran Duy Hung",
+        "store_code": "4170021"
+      }
+    },
+    {
+      "id": "dept_4170021",
+      "model": "hr.department",
+      "fields": {
+        "name": "Vincom Tran Duy Hung",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170021"
+        }
+      }
+    },
+    {
+      "id": "pos_4170022",
+      "model": "pos.config",
+      "fields": {
+        "name": "Thai Ha",
+        "store_code": "4170022"
+      }
+    },
+    {
+      "id": "dept_4170022",
+      "model": "hr.department",
+      "fields": {
+        "name": "Thai Ha",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170022"
+        }
+      }
+    },
+    {
+      "id": "pos_4170023",
+      "model": "pos.config",
+      "fields": {
+        "name": "Aeon Ha Dong",
+        "store_code": "4170023"
+      }
+    },
+    {
+      "id": "dept_4170023",
+      "model": "hr.department",
+      "fields": {
+        "name": "Aeon Ha Dong",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170023"
+        }
+      }
+    },
+    {
+      "id": "pos_4170024",
+      "model": "pos.config",
+      "fields": {
+        "name": "Aeon Binh Duong",
+        "store_code": "4170024"
+      }
+    },
+    {
+      "id": "dept_4170024",
+      "model": "hr.department",
+      "fields": {
+        "name": "Aeon Binh Duong",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170024"
+        }
+      }
+    },
+    {
+      "id": "pos_4170025",
+      "model": "pos.config",
+      "fields": {
+        "name": "Aeon Binh Tan",
+        "store_code": "4170025"
+      }
+    },
+    {
+      "id": "dept_4170025",
+      "model": "hr.department",
+      "fields": {
+        "name": "Aeon Binh Tan",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170025"
+        }
+      }
+    },
+    {
+      "id": "pos_4170026",
+      "model": "pos.config",
+      "fields": {
+        "name": "Lotte Go Vap",
+        "store_code": "4170026"
+      }
+    },
+    {
+      "id": "dept_4170026",
+      "model": "hr.department",
+      "fields": {
+        "name": "Lotte Go Vap",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170026"
+        }
+      }
+    },
+    {
+      "id": "pos_4170027",
+      "model": "pos.config",
+      "fields": {
+        "name": "AB Nha Trang",
+        "store_code": "4170027"
+      }
+    },
+    {
+      "id": "dept_4170027",
+      "model": "hr.department",
+      "fields": {
+        "name": "AB Nha Trang",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170027"
+        }
+      }
+    },
+    {
+      "id": "pos_4170028",
+      "model": "pos.config",
+      "fields": {
+        "name": "Vincom Smart City",
+        "store_code": "4170028"
+      }
+    },
+    {
+      "id": "dept_4170028",
+      "model": "hr.department",
+      "fields": {
+        "name": "Vincom Smart City",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170028"
+        }
+      }
+    },
+    {
+      "id": "pos_4170029",
+      "model": "pos.config",
+      "fields": {
+        "name": "Aeon Long Bien",
+        "store_code": "4170029"
+      }
+    },
+    {
+      "id": "dept_4170029",
+      "model": "hr.department",
+      "fields": {
+        "name": "Aeon Long Bien",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170029"
+        }
+      }
+    },
+    {
+      "id": "pos_4170030",
+      "model": "pos.config",
+      "fields": {
+        "name": "Vinhomes Times City",
+        "store_code": "4170030"
+      }
+    },
+    {
+      "id": "dept_4170030",
+      "model": "hr.department",
+      "fields": {
+        "name": "Vinhomes Times City",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170030"
+        }
+      }
+    },
+    {
+      "id": "pos_4170031",
+      "model": "pos.config",
+      "fields": {
+        "name": "The Grace",
+        "store_code": "4170031"
+      }
+    },
+    {
+      "id": "dept_4170031",
+      "model": "hr.department",
+      "fields": {
+        "name": "The Grace",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170031"
+        }
+      }
+    },
+    {
+      "id": "pos_4170032",
+      "model": "pos.config",
+      "fields": {
+        "name": "Aeon Le Chan (Hai Phong)",
+        "store_code": "4170032"
+      }
+    },
+    {
+      "id": "dept_4170032",
+      "model": "hr.department",
+      "fields": {
+        "name": "Aeon Le Chan (Hai Phong)",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170032"
+        }
+      }
+    },
+    {
+      "id": "pos_4170033",
+      "model": "pos.config",
+      "fields": {
+        "name": "2 Thang 9 (Da Nang)",
+        "store_code": "4170033"
+      }
+    },
+    {
+      "id": "dept_4170033",
+      "model": "hr.department",
+      "fields": {
+        "name": "2 Thang 9 (Da Nang)",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170033"
+        }
+      }
+    },
+    {
+      "id": "pos_4170034",
+      "model": "pos.config",
+      "fields": {
+        "name": "Nguyen Van Loc (Ha Noi)",
+        "store_code": "4170034"
+      }
+    },
+    {
+      "id": "dept_4170034",
+      "model": "hr.department",
+      "fields": {
+        "name": "Nguyen Van Loc (Ha Noi)",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170034"
+        }
+      }
+    },
+    {
+      "id": "pos_4170035",
+      "model": "pos.config",
+      "fields": {
+        "name": "Tran Nao",
+        "store_code": "4170035"
+      }
+    },
+    {
+      "id": "dept_4170035",
+      "model": "hr.department",
+      "fields": {
+        "name": "Tran Nao",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170035"
+        }
+      }
+    },
+    {
+      "id": "pos_4170036",
+      "model": "pos.config",
+      "fields": {
+        "name": "The Loop IPH (Ha Noi)",
+        "store_code": "4170036"
+      }
+    },
+    {
+      "id": "dept_4170036",
+      "model": "hr.department",
+      "fields": {
+        "name": "The Loop IPH (Ha Noi)",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170036"
+        }
+      }
+    },
+    {
+      "id": "pos_4170037",
+      "model": "pos.config",
+      "fields": {
+        "name": "Nguyen Van Linh (Da Nang)",
+        "store_code": "4170037"
+      }
+    },
+    {
+      "id": "dept_4170037",
+      "model": "hr.department",
+      "fields": {
+        "name": "Nguyen Van Linh (Da Nang)",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170037"
+        }
+      }
+    },
+    {
+      "id": "pos_4170038",
+      "model": "pos.config",
+      "fields": {
+        "name": "Nha Trang Station (Nha Trang)",
+        "store_code": "4170038"
+      }
+    },
+    {
+      "id": "dept_4170038",
+      "model": "hr.department",
+      "fields": {
+        "name": "Nha Trang Station (Nha Trang)",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170038"
+        }
+      }
+    },
+    {
+      "id": "pos_4170039",
+      "model": "pos.config",
+      "fields": {
+        "name": "Vo Thi Sau (Bien Hoa)",
+        "store_code": "4170039"
+      }
+    },
+    {
+      "id": "dept_4170039",
+      "model": "hr.department",
+      "fields": {
+        "name": "Vo Thi Sau (Bien Hoa)",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170039"
+        }
+      }
+    },
+    {
+      "id": "pos_4170040",
+      "model": "pos.config",
+      "fields": {
+        "name": "Biconsi Yersin (Thu Dau Mot)",
+        "store_code": "4170040"
+      }
+    },
+    {
+      "id": "dept_4170040",
+      "model": "hr.department",
+      "fields": {
+        "name": "Biconsi Yersin (Thu Dau Mot)",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170040"
+        }
+      }
+    },
+    {
+      "id": "pos_4170041",
+      "model": "pos.config",
+      "fields": {
+        "name": "Vincom Grand Park",
+        "store_code": "4170041"
+      }
+    },
+    {
+      "id": "dept_4170041",
+      "model": "hr.department",
+      "fields": {
+        "name": "Vincom Grand Park",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170041"
+        }
+      }
+    },
+    {
+      "id": "pos_4170042",
+      "model": "pos.config",
+      "fields": {
+        "name": "Linh Dam (Ha Noi)",
+        "store_code": "4170042"
+      }
+    },
+    {
+      "id": "dept_4170042",
+      "model": "hr.department",
+      "fields": {
+        "name": "Linh Dam (Ha Noi)",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170042"
+        }
+      }
+    },
+    {
+      "id": "pos_4170043",
+      "model": "pos.config",
+      "fields": {
+        "name": "Pham Ngu Lao",
+        "store_code": "4170043"
+      }
+    },
+    {
+      "id": "dept_4170043",
+      "model": "hr.department",
+      "fields": {
+        "name": "Pham Ngu Lao",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170043"
+        }
+      }
+    },
+    {
+      "id": "pos_4170044",
+      "model": "pos.config",
+      "fields": {
+        "name": "Hoi An (Da Nang)",
+        "store_code": "4170044"
+      }
+    },
+    {
+      "id": "dept_4170044",
+      "model": "hr.department",
+      "fields": {
+        "name": "Hoi An (Da Nang)",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170044"
+        }
+      }
+    },
+    {
+      "id": "pos_4170045",
+      "model": "pos.config",
+      "fields": {
+        "name": "Da Lat Market (Lam Dong)",
+        "store_code": "4170045"
+      }
+    },
+    {
+      "id": "dept_4170045",
+      "model": "hr.department",
+      "fields": {
+        "name": "Da Lat Market (Lam Dong)",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170045"
+        }
+      }
+    },
+    {
+      "id": "pos_4170046",
+      "model": "pos.config",
+      "fields": {
+        "name": "Van Cao (Hai Phong)",
+        "store_code": "4170046"
+      }
+    },
+    {
+      "id": "dept_4170046",
+      "model": "hr.department",
+      "fields": {
+        "name": "Van Cao (Hai Phong)",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170046"
+        }
+      }
+    },
+    {
+      "id": "pos_4170047",
+      "model": "pos.config",
+      "fields": {
+        "name": "Phan Xich Long",
+        "store_code": "4170047"
+      }
+    },
+    {
+      "id": "dept_4170047",
+      "model": "hr.department",
+      "fields": {
+        "name": "Phan Xich Long",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170047"
+        }
+      }
+    },
+    {
+      "id": "pos_4170048",
+      "model": "pos.config",
+      "fields": {
+        "name": "Ben Thanh Market",
+        "store_code": "4170048"
+      }
+    },
+    {
+      "id": "dept_4170048",
+      "model": "hr.department",
+      "fields": {
+        "name": "Ben Thanh Market",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170048"
+        }
+      }
+    },
+    {
+      "id": "pos_4170049",
+      "model": "pos.config",
+      "fields": {
+        "name": "Cach Mang Thang 8",
+        "store_code": "4170049"
+      }
+    },
+    {
+      "id": "dept_4170049",
+      "model": "hr.department",
+      "fields": {
+        "name": "Cach Mang Thang 8",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170049"
+        }
+      }
+    },
+    {
+      "id": "pos_4170050",
+      "model": "pos.config",
+      "fields": {
+        "name": "Thuy Van",
+        "store_code": "4170050"
+      }
+    },
+    {
+      "id": "dept_4170050",
+      "model": "hr.department",
+      "fields": {
+        "name": "Thuy Van",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170050"
+        }
+      }
+    },
+    {
+      "id": "pos_4170051",
+      "model": "pos.config",
+      "fields": {
+        "name": "Hung Vuong Plaza",
+        "store_code": "4170051"
+      }
+    },
+    {
+      "id": "dept_4170051",
+      "model": "hr.department",
+      "fields": {
+        "name": "Hung Vuong Plaza",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170051"
+        }
+      }
+    },
+    {
+      "id": "pos_4170052",
+      "model": "pos.config",
+      "fields": {
+        "name": "Ha Noi Centre",
+        "store_code": "4170052"
+      }
+    },
+    {
+      "id": "dept_4170052",
+      "model": "hr.department",
+      "fields": {
+        "name": "Ha Noi Centre",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "pos_config_id": {
+          "ref": "pos_4170052"
+        }
+      }
+    }
+  ],
+  "views": [],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "hr.department",
+    "pos.config"
+  ]
+}

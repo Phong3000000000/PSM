@@ -1,0 +1,96 @@
+{
+  "file": "models/shift_log_employee.py",
+  "type": "python",
+  "bucket": "models",
+  "summary": "models: shift.log.employee; 1 classes; 5 fields",
+  "classes": [
+    {
+      "python_class": "ShiftLogEmployee",
+      "description": "Nhân Viên Trong Ca",
+      "model": "shift.log.employee",
+      "inherit": null,
+      "order": "employee_id",
+      "rec_name": null,
+      "fields": [
+        {
+          "name": "shift_log_id",
+          "type": "Many2one",
+          "string": "Ca Làm",
+          "comodel": "shift.log",
+          "required": true,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "employee_id",
+          "type": "Many2one",
+          "string": "Nhân Viên",
+          "comodel": "hr.employee",
+          "required": true,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "working_hours",
+          "type": "Float",
+          "string": "Số Giờ Làm",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": "Số giờ làm việc của nhân viên trong ca này"
+        },
+        {
+          "name": "attendance_status",
+          "type": "Selection",
+          "string": "Trạng Thái",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": "[[\"present\", \"Có Mặt\"], [\"absent\", \"Vắng\"], [\"late\", \"Đi Trễ\"]]",
+          "default": "present",
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "notes",
+          "type": "Char",
+          "string": "Ghi Chú",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        }
+      ],
+      "methods": [],
+      "kind": "new_model"
+    }
+  ],
+  "routes": []
+}

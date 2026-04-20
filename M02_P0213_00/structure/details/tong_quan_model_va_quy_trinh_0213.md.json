@@ -1,0 +1,6 @@
+{
+  "file": "tong_quan_model_va_quy_trinh_0213.md",
+  "type": "document",
+  "bucket": "docs",
+  "summary": "# Tổng quan model và luồng quy trình module 0213 ## 1. Các model được sử dụng ### Model có sẵn của Odoo (built-in) - `hr.employee`: Thông tin nhân viên. - `a..."
+}

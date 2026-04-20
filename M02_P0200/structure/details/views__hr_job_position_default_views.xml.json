@@ -1,0 +1,106 @@
+{
+  "file": "views/hr_job_position_default_views.xml",
+  "type": "xml",
+  "bucket": "views",
+  "summary": "3 views, 1 actions, 2 menus",
+  "records": [
+    {
+      "id": "view_hr_job_position_default_tree",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "hr.job.position.default.tree",
+        "model": "hr.job.position.default",
+        "arch": ""
+      }
+    },
+    {
+      "id": "view_hr_job_position_default_form",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "hr.job.position.default.form",
+        "model": "hr.job.position.default",
+        "arch": ""
+      }
+    },
+    {
+      "id": "view_hr_job_position_default_search",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "hr.job.position.default.search",
+        "model": "hr.job.position.default",
+        "arch": ""
+      }
+    },
+    {
+      "id": "action_hr_job_position_default",
+      "model": "ir.actions.act_window",
+      "fields": {
+        "name": "Default Positions",
+        "res_model": "hr.job.position.default",
+        "view_mode": "list,form",
+        "search_view_id": {
+          "ref": "view_hr_job_position_default_search"
+        },
+        "help": ""
+      }
+    }
+  ],
+  "views": [
+    {
+      "id": "view_hr_job_position_default_tree",
+      "model": "hr.job.position.default",
+      "name": "hr.job.position.default.tree",
+      "inherit_id": null,
+      "file": "views/hr_job_position_default_views.xml"
+    },
+    {
+      "id": "view_hr_job_position_default_form",
+      "model": "hr.job.position.default",
+      "name": "hr.job.position.default.form",
+      "inherit_id": null,
+      "file": "views/hr_job_position_default_views.xml"
+    },
+    {
+      "id": "view_hr_job_position_default_search",
+      "model": "hr.job.position.default",
+      "name": "hr.job.position.default.search",
+      "inherit_id": null,
+      "file": "views/hr_job_position_default_views.xml"
+    }
+  ],
+  "actions": [
+    {
+      "id": "action_hr_job_position_default",
+      "name": "Default Positions",
+      "res_model": "hr.job.position.default",
+      "view_mode": "list,form",
+      "domain": null,
+      "file": "views/hr_job_position_default_views.xml"
+    }
+  ],
+  "menus": [
+    {
+      "id": "menu_hr_job_position_default_categ",
+      "name": "Default Positions",
+      "parent": "hr.menu_human_resources_configuration",
+      "action": null,
+      "groups": null,
+      "file": "views/hr_job_position_default_views.xml"
+    },
+    {
+      "id": "menu_hr_job_position_default",
+      "name": "Default Positions",
+      "parent": "menu_hr_job_position_default_categ",
+      "action": "action_hr_job_position_default",
+      "groups": null,
+      "file": "views/hr_job_position_default_views.xml"
+    }
+  ],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "hr.job.position.default",
+    "ir.actions.act_window",
+    "ir.ui.view"
+  ]
+}

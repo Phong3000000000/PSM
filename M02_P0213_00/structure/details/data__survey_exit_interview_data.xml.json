@@ -1,0 +1,1106 @@
+{
+  "file": "data/survey_exit_interview_data.xml",
+  "type": "xml",
+  "bucket": "data",
+  "summary": "XML data file.",
+  "records": [
+    {
+      "id": "psm_0213_survey_exit_interview",
+      "model": "survey.survey",
+      "fields": {
+        "title": "Khảo sát nghỉ việc - Exit Interview",
+        "survey_type": "survey",
+        "access_mode": "public",
+        "users_can_go_back": "True",
+        "questions_layout": "page_per_section",
+        "progression_mode": "number",
+        "is_attempts_limited": "False"
+      }
+    },
+    {
+      "id": "survey_exit_section_1",
+      "model": "survey.question",
+      "fields": {
+        "title": "Phần 1: Thông tin chung",
+        "survey_id": {
+          "ref": "psm_0213_survey_exit_interview"
+        },
+        "is_page": "True",
+        "sequence": "1"
+      }
+    },
+    {
+      "id": "survey_exit_q1",
+      "model": "survey.question",
+      "fields": {
+        "title": "1. Thời gian làm việc của bạn tại McDonald's Việt Nam",
+        "survey_id": {
+          "ref": "psm_0213_survey_exit_interview"
+        },
+        "sequence": "2",
+        "question_type": "simple_choice",
+        "constr_mandatory": "True"
+      }
+    },
+    {
+      "id": "survey_exit_q1_a1",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q1"
+        },
+        "value": "Thời gian làm việc < 90 ngày",
+        "sequence": "1"
+      }
+    },
+    {
+      "id": "survey_exit_q1_a2",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q1"
+        },
+        "value": "Thời gian làm việc > 90 ngày",
+        "sequence": "2"
+      }
+    },
+    {
+      "id": "survey_exit_section_2",
+      "model": "survey.question",
+      "fields": {
+        "title": "Phần 2: Lý do nghỉ việc",
+        "survey_id": {
+          "ref": "psm_0213_survey_exit_interview"
+        },
+        "is_page": "True",
+        "sequence": "10"
+      }
+    },
+    {
+      "id": "survey_exit_q2",
+      "model": "survey.question",
+      "fields": {
+        "title": "2. Lý do khiến bạn nghỉ làm việc tại McDonald's Việt Nam (chọn 2-3\n                lý do):",
+        "survey_id": {
+          "ref": "psm_0213_survey_exit_interview"
+        },
+        "sequence": "11",
+        "question_type": "multiple_choice",
+        "constr_mandatory": "True"
+      }
+    },
+    {
+      "id": "survey_exit_q2_a1",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q2"
+        },
+        "value": "Lương thưởng, phúc lợi (thu nhập, giờ công, lịch làm, đồng phục)",
+        "sequence": "1"
+      }
+    },
+    {
+      "id": "survey_exit_q2_a2",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q2"
+        },
+        "value": "Môi trường làm việc (Sự gắn kết, hỗ trợ, công bằng, máy móc, văn\n                hóa)",
+        "sequence": "2"
+      }
+    },
+    {
+      "id": "survey_exit_q2_a3",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q2"
+        },
+        "value": "Cơ hội thăng tiến, chương trình đào tạo (định hướng, đào tạo, kết\n                quả công việc, sự thăng tiến)",
+        "sequence": "3"
+      }
+    },
+    {
+      "id": "survey_exit_q2_a4",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q2"
+        },
+        "value": "Yếu tố khách quan",
+        "sequence": "4"
+      }
+    },
+    {
+      "id": "survey_exit_q2_a5",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q2"
+        },
+        "value": "Vấn đề cá nhân",
+        "sequence": "5"
+      }
+    },
+    {
+      "id": "survey_exit_q3",
+      "model": "survey.question",
+      "fields": {
+        "title": "3. Chọn 1 lý do quan trọng nhất khiến bạn nghỉ việc tại McDonald's\n                Việt Nam:",
+        "survey_id": {
+          "ref": "psm_0213_survey_exit_interview"
+        },
+        "sequence": "12",
+        "question_type": "simple_choice",
+        "constr_mandatory": "True"
+      }
+    },
+    {
+      "id": "survey_exit_q3_a1",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q3"
+        },
+        "value": "Lương thưởng, phúc lợi",
+        "sequence": "1"
+      }
+    },
+    {
+      "id": "survey_exit_q3_a2",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q3"
+        },
+        "value": "Môi trường làm việc",
+        "sequence": "2"
+      }
+    },
+    {
+      "id": "survey_exit_q3_a3",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q3"
+        },
+        "value": "Cơ hội thăng tiến, chương trình đào tạo",
+        "sequence": "3"
+      }
+    },
+    {
+      "id": "survey_exit_q3_a4",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q3"
+        },
+        "value": "Yếu tố khách quan",
+        "sequence": "4"
+      }
+    },
+    {
+      "id": "survey_exit_q3_a5",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q3"
+        },
+        "value": "Vấn đề cá nhân",
+        "sequence": "5"
+      }
+    },
+    {
+      "id": "survey_exit_section_3",
+      "model": "survey.question",
+      "fields": {
+        "title": "Phần 3: Chi tiết lý do nghỉ việc",
+        "survey_id": {
+          "ref": "psm_0213_survey_exit_interview"
+        },
+        "is_page": "True",
+        "sequence": "20"
+      }
+    },
+    {
+      "id": "survey_exit_q4a",
+      "model": "survey.question",
+      "fields": {
+        "title": "4a. Lương thưởng, phúc lợi (chọn các lý do liên quan):",
+        "survey_id": {
+          "ref": "psm_0213_survey_exit_interview"
+        },
+        "sequence": "21",
+        "question_type": "multiple_choice",
+        "constr_mandatory": "False"
+      }
+    },
+    {
+      "id": "survey_exit_q4a_a1",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4a"
+        },
+        "value": "Thu nhập tại McDonald's không đáp ứng được nhu cầu cá nhân hoặc\n                không cạnh tranh so với công ty khác",
+        "sequence": "1"
+      }
+    },
+    {
+      "id": "survey_exit_q4a_a2",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4a"
+        },
+        "value": "Tôi không được ghi nhận đủ ngày công theo lịch làm việc thực tế",
+        "sequence": "2"
+      }
+    },
+    {
+      "id": "survey_exit_q4a_a3",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4a"
+        },
+        "value": "Tôi không thường xuyên được ghi nhận khi hoàn thành công việc thông\n                qua (Điểm Bravo, Thank you card, BOG,…)",
+        "sequence": "3"
+      }
+    },
+    {
+      "id": "survey_exit_q4a_a4",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4a"
+        },
+        "value": "Không được cung cấp đủ thông tin về chính sách, khen thưởng phúc lợi\n                rõ ràng, minh bạch",
+        "sequence": "4"
+      }
+    },
+    {
+      "id": "survey_exit_q4a_a5",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4a"
+        },
+        "value": "Lịch làm việc không sắp xếp được các công việc cá nhân như (lịch\n                học, lịch thực tập, gia đình, con cái)",
+        "sequence": "5"
+      }
+    },
+    {
+      "id": "survey_exit_q4a_a6",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4a"
+        },
+        "value": "Chính sách khen thưởng và phúc lợi chưa tương xứng với công sức và\n                đóng góp của tôi",
+        "sequence": "6"
+      }
+    },
+    {
+      "id": "survey_exit_q4a_a7",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4a"
+        },
+        "value": "Giảm giờ công dẫn đến giảm thu nhập",
+        "sequence": "7"
+      }
+    },
+    {
+      "id": "survey_exit_q4a_a8",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4a"
+        },
+        "value": "Khối lượng công việc quá tải và cường độ công việc cao gây áp lực\n                lớn",
+        "sequence": "8"
+      }
+    },
+    {
+      "id": "survey_exit_q4b",
+      "model": "survey.question",
+      "fields": {
+        "title": "4b. Môi trường làm việc (chọn các lý do liên quan):",
+        "survey_id": {
+          "ref": "psm_0213_survey_exit_interview"
+        },
+        "sequence": "22",
+        "question_type": "multiple_choice",
+        "constr_mandatory": "False"
+      }
+    },
+    {
+      "id": "survey_exit_q4b_a1",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4b"
+        },
+        "value": "Không nhận được sự hỗ trợ từ đồng nghiệp, quản lý trong công việc",
+        "sequence": "1"
+      }
+    },
+    {
+      "id": "survey_exit_q4b_a2",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4b"
+        },
+        "value": "Môi trường làm việc thiếu đoàn kết, kỹ năng làm việc nhóm kém, khó\n                hòa nhập với đội ngũ",
+        "sequence": "2"
+      }
+    },
+    {
+      "id": "survey_exit_q4b_a3",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4b"
+        },
+        "value": "Quản lý lạm dụng quyền lực, thiếu minh bạch và không công bằng trong\n                phân chia công việc cũng như đánh giá kết quả",
+        "sequence": "3"
+      }
+    },
+    {
+      "id": "survey_exit_q4b_a4",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4b"
+        },
+        "value": "Không nhận được sự tôn trọng từ đồng nghiệp, quản lý (phân biệt đối\n                xử về giới tính, tuổi tác, ngôn ngữ giao tiếp,…)",
+        "sequence": "4"
+      }
+    },
+    {
+      "id": "survey_exit_q4b_a5",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4b"
+        },
+        "value": "Tôi cảm thấy môi trường làm việc không an toàn (máy móc thiết bị,\n                tiếp xúc với dầu mỡ, hóa chất tẩy rửa,…)",
+        "sequence": "5"
+      }
+    },
+    {
+      "id": "survey_exit_q4b_a6",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4b"
+        },
+        "value": "Tôi không được lắng nghe và thể hiện quan điểm/ ý kiến cá nhân",
+        "sequence": "6"
+      }
+    },
+    {
+      "id": "survey_exit_q4c",
+      "model": "survey.question",
+      "fields": {
+        "title": "4c. Cơ hội thăng tiến, chương trình đào tạo (chọn các lý do liên\n                quan):",
+        "survey_id": {
+          "ref": "psm_0213_survey_exit_interview"
+        },
+        "sequence": "23",
+        "question_type": "multiple_choice",
+        "constr_mandatory": "False"
+      }
+    },
+    {
+      "id": "survey_exit_q4c_a1",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4c"
+        },
+        "value": "Tôi không nhận được sự giúp đỡ hoặc nhận xét/ đánh giá từ quản lý\n                trong công việc và phát triển định hướng nghề nghiệp",
+        "sequence": "1"
+      }
+    },
+    {
+      "id": "survey_exit_q4c_a2",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4c"
+        },
+        "value": "Tôi không hiểu rõ về lộ trình và nội dung đào tạo",
+        "sequence": "2"
+      }
+    },
+    {
+      "id": "survey_exit_q4c_a3",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4c"
+        },
+        "value": "Quản lý không hỗ trợ giải quyết khi tôi gặp khó khăn trong công việc",
+        "sequence": "3"
+      }
+    },
+    {
+      "id": "survey_exit_q4c_a4",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4c"
+        },
+        "value": "Kết quả công việc và sự đóng góp không được ghi nhận một cách công\n                bằng và khách quan",
+        "sequence": "4"
+      }
+    },
+    {
+      "id": "survey_exit_q4c_a5",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4c"
+        },
+        "value": "Không được định hướng rõ ràng về lộ trình thăng tiến",
+        "sequence": "5"
+      }
+    },
+    {
+      "id": "survey_exit_q4c_a6",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4c"
+        },
+        "value": "Tốc độ thăng tiến chậm",
+        "sequence": "6"
+      }
+    },
+    {
+      "id": "survey_exit_q4c_a7",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4c"
+        },
+        "value": "Chương trình đào tạo chưa giúp tôi nhanh chóng thích nghi với công\n                việc và môi trường làm việc",
+        "sequence": "7"
+      }
+    },
+    {
+      "id": "survey_exit_q4c_a8",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4c"
+        },
+        "value": "Chương trình đào tạo không thường xuyên cập nhật và phù hợp với các\n                xu hướng mới",
+        "sequence": "8"
+      }
+    },
+    {
+      "id": "survey_exit_q4d",
+      "model": "survey.question",
+      "fields": {
+        "title": "4d. Vấn đề cá nhân (chọn các lý do liên quan):",
+        "survey_id": {
+          "ref": "psm_0213_survey_exit_interview"
+        },
+        "sequence": "24",
+        "question_type": "multiple_choice",
+        "constr_mandatory": "False"
+      }
+    },
+    {
+      "id": "survey_exit_q4d_a1",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4d"
+        },
+        "value": "Bản thân muốn có thời gian tiếp tục đi học hoặc đi thực tập để nâng\n                cao chuyên môn",
+        "sequence": "1"
+      }
+    },
+    {
+      "id": "survey_exit_q4d_a2",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4d"
+        },
+        "value": "Do vi phạm, bị kỉ luật trong công việc, nhà hàng yêu cầu nghỉ",
+        "sequence": "2"
+      }
+    },
+    {
+      "id": "survey_exit_q4d_a3",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4d"
+        },
+        "value": "Lịch học không sắp xếp được để có thể đi làm",
+        "sequence": "3"
+      }
+    },
+    {
+      "id": "survey_exit_q4d_a4",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4d"
+        },
+        "value": "Tốt nghiệp và tìm công việc khác đúng ngành",
+        "sequence": "4"
+      }
+    },
+    {
+      "id": "survey_exit_q4d_a5",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4d"
+        },
+        "value": "Thay đổi định hướng công việc",
+        "sequence": "5"
+      }
+    },
+    {
+      "id": "survey_exit_q4d_a6",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4d"
+        },
+        "value": "Đi thực tập",
+        "sequence": "6"
+      }
+    },
+    {
+      "id": "survey_exit_q4d_a7",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4d"
+        },
+        "value": "Đang có vướng bận về gia đình cần thời gian dài để giải quyết",
+        "sequence": "7"
+      }
+    },
+    {
+      "id": "survey_exit_q4d_a8",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4d"
+        },
+        "value": "Thực hiện nghĩa vụ quân sự",
+        "sequence": "8"
+      }
+    },
+    {
+      "id": "survey_exit_q4d_a9",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4d"
+        },
+        "value": "Thay đổi nơi ở (định cư, về quê, điều chuyển nơi ở,…)",
+        "sequence": "9"
+      }
+    },
+    {
+      "id": "survey_exit_q4d_a10",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4d"
+        },
+        "value": "Vị trí cửa hàng quá xa",
+        "sequence": "10"
+      }
+    },
+    {
+      "id": "survey_exit_q4d_a11",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4d"
+        },
+        "value": "Không có phương tiện đi lại làm việc",
+        "sequence": "11"
+      }
+    },
+    {
+      "id": "survey_exit_q4d_a12",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4d"
+        },
+        "value": "Sức khỏe bản thân không đảm bảo được tính chất công việc nặng nhọc",
+        "sequence": "12"
+      }
+    },
+    {
+      "id": "survey_exit_q4d_a13",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4d"
+        },
+        "value": "Không phù hợp, không thích nghi được với môi trường và công việc",
+        "sequence": "13"
+      }
+    },
+    {
+      "id": "survey_exit_q4d_a14",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4d"
+        },
+        "value": "Bị tai nạn rủi ro không thể đi làm được",
+        "sequence": "14"
+      }
+    },
+    {
+      "id": "survey_exit_q4e",
+      "model": "survey.question",
+      "fields": {
+        "title": "4e. Yếu tố khách quan (chọn các lý do liên quan):",
+        "survey_id": {
+          "ref": "psm_0213_survey_exit_interview"
+        },
+        "sequence": "25",
+        "question_type": "multiple_choice",
+        "constr_mandatory": "False"
+      }
+    },
+    {
+      "id": "survey_exit_q4e_a1",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4e"
+        },
+        "value": "Nhà hàng đóng cửa",
+        "sequence": "1"
+      }
+    },
+    {
+      "id": "survey_exit_q4e_a2",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q4e"
+        },
+        "value": "Thay đổi mô hình kinh doanh",
+        "sequence": "2"
+      }
+    },
+    {
+      "id": "survey_exit_q4f",
+      "model": "survey.question",
+      "fields": {
+        "title": "4f. Lý do khác (nếu có):",
+        "survey_id": {
+          "ref": "psm_0213_survey_exit_interview"
+        },
+        "sequence": "26",
+        "question_type": "text_box",
+        "constr_mandatory": "False"
+      }
+    },
+    {
+      "id": "survey_exit_section_4",
+      "model": "survey.question",
+      "fields": {
+        "title": "Phần 4: Góp ý và đề xuất",
+        "survey_id": {
+          "ref": "psm_0213_survey_exit_interview"
+        },
+        "is_page": "True",
+        "sequence": "30"
+      }
+    },
+    {
+      "id": "survey_exit_q5",
+      "model": "survey.question",
+      "fields": {
+        "title": "5. Bạn có sẵn sàng giới thiệu bạn bè vào làm việc tại McDonald's\n                Việt Nam?",
+        "survey_id": {
+          "ref": "psm_0213_survey_exit_interview"
+        },
+        "sequence": "31",
+        "question_type": "simple_choice",
+        "constr_mandatory": "True"
+      }
+    },
+    {
+      "id": "survey_exit_q5_a1",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q5"
+        },
+        "value": "Có",
+        "sequence": "1"
+      }
+    },
+    {
+      "id": "survey_exit_q5_a2",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q5"
+        },
+        "value": "Không",
+        "sequence": "2"
+      }
+    },
+    {
+      "id": "survey_exit_q6",
+      "model": "survey.question",
+      "fields": {
+        "title": "6. Một vài đề xuất của bạn để giúp McDonald's Việt Nam trở thành\n                \"Best Place To Work\":",
+        "survey_id": {
+          "ref": "psm_0213_survey_exit_interview"
+        },
+        "sequence": "32",
+        "question_type": "text_box",
+        "constr_mandatory": "False"
+      }
+    },
+    {
+      "id": "survey_exit_q7",
+      "model": "survey.question",
+      "fields": {
+        "title": "7. Điều gì đã thu hút bạn đến với công ty/vị trí mới của bạn?",
+        "survey_id": {
+          "ref": "psm_0213_survey_exit_interview"
+        },
+        "sequence": "33",
+        "question_type": "simple_choice",
+        "constr_mandatory": "False",
+        "comments_allowed": "True",
+        "comments_message": "Lý do khác:"
+      }
+    },
+    {
+      "id": "survey_exit_q7_a1",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q7"
+        },
+        "value": "Lương thưởng/phúc lợi hấp dẫn",
+        "sequence": "1"
+      }
+    },
+    {
+      "id": "survey_exit_q7_a2",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q7"
+        },
+        "value": "Môi trường làm việc năng động, cởi mở",
+        "sequence": "2"
+      }
+    },
+    {
+      "id": "survey_exit_q7_a3",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q7"
+        },
+        "value": "Có nhiều cơ hội thăng tiến",
+        "sequence": "3"
+      }
+    },
+    {
+      "id": "survey_exit_q7_a4",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q7"
+        },
+        "value": "Chương trình đào tạo rõ ràng",
+        "sequence": "4"
+      }
+    },
+    {
+      "id": "survey_exit_q7_a5",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q7"
+        },
+        "value": "Đúng ngành học & có thể phát triển tốt kỹ năng mà bạn cần",
+        "sequence": "5"
+      }
+    },
+    {
+      "id": "survey_exit_q8",
+      "model": "survey.question",
+      "fields": {
+        "title": "8. Bạn có cân nhắc việc làm với McDonald's một lần nữa không?",
+        "survey_id": {
+          "ref": "psm_0213_survey_exit_interview"
+        },
+        "sequence": "34",
+        "question_type": "simple_choice",
+        "constr_mandatory": "True"
+      }
+    },
+    {
+      "id": "survey_exit_q8_a1",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q8"
+        },
+        "value": "Có",
+        "sequence": "1"
+      }
+    },
+    {
+      "id": "survey_exit_q8_a2",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q8"
+        },
+        "value": "Không",
+        "sequence": "2"
+      }
+    },
+    {
+      "id": "survey_exit_section_5",
+      "model": "survey.question",
+      "fields": {
+        "title": "Phần 5: Lý do gia nhập McDonald's",
+        "survey_id": {
+          "ref": "psm_0213_survey_exit_interview"
+        },
+        "is_page": "True",
+        "sequence": "40"
+      }
+    },
+    {
+      "id": "survey_exit_q9",
+      "model": "survey.question",
+      "fields": {
+        "title": "9. Lý do bạn gia nhập vào McDonald's Việt Nam (chọn tất cả các lý do\n                phù hợp):",
+        "survey_id": {
+          "ref": "psm_0213_survey_exit_interview"
+        },
+        "sequence": "41",
+        "question_type": "multiple_choice",
+        "constr_mandatory": "True",
+        "comments_allowed": "True",
+        "comments_message": "Lý do khác:"
+      }
+    },
+    {
+      "id": "survey_exit_q9_a1",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q9"
+        },
+        "value": "Đúng ngành mà bạn đã học",
+        "sequence": "1"
+      }
+    },
+    {
+      "id": "survey_exit_q9_a2",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q9"
+        },
+        "value": "Thời gian làm việc linh hoạt",
+        "sequence": "2"
+      }
+    },
+    {
+      "id": "survey_exit_q9_a3",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q9"
+        },
+        "value": "Phù hợp với kỹ năng của bạn và giúp bạn phát triển các kỹ năng cần\n                thiết",
+        "sequence": "3"
+      }
+    },
+    {
+      "id": "survey_exit_q9_a4",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q9"
+        },
+        "value": "Lương thưởng/phúc lợi tốt",
+        "sequence": "4"
+      }
+    },
+    {
+      "id": "survey_exit_q9_a5",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q9"
+        },
+        "value": "Người thân/bạn bè đang làm việc tại McDonald's",
+        "sequence": "5"
+      }
+    },
+    {
+      "id": "survey_exit_q9_a6",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q9"
+        },
+        "value": "Chương trình đào tạo & Lộ trình thăng tiến rõ ràng",
+        "sequence": "6"
+      }
+    },
+    {
+      "id": "survey_exit_q9_a7",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q9"
+        },
+        "value": "Hình ảnh nhà tuyển dụng",
+        "sequence": "7"
+      }
+    },
+    {
+      "id": "survey_exit_q9_a8",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q9"
+        },
+        "value": "Môi trường làm việc năng động, chuyên nghiệp",
+        "sequence": "8"
+      }
+    },
+    {
+      "id": "survey_exit_q9_a9",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q9"
+        },
+        "value": "Thương hiệu nổi tiếng toàn cầu",
+        "sequence": "9"
+      }
+    },
+    {
+      "id": "survey_exit_q9_a10",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q9"
+        },
+        "value": "Mong muốn tìm hiểu và trải nghiệm công việc",
+        "sequence": "10"
+      }
+    },
+    {
+      "id": "survey_exit_q9_a11",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q9"
+        },
+        "value": "Thích sản phẩm của McDonald's",
+        "sequence": "11"
+      }
+    },
+    {
+      "id": "survey_exit_q9_a12",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q9"
+        },
+        "value": "Vị trí đi làm thuận tiện",
+        "sequence": "12"
+      }
+    },
+    {
+      "id": "survey_exit_q9_a13",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q9"
+        },
+        "value": "Nhân viên hòa đồng và thân thiện",
+        "sequence": "13"
+      }
+    },
+    {
+      "id": "survey_exit_section_6",
+      "model": "survey.question",
+      "fields": {
+        "title": "Phần 6: Xác nhận và cam kết",
+        "survey_id": {
+          "ref": "psm_0213_survey_exit_interview"
+        },
+        "is_page": "True",
+        "sequence": "50"
+      }
+    },
+    {
+      "id": "survey_exit_q10",
+      "model": "survey.question",
+      "fields": {
+        "title": "10. Tôi đã đọc, hiểu và đồng ý với các cam kết dưới đây",
+        "description": "<div style=\"margin-top: 12px; padding: 20px; border: 1px solid #f2d6c8; border-radius: 18px; background: linear-gradient(180deg, #fff7f2 0%, #ffffff 100%); box-shadow: 0 10px 30px rgba(128, 54, 22, 0.08);\">\n                    <div style=\"font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #9a5a3c; margin-bottom: 8px;\">\n                        Xác nhận trước khi gửi khảo sát\n                    </div>\n                    <p style=\"margin: 0 0 16px; font-size: 16px; line-height: 1.7; color: #2f241f;\">\n                        Vui lòng đọc kỹ 4 điều khoản dưới đây và chọn xác nhận ở cuối câu hỏi.\n                    </p>\n                    <ol style=\"margin: 0; padding-left: 20px; color: #2f241f; line-height: 1.8;\">\n                        <li style=\"margin-bottom: 12px;\">\n                            <strong>Tuân thủ quy trình nghỉ việc</strong> của công ty và các trách nhiệm, chế độ thanh toán khi chấm dứt hợp đồng lao động, bao gồm nhưng không giới hạn quy định quyết toán lương, nhận sổ/tờ rời BHXH &amp; Quyết định nghỉ việc.\n                        </li>\n                        <li style=\"margin-bottom: 12px;\">\n                            <strong>Nếu chấm dứt làm việc trước thời hạn cho phép</strong>, công ty có quyền khấu trừ vào bất kỳ khoản thanh toán nào của tôi một khoản tương ứng với số ngày nghỉ trước hạn.\n                        </li>\n                        <li style=\"margin-bottom: 12px;\">\n                            <strong>Cho phép Công ty lưu trữ Dữ liệu cá nhân</strong> sau khi các bên kết thúc mối quan hệ lao động, hoặc sau khi các bên chấm dứt hợp đồng là năm (5) năm, trừ trường hợp pháp luật yêu cầu một thời gian dài hơn.\n                        </li>\n                        <li style=\"margin-bottom: 0;\">\n                            <strong>Cam kết bảo mật thông tin</strong> theo Thỏa thuận Bảo mật thông tin đã ký tại thời điểm ký kết hợp đồng lao động với công ty, cũng như các thông tin mật hoặc thông tin cần bảo mật mà cá nhân có được trong quá trình làm việc tại công ty.\n                        </li>\n                    </ol>\n                </div>",
+        "survey_id": {
+          "ref": "psm_0213_survey_exit_interview"
+        },
+        "sequence": "51",
+        "question_type": "simple_choice",
+        "constr_mandatory": "True"
+      }
+    },
+    {
+      "id": "survey_exit_q10_a1",
+      "model": "survey.question.answer",
+      "fields": {
+        "question_id": {
+          "ref": "survey_exit_q10"
+        },
+        "value": "Tôi xác nhận đã đọc, hiểu và đồng ý với tất cả điều khoản trên",
+        "sequence": "1"
+      }
+    }
+  ],
+  "views": [],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "survey.question",
+    "survey.question.answer",
+    "survey.survey"
+  ]
+}

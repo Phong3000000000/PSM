@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Kế thừa quyền Manager Nhân sự (HR) và Quản trị Khảo sát (Survey) -->
+        <record id="M02_P0200.GDH_OPS_STORE_PM_M" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('hr.group_hr_manager')), (4, ref('survey.group_survey_manager')), (4, ref('sign.group_sign_manager')), (4, ref('base.group_partner_manager'))]"/>
+        </record>
+
+
+        <!-- Thêm PM vào danh sách nhóm được thấy Menu Employees (Icon ngoài cùng) -->
+        <record id="hr.menu_hr_root" model="ir.ui.menu">
+            <field name="group_ids" eval="[(4, ref('M02_P0200.GDH_OPS_STORE_PM_M'))]"/>
+        </record>
+
+        <!-- Thêm PM vào Menu chính (Tab "Danh sách" bên trong module) -->
+        <record id="hr.menu_hr_main" model="ir.ui.menu">
+            <field name="group_ids" eval="[(4, ref('M02_P0200.GDH_OPS_STORE_PM_M'))]"/>
+        </record>
+
+        <!-- Quan trọng: Link trực tiếp vào Action hiển thị Kanban/List nhân viên -->
+        <record id="hr.menu_hr_employee_payroll" model="ir.ui.menu">
+            <field name="group_ids" eval="[(4, ref('M02_P0200.GDH_OPS_STORE_PM_M'))]"/>
+        </record>
+    </data>
+</odoo>

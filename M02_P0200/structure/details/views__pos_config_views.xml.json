@@ -1,0 +1,37 @@
+{
+  "file": "views/pos_config_views.xml",
+  "type": "xml",
+  "bucket": "views",
+  "summary": "1 views",
+  "records": [
+    {
+      "id": "view_pos_config_form_store_code",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "pos.config.form.store_code",
+        "model": "pos.config",
+        "inherit_id": {
+          "ref": "point_of_sale.pos_config_view_form"
+        },
+        "arch": ""
+      }
+    }
+  ],
+  "views": [
+    {
+      "id": "view_pos_config_form_store_code",
+      "model": "pos.config",
+      "name": "pos.config.form.store_code",
+      "inherit_id": "point_of_sale.pos_config_view_form",
+      "file": "views/pos_config_views.xml"
+    }
+  ],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "ir.ui.view",
+    "pos.config"
+  ]
+}

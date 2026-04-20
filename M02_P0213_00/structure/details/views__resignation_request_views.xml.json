@@ -1,0 +1,57 @@
+{
+  "file": "views/resignation_request_views.xml",
+  "type": "xml",
+  "bucket": "views",
+  "summary": "2 views",
+  "records": [
+    {
+      "id": "view_psm_0213_approval_request_form",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "approval.request.resignation.form",
+        "model": "approval.request",
+        "inherit_id": {
+          "ref": "approvals.approval_request_view_form"
+        },
+        "arch": ""
+      }
+    },
+    {
+      "id": "view_psm_0213_approval_category_form",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "approval.category.resignation.form",
+        "model": "approval.category",
+        "inherit_id": {
+          "ref": "approvals.approval_category_view_form"
+        },
+        "arch": ""
+      }
+    }
+  ],
+  "views": [
+    {
+      "id": "view_psm_0213_approval_request_form",
+      "model": "approval.request",
+      "name": "approval.request.resignation.form",
+      "inherit_id": "approvals.approval_request_view_form",
+      "file": "views/resignation_request_views.xml"
+    },
+    {
+      "id": "view_psm_0213_approval_category_form",
+      "model": "approval.category",
+      "name": "approval.category.resignation.form",
+      "inherit_id": "approvals.approval_category_view_form",
+      "file": "views/resignation_request_views.xml"
+    }
+  ],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "approval.category",
+    "approval.request",
+    "ir.ui.view"
+  ]
+}

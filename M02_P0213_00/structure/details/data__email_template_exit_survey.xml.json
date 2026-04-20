@@ -1,0 +1,32 @@
+{
+  "file": "data/email_template_exit_survey.xml",
+  "type": "xml",
+  "bucket": "data",
+  "summary": "XML data file.",
+  "records": [
+    {
+      "id": "psm_0213_email_template_exit_survey",
+      "model": "mail.template",
+      "fields": {
+        "name": "Khảo sát nghỉ việc - Exit Interview",
+        "model_id": {
+          "ref": "approvals.model_approval_request"
+        },
+        "subject": "Khảo sát nghỉ việc - Exit Interview Survey",
+        "email_from": "{{ (object.company_id.email or user.email) }}",
+        "email_to": "{{ object.request_owner_id.partner_id.email }}",
+        "body_html": "",
+        "lang": "{{ object.request_owner_id.lang }}",
+        "auto_delete": "True"
+      }
+    }
+  ],
+  "views": [],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "mail.template"
+  ]
+}

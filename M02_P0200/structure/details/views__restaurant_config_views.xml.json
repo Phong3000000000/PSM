@@ -1,0 +1,260 @@
+{
+  "file": "views/restaurant_config_views.xml",
+  "type": "xml",
+  "bucket": "views",
+  "summary": "8 views, 4 actions, 5 menus",
+  "records": [
+    {
+      "id": "view_restaurant_area_tree",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "restaurant.area.tree",
+        "model": "restaurant.area",
+        "arch": ""
+      }
+    },
+    {
+      "id": "view_restaurant_area_form",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "restaurant.area.form",
+        "model": "restaurant.area",
+        "arch": ""
+      }
+    },
+    {
+      "id": "action_restaurant_area",
+      "model": "ir.actions.act_window",
+      "fields": {
+        "name": "Khu Vực Lớn",
+        "res_model": "restaurant.area",
+        "view_mode": "list,form"
+      }
+    },
+    {
+      "id": "view_restaurant_positioning_area_tree",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "restaurant.positioning.area.tree",
+        "model": "restaurant.positioning.area",
+        "arch": ""
+      }
+    },
+    {
+      "id": "view_restaurant_positioning_area_form",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "restaurant.positioning.area.form",
+        "model": "restaurant.positioning.area",
+        "arch": ""
+      }
+    },
+    {
+      "id": "action_restaurant_positioning_area",
+      "model": "ir.actions.act_window",
+      "fields": {
+        "name": "Khu Vực Nhỏ",
+        "res_model": "restaurant.positioning.area",
+        "view_mode": "list,form"
+      }
+    },
+    {
+      "id": "view_restaurant_station_tree",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "restaurant.station.tree",
+        "model": "restaurant.station",
+        "arch": ""
+      }
+    },
+    {
+      "id": "view_restaurant_station_form",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "restaurant.station.form",
+        "model": "restaurant.station",
+        "arch": ""
+      }
+    },
+    {
+      "id": "action_restaurant_station",
+      "model": "ir.actions.act_window",
+      "fields": {
+        "name": "Station",
+        "res_model": "restaurant.station",
+        "view_mode": "list,form"
+      }
+    },
+    {
+      "id": "view_restaurant_shift_tree",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "restaurant.shift.tree",
+        "model": "restaurant.shift",
+        "arch": ""
+      }
+    },
+    {
+      "id": "view_restaurant_shift_form",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "restaurant.shift.form",
+        "model": "restaurant.shift",
+        "arch": ""
+      }
+    },
+    {
+      "id": "action_restaurant_shift",
+      "model": "ir.actions.act_window",
+      "fields": {
+        "name": "Ca Làm Việc",
+        "res_model": "restaurant.shift",
+        "view_mode": "list,form"
+      }
+    }
+  ],
+  "views": [
+    {
+      "id": "view_restaurant_area_tree",
+      "model": "restaurant.area",
+      "name": "restaurant.area.tree",
+      "inherit_id": null,
+      "file": "views/restaurant_config_views.xml"
+    },
+    {
+      "id": "view_restaurant_area_form",
+      "model": "restaurant.area",
+      "name": "restaurant.area.form",
+      "inherit_id": null,
+      "file": "views/restaurant_config_views.xml"
+    },
+    {
+      "id": "view_restaurant_positioning_area_tree",
+      "model": "restaurant.positioning.area",
+      "name": "restaurant.positioning.area.tree",
+      "inherit_id": null,
+      "file": "views/restaurant_config_views.xml"
+    },
+    {
+      "id": "view_restaurant_positioning_area_form",
+      "model": "restaurant.positioning.area",
+      "name": "restaurant.positioning.area.form",
+      "inherit_id": null,
+      "file": "views/restaurant_config_views.xml"
+    },
+    {
+      "id": "view_restaurant_station_tree",
+      "model": "restaurant.station",
+      "name": "restaurant.station.tree",
+      "inherit_id": null,
+      "file": "views/restaurant_config_views.xml"
+    },
+    {
+      "id": "view_restaurant_station_form",
+      "model": "restaurant.station",
+      "name": "restaurant.station.form",
+      "inherit_id": null,
+      "file": "views/restaurant_config_views.xml"
+    },
+    {
+      "id": "view_restaurant_shift_tree",
+      "model": "restaurant.shift",
+      "name": "restaurant.shift.tree",
+      "inherit_id": null,
+      "file": "views/restaurant_config_views.xml"
+    },
+    {
+      "id": "view_restaurant_shift_form",
+      "model": "restaurant.shift",
+      "name": "restaurant.shift.form",
+      "inherit_id": null,
+      "file": "views/restaurant_config_views.xml"
+    }
+  ],
+  "actions": [
+    {
+      "id": "action_restaurant_area",
+      "name": "Khu Vực Lớn",
+      "res_model": "restaurant.area",
+      "view_mode": "list,form",
+      "domain": null,
+      "file": "views/restaurant_config_views.xml"
+    },
+    {
+      "id": "action_restaurant_positioning_area",
+      "name": "Khu Vực Nhỏ",
+      "res_model": "restaurant.positioning.area",
+      "view_mode": "list,form",
+      "domain": null,
+      "file": "views/restaurant_config_views.xml"
+    },
+    {
+      "id": "action_restaurant_station",
+      "name": "Station",
+      "res_model": "restaurant.station",
+      "view_mode": "list,form",
+      "domain": null,
+      "file": "views/restaurant_config_views.xml"
+    },
+    {
+      "id": "action_restaurant_shift",
+      "name": "Ca Làm Việc",
+      "res_model": "restaurant.shift",
+      "view_mode": "list,form",
+      "domain": null,
+      "file": "views/restaurant_config_views.xml"
+    }
+  ],
+  "menus": [
+    {
+      "id": "menu_restaurant_config_root",
+      "name": "Cấu Hình Nhà Hàng",
+      "parent": "point_of_sale.menu_point_config_product",
+      "action": null,
+      "groups": null,
+      "file": "views/restaurant_config_views.xml"
+    },
+    {
+      "id": "menu_restaurant_area",
+      "name": "Khu Vực Lớn",
+      "parent": "menu_restaurant_config_root",
+      "action": "action_restaurant_area",
+      "groups": null,
+      "file": "views/restaurant_config_views.xml"
+    },
+    {
+      "id": "menu_restaurant_positioning_area",
+      "name": "Khu Vực Nhỏ",
+      "parent": "menu_restaurant_config_root",
+      "action": "action_restaurant_positioning_area",
+      "groups": null,
+      "file": "views/restaurant_config_views.xml"
+    },
+    {
+      "id": "menu_restaurant_station",
+      "name": "Station",
+      "parent": "menu_restaurant_config_root",
+      "action": "action_restaurant_station",
+      "groups": null,
+      "file": "views/restaurant_config_views.xml"
+    },
+    {
+      "id": "menu_restaurant_shift",
+      "name": "Ca Làm Việc",
+      "parent": "menu_restaurant_config_root",
+      "action": "action_restaurant_shift",
+      "groups": null,
+      "file": "views/restaurant_config_views.xml"
+    }
+  ],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "ir.actions.act_window",
+    "ir.ui.view",
+    "restaurant.area",
+    "restaurant.positioning.area",
+    "restaurant.shift",
+    "restaurant.station"
+  ]
+}

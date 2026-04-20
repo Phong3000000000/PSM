@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ======================================== -->
+        <!-- VỊ TRÍ MẶC ĐỊNH - KHỐI OPS (Vận Hành)   -->
+        <!-- ======================================== -->
+
+        <record id="default_pos_rgm" model="hr.job.position.default">
+            <field name="name">Restaurant Manager</field>
+            <field name="code">RGM</field>
+            <field name="block_id" ref="block_ops"/>
+            <field name="grade_id" ref="job_grade_6"/>
+            <field name="level_id" ref="job_level_manager_director"/>
+            <field name="sequence">1</field>
+            <field name="contract_type_ids" eval="[(6, 0, [ref('hr.contract_type_permanent')])]"/>
+        </record>
+
+        <record id="default_pos_dm2" model="hr.job.position.default">
+            <field name="name">Department Manager 2</field>
+            <field name="code">DM2</field>
+            <field name="block_id" ref="block_ops"/>
+            <field name="grade_id" ref="job_grade_3b"/>
+            <field name="level_id" ref="job_level_manager"/>
+            <field name="sequence">3</field>
+            <field name="contract_type_ids" eval="[(6, 0, [ref('hr.contract_type_permanent')])]"/>
+        </record>
+
+        <record id="default_pos_dm1" model="hr.job.position.default">
+            <field name="name">Department Manager 1</field>
+            <field name="code">DM1</field>
+            <field name="block_id" ref="block_ops"/>
+            <field name="grade_id" ref="job_grade_3b"/>
+            <field name="level_id" ref="job_level_manager"/>
+            <field name="sequence">4</field>
+            <field name="contract_type_ids" eval="[(6, 0, [ref('hr.contract_type_permanent')])]"/>
+        </record>
+
+        <record id="default_pos_sm" model="hr.job.position.default">
+            <field name="name">Shift Manager</field>
+            <field name="code">SM</field>
+            <field name="block_id" ref="block_ops"/>
+            <field name="grade_id" ref="job_grade_1b"/>
+            <field name="level_id" ref="job_level_supervisor"/>
+            <field name="sequence">5</field>
+            <field name="contract_type_ids" eval="[(6, 0, [ref('hr.contract_type_permanent'), ref('hr.contract_type_temporary')])]"/>
+        </record>
+
+        <record id="default_pos_mt" model="hr.job.position.default">
+            <field name="name">Manager Trainee</field>
+            <field name="code">MT</field>
+            <field name="block_id" ref="block_ops"/>
+            <field name="grade_id" ref="job_grade_1b"/>
+            <field name="level_id" ref="job_level_jr_specialist"/>
+            <field name="sequence">6</field>
+            <field name="contract_type_ids" eval="[(6, 0, [ref('hr.contract_type_permanent'), ref('hr.contract_type_temporary')])]"/>
+        </record>
+
+        <record id="default_pos_ct" model="hr.job.position.default">
+            <field name="name">Crew Trainer</field>
+            <field name="code">CT</field>
+            <field name="block_id" ref="block_ops"/>
+            <field name="grade_id" ref="job_grade_1b"/>
+            <field name="level_id" ref="job_level_team_leader"/>
+            <field name="sequence">7</field>
+            <field name="contract_type_ids" eval="[(6, 0, [ref('hr.contract_type_permanent'), ref('hr.contract_type_temporary')])]"/>
+        </record>
+
+        <record id="default_pos_crew" model="hr.job.position.default">
+            <field name="name">Crew</field>
+            <field name="code">CREW</field>
+            <field name="block_id" ref="block_ops"/>
+            <field name="grade_id" ref="job_grade_1d"/>
+            <field name="level_id" ref="job_level_assistant"/>
+            <field name="sequence">8</field>
+            <field name="contract_type_ids" eval="[(6, 0, [ref('hr.contract_type_permanent'), ref('hr.contract_type_temporary')])]"/>
+        </record>
+
+        <record id="default_pos_gel" model="hr.job.position.default">
+            <field name="name">GEL</field>
+            <field name="code">GEL</field>
+            <field name="block_id" ref="block_ops"/>
+            <field name="grade_id" ref="job_grade_1c"/>
+            <field name="level_id" ref="job_level_coordinator"/>
+            <field name="sequence">9</field>
+            <field name="contract_type_ids" eval="[(6, 0, [ref('hr.contract_type_permanent'), ref('hr.contract_type_temporary')])]"/>
+        </record>
+
+        <record id="default_pos_bt" model="hr.job.position.default">
+            <field name="name">Barista Trainer</field>
+            <field name="code">BT</field>
+            <field name="block_id" ref="block_ops"/>
+            <field name="grade_id" ref="job_grade_1b"/>
+            <field name="level_id" ref="job_level_team_leader"/>
+            <field name="sequence">10</field>
+            <field name="contract_type_ids" eval="[(6, 0, [ref('hr.contract_type_permanent'), ref('hr.contract_type_temporary')])]"/>
+        </record>
+
+        <record id="default_pos_barista" model="hr.job.position.default">
+            <field name="name">Barista</field>
+            <field name="code">BARISTA</field>
+            <field name="block_id" ref="block_ops"/>
+            <field name="grade_id" ref="job_grade_1d"/>
+            <field name="level_id" ref="job_level_assistant"/>
+            <field name="sequence">11</field>
+            <field name="contract_type_ids" eval="[(6, 0, [ref('hr.contract_type_permanent'), ref('hr.contract_type_temporary')])]"/>
+        </record>
+
+        <record id="default_pos_rider" model="hr.job.position.default">
+            <field name="name">Rider</field>
+            <field name="code">RIDER</field>
+            <field name="block_id" ref="block_ops"/>
+            <field name="grade_id" ref="job_grade_1d"/>
+            <field name="level_id" ref="job_level_assistant"/>
+            <field name="sequence">12</field>
+            <field name="contract_type_ids" eval="[(6, 0, [ref('hr.contract_type_permanent'), ref('hr.contract_type_temporary')])]"/>
+        </record>
+
+         <record id="default_pos_tealady" model="hr.job.position.default">
+            <field name="name">TeaLady</field>
+            <field name="code">TEALADY</field>
+            <field name="block_id" ref="block_ops"/>
+            <field name="grade_id" ref="job_grade_1d"/>
+            <field name="level_id" ref="job_level_assistant"/>
+            <field name="sequence">13</field>
+            <field name="contract_type_ids" eval="[(6, 0, [ref('hr.contract_type_permanent')])]"/>
+        </record>
+
+    </data>
+</odoo>

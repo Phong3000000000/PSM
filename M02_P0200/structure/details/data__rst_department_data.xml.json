@@ -1,0 +1,156 @@
+{
+  "file": "data/rst_department_data.xml",
+  "type": "xml",
+  "bucket": "data",
+  "summary": "XML data file.",
+  "records": [
+    {
+      "id": "dept_rst_maintenance",
+      "model": "hr.department",
+      "fields": {
+        "name": "Maintenance",
+        "block_id": {
+          "ref": "block_rst"
+        }
+      }
+    },
+    {
+      "id": "dept_rst_management",
+      "model": "hr.department",
+      "fields": {
+        "name": "Management",
+        "block_id": {
+          "ref": "block_rst"
+        }
+      }
+    },
+    {
+      "id": "dept_rst_human_resource",
+      "model": "hr.department",
+      "fields": {
+        "name": "Human Resource",
+        "block_id": {
+          "ref": "block_rst"
+        }
+      }
+    },
+    {
+      "id": "dept_rst_marketing",
+      "model": "hr.department",
+      "fields": {
+        "name": "Marketing",
+        "block_id": {
+          "ref": "block_rst"
+        }
+      }
+    },
+    {
+      "id": "dept_rst_supply_chain",
+      "model": "hr.department",
+      "fields": {
+        "name": "Supply Chain",
+        "block_id": {
+          "ref": "block_rst"
+        }
+      }
+    },
+    {
+      "id": "dept_rst_it",
+      "model": "hr.department",
+      "fields": {
+        "name": "Information Technology",
+        "block_id": {
+          "ref": "block_rst"
+        }
+      }
+    },
+    {
+      "id": "dept_rst_development",
+      "model": "hr.department",
+      "fields": {
+        "name": "Development",
+        "block_id": {
+          "ref": "block_rst"
+        }
+      }
+    },
+    {
+      "id": "dept_rst_finance",
+      "model": "hr.department",
+      "fields": {
+        "name": "Finance",
+        "block_id": {
+          "ref": "block_rst"
+        }
+      }
+    },
+    {
+      "id": "dept_rst_legal",
+      "model": "hr.department",
+      "fields": {
+        "name": "Legal",
+        "block_id": {
+          "ref": "block_rst"
+        }
+      }
+    },
+    {
+      "id": "dept_rst_rsg",
+      "model": "hr.department",
+      "fields": {
+        "name": "RSG",
+        "block_id": {
+          "ref": "block_rst"
+        }
+      }
+    },
+    {
+      "id": "dept_rst_ld",
+      "model": "hr.department",
+      "fields": {
+        "name": "L&D",
+        "block_id": {
+          "ref": "block_rst"
+        }
+      }
+    },
+    {
+      "id": "dept_rst_menu",
+      "model": "hr.department",
+      "fields": {
+        "name": "Menu",
+        "block_id": {
+          "ref": "block_rst"
+        }
+      }
+    },
+    {
+      "id": "dept_rst_strategy_insights",
+      "model": "hr.department",
+      "fields": {
+        "name": "Strategy & Insights",
+        "block_id": {
+          "ref": "block_rst"
+        }
+      }
+    },
+    {
+      "id": "dept_rst_operation",
+      "model": "hr.department",
+      "fields": {
+        "name": "Operations",
+        "block_id": {
+          "ref": "block_rst"
+        }
+      }
+    }
+  ],
+  "views": [],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "hr.department"
+  ]
+}

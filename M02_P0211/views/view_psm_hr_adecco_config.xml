@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_psm_hr_adecco_config_tree" model="ir.ui.view">
+        <field name="name">x_psm.hr.adecco.config.tree</field>
+        <field name="model">x_psm.hr.adecco.config</field>
+        <field name="arch" type="xml">
+            <list string="Cấu hình Email Onboarding" editable="bottom">
+                <field name="x_psm_agency_type" string="Phân khối áp định"/>
+                <field name="name" string="Tên đối tác"/>
+                <field name="x_psm_email" string="Email nhận thông báo"/>
+                <field name="x_psm_cooperate_with_3p" string="Hợp tác với đối tác"/>
+                <field name="active" string="Đang sử dụng" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_psm_hr_adecco_config" model="ir.actions.act_window">
+        <field name="name">Cấu hình Email Onboarding</field>
+        <field name="res_model">x_psm.hr.adecco.config</field>
+        <field name="view_mode">list</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Thiết lập Email nhận thông báo của đối tác onboarding.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu được đặt trong phần Onboarding Configuration -->
+    <menuitem id="menu_hr_adecco_config"
+              name="Email Onboarding"
+              parent="menu_hr_training_config_root"
+              action="action_psm_hr_adecco_config"
+              sequence="20"/>
+</odoo>

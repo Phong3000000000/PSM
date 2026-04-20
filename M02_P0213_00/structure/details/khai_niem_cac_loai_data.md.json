@@ -1,0 +1,6 @@
+{
+  "file": "khai_niem_cac_loai_data.md",
+  "type": "document",
+  "bucket": "docs",
+  "summary": "# Khái niệm các loại Data trong Odoo module ## 1. Master Data (Dữ liệu danh mục chính) - **Định nghĩa:** - Là các dữ liệu nền tảng, dùng để tham chiếu hoặc c..."
+}

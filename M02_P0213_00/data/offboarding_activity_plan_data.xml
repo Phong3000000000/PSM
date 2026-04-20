@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- Offboarding Activity Plan for Employees -->
-    <record id="offboarding_activity_plan" model="mail.activity.plan">
+    <record id="psm_0213_offboarding_activity_plan" model="mail.activity.plan">
         <field name="name">Quy trình nghỉ việc</field>
         <field name="res_model">hr.employee</field>
         <field name="active" eval="True"/>
@@ -9,8 +9,8 @@
     </record>
 
     <!-- Activity Template 1: Thu hồi tài sản (Asset Recovery) -->
-    <record id="offboarding_template_asset_recovery" model="mail.activity.plan.template">
-        <field name="plan_id" ref="offboarding_activity_plan"/>
+    <record id="psm_0213_offboarding_template_asset_recovery" model="mail.activity.plan.template">
+        <field name="plan_id" ref="psm_0213_offboarding_activity_plan"/>
         <field name="sequence">10</field>
         <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
         <field name="summary">Thu hồi tài sản công ty (laptop, điện thoại, thẻ nhân viên, chìa khóa...)</field>
@@ -29,8 +29,8 @@
     </record>
 
     <!-- Activity Template 2: Đánh giá hư hại (Damage Assessment) -->
-    <record id="offboarding_template_damage_assessment" model="mail.activity.plan.template">
-        <field name="plan_id" ref="offboarding_activity_plan"/>
+    <record id="psm_0213_offboarding_template_damage_assessment" model="mail.activity.plan.template">
+        <field name="plan_id" ref="psm_0213_offboarding_activity_plan"/>
         <field name="sequence">20</field>
         <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
         <field name="summary">Đánh giá tình trạng và hư hại tài sản thu hồi</field>
@@ -48,8 +48,8 @@
     </record>
 
     <!-- Activity Template 3: Deactive Email -->
-    <record id="offboarding_template_deactive_email" model="mail.activity.plan.template">
-        <field name="plan_id" ref="offboarding_activity_plan"/>
+    <record id="psm_0213_offboarding_template_deactive_email" model="mail.activity.plan.template">
+        <field name="plan_id" ref="psm_0213_offboarding_activity_plan"/>
         <field name="sequence">30</field>
         <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
         <field name="summary">Vô hiệu hóa tài khoản email và hệ thống</field>
@@ -68,8 +68,8 @@
     </record>
 
     <!-- Activity Template 4: Hoàn thành Expense Claim -->
-    <record id="offboarding_template_expense_claim" model="mail.activity.plan.template">
-        <field name="plan_id" ref="offboarding_activity_plan"/>
+    <record id="psm_0213_offboarding_template_expense_claim" model="mail.activity.plan.template">
+        <field name="plan_id" ref="psm_0213_offboarding_activity_plan"/>
         <field name="sequence">40</field>
         <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
         <field name="summary">Hoàn tất các đề nghị thanh toán chi phí (Expense Claim)</field>
@@ -86,8 +86,8 @@
         <field name="responsible_type">employee</field>
     </record>
     <!-- Activity Template 5: Exit Interview -->
-    <record id="offboarding_template_exit_interview" model="mail.activity.plan.template">
-        <field name="plan_id" ref="offboarding_activity_plan"/>
+    <record id="psm_0213_offboarding_template_exit_interview" model="mail.activity.plan.template">
+        <field name="plan_id" ref="psm_0213_offboarding_activity_plan"/>
         <field name="sequence">50</field>
         <field name="activity_type_id" ref="mail.mail_activity_data_todo"/>
         <field name="summary">Hoàn thành Exit Interview</field>

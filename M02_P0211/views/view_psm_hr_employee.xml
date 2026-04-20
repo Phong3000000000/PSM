@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_psm_hr_employee_form_onboarding" model="ir.ui.view">
+        <field name="name">hr.employee.form.onboarding.0211</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//header" position="after">
+                <!-- Cảnh báo thiếu thông tin để Onboarding -->
+                <div class="alert alert-danger mb-0 p-2" role="alert" 
+                     invisible="work_email">
+                    <i class="fa fa-exclamation-triangle me-1" title="Warning"/> 
+                    <b>Note:</b> A <b>Work Email</b> is required to automatically create a Portal account and send onboarding notifications.
+                </div>
+            </xpath>
+
+            <!-- 1. Buttons + Statusbar in header -->
+            <xpath expr="//header" position="inside">
+                <!-- APPROVAL LOGIC -->
+                <button name="action_psm_approve_onboarding"
+                        string="Approve"
+                        type="object"
+                        class="btn-success"
+                        invisible="x_psm_0211_onboarding_state != 'submitted'"/>
+                
+                <button name="action_psm_reject_onboarding"
+                        string="Refuse"
+                        type="object"
+                        class="btn-danger"
+                        invisible="x_psm_0211_onboarding_state not in ('pending', 'submitted')"/>
+
+                <!-- LOGIC ONBOARDING PORTAL -->
+                <button name="action_psm_automated_onboarding_setup"
+                        string="Send Link"
+                        type="object"
+                        class="btn-primary"
+                        invisible="x_psm_0211_welcome_email_sent or x_psm_0211_onboarding_state == 'done' or not work_email or x_psm_0211_onboarding_state == 'submitted'"
+                        help="Create Portal account and send Onboarding Link to employee"/>
+
+                <span invisible="not x_psm_0211_welcome_email_sent or x_psm_0211_onboarding_state in ('approved', 'probation', 'done', 'refused','signed')" class="text-success fw-bold d-inline-flex align-items-center me-2">
+                    <i class="fa fa-check-circle me-1"/> Sent
+                </span>
+                
+                <button name="action_psm_automated_onboarding_setup"
+                        string="Resend"
+                        type="object"
+                        class="btn-secondary"
+                        invisible="not x_psm_0211_welcome_email_sent or x_psm_0211_onboarding_state not in ('pending', 'submitted')"/>
+                
+                <field name="x_psm_0211_can_evaluate_probation" invisible="1"/>
+                <field name="x_psm_0211_is_full_time" invisible="1"/>
+                <button name="action_psm_open_probation_wizard"
+                        string="Probation Evaluation"
+                        type="object"
+                        class="btn-primary"
+                        invisible="x_psm_0211_onboarding_state != 'probation' or not x_psm_0211_can_evaluate_probation"/>
+
+                <!-- CONTRACT SIGNATURE LOGIC -->
+                <field name="x_psm_0211_contract_sign_request_id" invisible="1"/>
+                <field name="x_psm_0211_contract_signed" invisible="1"/>
+                <field name="x_psm_0211_welcome_email_sent" invisible="1"/>
+                
+                <span invisible="not x_psm_0211_contract_sign_request_id or x_psm_0211_contract_signed" class="text-info fw-bold d-inline-flex align-items-center me-2 ms-2" style="font-size: 0.9rem;">
+                    <i class="fa fa-clock-o me-1"/> Awaiting Signature
+                </span>
+                <!-- <span invisible="not x_psm_0211_contract_signed" class="text-success fw-bold d-inline-flex align-items-center me-2 ms-2" style="font-size: 0.9rem;">
+                    <i class="fa fa-check-circle me-1"/> Contract Signed
+                </span> -->
+
+                <field name="x_psm_0211_onboarding_state"
+                       widget="statusbar"
+                       statusbar_visible="pending,submitted,approved,probation,done,signed"
+                       options="{'clickable': '1'}"/>
+            </xpath>
+
+            <!-- Hiện lại nút Create User (Internal) mặc định của Odoo -->
+            <xpath expr="//button[@name='action_create_user']" position="attributes">
+                <attribute name="invisible">user_id</attribute>
+            </xpath>
+
+
+            <xpath expr="//button[@name='%(hr.plan_wizard_action)d'][1]" position="attributes">
+                <attribute name="invisible">not active or x_psm_0211_onboarding_state not in ('submitted', 'approved', 'probation')</attribute>
+            </xpath>
+
+            <!-- 2. Ribbon positioning fix - Inside sheet before button_box -->
+            <xpath expr="//div[@name='button_box']" position="before">
+                <!-- Statusbar -->
+                <widget name="web_ribbon" title="ADECCO" 
+                        bg_color="bg-info" 
+                        invisible="not x_psm_0211_show_adecco_banner"/>
+                <widget name="web_ribbon" title="GOOD DAY" 
+                        bg_color="text-bg-danger"
+                        invisible="not x_psm_0211_show_goodday_banner"/>
+            </xpath>
+
+
+            <!-- Fix icon overlap with ribbon -->
+            <xpath expr="//div[hasclass('o_presence_status_pill_wrapper')]" position="attributes">
+                <attribute name="style">margin-right: 70px;</attribute>
+            </xpath>
+
+            <!-- Smart Buttons: Đưa Onboarding & Thử việc lên đầu tiên của Button Box -->
+            <xpath expr="//div[@name='button_box']/*[1]" position="before">
+                <button name="action_psm_show_onboarding_progress" 
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-tasks"
+                        invisible="not id or x_psm_0211_onboarding_total_count == 0">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value text-primary"><field name="x_psm_0211_onboarding_done_count" nolabel="1"/> / <field name="x_psm_0211_onboarding_total_count" nolabel="1"/></span>
+                        <span class="o_stat_text text-wrap">Onboarding Progress</span>
+                    </div>
+                </button>
+                <!-- Appraisal button removed -->
+            </xpath>
+
+            <!-- Bắt buộc nhập Work Email để đảm bảo gửi email chào mừng tự động -->
+            <xpath expr="//field[@name='work_email']" position="attributes">
+                <attribute name="required">1</attribute>
+            </xpath>
+
+            <!-- 2. "Employee Documents" Tab — HR reviews documents submitted via portal -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Employee Documents" name="onboarding_documents"
+                      groups="hr.group_hr_user">
+
+                    <!-- Status -->
+                    <group string="Verification &amp; Approval">
+                        <group>
+                            <field name="x_psm_0211_onboarding_state" widget="badge"
+                                decoration-warning="x_psm_0211_onboarding_state == 'pending'"
+                                decoration-info="x_psm_0211_onboarding_state == 'submitted'"
+                                decoration-success="x_psm_0211_onboarding_state in ('approved', 'probation', 'done', 'signed')"
+                                decoration-danger="x_psm_0211_onboarding_state == 'refused'"/>
+                            <field name="x_psm_0211_probation_start_date" invisible="not x_psm_0211_probation_start_date"/>
+                            <field name="x_psm_0211_probation_end_date" invisible="not x_psm_0211_probation_end_date"/>
+                            <field name="x_psm_0211_probation_days_remaining" invisible="not x_psm_0211_probation_end_date"
+                                   decoration-danger="x_psm_0211_probation_days_remaining &lt;= 14"
+                                   decoration-warning="x_psm_0211_probation_days_remaining &gt; 14 and x_psm_0211_probation_days_remaining &lt;= 30"/>
+                            <field name="x_psm_0211_portal_last_update" widget="datetime" string="Last Portal Update" readonly="1"/>
+                            <field name="x_psm_portal_revision_count" string="Submission Count" readonly="1" decoration-info="x_psm_portal_revision_count > 0"/>
+                            <field name="x_psm_0211_portal_updates_count" invisible="1"/>
+                            <field name="x_psm_0211_onboarding_total_count" invisible="1"/>
+                        </group>
+                        <group invisible="x_psm_0211_onboarding_total_count == 0 or x_psm_0211_onboarding_state not in ('approved', 'probation', 'done','signed')" string="COMPLETION PROGRESS">
+                            <field name="x_psm_0211_onboarding_done_count" invisible="1"/>
+                            <field name="x_psm_0211_onboarding_total_count" invisible="1"/>
+                            <field name="x_psm_0211_onboarding_progress" 
+                                   widget="progressbar" 
+                                   nolabel="1"
+                                   options="{'current_value': 'x_psm_0211_onboarding_done_count', 'max_value': 'x_psm_0211_onboarding_total_count'}"/>
+                            
+                            <!-- Overall checklist (Toggle) -->
+                            <separator string="ONBOARDING CHECKLIST" class="mt-3 text-primary" invisible="not x_psm_0211_onboarding_task_ids"/>
+                            <field name="x_psm_0211_onboarding_task_ids" nolabel="1" invisible="not x_psm_0211_onboarding_task_ids">
+                                <list editable="bottom" create="0" delete="0">
+                                    <field name="name" readonly="1" string="Task" width="300px"/>
+                                    <field name="x_psm_date_planned" readonly="1" string="Deadline" width="100px"/>
+                                     <field name="x_psm_is_done" widget="boolean_toggle" string="Done" class="oe_inline" width="100px" readonly="x_psm_is_done" force_save="1"/>
+                                </list>
+                            </field>
+                        </group>
+                    </group>
+
+                    <!-- Progress Tracking: Food Safety & Training -->
+                    <group name="onboarding_tracking" invisible="x_psm_0211_onboarding_state not in ('approved', 'probation', 'done', 'signed') or x_psm_0211_onboarding_total_count == 0">
+                        <!-- Cột trái: VSATTP (Hidden for Office Staff) -->
+                        <field name="x_psm_0211_staff_type" invisible="1"/>
+                        <field name="x_psm_0211_is_rst_employee_onb" invisible="1"/>
+                        <group string="Food Safety Assessment (VSATTP)" 
+                               invisible="x_psm_0211_staff_type == 'office'">
+                            <field name="x_psm_0211_vsattp_survey_id" 
+                                   string="Survey"
+                                   options="{'no_create': True}"
+                                   context="{'default_survey_type': 'assessment'}"/>
+                            
+                            <label for="x_psm_0211_vsattp_survey_state" string="Submission Status"/>
+                            <div class="o_row">
+                                <field name="x_psm_0211_vsattp_survey_state" readonly="1" class="fw-bold text-primary oe_inline" invisible="not x_psm_0211_vsattp_user_input_id"/>
+                                <span class="text-muted" invisible="x_psm_0211_vsattp_user_input_id or x_psm_0211_vsattp_survey_done">(Not Started)</span>
+                            </div>
+
+                            <field name="x_psm_0211_vsattp_survey_score" 
+                                   widget="progressbar"
+                                   string="Score (%)"
+                                   invisible="not x_psm_0211_vsattp_user_input_id"/>
+
+                            <field name="x_psm_0211_vsattp_survey_url" 
+                                   string="Link"
+                                   widget="CopyClipboardChar"
+                                   invisible="not x_psm_0211_vsattp_user_input_id"/>
+                            
+                            <field name="x_psm_0211_vsattp_survey_done" widget="boolean_toggle" 
+                                   string="HR Verified"/>
+                            
+                            <button name="action_view_psm_0211_vsattp_results" 
+                                    type="object" 
+                                    string="View Submission" 
+                                    class="btn-link p-0" 
+                                    invisible="not x_psm_0211_vsattp_user_input_id"/>
+                        </group>
+
+                        <!-- Training Section -->
+                        <group string="Training Roadmap">
+                            <!-- Start button (visible only when not started) -->
+                            <div class="o_row" invisible="x_psm_0211_training_started">
+                                <button name="action_psm_start_training_journey" 
+                                        string="Start Training" 
+                                        type="object" 
+                                        class="btn-primary"
+                                        icon="fa-play-circle"/>
+                            </div>
+                            
+                            <!-- Khi đã bắt đầu -->
+                            <group invisible="not x_psm_0211_training_started" class="mt-0">
+                                <field name="x_psm_0211_training_state" widget="badge" 
+                                       decoration-info="x_psm_0211_training_state == 'in_progress'" 
+                                       decoration-success="x_psm_0211_training_state == 'completed'"
+                                       decoration-muted="x_psm_0211_training_state == 'not_started'"/>
+                                
+                                <label for="x_psm_0211_onboarding_ops_rst_training_process" string="Completion Progress"/>
+                                <div class="o_row">
+                                    <field name="x_psm_0211_onboarding_ops_rst_training_process" widget="progressbar" nolabel="1" class="oe_inline" style="width: 100%;"/>
+                                </div>
+                                
+                                <field name="x_psm_0211_training_start_date" readonly="1" string="Start Date"/>
+                            </group>
+                            
+                            <!-- Checklist Đào tạo -->
+                            <separator string="TRAINING CHECKLIST" invisible="not x_psm_0211_training_started" class="text-primary mt-3"/>
+                            <field name="x_psm_0211_training_task_ids" nolabel="1" invisible="not x_psm_0211_training_started">
+                                <list editable="bottom" create="0" delete="0">
+                                    <field name="x_psm_doc_code" readonly="1" string="ID" width="60px" decoration-info="1"/>
+                                    <field name="name" readonly="1" string="Task"/>
+                                    <field name="x_psm_date_planned" readonly="1" string="Deadline" width="100px"/>
+                                     <field name="x_psm_is_done" widget="boolean_toggle" string="Done" width="60px" readonly="x_psm_is_done" force_save="1"/>
+                                </list>
+                            </field>
+                        </group>
+                    </group>
+
+                    <separator string="ONBOARDING DOCUMENTS (MANDATORY)"/>
+                    <group>
+                        <!-- Identity Card: Both sides -->
+                        <group string="1. CITIZEN IDENTITY CARD (Front Side)">
+                            <field name="x_psm_0211_id_card_front" widget="image" options="{'size': [250, 150]}" string="Front Preview"/>
+                            <field name="x_psm_0211_id_card_front" filename="x_psm_0211_id_card_front_filename" widget="binary" string="Download Front"/>
+                            <field name="x_psm_0211_id_card_front_filename" invisible="1"/>
+                        </group>
+                        <group string="1. CITIZEN IDENTITY CARD (Back Side)">
+                            <field name="x_psm_0211_id_card_back" widget="image" options="{'size': [250, 150]}" string="Back Preview"/>
+                            <field name="x_psm_0211_id_card_back" filename="x_psm_0211_id_card_back_filename" widget="binary" string="Download Back"/>
+                            <field name="x_psm_0211_id_card_back_filename" invisible="1"/>
+                        </group>
+
+                        <group string="2. PERSONAL HISTORY / RESIDENCY">
+                            <field name="x_psm_0211_curriculum_vitae" widget="image" options="{'size': [250, 250]}" string="Document Preview"/>
+                            <field name="x_psm_0211_curriculum_vitae" filename="x_psm_0211_curriculum_vitae_filename" widget="binary" string="Download File"/>
+                            <field name="x_psm_0211_curriculum_vitae_filename" invisible="1"/>
+                        </group>
+                        <group string="3. HEALTH CERTIFICATE">
+                            <field name="x_psm_0211_health_certificate" widget="image" options="{'size': [250, 250]}" string="Health Preview"/>
+                            <field name="x_psm_0211_health_certificate" filename="x_psm_0211_health_certificate_filename" widget="binary" string="Download File"/>
+                            <field name="x_psm_0211_health_certificate_filename" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <!-- SECTION 2: FULL-TIME ONLY (Portrait & Additional) -->
+                    <separator string="PASSPORT PHOTO &amp; ADDITIONAL DOCUMENTS (FULL-TIME ONLY)" invisible="not x_psm_0211_is_full_time"/>
+                    <group invisible="not x_psm_0211_is_full_time">
+                        <group string="4. PASSPORT PHOTO (3X4)">
+                            <field name="x_psm_0211_passport_photo" widget="image" options="{'size': [200, 250]}" string="Photo Preview"/>
+                            <field name="x_psm_0211_passport_photo" filename="x_psm_0211_passport_photo_filename" widget="binary" string="Download Portrait"/>
+                            <field name="x_psm_0211_passport_photo_filename" invisible="1"/>
+                        </group>
+                        <group string="SOCIAL INSURANCE BOOK">
+                            <field name="x_psm_0211_social_insurance" widget="image" options="{'size': [250, 150]}" string="Preview"/>
+                            <field name="x_psm_0211_social_insurance" filename="x_psm_0211_social_insurance_filename" widget="binary" string="Download"/>
+                            <field name="x_psm_0211_social_insurance_filename" invisible="1"/>
+                        </group>
+                        <group string="DRIVING LICENSE">
+                            <field name="x_psm_0211_driving_license" widget="image" options="{'size': [250, 150]}" string="Preview"/>
+                            <field name="x_psm_0211_driving_license" filename="x_psm_0211_driving_license_filename" widget="binary" string="Download"/>
+                            <field name="x_psm_0211_driving_license_filename" invisible="1"/>
+                        </group>
+                        <group string="ACADEMIC DEGREES">
+                            <field name="x_psm_0211_professional_certificate" widget="image" options="{'size': [250, 350]}" string="Preview"/>
+                            <field name="x_psm_0211_professional_certificate" filename="x_psm_0211_professional_certificate_filename" widget="binary" string="Download"/>
+                            <field name="x_psm_0211_professional_certificate_filename" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <field name="x_psm_0211_is_full_time" invisible="1"/>
+
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Giữ field VSATTP ẩn trong Payroll để không lỗi view cache -->
+    <record id="view_psm_hr_employee_form_vsattp_payroll" model="ir.ui.view">
+        <field name="name">hr.employee.form.vsattp.payroll</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='payroll_information']//group[@name='payroll_group']" position="inside">
+                <!-- Fields ẩn để tránh lỗi ORM/Inheritance -->
+                <field name="x_psm_0211_vsattp_survey_id" invisible="1"/>
+                <field name="x_psm_0211_vsattp_user_input_id" invisible="1"/>
+                <field name="x_psm_0211_vsattp_survey_state" invisible="1"/>
+                <field name="x_psm_0211_vsattp_survey_score" invisible="1"/>
+                <field name="x_psm_0211_vsattp_survey_url" invisible="1"/>
+                <field name="x_psm_0211_vsattp_survey_done" invisible="1"/>
+                <field name="x_psm_0211_contract_date_start" invisible="1"/>
+                
+                <separator string="Management &amp; Company Transfer"/>
+                <group name="mcd_management_group">
+                    <field name="x_psm_0211_is_full_time" invisible="1"/>
+                    <field name="x_psm_0211_management_state" readonly="1" string="Current Management Entity"/>
+                    <button name="action_psm_transfer_to_good_day"
+                            string="Transfer from Adecco to McD"
+                            type="object"
+                            class="btn-outline-danger"
+                            confirm="This will transfer the management entity for this employee from Adecco to Good Day (McD). Proceed?"
+                            invisible="not x_psm_0211_show_transfer_button"/>
+                </group>
+
+
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Override invisible của nút "Signature Request" mặc định của hr_sign:
+         Ẩn khi đang có sign request CHƯA KÝ (pending), hiện lại khi đã ký xong -->
+    <record id="view_psm_hr_employee_sign_button_invisible" model="ir.ui.view">
+        <field name="name">hr.employee.form.sign.button.invisible</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr_sign.hr_employee_sign_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[1]" position="attributes">
+                <attribute name="invisible">not id or x_psm_0211_onboarding_state != 'done' or (x_psm_0211_contract_sign_request_id and not x_psm_0211_contract_signed)</attribute>
+            </xpath>
+
+        </field>
+    </record>
+    
+    <!-- ONLY FOR HR ADMIN: Make statusbar clickable for debugging -->
+
+    <!-- Bổ sung tìm kiếm và nhóm theo trạng thái Onboarding -->
+    <record id="view_psm_hr_employee_search_onboarding" model="ir.ui.view">
+        <field name="name">hr.employee.search.onboarding</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='my_team']" position="after">
+                <filter string="My Team in Probation" name="my_team_probation" 
+                        domain="[('parent_id.user_id', '=', uid), ('x_psm_0211_onboarding_state', '=', 'probation')]"/>
+                <separator/>
+                <filter name="evaluate_ready" string="Evaluate Ready" 
+                        domain="[('x_psm_0211_onboarding_state', '=', 'probation'), ('x_psm_0211_onboarding_ops_rst_training_process', '>=', 80)]"
+                        help="Show staff who completed 80% training and are in probation."/>
+            </xpath>
+            <xpath expr="//group" position="inside">
+                <filter string="Onboarding Status" name="group_onboarding_state" context="{'group_by': 'x_psm_0211_onboarding_state'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add Evaluate button to Kanban View -->
+    <record id="view_psm_hr_employee_kanban_probation_0211" model="ir.ui.view">
+        <field name="name">hr.employee.kanban.probation.0211</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.hr_kanban_view_employees"/>
+        <field name="arch" type="xml">
+            <xpath expr="//templates" position="before">
+                <!-- Fetch hidden fields needed for button visibility logic -->
+                <field name="x_psm_0211_can_evaluate_probation"/>
+            </xpath>
+            <xpath expr="//main/footer/div" position="inside">
+                <!-- Button -->
+                <button name="action_psm_open_probation_wizard" 
+                        type="object" 
+                        string="Evaluate" 
+                        class="btn btn-primary btn-sm ms-2"
+                        help="Evaluate Probation"
+                        invisible="not x_psm_0211_can_evaluate_probation">
+                    Evaluate
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_psm_hr_employee_tree_probation_0211" model="ir.ui.view">
+        <field name="name">hr.employee.list.probation.0211</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parent_id']" position="after">
+                <field name="x_psm_0211_can_evaluate_probation" column_invisible="True"/>
+                <button name="action_psm_open_probation_wizard" 
+                        type="object" 
+                        string="Evaluate" 
+                        class="btn btn-primary btn-sm"
+                        invisible="not x_psm_0211_can_evaluate_probation"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_psm_hr_employee_public_kanban_probation_0211" model="ir.ui.view">
+        <field name="name">hr.employee.public.kanban.probation.0211</field>
+        <field name="model">hr.employee.public</field>
+        <field name="inherit_id" ref="hr.hr_employee_public_view_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//templates" position="before">
+                <!-- Fetch hidden fields needed for button visibility logic -->
+                <field name="x_psm_0211_can_evaluate_probation"/>
+            </xpath>
+            <xpath expr="//main/div[last()]" position="inside">
+                <!-- Evaluate Button for Directory/Kanban -->
+                <button name="action_psm_open_probation_wizard" 
+                        type="object" 
+                        string="Evaluate" 
+                        class="btn btn-primary btn-sm ms-2"
+                        help="Evaluate Probation"
+                        invisible="not x_psm_0211_can_evaluate_probation">
+                    Evaluate
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_psm_hr_employee_public_tree_probation_0211" model="ir.ui.view">
+        <field name="name">hr.employee.public.list.probation.0211</field>
+        <field name="model">hr.employee.public</field>
+        <field name="inherit_id" ref="hr.hr_employee_public_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parent_id']" position="after">
+                <field name="x_psm_0211_can_evaluate_probation" column_invisible="True"/>
+                <button name="action_psm_open_probation_wizard" 
+                        type="object" 
+                        string="Evaluate" 
+                        class="btn btn-primary btn-sm"
+                        invisible="not x_psm_0211_can_evaluate_probation"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Smart Filter for Directory View -->
+    <record id="view_psm_hr_employee_public_search_probation_0211" model="ir.ui.view">
+        <field name="name">hr.employee.public.search.probation.0211</field>
+        <field name="model">hr.employee.public</field>
+        <field name="inherit_id" ref="hr.hr_employee_public_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='my_team']" position="after">
+                <separator/>
+                <filter name="evaluate_ready" string="Evaluate Ready" 
+                        domain="[('x_psm_0211_onboarding_state', '=', 'probation'), ('x_psm_0211_onboarding_ops_rst_training_process', '>=', 80), ('x_psm_0211_staff_type', '=', 'office')]"
+                        help="Show office staff who completed 80% training and are in probation."/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

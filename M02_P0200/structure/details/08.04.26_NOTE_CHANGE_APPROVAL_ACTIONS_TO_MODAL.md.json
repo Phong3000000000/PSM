@@ -1,0 +1,6 @@
+{
+  "file": "08.04.26_NOTE_CHANGE_APPROVAL_ACTIONS_TO_MODAL.md",
+  "type": "document",
+  "bucket": "docs",
+  "summary": "# Ghi chú đổi thao tác duyệt / từ chối từ nút trực tiếp sang popup ## Bối cảnh - Màn hình: `/my/approvals` - Module giao diện view: `M02_P0200` - Module x..."
+}

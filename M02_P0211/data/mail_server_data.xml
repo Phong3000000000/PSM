@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- 
+            CẤU HÌNH MAIL SERVER DÙNG CHUNG (GLOBAL)
+            - Port 587 / TLS: Khuyên dùng cho Gmail bản mới.
+            - owner_user_id = False: Đảm bảo đây là server dùng chung, không bị lỗi "belongs to a user".
+            - smtp_encryption = starttls: Giá trị chuẩn trong Odoo cho Port 587.
+        -->
+        <record id="default_outgoing_mail_server" model="ir.mail_server">
+            <field name="name">Gmail MCD (Auto-Config)</field>
+            <field name="smtp_authentication">login</field>
+            <field name="smtp_host">smtp.gmail.com</field>
+            <field name="smtp_port">587</field>
+            <field name="smtp_encryption">starttls</field>
+            <field name="smtp_user">floralfantasy.system@gmail.com</field>
+            <field name="smtp_pass">ifxr cdhs igri rvxx</field>
+            <field name="sequence">10</field>
+            <!-- Trong Odoo 19, trường này tên là owner_user_id thay vì user_id -->
+            <field name="owner_user_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

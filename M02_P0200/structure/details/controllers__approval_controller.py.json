@@ -1,0 +1,392 @@
+{
+  "file": "controllers/approval_controller.py",
+  "type": "python",
+  "bucket": "controllers",
+  "summary": "1 classes; 0 fields",
+  "classes": [
+    {
+      "python_class": "ApprovalController",
+      "description": "Python helper class ApprovalController.",
+      "model": null,
+      "inherit": null,
+      "order": null,
+      "rec_name": null,
+      "fields": [],
+      "methods": [
+        {
+          "name": "_get_portal_employee",
+          "type": "helper",
+          "decorators": [],
+          "summary": "helper"
+        },
+        {
+          "name": "_get_user_activity_display_map",
+          "type": "helper",
+          "decorators": [],
+          "summary": "helper"
+        },
+        {
+          "name": "_get_pending_request_changes_map",
+          "type": "helper",
+          "decorators": [],
+          "summary": "Build a safe changes-summary map for mixed approval.request sources."
+        },
+        {
+          "name": "_get_pending_request_display_map",
+          "type": "helper",
+          "decorators": [],
+          "summary": "Build a safe display map for mixed approval.request sources."
+        },
+        {
+          "name": "_get_request_owner_employee",
+          "type": "helper",
+          "decorators": [],
+          "summary": "helper"
+        },
+        {
+          "name": "_get_resignation_finalization_action_map",
+          "type": "helper",
+          "decorators": [],
+          "summary": "helper"
+        },
+        {
+          "name": "portal_approvals",
+          "type": "method",
+          "decorators": [
+            {
+              "call": "http.route",
+              "args": [
+                [
+                  "/my/approvals"
+                ]
+              ],
+              "keywords": {
+                "type": "http",
+                "auth": "user",
+                "website": true
+              }
+            }
+          ],
+          "summary": "Trang duyệt yêu cầu cho Line Manager trên Portal\nHiển thị cả ca làm việc và các approval.request"
+        },
+        {
+          "name": "portal_finalize_resignation",
+          "type": "method",
+          "decorators": [
+            {
+              "call": "http.route",
+              "args": [
+                [
+                  "/my/approvals/finalize-resignation"
+                ]
+              ],
+              "keywords": {
+                "type": "json",
+                "auth": "user"
+              }
+            }
+          ],
+          "summary": "method"
+        },
+        {
+          "name": "portal_my_activities",
+          "type": "method",
+          "decorators": [
+            {
+              "call": "http.route",
+              "args": [
+                [
+                  "/my/activities"
+                ]
+              ],
+              "keywords": {
+                "type": "http",
+                "auth": "user",
+                "website": true
+              }
+            }
+          ],
+          "summary": "method"
+        },
+        {
+          "name": "portal_my_activity_done",
+          "type": "method",
+          "decorators": [
+            {
+              "call": "http.route",
+              "args": [
+                [
+                  "/my/activities/done"
+                ]
+              ],
+              "keywords": {
+                "type": "http",
+                "auth": "user",
+                "methods": [
+                  "POST"
+                ],
+                "website": true,
+                "csrf": true
+              }
+            }
+          ],
+          "summary": "method"
+        },
+        {
+          "name": "portal_approve_shift",
+          "type": "method",
+          "decorators": [
+            {
+              "call": "http.route",
+              "args": [
+                [
+                  "/my/approvals/approve-shift"
+                ]
+              ],
+              "keywords": {
+                "type": "json",
+                "auth": "user"
+              }
+            }
+          ],
+          "summary": "API duyệt ca làm việc từ Portal"
+        },
+        {
+          "name": "portal_reject_shift",
+          "type": "method",
+          "decorators": [
+            {
+              "call": "http.route",
+              "args": [
+                [
+                  "/my/approvals/reject-shift"
+                ]
+              ],
+              "keywords": {
+                "type": "json",
+                "auth": "user"
+              }
+            }
+          ],
+          "summary": "API từ chối ca từ Portal"
+        },
+        {
+          "name": "portal_approve_request",
+          "type": "method",
+          "decorators": [
+            {
+              "call": "http.route",
+              "args": [
+                [
+                  "/my/approvals/approve-request"
+                ]
+              ],
+              "keywords": {
+                "type": "json",
+                "auth": "user"
+              }
+            }
+          ],
+          "summary": "API duyệt approval.request từ Portal"
+        },
+        {
+          "name": "portal_reject_request",
+          "type": "method",
+          "decorators": [
+            {
+              "call": "http.route",
+              "args": [
+                [
+                  "/my/approvals/reject-request"
+                ]
+              ],
+              "keywords": {
+                "type": "json",
+                "auth": "user"
+              }
+            }
+          ],
+          "summary": "API từ chối approval.request từ Portal"
+        },
+        {
+          "name": "portal_leave_replacement_candidates",
+          "type": "method",
+          "decorators": [
+            {
+              "call": "http.route",
+              "args": [
+                [
+                  "/my/approvals/leave-replacement-candidates"
+                ]
+              ],
+              "keywords": {
+                "type": "json",
+                "auth": "user"
+              }
+            }
+          ],
+          "summary": "Lấy danh sách nhân viên từ các cửa hàng cùng SSP Manager để thế chỗ"
+        },
+        {
+          "name": "portal_upload_attachment",
+          "type": "method",
+          "decorators": [
+            {
+              "call": "http.route",
+              "args": [
+                [
+                  "/my/approvals/upload_attachment"
+                ]
+              ],
+              "keywords": {
+                "type": "http",
+                "auth": "user",
+                "methods": [
+                  "POST"
+                ],
+                "website": true,
+                "csrf": true
+              }
+            }
+          ],
+          "summary": "Upload attachment for approval request"
+        }
+      ],
+      "kind": "python_class"
+    }
+  ],
+  "routes": [
+    {
+      "method": "portal_approvals",
+      "route": [
+        [
+          "/my/approvals"
+        ]
+      ],
+      "options": {
+        "type": "http",
+        "auth": "user",
+        "website": true
+      }
+    },
+    {
+      "method": "portal_finalize_resignation",
+      "route": [
+        [
+          "/my/approvals/finalize-resignation"
+        ]
+      ],
+      "options": {
+        "type": "json",
+        "auth": "user"
+      }
+    },
+    {
+      "method": "portal_my_activities",
+      "route": [
+        [
+          "/my/activities"
+        ]
+      ],
+      "options": {
+        "type": "http",
+        "auth": "user",
+        "website": true
+      }
+    },
+    {
+      "method": "portal_my_activity_done",
+      "route": [
+        [
+          "/my/activities/done"
+        ]
+      ],
+      "options": {
+        "type": "http",
+        "auth": "user",
+        "methods": [
+          "POST"
+        ],
+        "website": true,
+        "csrf": true
+      }
+    },
+    {
+      "method": "portal_approve_shift",
+      "route": [
+        [
+          "/my/approvals/approve-shift"
+        ]
+      ],
+      "options": {
+        "type": "json",
+        "auth": "user"
+      }
+    },
+    {
+      "method": "portal_reject_shift",
+      "route": [
+        [
+          "/my/approvals/reject-shift"
+        ]
+      ],
+      "options": {
+        "type": "json",
+        "auth": "user"
+      }
+    },
+    {
+      "method": "portal_approve_request",
+      "route": [
+        [
+          "/my/approvals/approve-request"
+        ]
+      ],
+      "options": {
+        "type": "json",
+        "auth": "user"
+      }
+    },
+    {
+      "method": "portal_reject_request",
+      "route": [
+        [
+          "/my/approvals/reject-request"
+        ]
+      ],
+      "options": {
+        "type": "json",
+        "auth": "user"
+      }
+    },
+    {
+      "method": "portal_leave_replacement_candidates",
+      "route": [
+        [
+          "/my/approvals/leave-replacement-candidates"
+        ]
+      ],
+      "options": {
+        "type": "json",
+        "auth": "user"
+      }
+    },
+    {
+      "method": "portal_upload_attachment",
+      "route": [
+        [
+          "/my/approvals/upload_attachment"
+        ]
+      ],
+      "options": {
+        "type": "http",
+        "auth": "user",
+        "methods": [
+          "POST"
+        ],
+        "website": true,
+        "csrf": true
+      }
+    }
+  ]
+}

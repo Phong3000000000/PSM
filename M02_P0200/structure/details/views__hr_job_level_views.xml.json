@@ -1,0 +1,79 @@
+{
+  "file": "views/hr_job_level_views.xml",
+  "type": "xml",
+  "bucket": "views",
+  "summary": "2 views, 1 actions, 1 menus",
+  "records": [
+    {
+      "id": "view_hr_job_level_tree",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "hr.job.level.tree",
+        "model": "hr.job.level",
+        "arch": ""
+      }
+    },
+    {
+      "id": "view_hr_job_level_form",
+      "model": "ir.ui.view",
+      "fields": {
+        "name": "hr.job.level.form",
+        "model": "hr.job.level",
+        "arch": ""
+      }
+    },
+    {
+      "id": "action_hr_job_level",
+      "model": "ir.actions.act_window",
+      "fields": {
+        "name": "Job Levels",
+        "res_model": "hr.job.level",
+        "view_mode": "list,form",
+        "help": ""
+      }
+    }
+  ],
+  "views": [
+    {
+      "id": "view_hr_job_level_tree",
+      "model": "hr.job.level",
+      "name": "hr.job.level.tree",
+      "inherit_id": null,
+      "file": "views/hr_job_level_views.xml"
+    },
+    {
+      "id": "view_hr_job_level_form",
+      "model": "hr.job.level",
+      "name": "hr.job.level.form",
+      "inherit_id": null,
+      "file": "views/hr_job_level_views.xml"
+    }
+  ],
+  "actions": [
+    {
+      "id": "action_hr_job_level",
+      "name": "Job Levels",
+      "res_model": "hr.job.level",
+      "view_mode": "list,form",
+      "domain": null,
+      "file": "views/hr_job_level_views.xml"
+    }
+  ],
+  "menus": [
+    {
+      "id": "menu_hr_job_level",
+      "name": "Job Levels",
+      "parent": "M02_P0200.menu_hr_job_position_default_categ",
+      "action": "action_hr_job_level",
+      "groups": null,
+      "file": "views/hr_job_level_views.xml"
+    }
+  ],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "hr.job.level",
+    "ir.actions.act_window",
+    "ir.ui.view"
+  ]
+}

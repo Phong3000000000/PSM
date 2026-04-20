@@ -1,0 +1,394 @@
+{
+  "file": "data/hr_job_position_default_data.xml",
+  "type": "xml",
+  "bucket": "data",
+  "summary": "XML data file.",
+  "records": [
+    {
+      "id": "default_pos_rgm",
+      "model": "hr.job.position.default",
+      "fields": {
+        "name": "Restaurant Manager",
+        "code": "RGM",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "sequence": "1",
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "default_pos_dm3",
+      "model": "hr.job.position.default",
+      "fields": {
+        "name": "Department Manager 3",
+        "code": "DM3",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "sequence": "2",
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "default_pos_dm2",
+      "model": "hr.job.position.default",
+      "fields": {
+        "name": "Department Manager 2",
+        "code": "DM2",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "sequence": "3",
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "default_pos_dm1",
+      "model": "hr.job.position.default",
+      "fields": {
+        "name": "Department Manager 1",
+        "code": "DM1",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "sequence": "4",
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "default_pos_sm",
+      "model": "hr.job.position.default",
+      "fields": {
+        "name": "Shift Manager (Part-time)",
+        "code": "SM",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "sequence": "5",
+        "contract_type_id": {
+          "eval": "6"
+        }
+      }
+    },
+    {
+      "id": "default_pos_sm_ft",
+      "model": "hr.job.position.default",
+      "fields": {
+        "name": "Shift Manager (Full-time)",
+        "code": "SM_FT",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "level_id": {
+          "ref": "job_level_manager"
+        },
+        "sequence": "5",
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "default_pos_mt",
+      "model": "hr.job.position.default",
+      "fields": {
+        "name": "Manager Trainee (Part-time)",
+        "code": "MT",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "level_id": {
+          "ref": "job_level_employee"
+        },
+        "sequence": "6",
+        "contract_type_id": {
+          "eval": "6"
+        }
+      }
+    },
+    {
+      "id": "default_pos_mt_ft",
+      "model": "hr.job.position.default",
+      "fields": {
+        "name": "Manager Trainee (Full-time)",
+        "code": "MT_FT",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "level_id": {
+          "ref": "job_level_employee"
+        },
+        "sequence": "6",
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "default_pos_ct",
+      "model": "hr.job.position.default",
+      "fields": {
+        "name": "Crew Trainer (Part-time)",
+        "code": "CT",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "level_id": {
+          "ref": "job_level_employee"
+        },
+        "sequence": "7",
+        "contract_type_id": {
+          "eval": "6"
+        }
+      }
+    },
+    {
+      "id": "default_pos_ct_ft",
+      "model": "hr.job.position.default",
+      "fields": {
+        "name": "Crew Trainer (Full-time)",
+        "code": "CT_FT",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "level_id": {
+          "ref": "job_level_employee"
+        },
+        "sequence": "7",
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "default_pos_crew",
+      "model": "hr.job.position.default",
+      "fields": {
+        "name": "Crew (Part-time)",
+        "code": "CREW",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "level_id": {
+          "ref": "job_level_employee"
+        },
+        "sequence": "8",
+        "contract_type_id": {
+          "eval": "6"
+        }
+      }
+    },
+    {
+      "id": "default_pos_crew_ft",
+      "model": "hr.job.position.default",
+      "fields": {
+        "name": "Crew (Full-time)",
+        "code": "CREW_FT",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "level_id": {
+          "ref": "job_level_employee"
+        },
+        "sequence": "8",
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "default_pos_gel",
+      "model": "hr.job.position.default",
+      "fields": {
+        "name": "GEL (Part-time)",
+        "code": "GEL",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "level_id": {
+          "ref": "job_level_employee"
+        },
+        "sequence": "9",
+        "contract_type_id": {
+          "eval": "6"
+        }
+      }
+    },
+    {
+      "id": "default_pos_gel_ft",
+      "model": "hr.job.position.default",
+      "fields": {
+        "name": "GEL (Full-time)",
+        "code": "GEL_FT",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "level_id": {
+          "ref": "job_level_employee"
+        },
+        "sequence": "9",
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "default_pos_bt",
+      "model": "hr.job.position.default",
+      "fields": {
+        "name": "Barista Trainer (Part-time)",
+        "code": "BT",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "level_id": {
+          "ref": "job_level_employee"
+        },
+        "sequence": "10",
+        "contract_type_id": {
+          "eval": "6"
+        }
+      }
+    },
+    {
+      "id": "default_pos_bt_ft",
+      "model": "hr.job.position.default",
+      "fields": {
+        "name": "Barista Trainer (Full-time)",
+        "code": "BT_FT",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "level_id": {
+          "ref": "job_level_employee"
+        },
+        "sequence": "10",
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "default_pos_barista",
+      "model": "hr.job.position.default",
+      "fields": {
+        "name": "Barista (Part-time)",
+        "code": "BARISTA",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "level_id": {
+          "ref": "job_level_employee"
+        },
+        "sequence": "11",
+        "contract_type_id": {
+          "eval": "6"
+        }
+      }
+    },
+    {
+      "id": "default_pos_barista_ft",
+      "model": "hr.job.position.default",
+      "fields": {
+        "name": "Barista (Full-time)",
+        "code": "BARISTA_FT",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "level_id": {
+          "ref": "job_level_employee"
+        },
+        "sequence": "11",
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "default_pos_rider",
+      "model": "hr.job.position.default",
+      "fields": {
+        "name": "Rider (Part-time)",
+        "code": "RIDER",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "level_id": {
+          "ref": "job_level_employee"
+        },
+        "sequence": "12",
+        "contract_type_id": {
+          "eval": "6"
+        }
+      }
+    },
+    {
+      "id": "default_pos_rider_ft",
+      "model": "hr.job.position.default",
+      "fields": {
+        "name": "Rider (Full-time)",
+        "code": "RIDER_FT",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "level_id": {
+          "ref": "job_level_employee"
+        },
+        "sequence": "12",
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    },
+    {
+      "id": "default_pos_tealady",
+      "model": "hr.job.position.default",
+      "fields": {
+        "name": "TeaLady",
+        "code": "TEALADY",
+        "block_id": {
+          "ref": "block_ops"
+        },
+        "level_id": {
+          "ref": "job_level_employee"
+        },
+        "sequence": "13",
+        "contract_type_id": {
+          "eval": "5"
+        }
+      }
+    }
+  ],
+  "views": [],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "hr.job.position.default"
+  ]
+}

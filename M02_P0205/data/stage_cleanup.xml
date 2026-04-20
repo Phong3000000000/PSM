@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- PHASE MARKER: FORCE-SCOPE patch. This file rewrites default Odoo stages to recruitment_type=store. -->
+        <!-- Khắc phục triệt để: Chuyển các Stage không mong muốn sang Khối Cửa Hàng
+             để chúng không còn xuất hiện trong luồng Khối Văn Phòng -->
+
+        <!-- 1. Các Stage gốc của Odoo (thường hiển thị tiếng Anh) -->
+        <record id="hr_recruitment.stage_job1" model="hr.recruitment.stage">
+            <field name="recruitment_type">store</field>
+        </record>
+        <record id="hr_recruitment.stage_job2" model="hr.recruitment.stage">
+            <field name="recruitment_type">store</field>
+        </record>
+        <record id="hr_recruitment.stage_job3" model="hr.recruitment.stage">
+            <field name="recruitment_type">store</field>
+        </record>
+        <record id="hr_recruitment.stage_job4" model="hr.recruitment.stage">
+            <field name="recruitment_type">store</field>
+        </record>
+        <record id="hr_recruitment.stage_job5" model="hr.recruitment.stage">
+            <field name="recruitment_type">store</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,166 @@
+{
+  "file": "data/shift_log_checklist_data.xml",
+  "type": "xml",
+  "bucket": "data",
+  "summary": "XML data file.",
+  "records": [
+    {
+      "id": "checklist_pre_hygiene",
+      "model": "shift.log.checklist",
+      "fields": {
+        "name": "Kiểm tra vệ sinh khu vực / thiết bị",
+        "shift_phase": "preshift",
+        "category": "Vệ sinh",
+        "sequence": "1"
+      }
+    },
+    {
+      "id": "checklist_pre_inventory",
+      "model": "shift.log.checklist",
+      "fields": {
+        "name": "Kiểm tra nguyên liệu / hàng tồn kho",
+        "shift_phase": "preshift",
+        "category": "Kho",
+        "sequence": "2"
+      }
+    },
+    {
+      "id": "checklist_pre_briefing",
+      "model": "shift.log.checklist",
+      "fields": {
+        "name": "Họp briefing đầu ca (giao nhiệm vụ)",
+        "shift_phase": "preshift",
+        "category": "Quản lý",
+        "sequence": "3"
+      }
+    },
+    {
+      "id": "checklist_pre_food_safety",
+      "model": "shift.log.checklist",
+      "fields": {
+        "name": "Kiểm tra an toàn thực phẩm / nhiệt độ",
+        "shift_phase": "preshift",
+        "category": "An toàn",
+        "sequence": "4"
+      }
+    },
+    {
+      "id": "checklist_pre_equipment",
+      "model": "shift.log.checklist",
+      "fields": {
+        "name": "Kiểm tra thiết bị hoạt động",
+        "shift_phase": "preshift",
+        "category": "Thiết bị",
+        "sequence": "5"
+      }
+    },
+    {
+      "id": "checklist_during_food_quality",
+      "model": "shift.log.checklist",
+      "fields": {
+        "name": "Kiểm tra chất lượng sản phẩm (Food Quality Check)",
+        "shift_phase": "during",
+        "category": "Chất lượng",
+        "sequence": "1"
+      }
+    },
+    {
+      "id": "checklist_during_sos",
+      "model": "shift.log.checklist",
+      "fields": {
+        "name": "Kiểm tra tốc độ phục vụ (Speed of Service)",
+        "shift_phase": "during",
+        "category": "Hiệu suất",
+        "sequence": "2"
+      }
+    },
+    {
+      "id": "checklist_during_hygiene",
+      "model": "shift.log.checklist",
+      "fields": {
+        "name": "Kiểm tra vệ sinh giữa ca",
+        "shift_phase": "during",
+        "category": "Vệ sinh",
+        "sequence": "3"
+      }
+    },
+    {
+      "id": "checklist_during_sales",
+      "model": "shift.log.checklist",
+      "fields": {
+        "name": "Theo dõi doanh số / GC so với target",
+        "shift_phase": "during",
+        "category": "Doanh số",
+        "sequence": "4"
+      }
+    },
+    {
+      "id": "checklist_during_customer",
+      "model": "shift.log.checklist",
+      "fields": {
+        "name": "Xử lý sự cố / phản hồi khách hàng",
+        "shift_phase": "during",
+        "category": "Khách hàng",
+        "sequence": "5"
+      }
+    },
+    {
+      "id": "checklist_post_sales",
+      "model": "shift.log.checklist",
+      "fields": {
+        "name": "Tổng kết doanh số ca",
+        "shift_phase": "postshift",
+        "category": "Doanh số",
+        "sequence": "1"
+      }
+    },
+    {
+      "id": "checklist_post_hygiene",
+      "model": "shift.log.checklist",
+      "fields": {
+        "name": "Kiểm tra vệ sinh cuối ca",
+        "shift_phase": "postshift",
+        "category": "Vệ sinh",
+        "sequence": "2"
+      }
+    },
+    {
+      "id": "checklist_post_handover",
+      "model": "shift.log.checklist",
+      "fields": {
+        "name": "Bàn giao ca tiếp theo",
+        "shift_phase": "postshift",
+        "category": "Quản lý",
+        "sequence": "3"
+      }
+    },
+    {
+      "id": "checklist_post_incidents",
+      "model": "shift.log.checklist",
+      "fields": {
+        "name": "Ghi nhận sự cố / vấn đề trong ca",
+        "shift_phase": "postshift",
+        "category": "Sự cố",
+        "sequence": "4"
+      }
+    },
+    {
+      "id": "checklist_post_best_emp",
+      "model": "shift.log.checklist",
+      "fields": {
+        "name": "Chọn nhân viên xuất sắc nhất ca",
+        "shift_phase": "postshift",
+        "category": "Đánh giá",
+        "sequence": "5"
+      }
+    }
+  ],
+  "views": [],
+  "actions": [],
+  "menus": [],
+  "templates": [],
+  "functions": [],
+  "referenced_models": [
+    "shift.log.checklist"
+  ]
+}

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_psm_hr_applicant_form_inherit_documents" model="ir.ui.view">
+        <field name="name">hr.applicant.view.form.inherit.documents</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_applicant_view_form"/>
+        <field name="arch" type="xml">
+            <!-- 1. ADD BUTTONS TO HEADER -->
+            <xpath expr="//header" position="inside">
+                <!-- Using class btn-primary for Approve, btn-secondary for Refuse -->
+                <button name="action_psm_approve_documents" string="Duyệt hồ sơ" type="object" class="btn-success" invisible="x_psm_0211_document_approval_status == 'approved'"/>
+                <button name="action_psm_reject_documents" string="Không duyệt" type="object" class="btn-danger" invisible="x_psm_0211_document_approval_status == 'refused'"/>
+            </xpath>
+            
+            <xpath expr="//header" position="after">
+                <field name="x_psm_0211_document_approval_status" invisible="1"/>
+                <div class="alert alert-success text-center" invisible="x_psm_0211_document_approval_status != 'approved'" role="alert" style="margin-bottom: 0px;">
+                    Hồ sơ đã được duyệt
+                </div>
+                <div class="alert alert-danger text-center" invisible="x_psm_0211_document_approval_status != 'refused'" role="alert" style="margin-bottom: 0px;">
+                    Hồ sơ không đạt
+                </div>
+            </xpath>
+
+            <!-- 2. ADD TAB "THÔNG TIN CÁ NHÂN" -->
+            <!-- Try to put it after general information or skills tag -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Thông tin cá nhân">
+                    <group>
+                        <group string="Trạng thái hồ sơ">
+                            <field name="x_psm_0211_portal_last_update" widget="datetime"/>
+                            <field name="x_psm_0211_portal_updates_count"/>
+                            <field name="x_psm_0211_document_approval_status" widget="badge" 
+                                decoration-success="x_psm_0211_document_approval_status == 'approved'"
+                                decoration-danger="x_psm_0211_document_approval_status == 'refused'"
+                                decoration-warning="x_psm_0211_document_approval_status == 'pending'"/>
+                        </group>
+                    </group>
+
+                    <group string="Tài liệu cá nhân">
+                        <!-- Ảnh thẻ -->
+                        <group string="1. Ảnh thẻ">
+                            <field name="x_psm_0211_passport_photo" filename="x_psm_0211_passport_photo_filename" widget="binary"/>
+                        </group>
+                        
+                        <!-- CCCD/CMND -->
+                        <group string="2. Căn cước công dân">
+                            <field name="x_psm_0211_id_card_front" filename="x_psm_0211_id_card_front_filename" widget="binary"/>
+                            <field name="x_psm_0211_id_card_back" filename="x_psm_0211_id_card_back_filename" widget="binary"/>
+                        </group>
+                        
+                        <!-- Hộ khẩu -->
+                        <group string="3. Sổ hộ khẩu">
+                            <field name="x_psm_0211_household_registration" filename="x_psm_0211_household_registration_filename" widget="binary"/>
+                        </group>
+                        
+                        <!-- Lý lịch tư pháp -->
+                        <group string="4. Lý lịch tư pháp">
+                            <field name="x_psm_0211_judicial_record" filename="x_psm_0211_judicial_record_filename" widget="binary"/>
+                        </group>
+                        
+                        <!-- Bằng cấp -->
+                        <group string="5. Bằng cấp &amp; Chứng chỉ">
+                            <field name="x_psm_0211_professional_certificate" filename="x_psm_0211_professional_certificate_filename" widget="binary"/>
+                            <field name="x_psm_0211_additional_certificates" filename="x_psm_0211_additional_certificates_filename" widget="binary"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- KANBAN VIEW INHERITANCE FOR RIBBON -->
+    <record id="view_psm_hr_applicant_kanban_inherit_documents" model="ir.ui.view">
+        <field name="name">hr.applicant.view.kanban.inherit.documents</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_kanban_view_applicant"/>
+        <field name="arch" type="xml">
+            <!-- Add field to be available in kanban record -->
+            <xpath expr="//field[@name='stage_id']" position="before">
+                <field name="x_psm_0211_document_approval_status"/>
+            </xpath>
+
+            <!-- Add Ribbon to Card -->
+            <xpath expr="//t[@t-name='card']" position="inside">
+                <widget name="web_ribbon" title="Không đạt" bg_color="text-bg-danger" invisible="x_psm_0211_document_approval_status != 'refused'"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

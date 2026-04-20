@@ -1,0 +1,118 @@
+{
+  "file": "models/pos_config_ext.py",
+  "type": "python",
+  "bucket": "models",
+  "summary": "models: pos.config; 1 classes; 6 fields",
+  "classes": [
+    {
+      "python_class": "PosConfigExt",
+      "description": "Extends pos.config in models/pos_config_ext.py.",
+      "model": null,
+      "inherit": "pos.config",
+      "order": null,
+      "rec_name": null,
+      "fields": [
+        {
+          "name": "store_code",
+          "type": "Char",
+          "string": "Store Code",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": "Mã cửa hàng"
+        },
+        {
+          "name": "opening_hour",
+          "type": "Float",
+          "string": "Opening Hour",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": "Giờ mở cửa"
+        },
+        {
+          "name": "closing_hour",
+          "type": "Float",
+          "string": "Closing Hour",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": "Giờ đóng cửa"
+        },
+        {
+          "name": "main_shift_ids",
+          "type": "Many2many",
+          "string": "Main Shifts",
+          "comodel": "restaurant.shift",
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": "Các ca làm việc chính"
+        },
+        {
+          "name": "secondary_shift_ids",
+          "type": "Many2many",
+          "string": "Secondary Shifts",
+          "comodel": "restaurant.shift",
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": "Các ca làm việc phụ"
+        },
+        {
+          "name": "department_id",
+          "type": "Many2one",
+          "string": "Phòng Ban",
+          "comodel": "hr.department",
+          "required": false,
+          "readonly": false,
+          "store": true,
+          "related": null,
+          "compute": "_compute_department_id",
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        }
+      ],
+      "methods": [
+        {
+          "name": "_compute_department_id",
+          "type": "compute",
+          "decorators": [],
+          "summary": "compute"
+        }
+      ],
+      "kind": "inherit_only"
+    }
+  ],
+  "routes": []
+}

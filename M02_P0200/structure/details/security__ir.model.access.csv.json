@@ -1,0 +1,140 @@
+{
+  "file": "security/ir.model.access.csv",
+  "type": "security_csv",
+  "bucket": "security",
+  "summary": "12 access rules",
+  "access_rules": [
+    {
+      "id": "access_department_block_user",
+      "name": "department.block.user",
+      "model_id": "model_department_block",
+      "group_id": "base.group_user",
+      "model": "department.block",
+      "perm_read": true,
+      "perm_write": true,
+      "perm_create": true,
+      "perm_unlink": true
+    },
+    {
+      "id": "access_restaurant_area_user",
+      "name": "restaurant.area.user",
+      "model_id": "model_restaurant_area",
+      "group_id": "base.group_user",
+      "model": "restaurant.area",
+      "perm_read": true,
+      "perm_write": true,
+      "perm_create": true,
+      "perm_unlink": true
+    },
+    {
+      "id": "access_restaurant_positioning_area_user",
+      "name": "restaurant.positioning.area.user",
+      "model_id": "model_restaurant_positioning_area",
+      "group_id": "base.group_user",
+      "model": "restaurant.positioning.area",
+      "perm_read": true,
+      "perm_write": true,
+      "perm_create": true,
+      "perm_unlink": true
+    },
+    {
+      "id": "access_restaurant_station_user",
+      "name": "restaurant.station.user",
+      "model_id": "model_restaurant_station",
+      "group_id": "base.group_user",
+      "model": "restaurant.station",
+      "perm_read": true,
+      "perm_write": true,
+      "perm_create": true,
+      "perm_unlink": true
+    },
+    {
+      "id": "access_restaurant_shift_user",
+      "name": "restaurant.shift.user",
+      "model_id": "model_restaurant_shift",
+      "group_id": "base.group_user",
+      "model": "restaurant.shift",
+      "perm_read": true,
+      "perm_write": true,
+      "perm_create": true,
+      "perm_unlink": true
+    },
+    {
+      "id": "access_shift_log_user",
+      "name": "shift.log.user",
+      "model_id": "model_shift_log",
+      "group_id": "base.group_user",
+      "model": "shift.log",
+      "perm_read": true,
+      "perm_write": true,
+      "perm_create": true,
+      "perm_unlink": true
+    },
+    {
+      "id": "access_shift_log_employee_user",
+      "name": "shift.log.employee.user",
+      "model_id": "model_shift_log_employee",
+      "group_id": "base.group_user",
+      "model": "shift.log.employee",
+      "perm_read": true,
+      "perm_write": true,
+      "perm_create": true,
+      "perm_unlink": true
+    },
+    {
+      "id": "access_shift_log_checklist_user",
+      "name": "shift.log.checklist.user",
+      "model_id": "model_shift_log_checklist",
+      "group_id": "base.group_user",
+      "model": "shift.log.checklist",
+      "perm_read": true,
+      "perm_write": true,
+      "perm_create": true,
+      "perm_unlink": true
+    },
+    {
+      "id": "access_shift_log_checklist_line_user",
+      "name": "shift.log.checklist.line.user",
+      "model_id": "model_shift_log_checklist_line",
+      "group_id": "base.group_user",
+      "model": "shift.log.checklist.line",
+      "perm_read": true,
+      "perm_write": true,
+      "perm_create": true,
+      "perm_unlink": true
+    },
+    {
+      "id": "access_hr_job_position_default_user",
+      "name": "hr.job.position.default.user",
+      "model_id": "model_hr_job_position_default",
+      "group_id": "base.group_user",
+      "model": "hr.job.position.default",
+      "perm_read": true,
+      "perm_write": true,
+      "perm_create": true,
+      "perm_unlink": true
+    },
+    {
+      "id": "access_shift_log_generate_wizard_user",
+      "name": "shift.log.generate.wizard.user",
+      "model_id": "model_shift_log_generate_wizard",
+      "group_id": "base.group_user",
+      "model": "shift.log.generate.wizard",
+      "perm_read": true,
+      "perm_write": true,
+      "perm_create": true,
+      "perm_unlink": true
+    },
+    {
+      "id": "access_hr_job_level_user",
+      "name": "hr.job.level.user",
+      "model_id": "model_hr_job_level",
+      "group_id": "base.group_user",
+      "model": "hr.job.level",
+      "perm_read": true,
+      "perm_write": true,
+      "perm_create": true,
+      "perm_unlink": true
+    }
+  ]
+}

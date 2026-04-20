@@ -1,0 +1,995 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- NOTE: Thank-you page overwrite has been removed.
+             The unified thank-you is now handled by M02_P0204.
+             Kept: detail_custom_fields template and interview slot templates. -->
+
+    <!-- Override job detail page: render từ fields thay vì website_description khi đã có data -->
+    <template id="psm_detail_custom_fields" inherit_id="website_hr_recruitment.detail">
+        <xpath expr="//div[@t-field='job.website_description']" position="replace">
+            <t
+                t-if="job.x_psm_0205_job_intro or job.x_psm_0205_responsibilities or job.x_psm_0205_must_have or job.x_psm_0205_nice_to_have or job.x_psm_0205_whats_great">
+                <!-- Mô tả công việc + ratings (giữ ratings phần bên phải) -->
+                <section class="pt32">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-8 pb32" itemprop="description">
+                                <t t-if="job.x_psm_0205_job_intro">
+                                    <t t-foreach="job.x_psm_0205_job_intro.splitlines()" t-as="line">
+                                        <p t-if="line.strip()" class="lead" t-esc="line" />
+                                    </t>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- x_psm_0205_responsibilities / Must Have / Nice to have -->
+                <section class="s_comparisons pt24 pb24 bg-200">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-4 pt16 pb16">
+                                <div class="card text-bg-primary">
+                                    <h4 class="card-header">Responsibilities</h4>
+                                    <ul class="list-group list-group-flush"
+                                        itemprop="x_psm_0205_responsibilities">
+                                        <t t-if="job.x_psm_0205_responsibilities">
+                                            <t t-foreach="job.x_psm_0205_responsibilities.splitlines()"
+                                                t-as="item">
+                                                <li t-if="item.strip()" class="list-group-item"
+                                                    t-esc="item" />
+                                            </t>
+                                        </t>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 pt16 pb16">
+                                <div class="card text-bg-primary">
+                                    <h4 class="card-header">Must Have</h4>
+                                    <ul class="list-group list-group-flush" itemprop="skills">
+                                        <t t-if="job.x_psm_0205_must_have">
+                                            <t t-foreach="job.x_psm_0205_must_have.splitlines()" t-as="item">
+                                                <li t-if="item.strip()" class="list-group-item"
+                                                    t-esc="item" />
+                                            </t>
+                                        </t>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 pt16 pb16">
+                                <div class="card text-bg-primary">
+                                    <h4 class="card-header">Nice to have</h4>
+                                    <ul class="list-group list-group-flush">
+                                        <t t-if="job.x_psm_0205_nice_to_have">
+                                            <t t-foreach="job.x_psm_0205_nice_to_have.splitlines()" t-as="item">
+                                                <li t-if="item.strip()" class="list-group-item"
+                                                    t-esc="item" />
+                                            </t>
+                                        </t>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- What's great in the job? -->
+                <t t-if="job.x_psm_0205_whats_great">
+                    <section class="s_comparisons pt24 pb24">
+                        <div class="container">
+                            <div class="row align-items-center">
+                                <div class="col-sm-12 pb40">
+                                    <h2>What's great in the job?</h2>
+                                    <br />
+                                    <ul class="lead">
+                                        <t t-foreach="job.x_psm_0205_whats_great.splitlines()" t-as="item">
+                                            <li t-if="item.strip()" t-esc="item" />
+                                        </t>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </t>
+            </t>
+            <t t-else="">
+                <!-- Fallback: render website_description gốc -->
+                <div t-field="job.website_description" />
+            </t>
+        </xpath>
+    </template>
+
+    <template id="psm_detail_office_apply_button" inherit_id="website_hr_recruitment.detail"
+        priority="35">
+        <xpath expr="//section[contains(@class, 'pb32')]//a[@t-attf-href='/jobs/apply/#{slug(job)}']" position="replace">
+            <a role="button"
+                t-attf-href="/jobs/apply/#{slug(job)}"
+                class="btn btn-primary btn-lg">
+                Apply Now!
+            </a>
+        </xpath>
+        <xpath expr="//section[contains(@class, 'o_job_bottom_bar')]//a[@t-attf-href='/jobs/apply/#{slug(job)}']" position="replace"/>
+    </template>
+
+    <template id="psm_jobs_index_theme" inherit_id="website_hr_recruitment.index" priority="35">
+        <xpath expr="//div[@id='wrap']" position="attributes">
+            <attribute name="class" add=" psm-jobs-index" separator=" "/>
+        </xpath>
+        <xpath expr="//div[@class='container oe_website_jobs']" position="before">
+            <style>
+                .psm-jobs-index {
+                    background: var(--background) !important;
+                    color: var(--foreground);
+                }
+
+                .psm-jobs-index .oe_website_jobs {
+                    color: var(--foreground);
+                }
+
+                .psm-jobs-index .card {
+                    background: var(--card) !important;
+                    color: var(--card-foreground) !important;
+                    border: 1px solid var(--border) !important;
+                    border-radius: 20px;
+                    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+                }
+
+                .psm-jobs-index .card .card-body,
+                .psm-jobs-index .card a,
+                .psm-jobs-index .card h3,
+                .psm-jobs-index .card h5,
+                .psm-jobs-index .card .text-reset,
+                .psm-jobs-index .card .text-dark {
+                    color: var(--card-foreground) !important;
+                }
+
+                .psm-jobs-index .card .text-muted,
+                .psm-jobs-index .card .fw-light,
+                .psm-jobs-index .alert.text-muted,
+                .psm-jobs-index p.text-muted {
+                    color: var(--muted-foreground) !important;
+                }
+
+                .psm-jobs-index .alert {
+                    background: var(--card) !important;
+                    color: var(--card-foreground) !important;
+                    border: 1px solid var(--border) !important;
+                }
+
+                .psm-jobs-index .badge.text-bg-danger {
+                    background: var(--primary) !important;
+                    color: var(--primary-foreground) !important;
+                }
+
+                .psm-jobs-index .o_wevent_index_topbar_filters h1 {
+                    color: var(--foreground) !important;
+                }
+
+                .psm-jobs-index .oe_search_box,
+                .psm-jobs-index input[name='search'] {
+                    background: var(--muted) !important;
+                    color: var(--foreground) !important;
+                    border-color: var(--border) !important;
+                }
+
+                .psm-jobs-index .oe_search_box::placeholder,
+                .psm-jobs-index input[name='search']::placeholder {
+                    color: var(--muted-foreground) !important;
+                }
+
+                .psm-jobs-index .oe_search_button,
+                .psm-jobs-index .btn-light {
+                    background: var(--card) !important;
+                    color: var(--foreground) !important;
+                    border-color: var(--border) !important;
+                }
+
+                .psm-jobs-index .pagination .page-link {
+                    background: var(--card) !important;
+                    color: var(--foreground) !important;
+                    border-color: var(--border) !important;
+                }
+
+                .psm-jobs-index .pagination .active .page-link {
+                    background: var(--primary) !important;
+                    color: var(--primary-foreground) !important;
+                    border-color: var(--primary) !important;
+                }
+
+                html[data-theme='dark'] .psm-jobs-index .card {
+                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.32);
+                }
+
+                html[data-theme='dark'] .psm-jobs-index .card .card-body {
+                    background: linear-gradient(180deg, #2a2623 0%, #1b1917 100%) !important;
+                }
+
+                html[data-theme='dark'] .psm-jobs-index .oe_search_button,
+                html[data-theme='dark'] .psm-jobs-index .btn-light {
+                    background: #221f1d !important;
+                }
+            </style>
+        </xpath>
+    </template>
+
+    <template id="psm_interview_slot_confirm" name="Interview Slot Confirm">
+        <t t-call="website.layout">
+            <div id="wrap" style="background:#f5f5f5; padding:48px 16px 72px;">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-xl-8 col-lg-9">
+                            <div
+                                style="background:#FFFFFF; border-radius:28px; overflow:hidden; box-shadow:0 20px 45px rgba(0,0,0,0.08);">
+                                <div style="display:flex; min-height:18px;">
+                                    <div style="flex:1; background:#FFC72C;"></div>
+                                    <div style="flex:1; background:#DA291C;"></div>
+                                    <div style="flex:1; background:#000000;"></div>
+                                    <div style="flex:1; background:#FFFFFF;"></div>
+                                </div>
+
+                                <div
+                                    style="padding:42px 40px 36px; font-family:Arial, sans-serif; color:#111111;">
+                                    <div
+                                        style="display:inline-flex; align-items:center; justify-content:center; width:78px; height:78px; border-radius:50%; background:#FFC72C; color:#000000; font-size:40px; font-weight:700; margin-bottom:20px;">
+                                        ✓
+                                    </div>
+
+                                    <h1
+                                        style="margin:0 0 12px; font-family:Arial, sans-serif; font-size:48px; line-height:1.05; font-weight:800; color:#000000;">
+                                        Đã ghi nhận lịch phỏng vấn
+                                    </h1>
+
+                                    <p
+                                        style="margin:0 0 28px; font-family:Arial, sans-serif; font-size:20px; line-height:1.6; color:#3f3f46;">
+                                        Cảm ơn bạn đã xác nhận khung giờ phỏng vấn. Đội ngũ tuyển
+                                        dụng sẽ liên hệ lại với bạn trong thời gian sớm nhất.
+                                    </p>
+
+                                    <div
+                                        style="border:1px solid #ececec; border-radius:22px; overflow:hidden; background:#fffdf8;">
+                                        <div
+                                            style="padding:18px 24px; background:#000000; color:#FFFFFF; font-family:Arial, sans-serif; font-size:15px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;">
+                                            Thông tin đã xác nhận
+                                        </div>
+
+                                        <div style="padding:24px;">
+                                            <div style="display:flex; flex-wrap:wrap; gap:18px;">
+                                                <div
+                                                    style="flex:1 1 220px; padding:18px 20px; border-radius:18px; background:#FFFFFF; border:1px solid #ececec;">
+                                                    <div
+                                                        style="font-family:Arial, sans-serif; font-size:13px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#DA291C; margin-bottom:10px;">
+                                                        Ứng viên
+                                                    </div>
+                                                    <div
+                                                        style="font-family:Arial, sans-serif; font-size:26px; line-height:1.3; font-weight:700; color:#000000;">
+                                                        <t t-out="applicant.partner_name" />
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    style="flex:1 1 220px; padding:18px 20px; border-radius:18px; background:#FFFFFF; border:1px solid #ececec;">
+                                                    <div
+                                                        style="font-family:Arial, sans-serif; font-size:13px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#DA291C; margin-bottom:10px;">
+                                                        Thời gian
+                                                    </div>
+                                                    <div
+                                                        style="font-family:Arial, sans-serif; font-size:26px; line-height:1.3; font-weight:700; color:#000000;">
+                                                        <t t-out="event_start_display" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div
+                                                style="margin-top:22px; padding:18px 20px; border-radius:18px; background:#FFF4CC; border-left:6px solid #FFC72C;">
+                                                <div
+                                                    style="font-family:Arial, sans-serif; font-size:16px; line-height:1.7; color:#2d2d2d;">
+                                                    Vị trí ứng tuyển: <strong>
+                                                        <t
+                                                            t-out="applicant.job_id.name or 'Đang cập nhật'" />
+                                                    </strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        style="margin-top:28px; font-family:Arial, sans-serif; font-size:16px; line-height:1.8; color:#3f3f46;">
+                                        Nếu cần thay đổi lịch hoặc có thêm câu hỏi, bạn có thể phản
+                                        hồi lại email tuyển dụng để được hỗ trợ.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="psm_interview_slot_invalid" name="Interview Slot Invalid">
+        <t t-call="website.layout">
+            <div id="wrap" class="container mt32 mb32">
+                <div class="row">
+                    <div class="col-lg-8 offset-lg-2 text-center">
+                        <h2>Lien ket khong hop le</h2>
+                        <p>Vui long kiem tra lai email hoac lien he bo phan tuyen dung.</p>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="psm_office_job_apply_custom" name="Office Job Apply Custom">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure oe_empty psm-office-apply">
+                <style>
+                    .psm-office-apply {
+                    --mcd-yellow: var(--secondary);
+                    --mcd-red: var(--primary);
+                    --mcd-black: #000000;
+                    --mcd-white: #FFFFFF;
+                    --mcd-ink: var(--foreground);
+                    --mcd-surface: var(--card);
+                    --mcd-surface-foreground: var(--card-foreground);
+                    --mcd-border: var(--border);
+                    --mcd-muted: var(--muted);
+                    --mcd-muted-foreground: var(--muted-foreground);
+                    background:
+                    radial-gradient(circle at top, rgba(255, 188, 13, 0.08), transparent 26%),
+                    linear-gradient(180deg, var(--background) 0%, color-mix(in srgb,
+                    var(--background) 88%, white 12%) 100%);
+                    color: var(--foreground);
+                    min-height: 100vh;
+                    }
+
+                    html[data-theme='dark'] .psm-office-apply {
+                    background:
+                    radial-gradient(circle at top, rgba(255, 188, 13, 0.12), transparent 24%),
+                    linear-gradient(180deg, #151413 0%, #1d1b19 48%, #151413 100%);
+                    }
+
+                    .psm-office-apply .hero-badge {
+                    background: var(--mcd-red);
+                    color: var(--mcd-yellow);
+                    border: 1px solid rgba(0, 0, 0, 0.12);
+                    }
+
+                    .psm-office-apply .hero-title {
+                    color: var(--foreground);
+                    }
+
+                    .psm-office-apply .hero-subtitle {
+                    color: var(--mcd-muted-foreground);
+                    }
+
+                    .psm-office-apply .section-title {
+                    color: var(--secondary);
+                    }
+
+                    .psm-office-apply .section-desc {
+                    color: var(--secondary-foreground);
+                    }
+
+                    .psm-office-apply .form-label,
+                    .psm-office-apply .text-dark {
+                    color: var(--mcd-ink);
+                    }
+
+                    .psm-office-apply .hero-card,
+                    .psm-office-apply .section-card,
+                    .psm-office-apply .survey-card {
+                    background: var(--mcd-surface) !important;
+                    color: var(--mcd-surface-foreground) !important;
+                    border: 1px solid var(--mcd-border) !important;
+                    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.08);
+                    backdrop-filter: blur(16px);
+                    -webkit-backdrop-filter: blur(16px);
+                    }
+
+                    html[data-theme='dark'] .psm-office-apply .hero-card,
+                    html[data-theme='dark'] .psm-office-apply .section-card,
+                    html[data-theme='dark'] .psm-office-apply .survey-card {
+                    background: linear-gradient(180deg, #2a2623 0%, #1b1917 100%) !important;
+                    border-color: rgba(255, 255, 255, 0.08) !important;
+                    color: #f5f5f4 !important;
+                    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+                    }
+
+                    html[data-theme='dark'] .psm-office-apply .hero-card .card-body,
+                    html[data-theme='dark'] .psm-office-apply .section-card .card-body,
+                    html[data-theme='dark'] .psm-office-apply .survey-card .card-body {
+                    background: linear-gradient(180deg, #2a2623 0%, #1b1917 100%) !important;
+                    color: #f5f5f4 !important;
+                    }
+
+                    html[data-theme='dark'] .psm-office-apply .hero-card .text-dark,
+                    html[data-theme='dark'] .psm-office-apply .section-card .card-body .text-dark,
+                    html[data-theme='dark'] .psm-office-apply .survey-card .card-body .text-dark,
+                    html[data-theme='dark'] .psm-office-apply .hero-card .fw-bold,
+                    html[data-theme='dark'] .psm-office-apply .hero-card .fw-semibold,
+                    html[data-theme='dark'] .psm-office-apply .section-card .card-body .fw-semibold,
+                    html[data-theme='dark'] .psm-office-apply .survey-card .card-body .fw-semibold {
+                    color: #f5f5f4 !important;
+                    }
+
+                    html[data-theme='dark'] .psm-office-apply .hero-card .text-muted,
+                    html[data-theme='dark'] .psm-office-apply .section-card .card-body .text-muted,
+                    html[data-theme='dark'] .psm-office-apply .survey-card .card-body .text-muted,
+                    html[data-theme='dark'] .psm-office-apply .form-text.text-muted {
+                    color: #d6d3d1 !important;
+                    }
+
+                    .psm-office-apply .section-card .card-header h4,
+                    .psm-office-apply .survey-card .card-header h4 {
+                    color: var(--mcd-yellow) !important;
+                    }
+
+                    .psm-office-apply .section-card .card-header p,
+                    .psm-office-apply .survey-card .card-header p {
+                    color: var(--mcd-white) !important;
+                    opacity: 1 !important;
+                    }
+
+                    .psm-office-apply .section-card .card-header,
+                    .psm-office-apply .survey-card .card-header {
+                    background: var(--mcd-red) !important;
+                    color: var(--mcd-white) !important;
+                    }
+
+                    .psm-office-apply .section-card .card-header p,
+                    .psm-office-apply .survey-card .card-header p {
+                    opacity: 1 !important;
+                    }
+
+                    .psm-office-apply .hero-card {
+                    position: relative;
+                    overflow: hidden;
+                    }
+
+                    .psm-office-apply .hero-card::before {
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    top: 0;
+                    height: 10px;
+                    background: linear-gradient(90deg, var(--mcd-red) 0 35%, var(--mcd-yellow) 35%
+                    70%, var(--mcd-black) 70% 85%, var(--mcd-white) 85% 100%);
+                    }
+
+                    .psm-office-apply .theme-muted-panel > .small,
+                    .psm-office-apply .alert .small.text-uppercase {
+                    color: var(--mcd-yellow) !important;
+                    }
+
+                    .psm-office-apply .theme-submit-btn {
+                    background-color: var(--primary);
+                    border: 1px solid var(--secondary);
+                    color: var(--secondary);
+                    border-radius: 999px;
+                    min-width: 280px;
+                    }
+
+                    .psm-office-apply .theme-submit-btn:hover {
+                    background-color: var(--secondary);
+                    border-color: var(--primary);
+                    color: var(--secondary-foreground);
+                    }
+
+                    .psm-office-apply .theme-pill {
+                    background: var(--secondary);
+                    color: var(--secondary-foreground);
+                    border: 1px solid var(--border);
+                    }
+
+                    .psm-office-apply .theme-muted-panel {
+                    background: var(--primary);
+                    border: 1px solid var(--border);
+                    color: var(--mcd-white);
+                    }
+
+                    .psm-office-apply .theme-muted-panel .text-muted,
+                    .psm-office-apply .theme-muted-panel .fw-semibold,
+                    .psm-office-apply .theme-muted-panel .text-dark {
+                    color: var(--mcd-white) !important;
+                    }
+
+                    .psm-office-apply .theme-muted-panel p {
+                    color: var(--mcd-white) !important;
+                    }
+
+                    html[data-theme='dark'] .psm-office-apply .theme-muted-panel {
+                    background: linear-gradient(180deg, #da291c 0%, #b91c1c 100%);
+                    border-color: rgba(255, 255, 255, 0.08) !important;
+                    }
+
+                    .psm-office-apply .theme-metric-box {
+                    background: var(--primary);
+                    border: 1px solid var(--border);
+                    color: var(--secondary);
+                    }
+
+                    .psm-office-apply .theme-metric-box,
+                    .psm-office-apply .theme-muted-panel {
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+                    }
+
+                    .psm-office-apply .theme-metric-box .text-muted,
+                    .psm-office-apply .theme-metric-box .text-dark {
+                    color: var(--secondary) !important;
+                    }
+
+                    .psm-office-apply .theme-metric-box .text-muted {
+                    color: var(--mcd-white) !important;
+                    }
+
+                    .psm-office-apply .survey_question {
+                    background: var(--muted) !important;
+                    border-color: var(--border) !important;
+                    color: var(--foreground);
+                    }
+
+                    html[data-theme='dark'] .psm-office-apply .survey_question {
+                    background: rgba(255, 255, 255, 0.06) !important;
+                    border-color: rgba(255, 255, 255, 0.08) !important;
+                    }
+
+                    .psm-office-apply .survey_question h5,
+                    .psm-office-apply .survey_question .form-check-label,
+                    .psm-office-apply .survey_question .badge {
+                    color: var(--foreground) !important;
+                    }
+
+                    .psm-office-apply .survey_question .text-muted {
+                    color: var(--muted-foreground) !important;
+                    }
+
+                    .psm-office-apply .survey_question .badge.text-bg-light {
+                    background: var(--card) !important;
+                    color: var(--foreground) !important;
+                    border-color: var(--border) !important;
+                    }
+
+                    .psm-office-apply .form-control,
+                    .psm-office-apply .form-select,
+                    .psm-office-apply textarea,
+                    .psm-office-apply input[type="text"],
+                    .psm-office-apply input[type="email"],
+                    .psm-office-apply input[type="tel"],
+                    .psm-office-apply input[type="number"],
+                    .psm-office-apply input[type="date"] {
+                    background-color: var(--card) !important;
+                    color: var(--foreground) !important;
+                    border-color: var(--border) !important;
+                    }
+
+                    html[data-theme='dark'] .psm-office-apply .form-label,
+                    html[data-theme='dark'] .psm-office-apply label,
+                    html[data-theme='dark'] .psm-office-apply .question_input,
+                    html[data-theme='dark'] .psm-office-apply .form-check-label {
+                    color: #f5f5f4 !important;
+                    }
+
+                    html[data-theme='dark'] .psm-office-apply .form-control,
+                    html[data-theme='dark'] .psm-office-apply .form-select,
+                    html[data-theme='dark'] .psm-office-apply textarea,
+                    html[data-theme='dark'] .psm-office-apply input[type="text"],
+                    html[data-theme='dark'] .psm-office-apply input[type="email"],
+                    html[data-theme='dark'] .psm-office-apply input[type="tel"],
+                    html[data-theme='dark'] .psm-office-apply input[type="number"],
+                    html[data-theme='dark'] .psm-office-apply input[type="date"] {
+                    background: #4b4743 !important;
+                    color: #f5f5f4 !important;
+                    border-color: #6b655f !important;
+                    }
+
+                    .psm-office-apply .form-control::placeholder,
+                    .psm-office-apply .form-select::placeholder,
+                    .psm-office-apply textarea::placeholder {
+                    color: var(--muted-foreground) !important;
+                    }
+
+                    html[data-theme='dark'] .psm-office-apply .form-control::placeholder,
+                    html[data-theme='dark'] .psm-office-apply .form-select::placeholder,
+                    html[data-theme='dark'] .psm-office-apply textarea::placeholder {
+                    color: #d6d3d1 !important;
+                    opacity: 0.72;
+                    }
+
+                    .psm-office-apply .form-check-input {
+                    background-color: var(--card) !important;
+                    border-color: var(--border) !important;
+                    }
+
+                    html[data-theme='dark'] .psm-office-apply .form-check-input {
+                    background-color: #3a3632 !important;
+                    border-color: #6b655f !important;
+                    }
+
+                    .psm-office-apply .form-check-input:checked {
+                    background-color: var(--primary) !important;
+                    border-color: var(--primary) !important;
+                    }
+                </style>
+
+                <section class="py-5 psm-office-apply-section" style="background: var(--background);">
+                    <div class="container psm-office-apply-container">
+                        <div class="row justify-content-center mb-4">
+                            <div class="col-xl-10 col-lg-11">
+                                <div class="text-center mb-4 psm-office-apply-header">
+                                    <span class="badge rounded-pill hero-badge px-3 py-2 mb-3">Office
+                                        Recruitment</span>
+                                    <h1 class="display-6 fw-bold hero-title mb-3 psm-office-apply-title">
+                                        <t t-esc="job.name" />
+                                    </h1>
+                                    <p class="lead hero-subtitle mb-0 psm-office-apply-subtitle">
+                                        Hoàn tất thông tin ứng tuyển để bộ phận tuyển dụng xem xét
+                                        hồ sơ của bạn.
+                                    </p>
+                                </div>
+
+                                <t t-if="not has_property_schema">
+                                    <div class="alert alert-warning text-center shadow-sm">
+                                        <h4 class="alert-heading mb-3">
+                                            <i class="fa fa-exclamation-triangle me-2" />Chưa thiết
+                                            lập biểu mẫu </h4>
+                                        <p class="mb-0">
+                                            Vị trí này chưa được thiết lập biểu mẫu ứng tuyển trực
+                                            tuyến. Vui lòng quay lại sau hoặc liên hệ bộ phận nhân
+                                            sự để được hỗ trợ.
+                                        </p>
+                                    </div>
+                                </t>
+
+                                <t t-else="">
+                                    <form t-att-action="submit_url" method="post"
+                                        class="js_website_submit_form psm-office-apply-form" enctype="multipart/form-data">
+                                        <input type="hidden" name="csrf_token"
+                                            t-att-value="request.csrf_token()" />
+                                        <input type="hidden" name="job_id" t-att-value="job.id" />
+                                        <input type="hidden" name="apply_origin"
+                                            t-att-value="apply_origin" />
+                                        <input type="hidden" name="x_psm_0205_recruitment_type" value="office" />
+                                        <input type="hidden" name="line_id"
+                                            t-if="source_context.get('line_id')"
+                                            t-att-value="source_context['line_id']" />
+                                        <input type="hidden" name="request_id"
+                                            t-if="source_context.get('request_id')"
+                                            t-att-value="source_context['request_id']" />
+                                        <input type="hidden" name="schedule_id" t-if="schedule"
+                                            t-att-value="schedule.id" />
+
+                                        <div class="card hero-card psm-office-hero-card mb-4"
+                                            style="border-radius: 24px;">
+                                            <div class="card-body p-4 p-lg-5">
+                                                <div class="row g-4 align-items-start psm-office-hero-grid">
+                                                    <div class="col-lg-7 psm-office-hero-main">
+                                                        <div class="d-flex flex-column gap-3">
+                                                            <div
+                                                                class="d-flex align-items-start gap-3">
+                                                                <div
+                                                                    class="rounded-circle d-inline-flex align-items-center justify-content-center flex-shrink-0"
+                                                                    style="width: 48px; height: 48px; background: var(--secondary); color: var(--secondary-foreground);">
+                                                                    <i class="fa fa-briefcase" />
+                                                                </div>
+                                                                <div>
+                                                                    <div
+                                                                        class="text-muted small text-uppercase fw-semibold">Vị
+                                                                        trí</div>
+                                                                    <div class="fw-bold text-dark">
+                                                                        <t t-esc="job.name" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div
+                                                                class="d-flex align-items-start gap-3"
+                                                                t-if="job.company_id">
+                                                                <div
+                                                                    class="rounded-circle d-inline-flex align-items-center justify-content-center flex-shrink-0"
+                                                                    style="width: 48px; height: 48px; background: var(--primary); color: var(--primary-foreground);">
+                                                                    <i class="fa fa-building-o" />
+                                                                </div>
+                                                                <div>
+                                                                    <div
+                                                                        class="text-muted small text-uppercase fw-semibold">Công
+                                                                        ty</div>
+                                                                    <div
+                                                                        class="fw-semibold text-dark">
+                                                                        <t
+                                                                            t-esc="job.company_id.name" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div
+                                                                class="d-flex align-items-start gap-3"
+                                                                t-if="job.department_id">
+                                                                <div
+                                                                    class="rounded-circle d-inline-flex align-items-center justify-content-center flex-shrink-0"
+                                                                    style="width: 48px; height: 48px; background: var(--foreground); color: var(--background);">
+                                                                    <i class="fa fa-sitemap" />
+                                                                </div>
+                                                                <div>
+                                                                    <div
+                                                                        class="text-muted small text-uppercase fw-semibold">Phòng
+                                                                        ban</div>
+                                                                    <div
+                                                                        class="fw-semibold text-dark">
+                                                                        <t
+                                                                            t-esc="job.department_id.name" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div
+                                                                class="d-flex align-items-start gap-3"
+                                                                t-if="job.address_id">
+                                                                <div
+                                                                    class="rounded-circle d-inline-flex align-items-center justify-content-center flex-shrink-0"
+                                                                    style="width: 48px; height: 48px; background: var(--card); color: var(--foreground); border: 1px solid var(--border);">
+                                                                    <i class="fa fa-map-marker" />
+                                                                </div>
+                                                                <div>
+                                                                    <div
+                                                                        class="text-muted small text-uppercase fw-semibold">Địa
+                                                                        điểm</div>
+                                                                    <div
+                                                                        class="fw-semibold text-dark">
+                                                                        <t
+                                                                            t-esc="job.address_id.display_name" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-5 psm-office-hero-note-col">
+                                                        <div
+                                                            class="rounded-4 h-100 p-4 theme-muted-panel">
+                                                            <div
+                                                                class="small text-uppercase fw-semibold mb-2"
+                                                                style="color: #FFC72C;">Lưu ý</div>
+                                                            <p class="mb-3">
+                                                                Vui lòng điền đầy đủ thông tin và
+                                                                đính kèm CV mới nhất. Hồ sơ hợp lệ
+                                                                sẽ được chuyển thẳng vào quy trình
+                                                                tuyển dụng văn phòng.
+                                                            </p>
+                                                            <p class="mb-3">
+                                                                Hồ sơ sẽ được xử lý qua hệ thống
+                                                                tuyển dụng dùng chung để bảo đảm lưu
+                                                                trữ applicant và khảo sát thống
+                                                                nhất.
+                                                            </p>
+                                                            <p class="mb-0"
+                                                                t-if="job.contract_type_id">
+                                                                <strong>Loại hợp đồng:</strong>
+                                                                <t t-esc="job.contract_type_id.name" />
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="alert border-0 rounded-4 mt-4 mb-0 psm-office-source-context"
+                                                    style="background: var(--primary); color: var(--primary-foreground);"
+                                                    t-if="source_context.get('source_title')">
+                                                    <div
+                                                        class="small text-uppercase fw-semibold mb-1"
+                                                        style="color: #FFC72C;">Nguồn tuyển dụng</div>
+                                                    <div class="fw-bold"
+                                                        style="color: var(--secondary);">
+                                                        <t t-esc="source_context['source_title']" />
+                                                    </div>
+                                                    <div
+                                                        t-if="source_context.get('source_subtitle')"
+                                                        style="color: var(--secondary-foreground);">
+                                                        <t t-esc="source_context['source_subtitle']" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="card survey-card mb-4"
+                                            style="border-radius: 24px;"
+                                            t-if="apply_sections">
+                                            <div class="card-header border-0 py-3 px-4"
+                                                style="background: var(--primary); border-radius: 24px 24px 0 0;">
+                                                <h4 class="mb-1 fw-bold">Application / Pre-interview form</h4>
+                                                <p class="mb-0 opacity-75">Vui lòng điền đầy đủ theo đúng các nhóm thông tin bên dưới.</p>
+                                            </div>
+                                            <div class="card-body p-4 p-lg-5">
+                                                <t t-foreach="apply_sections or []" t-as="section">
+                                                    <div class="mb-4 p-4 border rounded-4 bg-light survey_question" t-if="section.get('fields')">
+                                                        <div
+                                                            class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
+                                                            <div>
+                                                                <h5 class="fw-bold mb-2">
+                                                                    <t t-esc="section.get('title')" />
+                                                                </h5>
+                                                            </div>
+                                                            <span class="badge rounded-pill text-bg-light border">Section</span>
+                                                        </div>
+                                                        <div class="row g-4 psm-office-field-grid">
+                                                            <t t-foreach="section.get('fields') or []" t-as="field_data">
+                                                                <t t-call="M02_P0205.psm_office_job_apply_field_renderer" />
+                                                            </t>
+                                                        </div>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </div>
+
+                                        <div class="text-center mt-4 psm-office-apply-actions">
+                                            <button type="submit"
+                                                class="btn btn-lg px-5 py-3 text-white fw-bold shadow-sm theme-submit-btn psm-office-submit-btn">
+                                                Gửi hồ sơ ứng tuyển
+                                            </button>
+                                        </div>
+                                    </form>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script type="text/javascript">
+                        (function () {
+                            const documentTypeEl = document.getElementById('x_id_document_type');
+                            const documentNumberEl = document.getElementById('x_id_number');
+                            const documentHintEl = document.getElementById('x_id_number_hint');
+
+                            function updateDocumentValidationByType() {
+                                if (!documentTypeEl || !documentNumberEl) {
+                                    return;
+                                }
+
+                                const isPassport = documentTypeEl.value === 'passport';
+                                if (isPassport) {
+                                    documentNumberEl.setAttribute('pattern', '[A-Za-z0-9]{6,12}');
+                                    documentNumberEl.setAttribute('minlength', '6');
+                                    documentNumberEl.setAttribute('maxlength', '12');
+                                    documentNumberEl.removeAttribute('inputmode');
+                                    documentNumberEl.setAttribute('title', 'Hộ chiếu chỉ gồm chữ và số, độ dài từ 6 đến 12 ký tự');
+                                    if (documentHintEl) {
+                                        documentHintEl.textContent = 'Nếu chọn Hộ chiếu, vui lòng nhập chữ và số, độ dài từ 6 đến 12 ký tự.';
+                                    }
+                                } else {
+                                    documentNumberEl.setAttribute('pattern', '[0-9]{12}');
+                                    documentNumberEl.setAttribute('minlength', '12');
+                                    documentNumberEl.setAttribute('maxlength', '12');
+                                    documentNumberEl.setAttribute('inputmode', 'numeric');
+                                    documentNumberEl.setAttribute('title', 'CCCD phải gồm đúng 12 chữ số');
+                                    if (documentHintEl) {
+                                        documentHintEl.textContent = 'Nếu chọn CCCD, vui lòng nhập đúng 12 chữ số.';
+                                    }
+                                }
+                            }
+
+                            if (documentTypeEl &amp;&amp; documentNumberEl) {
+                                updateDocumentValidationByType();
+                                documentTypeEl.addEventListener('change', updateDocumentValidationByType);
+                            }
+                        })();
+                    </script>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="psm_office_job_apply_field_renderer" name="Office Job Apply Field Renderer">
+        <t t-set="field" t-value="field_data or {}" />
+        <t t-set="display_label" t-value="field.get('label') or field.get('name')" />
+        <t t-set="placeholder" t-value="field.get('placeholder') or ''" />
+        <t t-set="help_text" t-value="field.get('help_text') or ''" />
+        <t t-set="col_size" t-value="field.get('col_size') or 6" />
+        <t t-set="field_name" t-value="field.get('name')" />
+        <t t-set="field_type" t-value="field.get('type') or 'char'" />
+        <t t-set="field_required" t-value="field.get('required')" />
+        <t t-set="field_widget" t-value="field.get('widget')" />
+        <div t-if="field_name and field.get('is_active', True)" t-attf-class="col-md-#{col_size} mb-1 psm-office-field-col">
+            <label class="form-label fw-bold text-dark">
+                <t t-esc="display_label" />
+                <span t-if="field_required" class="text-danger"> *</span>
+            </label>
+            <p class="form-text mt-0 mb-2 text-muted" t-if="help_text">
+                <t t-esc="help_text" />
+            </p>
+
+            <t t-if="field_widget == 'file' or field_name in ['x_cv_attachment', 'x_portrait_image']">
+                <input type="file" t-att-name="field_name"
+                    t-attf-class="form-control form-control-lg #{'is-invalid' if error and error.get(field_name) else ''}"
+                    t-att-accept="'image/*' if field_name == 'x_portrait_image' else None"
+                    t-att-required="field_required" />
+            </t>
+
+            <t t-if="field_name == 'x_id_document_type' and not (field_widget == 'file' or field_name in ['x_cv_attachment', 'x_portrait_image'])">
+                <t t-set="document_options" t-value="field.get('selection') or [{'value': 'citizen_id', 'label': 'CCCD'}, {'value': 'passport', 'label': 'Hộ chiếu'}]"/>
+                <t t-set="selected_document_type" t-value="default.get('x_id_document_type', field.get('default') or 'citizen_id') if default else (field.get('default') or 'citizen_id')"/>
+                <select
+                    id="x_id_document_type"
+                    t-att-name="field_name"
+                    t-attf-class="form-select form-select-lg #{'is-invalid' if error and error.get(field_name) else ''}"
+                    t-att-required="field_required">
+                    <t t-foreach="document_options" t-as="opt">
+                        <option
+                            t-att-value="opt.get('value')"
+                            t-att-selected="'selected' if str(selected_document_type) == str(opt.get('value')) else None"
+                        ><t t-esc="opt.get('label')" /></option>
+                    </t>
+                </select>
+            </t>
+
+            <t t-if="field_name == 'x_id_number' and not (field_widget == 'file' or field_name in ['x_cv_attachment', 'x_portrait_image'])">
+                <input type="text"
+                    id="x_id_number"
+                    t-att-name="field_name"
+                    t-attf-class="form-control form-control-lg #{'is-invalid' if error and error.get(field_name) else ''}"
+                    t-att-required="field_required"
+                    pattern="[0-9]{12}"
+                    minlength="12"
+                    maxlength="12"
+                    inputmode="numeric"
+                    title="CCCD phải gồm đúng 12 chữ số"
+                    t-att-value="default.get(field_name, field.get('default') or '') if default else (field.get('default') or '')" />
+                <small id="x_id_number_hint" class="text-muted mt-1 d-block">Nếu chọn CCCD, vui lòng nhập đúng 12 chữ số.</small>
+            </t>
+
+            <t t-if="field_type in ['char', 'integer', 'float', 'monetary', 'date', 'datetime'] and field_name not in ['x_id_number'] and not (field_widget == 'file' or field_name in ['x_cv_attachment', 'x_portrait_image'])">
+                <t t-set="input_type"
+                    t-value="'email' if field_name == 'email_from' else ('tel' if field_name == 'partner_phone' else ('number' if field_type in ['integer', 'float', 'monetary'] else ('date' if field_type == 'date' else ('datetime-local' if field_type == 'datetime' else 'text'))))" />
+                <input
+                    t-att-type="input_type"
+                    t-att-name="field_name"
+                    t-attf-class="form-control form-control-lg #{'is-invalid' if error and error.get(field_name) else ''}"
+                    t-att-placeholder="placeholder or None"
+                    t-att-required="field_required"
+                    t-att-step="'any' if field_type in ['float', 'monetary'] else None"
+                    t-att-value="default.get(field_name, field.get('default') or '') if default else (field.get('default') or '')" />
+            </t>
+
+            <t t-if="field_type in ['text', 'html']">
+                <textarea t-att-name="field_name"
+                    t-attf-class="form-control #{'is-invalid' if error and error.get(field_name) else ''}"
+                    rows="4"
+                    t-att-placeholder="placeholder or None"
+                    t-att-required="field_required"
+                ><t t-esc="default.get(field_name, field.get('default') or '') if default else (field.get('default') or '')" /></textarea>
+            </t>
+
+            <t t-if="field_type == 'selection' and field_name not in ['x_id_document_type']">
+                <select t-att-name="field_name"
+                    t-attf-class="form-select form-select-lg #{'is-invalid' if error and error.get(field_name) else ''}"
+                    t-att-required="field_required">
+                    <option value="">-- Chọn --</option>
+                    <t t-foreach="field.get('selection') or []" t-as="opt">
+                        <option
+                            t-att-value="opt.get('value')"
+                            t-att-selected="'selected' if (default and str(default.get(field_name, '')) == str(opt.get('value'))) else None"
+                        ><t t-esc="opt.get('label')" /></option>
+                    </t>
+                </select>
+            </t>
+
+            <t t-if="field_type == 'boolean'">
+                <div class="form-check pt-2">
+                    <input class="form-check-input" type="checkbox"
+                        t-att-name="field_name"
+                        t-att-id="'checkbox_' + field_name"
+                        value="1"
+                        t-att-checked="'checked' if default and str(default.get(field_name, '')) in ['1', 'true', 'True'] else None" />
+                    <label class="form-check-label"
+                        t-att-for="'checkbox_' + field_name">
+                        <t t-esc="display_label" />
+                    </label>
+                </div>
+            </t>
+
+            <t t-if="field_type not in ['char', 'integer', 'float', 'monetary', 'date', 'datetime', 'text', 'html', 'selection', 'boolean'] and not (field_widget == 'file' or field_name in ['x_cv_attachment', 'x_portrait_image'])">
+                <input type="text"
+                    t-att-name="field_name"
+                    t-attf-class="form-control form-control-lg #{'is-invalid' if error and error.get(field_name) else ''}"
+                    t-att-placeholder="placeholder or None"
+                    t-att-required="field_required"
+                    t-att-value="default.get(field_name, field.get('default') or '') if default else (field.get('default') or '')" />
+            </t>
+
+            <div t-if="error and error.get(field_name)" class="invalid-feedback d-block">
+                <t t-esc="error.get(field_name)" />
+            </div>
+        </div>
+    </template>
+
+</odoo>

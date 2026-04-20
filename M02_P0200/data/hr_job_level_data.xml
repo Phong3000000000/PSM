@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Grade 6 -->
+        <record id="job_level_manager_director" model="hr.job.level">
+            <field name="name">Manager Director</field>
+            <field name="code">MANAGER_DIRECTOR</field>
+            <field name="grade_id" ref="job_grade_6"/>
+            <field name="sequence">10</field>
+        </record>
+        <record id="job_level_general_manager" model="hr.job.level">
+            <field name="name">General Manager</field>
+            <field name="code">GENERAL_MANAGER</field>
+            <field name="grade_id" ref="job_grade_6"/>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- Grade 5a -->
+        <record id="job_level_deputy_gm" model="hr.job.level">
+            <field name="name">Deputy GM</field>
+            <field name="code">DEPUTY_GM</field>
+            <field name="grade_id" ref="job_grade_5a"/>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- Grade 5b -->
+        <record id="job_level_c_level" model="hr.job.level">
+            <field name="name">C-level</field>
+            <field name="code">C_LEVEL</field>
+            <field name="grade_id" ref="job_grade_5b"/>
+            <field name="sequence">40</field>
+        </record>
+        <record id="job_level_vice_president" model="hr.job.level">
+            <field name="name">Vice President</field>
+            <field name="code">VICE_PRESIDENT</field>
+            <field name="grade_id" ref="job_grade_5b"/>
+            <field name="sequence">50</field>
+        </record>
+
+        <!-- Grade 4a -->
+        <record id="job_level_director" model="hr.job.level">
+            <field name="name">Director</field>
+            <field name="code">DIRECTOR</field>
+            <field name="grade_id" ref="job_grade_4a"/>
+            <field name="sequence">60</field>
+        </record>
+        <record id="job_level_sr_function_head" model="hr.job.level">
+            <field name="name">Sr. Function Head</field>
+            <field name="code">SR_FUNCTION_HEAD</field>
+            <field name="grade_id" ref="job_grade_4a"/>
+            <field name="sequence">70</field>
+        </record>
+
+        <!-- Grade 4b -->
+        <record id="job_level_function_head" model="hr.job.level">
+            <field name="name">Function Head</field>
+            <field name="code">FUNCTION_HEAD</field>
+            <field name="grade_id" ref="job_grade_4b"/>
+            <field name="sequence">80</field>
+        </record>
+
+        <!-- Grade 4c -->
+        <record id="job_level_jr_function_head" model="hr.job.level">
+            <field name="name">Jr. Function Head</field>
+            <field name="code">JR_FUNCTION_HEAD</field>
+            <field name="grade_id" ref="job_grade_4c"/>
+            <field name="sequence">90</field>
+        </record>
+
+        <!-- Grade 3a -->
+        <record id="job_level_sr_manager" model="hr.job.level">
+            <field name="name">Sr. Manager</field>
+            <field name="code">SR_MANAGER</field>
+            <field name="grade_id" ref="job_grade_3a"/>
+            <field name="sequence">100</field>
+        </record>
+
+        <!-- Grade 3b -->
+        <record id="job_level_manager" model="hr.job.level">
+            <field name="name">Manager</field>
+            <field name="code">MANAGER</field>
+            <field name="grade_id" ref="job_grade_3b"/>
+            <field name="sequence">110</field>
+        </record>
+
+        <!-- Grade 2a -->
+        <record id="job_level_sr_consultant" model="hr.job.level">
+            <field name="name">Sr. Consultant</field>
+            <field name="code">SR_CONSULTANT</field>
+            <field name="grade_id" ref="job_grade_2a"/>
+            <field name="sequence">120</field>
+        </record>
+        <record id="job_level_jr_manager" model="hr.job.level">
+            <field name="name">Jr. Manager</field>
+            <field name="code">JR_MANAGER</field>
+            <field name="grade_id" ref="job_grade_2a"/>
+            <field name="sequence">130</field>
+        </record>
+
+        <!-- Grade 2b -->
+        <record id="job_level_consultant" model="hr.job.level">
+            <field name="name">Consultant</field>
+            <field name="code">CONSULTANT</field>
+            <field name="grade_id" ref="job_grade_2b"/>
+            <field name="sequence">140</field>
+        </record>
+        <record id="job_level_lead_g2" model="hr.job.level">
+            <field name="name">Lead</field>
+            <field name="code">LEAD_G2</field>
+            <field name="grade_id" ref="job_grade_2b"/>
+            <field name="sequence">150</field>
+        </record>
+
+        <!-- Grade 1a -->
+        <record id="job_level_specialist" model="hr.job.level">
+            <field name="name">Specialist</field>
+            <field name="code">SPECIALIST</field>
+            <field name="grade_id" ref="job_grade_1a"/>
+            <field name="sequence">160</field>
+        </record>
+        <record id="job_level_lead_g1" model="hr.job.level">
+            <field name="name">Lead</field>
+            <field name="code">LEAD_G1</field>
+            <field name="grade_id" ref="job_grade_1a"/>
+            <field name="sequence">170</field>
+        </record>
+
+        <!-- Grade 1b -->
+        <record id="job_level_jr_specialist" model="hr.job.level">
+            <field name="name">Jr. Specialist</field>
+            <field name="code">JR_SPECIALIST</field>
+            <field name="grade_id" ref="job_grade_1b"/>
+            <field name="sequence">180</field>
+        </record>
+        <record id="job_level_supervisor" model="hr.job.level">
+            <field name="name">Supervisor</field>
+            <field name="code">SUPERVISOR</field>
+            <field name="grade_id" ref="job_grade_1b"/>
+            <field name="sequence">190</field>
+        </record>
+        <record id="job_level_team_leader" model="hr.job.level">
+            <field name="name">Team leader</field>
+            <field name="code">TEAM_LEADER</field>
+            <field name="grade_id" ref="job_grade_1b"/>
+            <field name="sequence">200</field>
+        </record>
+
+        <!-- Grade 1c -->
+        <record id="job_level_coordinator" model="hr.job.level">
+            <field name="name">Coordinator</field>
+            <field name="code">COORDINATOR</field>
+            <field name="grade_id" ref="job_grade_1c"/>
+            <field name="sequence">210</field>
+        </record>
+
+        <!-- Grade 1d -->
+        <record id="job_level_assistant" model="hr.job.level">
+            <field name="name">Assistant</field>
+            <field name="code">ASSISTANT</field>
+            <field name="grade_id" ref="job_grade_1d"/>
+            <field name="sequence">220</field>
+        </record>
+    </data>
+</odoo>

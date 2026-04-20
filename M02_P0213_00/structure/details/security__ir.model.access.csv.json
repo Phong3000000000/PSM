@@ -1,0 +1,151 @@
+{
+  "file": "security/ir.model.access.csv",
+  "type": "security_csv",
+  "bucket": "security",
+  "summary": "13 access rules",
+  "access_rules": [
+    {
+      "id": "access_mail_activity_internal_user",
+      "name": "mail.activity.internal.user",
+      "model_id": "mail.model_mail_activity",
+      "group_id": "base.group_user",
+      "model": "mail.model_mail_activity",
+      "perm_read": true,
+      "perm_write": true,
+      "perm_create": true,
+      "perm_unlink": true
+    },
+    {
+      "id": "access_approval_request_internal_user",
+      "name": "approval.request.internal.user",
+      "model_id": "approvals.model_approval_request",
+      "group_id": "base.group_user",
+      "model": "approvals.model_approval_request",
+      "perm_read": true,
+      "perm_write": true,
+      "perm_create": true,
+      "perm_unlink": true
+    },
+    {
+      "id": "access_hr_employee_internal_user",
+      "name": "hr.employee.internal.user",
+      "model_id": "hr.model_hr_employee",
+      "group_id": "base.group_user",
+      "model": "hr.model_hr_employee",
+      "perm_read": true,
+      "perm_write": true,
+      "perm_create": false,
+      "perm_unlink": false
+    },
+    {
+      "id": "access_survey_survey_portal_user",
+      "name": "survey.survey.portal.user",
+      "model_id": "survey.model_survey_survey",
+      "group_id": "base.group_portal",
+      "model": "survey.model_survey_survey",
+      "perm_read": true,
+      "perm_write": false,
+      "perm_create": false,
+      "perm_unlink": false
+    },
+    {
+      "id": "access_survey_survey_internal_user",
+      "name": "survey.survey.internal.user",
+      "model_id": "survey.model_survey_survey",
+      "group_id": "base.group_user",
+      "model": "survey.model_survey_survey",
+      "perm_read": true,
+      "perm_write": true,
+      "perm_create": false,
+      "perm_unlink": false
+    },
+    {
+      "id": "access_survey_user_input_portal_user",
+      "name": "survey.user_input.portal.user",
+      "model_id": "survey.model_survey_user_input",
+      "group_id": "base.group_portal",
+      "model": "survey.model_survey_user_input",
+      "perm_read": true,
+      "perm_write": true,
+      "perm_create": true,
+      "perm_unlink": false
+    },
+    {
+      "id": "access_survey_user_input_internal_user",
+      "name": "survey.user_input.internal.user",
+      "model_id": "survey.model_survey_user_input",
+      "group_id": "base.group_user",
+      "model": "survey.model_survey_user_input",
+      "perm_read": true,
+      "perm_write": true,
+      "perm_create": true,
+      "perm_unlink": true
+    },
+    {
+      "id": "access_survey_question_portal_user",
+      "name": "survey.question.portal.user",
+      "model_id": "survey.model_survey_question",
+      "group_id": "base.group_portal",
+      "model": "survey.model_survey_question",
+      "perm_read": true,
+      "perm_write": false,
+      "perm_create": false,
+      "perm_unlink": false
+    },
+    {
+      "id": "access_survey_question_internal_user",
+      "name": "survey.question.internal.user",
+      "model_id": "survey.model_survey_question",
+      "group_id": "base.group_user",
+      "model": "survey.model_survey_question",
+      "perm_read": true,
+      "perm_write": true,
+      "perm_create": false,
+      "perm_unlink": false
+    },
+    {
+      "id": "access_survey_question_answer_portal_user",
+      "name": "survey.question.answer.portal.user",
+      "model_id": "survey.model_survey_question_answer",
+      "group_id": "base.group_portal",
+      "model": "survey.model_survey_question_answer",
+      "perm_read": true,
+      "perm_write": false,
+      "perm_create": false,
+      "perm_unlink": false
+    },
+    {
+      "id": "access_survey_question_answer_internal_user",
+      "name": "survey.question.answer.internal.user",
+      "model_id": "survey.model_survey_question_answer",
+      "group_id": "base.group_user",
+      "model": "survey.model_survey_question_answer",
+      "perm_read": true,
+      "perm_write": true,
+      "perm_create": false,
+      "perm_unlink": false
+    },
+    {
+      "id": "access_hr_contract_type_internal_user",
+      "name": "hr.contract.type.internal.user",
+      "model_id": "hr.model_hr_contract_type",
+      "group_id": "base.group_user",
+      "model": "hr.model_hr_contract_type",
+      "perm_read": true,
+      "perm_write": true,
+      "perm_create": false,
+      "perm_unlink": false
+    },
+    {
+      "id": "access_hr_departure_reason_internal_user",
+      "name": "hr.departure.reason.internal.user",
+      "model_id": "hr.model_hr_departure_reason",
+      "group_id": "base.group_user",
+      "model": "hr.model_hr_departure_reason",
+      "perm_read": true,
+      "perm_write": false,
+      "perm_create": false,
+      "perm_unlink": false
+    }
+  ]
+}

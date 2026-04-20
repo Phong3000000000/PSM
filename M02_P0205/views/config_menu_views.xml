@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="action_psm_0205_recruitment_settings_server" model="ir.actions.server">
+            <field name="name">Cấu hình Tuyển dụng Khối Văn phòng</field>
+            <field name="model_id" ref="base.model_res_company"/>
+            <field name="state">code</field>
+            <field name="code"><![CDATA[
+if not env.user.has_group("M02_P0200.GDH_RST_HR_HEAD_M"):
+    action = {
+        "type": "ir.actions.client",
+        "tag": "display_notification",
+        "params": {
+            "title": "Không có quyền truy cập",
+            "message": "Bạn không có quyền truy cập cấu hình Tuyển dụng Khối Văn phòng.",
+            "type": "warning",
+            "sticky": False,
+        }
+    }
+else:
+    action = {
+        "type": "ir.actions.act_window",
+        "name": "Cấu hình Tuyển dụng Khối Văn phòng",
+        "res_model": "res.company",
+        "res_id": env.company.id,
+        "view_mode": "form",
+        "views": [(env.ref("M02_P0205.view_psm_0205_company_recruitment_config_form").id, "form")],
+        "target": "current",
+    }
+            ]]></field>
+        </record>
+
+        <menuitem id="menu_psm_0205_recruitment_settings"
+            name="Tuyển dụng Khối Văn phòng"
+            parent="hr_recruitment.menu_hr_recruitment_configuration"
+            action="action_psm_0205_recruitment_settings_server"
+            groups="M02_P0200.GDH_RST_HR_HEAD_M"
+            sequence="12" />
+    </data>
+</odoo>

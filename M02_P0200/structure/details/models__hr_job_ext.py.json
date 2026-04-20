@@ -1,0 +1,66 @@
+{
+  "file": "models/hr_job_ext.py",
+  "type": "python",
+  "bucket": "models",
+  "summary": "models: hr.job; 1 classes; 3 fields",
+  "classes": [
+    {
+      "python_class": "HrJob",
+      "description": "Extends hr.job in models/hr_job_ext.py.",
+      "model": null,
+      "inherit": "hr.job",
+      "order": null,
+      "rec_name": null,
+      "fields": [
+        {
+          "name": "code",
+          "type": "Char",
+          "string": "Mã Viết Tắt",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        },
+        {
+          "name": "name_ll",
+          "type": "Char",
+          "string": "Tên Tiếng Việt",
+          "comodel": null,
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": "Tên vị trí bằng tiếng Việt"
+        },
+        {
+          "name": "level_id",
+          "type": "Many2one",
+          "string": "Level",
+          "comodel": "hr.job.level",
+          "required": false,
+          "readonly": false,
+          "store": null,
+          "related": null,
+          "compute": null,
+          "selection": null,
+          "default": null,
+          "tracking": null,
+          "help": null
+        }
+      ],
+      "methods": [],
+      "kind": "inherit_only"
+    }
+  ],
+  "routes": []
+}

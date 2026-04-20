@@ -18,7 +18,7 @@ class SurveyUserInput(models.Model):
         ACTIVITY_SUMMARY = "Hoàn thành Exit Interview"
 
         exit_survey = self.env.ref(
-            "M02_P0214_00.survey_exit_interview", raise_if_not_found=False
+            "M02_P0213_00.psm_0213_survey_exit_interview", raise_if_not_found=False
         )
 
         for user_input in self:
@@ -62,10 +62,10 @@ class SurveyUserInput(models.Model):
                     
                     # === AUTO SEND BHXH EMAIL ===
                     # Tìm resignation request của nhân viên
-                    rst_category = self.env.ref("M02_P0214_00.approval_category_resignation", raise_if_not_found=False)
+                    rst_category = self.env.ref("M02_P0213_00.psm_0213_approval_category_resignation", raise_if_not_found=False)
                     if rst_category:
                         resignation_request = self.env['approval.request'].search([
-                            ('employee_id', '=', employee.id),
+                            ('x_psm_0213_employee_id', '=', employee.id),
                             ('category_id', '=', rst_category.id),
                             ('request_status', '=', 'approved'),
                         ], order='create_date desc', limit=1)
