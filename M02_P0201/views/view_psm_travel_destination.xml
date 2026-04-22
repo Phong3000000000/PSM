@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_psm_travel_destination_list" model="ir.ui.view">
+        <field name="name">x_psm_travel_destination.list</field>
+        <field name="model">x_psm_travel_destination</field>
+        <field name="arch" type="xml">
+            <list string="Destinations">
+                <field name="x_psm_name"/>
+                <field name="x_psm_state_id"/>
+                <field name="x_psm_country_id"/>
+                <field name="x_psm_is_international"/>
+                <field name="x_psm_zone_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_psm_travel_destination_form" model="ir.ui.view">
+        <field name="name">x_psm_travel_destination.form</field>
+        <field name="model">x_psm_travel_destination</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <form string="Destination">
+                <sheet>
+                    <group>
+                        <group string="Thong tin co ban">
+                            <field name="x_psm_state_id" options="{'no_create': True}"/>
+                            <field name="x_psm_name"/>
+                            <field name="x_psm_country_id"/>
+                            <field name="x_psm_is_international" readonly="1"/>
+                        </group>
+                        <group string="Phan loai">
+                            <field name="x_psm_zone_id"/>
+                            <field name="x_psm_is_adjacent_hcm" invisible="x_psm_is_international"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_psm_travel_destination" model="ir.actions.act_window">
+        <field name="name">Destinations</field>
+        <field name="res_model">x_psm_travel_destination</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_psm_travel_destination_view_list" model="ir.actions.act_window.view">
+        <field name="sequence">10</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_psm_travel_destination_list"/>
+        <field name="act_window_id" ref="action_psm_travel_destination"/>
+    </record>
+
+    <record id="action_psm_travel_destination_view_form" model="ir.actions.act_window.view">
+        <field name="sequence">20</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_psm_travel_destination_form"/>
+        <field name="act_window_id" ref="action_psm_travel_destination"/>
+    </record>
+</odoo>

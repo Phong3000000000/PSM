@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="m02_p0501_task_b02_si_area_survey" model="project.task">
+            <field name="name">B02 - S&amp;I Area Survey</field>
+            <field name="project_id" ref="m02_p0501_store_package_test01"/>
+            <field name="stage_id" ref="m02_p0501_task_stage_done"/>
+            <field name="sequence">10</field>
+            <field name="description">Step B02. Owner: S&amp;I. Output: survey inputs for the candidate location.</field>
+        </record>
+        <record id="m02_p0501_task_b03_dev_pmo_analysis" model="project.task">
+            <field name="name">B03 - DEV PMO Analysis</field>
+            <field name="project_id" ref="m02_p0501_store_package_test01"/>
+            <field name="stage_id" ref="m02_p0501_task_stage_done"/>
+            <field name="sequence">20</field>
+            <field name="description">Step B03. Owner: DEV PMO. Output: analysis note for package scope and constraints.</field>
+        </record>
+        <record id="m02_p0501_task_b04_find_location_update_dev_re" model="project.task">
+            <field name="name">B04 - DEV Find Location and Update DEV-RE</field>
+            <field name="project_id" ref="m02_p0501_store_package_test01"/>
+            <field name="stage_id" ref="m02_p0501_task_stage_done"/>
+            <field name="sequence">30</field>
+            <field name="description">Step B04. Owner: DEV. Output: location shortlist and updated DEV-RE notes.</field>
+        </record>
+        <record id="m02_p0501_task_b05_dev_investment_budget" model="project.task">
+            <field name="name">B05 - DEV Investment Budget</field>
+            <field name="project_id" ref="m02_p0501_store_package_test01"/>
+            <field name="stage_id" ref="m02_p0501_task_stage_done"/>
+            <field name="sequence">40</field>
+            <field name="description">Step B05. Owner: DEV/FIN. Output: investment budget draft.</field>
+        </record>
+        <record id="m02_p0501_task_b06_dev_pipeline_report" model="project.task">
+            <field name="name">B06 - DEV Pipeline Report</field>
+            <field name="project_id" ref="m02_p0501_store_package_test01"/>
+            <field name="stage_id" ref="m02_p0501_task_stage_done"/>
+            <field name="sequence">50</field>
+            <field name="description">Step B06. Owner: DEV. Output: pipeline status report for the package.</field>
+        </record>
+        <record id="m02_p0501_task_b07_dev_sales_projection" model="project.task">
+            <field name="name">B07 - DEV Sales Projection</field>
+            <field name="project_id" ref="m02_p0501_store_package_test01"/>
+            <field name="stage_id" ref="m02_p0501_task_stage_done"/>
+            <field name="sequence">60</field>
+            <field name="description">Step B07. Owner: DEV. Output: sales projection draft for the location.</field>
+        </record>
+        <record id="m02_p0501_task_b08_dev_comparable_approach" model="project.task">
+            <field name="name">B08 - DEV Comparable Approach</field>
+            <field name="project_id" ref="m02_p0501_store_package_test01"/>
+            <field name="stage_id" ref="m02_p0501_task_stage_done"/>
+            <field name="sequence">70</field>
+            <field name="description">Step B08. Owner: DEV. Output: comparable approach note.</field>
+        </record>
+        <record id="m02_p0501_task_b09_dev_pl_assessment" model="project.task">
+            <field name="name">B09 - DEV P&amp;L Assessment</field>
+            <field name="project_id" ref="m02_p0501_store_package_test01"/>
+            <field name="stage_id" ref="m02_p0501_task_stage_done"/>
+            <field name="sequence">80</field>
+            <field name="description">Step B09. Owner: DEV/FIN. Output: P&amp;L assessment summary.</field>
+        </record>
+        <record id="m02_p0501_task_b10_fin_ops_review_pl" model="project.task">
+            <field name="name">B10 - FIN/OPS Review P&amp;L</field>
+            <field name="project_id" ref="m02_p0501_store_package_test01"/>
+            <field name="stage_id" ref="m02_p0501_task_stage_done"/>
+            <field name="sequence">90</field>
+            <field name="description">Step B10. Owner: FIN/OPS. Output: review comments on P&amp;L.</field>
+        </record>
+        <record id="m02_p0501_task_b11_it_update_it_investment" model="project.task">
+            <field name="name">B11 - IT Update IT Investment</field>
+            <field name="project_id" ref="m02_p0501_store_package_test01"/>
+            <field name="stage_id" ref="m02_p0501_task_stage_done"/>
+            <field name="sequence">100</field>
+            <field name="description">Step B11. Owner: IT. Output: updated IT investment input.</field>
+        </record>
+        <record id="m02_p0501_task_b12_si_review_sales_projection" model="project.task">
+            <field name="name">B12 - S&amp;I Review Sales Projection</field>
+            <field name="project_id" ref="m02_p0501_store_package_test01"/>
+            <field name="stage_id" ref="m02_p0501_task_stage_done"/>
+            <field name="sequence">110</field>
+            <field name="description">Step B12. Owner: S&amp;I. Output: review note on sales projection.</field>
+        </record>
+        <record id="m02_p0501_task_b13_mkt_review_sales_projection" model="project.task">
+            <field name="name">B13 - MKT Review Sales Projection</field>
+            <field name="project_id" ref="m02_p0501_store_package_test01"/>
+            <field name="stage_id" ref="m02_p0501_task_stage_done"/>
+            <field name="sequence">120</field>
+            <field name="description">Step B13. Owner: MKT. Output: review note on sales projection.</field>
+        </record>
+        <record id="m02_p0501_task_b14_16_approval_package_prep" model="project.task">
+            <field name="name">B14-16 - Approval Package Preparation</field>
+            <field name="project_id" ref="m02_p0501_store_package_test01"/>
+            <field name="stage_id" ref="m02_p0501_task_stage_in_progress"/>
+            <field name="sequence">130</field>
+            <field name="description">Step B14-B16. Owner: PMO. Output: approval package assembled and ready for review.</field>
+        </record>
+    </data>
+</odoo>

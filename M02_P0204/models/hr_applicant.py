@@ -67,20 +67,8 @@ class HrApplicant(models.Model):
     stage_filter_type = fields.Char(
         compute="_compute_stage_filter_type",
         store=False,
-        help="Dùng để lọc stage dropdown theo 3 family office/staff/management.",
+        help="Dùng để lọc stage dropdown: store dùng position_level, office dùng 'office'",
     )
-
-    def _x_psm_normalize_stage_type(self, recruitment_type=False, position_level=False):
-        """Normalize raw recruitment hints to canonical stage family keys."""
-        if recruitment_type == 'office':
-            return 'office'
-        if recruitment_type == 'store':
-            return position_level if position_level in ('staff', 'management') else False
-        if recruitment_type in ('staff', 'management'):
-            return recruitment_type
-        if position_level in ('staff', 'management'):
-            return position_level
-        return False
 
     def _get_pipeline_stage_type(self):
         """Return the stage type key for pipeline filtering.
@@ -88,10 +76,9 @@ class HrApplicant(models.Model):
         Office jobs always use 'office'.
         """
         self.ensure_one()
-        return self._x_psm_normalize_stage_type(
-            recruitment_type=self.recruitment_type,
-            position_level=self.position_level,
-        )
+        if self.recruitment_type == 'store':
+            return self.position_level or 'store'
+        return self.recruitment_type or False
 
     @api.depends("position_level", "recruitment_type")
     def _compute_stage_filter_type(self):
@@ -115,18 +102,18 @@ class HrApplicant(models.Model):
             ])
 
         stage_type = stage_type or self._get_pipeline_stage_type()
-        if not stage_type:
-            if self.recruitment_type == 'store':
-                scope_domain.append(('id', '=', 0))
-            return scope_domain
-
-        scope_domain.append(('recruitment_type', '=', stage_type))
-        if include_office_visibility and stage_type == 'office':
+        if stage_type:
             scope_domain.extend([
                 '|',
-                ('office_pipeline_visible', '=', True),
-                ('recruitment_type', '!=', 'office'),
+                ('recruitment_type', '=', 'both'),
+                ('recruitment_type', '=', stage_type),
             ])
+            if include_office_visibility and stage_type == 'office':
+                scope_domain.extend([
+                    '|',
+                    ('office_pipeline_visible', '=', True),
+                    ('recruitment_type', '!=', 'office'),
+                ])
 
         return scope_domain
 
@@ -140,9 +127,7 @@ class HrApplicant(models.Model):
             return False
 
         stage_type = stage_type or self._get_pipeline_stage_type()
-        if self.recruitment_type == 'store' and not stage_type:
-            return False
-        if stage_type and stage.recruitment_type != stage_type:
+        if stage_type and stage.recruitment_type not in ('both', stage_type):
             return False
 
         if (
@@ -186,19 +171,33 @@ class HrApplicant(models.Model):
             elif stage_type == 'staff':
                 candidates.append('M02_P0204.stage_staff_interview_oje')
             elif stage_type == 'management':
-                candidates.append('M02_P0204.stage_mgmt_interview')
+                candidates.extend([
+                    'M02_P0204.stage_mgmt_interview',
+                    'M02_P0204.stage_store_interview',
+                ])
+            elif stage_type == 'store':
+                candidates.append('M02_P0204.stage_store_interview')
             else:
                 candidates.extend([
                     'M02_P0204.stage_mgmt_interview',
                     'M02_P0204.stage_staff_interview_oje',
+                    'M02_P0204.stage_store_interview',
                 ])
         elif key == 'oje':
             if stage_type == 'staff':
                 candidates.append('M02_P0204.stage_staff_interview_oje')
             elif stage_type == 'management':
-                candidates.append('M02_P0204.stage_mgmt_oje')
+                candidates.extend([
+                    'M02_P0204.stage_mgmt_oje',
+                    'M02_P0204.stage_store_oje',
+                ])
+            elif stage_type == 'store':
+                candidates.append('M02_P0204.stage_store_oje')
             else:
-                candidates.append('M02_P0204.stage_staff_interview_oje')
+                candidates.extend([
+                    'M02_P0204.stage_staff_interview_oje',
+                    'M02_P0204.stage_store_oje',
+                ])
         elif key == 'offer':
             if stage_type == 'office':
                 candidates.append('M02_P0205.stage_office_proposal')
@@ -244,8 +243,6 @@ class HrApplicant(models.Model):
         """Resolve a target stage using XMLID-first then name-based fallback."""
         self.ensure_one()
         stage_type = stage_type or self._get_pipeline_stage_type()
-        if self.recruitment_type == 'store' and not stage_type:
-            return self.env['hr.recruitment.stage']
         stage_model = self.env['hr.recruitment.stage'].sudo()
 
         # 1) XMLID-first lookup
@@ -272,7 +269,11 @@ class HrApplicant(models.Model):
         domain.append(('name', comparator, stage_name))
 
         if stage_type:
-            domain.append(('recruitment_type', '=', stage_type))
+            domain.extend([
+                '|',
+                ('recruitment_type', '=', 'both'),
+                ('recruitment_type', '=', stage_type),
+            ])
             if stage_type == 'office':
                 domain.extend([
                     '|',
@@ -300,6 +301,17 @@ class HrApplicant(models.Model):
             generic_domain.append(('hired_stage', '=', True))
         stage = stage_model.search(generic_domain, order='sequence asc', limit=1)
         if stage and (not stage_type or self._x_psm_stage_matches_scope(stage, stage_type=stage_type)):
+            return stage
+
+        # 4) Last fallback: globally shared stage type.
+        broad_domain = [
+            ('name', comparator, stage_name),
+            ('recruitment_type', '=', 'both'),
+        ]
+        if use_hired_flag:
+            broad_domain.append(('hired_stage', '=', True))
+        stage = stage_model.search(broad_domain, order='sequence asc', limit=1)
+        if stage:
             return stage
         return self.env['hr.recruitment.stage']
 
@@ -390,59 +402,35 @@ class HrApplicant(models.Model):
             ])
 
         if recruitment_type == 'store':
-            stage_type = position_level if position_level in ('staff', 'management') else False
-        elif recruitment_type in ('office', 'staff', 'management'):
+            stage_type = position_level or 'staff'
+        elif recruitment_type in ('office', 'staff', 'management', 'both'):
             stage_type = recruitment_type
         else:
             stage_type = False
 
-        if not stage_type:
-            return self.env['hr.recruitment.stage'].sudo()
-
-        domain.append(('recruitment_type', '=', stage_type))
-        if stage_type == 'office':
+        if stage_type:
             domain.extend([
                 '|',
-                ('office_pipeline_visible', '=', True),
-                ('recruitment_type', '!=', 'office'),
+                ('recruitment_type', '=', 'both'),
+                ('recruitment_type', '=', stage_type),
             ])
+            if stage_type == 'office':
+                domain.extend([
+                    '|',
+                    ('office_pipeline_visible', '=', True),
+                    ('recruitment_type', '!=', 'office'),
+                ])
             
         stage = self.env['hr.recruitment.stage'].sudo().search(domain, order='sequence asc', limit=1)
         if not stage and job:
-            fallback_domain = [
+            stage = self.env['hr.recruitment.stage'].sudo().search([
                 ('name', '=', stage_name),
                 '|',
                 ('job_ids', '=', False),
                 ('job_ids', '=', job.id),
-                ('recruitment_type', '=', stage_type),
-            ]
-            if stage_type == 'office':
-                fallback_domain.extend([
-                    '|',
-                    ('office_pipeline_visible', '=', True),
-                    ('recruitment_type', '!=', 'office'),
-                ])
-            stage = self.env['hr.recruitment.stage'].sudo().search(
-                fallback_domain,
-                order='sequence asc',
-                limit=1,
-            )
+            ], order='sequence asc', limit=1)
         if not stage:
-            fallback_domain = [
-                ('name', '=', stage_name),
-                ('recruitment_type', '=', stage_type),
-            ]
-            if stage_type == 'office':
-                fallback_domain.extend([
-                    '|',
-                    ('office_pipeline_visible', '=', True),
-                    ('recruitment_type', '!=', 'office'),
-                ])
-            stage = self.env['hr.recruitment.stage'].sudo().search(
-                fallback_domain,
-                order='sequence asc',
-                limit=1,
-            )
+            stage = self.env['hr.recruitment.stage'].sudo().search([('name', '=', stage_name)], order='sequence asc', limit=1)
         return stage
 
     # ==================== SURVEY ====================
@@ -1821,18 +1809,15 @@ class HrApplicant(models.Model):
         Priority: context(default_stage_filter_type) > context(position_level) >
                   context(recruitment_type) > domain(position_level) >
                   domain(recruitment_type) > job lookup.
-        Returns: 'staff' | 'management' | 'office' | False
+        Returns: 'staff' | 'management' | 'office' | 'store' | False
         """
         ctx = self.env.context
 
         # 1. Explicit stage filter (set by action_open_applicants)
-        target = ctx.get("default_stage_filter_type")
-        if target in ('office', 'staff', 'management'):
-            return target
-
-        target = self._x_psm_normalize_stage_type(
-            recruitment_type=ctx.get("default_recruitment_type"),
-            position_level=ctx.get("default_position_level"),
+        target = (
+            ctx.get("default_stage_filter_type")
+            or ctx.get("default_position_level")
+            or ctx.get("default_recruitment_type")
         )
         if target:
             return target
@@ -1842,15 +1827,11 @@ class HrApplicant(models.Model):
             for leaf in domain:
                 if isinstance(leaf, (list, tuple)) and len(leaf) == 3:
                     if leaf[0] == "position_level" and leaf[1] == "=":
-                        target = self._x_psm_normalize_stage_type(position_level=leaf[2])
-                        if target:
-                            return target
+                        return leaf[2]
             for leaf in domain:
                 if isinstance(leaf, (list, tuple)) and len(leaf) == 3:
                     if leaf[0] == "recruitment_type" and leaf[1] == "=":
-                        target = self._x_psm_normalize_stage_type(recruitment_type=leaf[2])
-                        if target:
-                            return target
+                        return leaf[2]
 
         # 3. Lookup job from context or domain
         job_id = ctx.get("default_job_id")
@@ -1890,30 +1871,10 @@ class HrApplicant(models.Model):
     @api.model
     def _read_group_stage_ids(self, stages, domain, order=None):
         """Filter kanban stages by the resolved pipeline type.
-        Never returns all stages as a fallback.
+        Never returns all stages as a fallback — unknown falls back to 'both' only.
         """
         target_type = self._resolve_stage_filter_type(domain)
         scope_job_id = self._resolve_stage_scope_job_id(domain)
-
-        if not target_type:
-            store_scope = self.env.context.get("default_recruitment_type") == 'store'
-            if not store_scope and domain:
-                for leaf in domain:
-                    if (
-                        isinstance(leaf, (list, tuple))
-                        and len(leaf) == 3
-                        and leaf[0] == 'recruitment_type'
-                        and leaf[1] == '='
-                        and leaf[2] == 'store'
-                    ):
-                        store_scope = True
-                        break
-            if not store_scope and scope_job_id:
-                job = self.env['hr.job'].browse(scope_job_id)
-                if job.exists() and job.recruitment_type == 'store' and not job.position_level:
-                    store_scope = True
-            if store_scope:
-                return stages.browse()
 
         search_domain = []
 
@@ -1925,13 +1886,20 @@ class HrApplicant(models.Model):
             ])
 
         if target_type:
-            search_domain.append(('recruitment_type', '=', target_type))
+            search_domain.extend([
+                '|',
+                ('recruitment_type', '=', 'both'),
+                ('recruitment_type', '=', target_type),
+            ])
             if target_type == 'office':
                 search_domain.extend([
                     '|',
                     ('office_pipeline_visible', '=', True),
                     ('recruitment_type', '!=', 'office'),
                 ])
+        else:
+            # Absolute fallback: show only generic 'both' stages, never everything.
+            search_domain.append(('recruitment_type', '=', 'both'))
 
         if not search_domain:
             search_domain = [('job_ids', '=', False)]

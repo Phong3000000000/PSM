@@ -20,31 +20,50 @@
         <field name="model">survey.survey</field>
         <field name="inherit_id" ref="survey.survey_survey_view_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='question_and_page_ids']/list" position="attributes">
+                <attribute name="decoration-muted">x_psm_0204_is_locked_on_custom_ui</attribute>
+            </xpath>
+
             <xpath expr="//field[@name='question_and_page_ids']/list/field[@name='question_type']" position="after">
                 <field name="x_psm_parent_survey_usage" column_invisible="True"/>
+                <field name="x_psm_0204_is_custom_job_question" column_invisible="True"/>
+                <field name="x_psm_0204_is_locked_on_custom_ui" column_invisible="True"/>
                 <field name="is_scored_question" column_invisible="True"/>
                 <field name="x_psm_show_on_webform"
-                    string="Bật/tắt"
+                    string="On/Off"
                     widget="boolean_toggle"
                     optional="show"
+                    readonly="x_psm_0204_is_locked_on_custom_ui"
                     invisible="is_page or x_psm_parent_survey_usage != 'pre_interview'"/>
                 <field name="x_psm_0204_is_mandatory_correct"
-                    string="Phải đúng"
+                    string="Must Be Correct"
                     widget="boolean_toggle"
                     optional="show"
+                    readonly="x_psm_0204_is_locked_on_custom_ui"
                     invisible="is_page or not is_scored_question"/>
                 <field name="x_psm_0204_is_reject_when_wrong"
-                    string="Loại khi sai"
+                    string="Reject If Wrong"
                     widget="boolean_toggle"
                     optional="show"
+                    readonly="x_psm_0204_is_locked_on_custom_ui"
                     invisible="is_page or not is_scored_question or not x_psm_0204_is_mandatory_correct"/>
+                <field name="x_psm_0204_lock_on_custom"
+                    string="Lock on Custom"
+                    widget="boolean_toggle"
+                    optional="show"
+                    readonly="x_psm_0204_is_custom_job_question or x_psm_0204_is_locked_on_custom_ui"/>
             </xpath>
 
             <xpath expr="//field[@name='question_and_page_ids']/list/field[@name='constr_mandatory']" position="attributes">
-                <attribute name="string">Bắt buộc</attribute>
+                <attribute name="string">Required</attribute>
                 <attribute name="widget">boolean_toggle</attribute>
                 <attribute name="optional">show</attribute>
+                <attribute name="readonly">x_psm_0204_is_locked_on_custom_ui</attribute>
                 <attribute name="invisible">is_page</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='question_and_page_ids']/list/button[@name='copy']" position="attributes">
+                <attribute name="invisible">x_psm_0204_is_locked_on_custom_ui</attribute>
             </xpath>
 
             <!-- Reorder base constr_mandatory right after Bật/tắt without duplicating field. -->

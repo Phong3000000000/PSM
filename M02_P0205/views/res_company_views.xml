@@ -57,22 +57,8 @@
                             <field name="x_psm_0205_default_abu_interviewer_group_id" options="{'no_create': True}"/>
                         </group>
                     </group>
-                    <group string="Approver mặc định" col="2">
-                        <group>
-                            <field name="x_psm_0205_hr_approval_group_id" options="{'no_create': True}"/>
-                        </group>
-                        <group>
-                            <field name="x_psm_0205_ceo_approval_group_id" options="{'no_create': True}"/>
-                        </group>
-                    </group>
-                    <group string="Luồng duyệt office" col="2">
-                        <group>
-                            <field name="x_psm_0205_enable_ceo_approval"/>
-                            <field name="x_psm_0205_hr_approval_sequence"/>
-                        </group>
-                        <group>
-                            <field name="x_psm_0205_ceo_approval_sequence" invisible="not x_psm_0205_enable_ceo_approval"/>
-                        </group>
+                    <group string="Approval category" col="1">
+                        <div class="o_form_label">Luồng duyệt tuyển dụng được cấu hình trực tiếp trên Approvals &gt; Configuration theo category OPS/RTX.</div>
                     </group>
                 </sheet>
             </form>

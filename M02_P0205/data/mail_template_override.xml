@@ -1,97 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="0">
-        <record id="email_interview_invitation_office" model="mail.template">
-            <field name="name">Thư mời phỏng vấn (Tuyển dụng VP)</field>
-            <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
-            <field name="subject">Thư mời phỏng vấn - {{ ctx.get('interview_label', 'Vòng 1') }} - {{ object.job_id.name }}</field>
-            <field name="email_from">{{ (object.user_id.email_formatted or object.company_id.email_formatted or 'noreply@recruitment.com') }}</field>
-            <field name="email_to">{{ object.email_from }}</field>
-            <field name="body_html"><![CDATA[
-<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;background-color:#f4f4f4;margin:0;padding:0;">
-    <tr>
-        <td align="center" style="padding:24px 12px;">
-            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="680" style="width:680px;max-width:680px;border-collapse:collapse;background-color:#FFFFFF;border:1px solid #e5e5e5;">
-                <tr>
-                    <td style="padding:0;background-color:#FFFFFF;">
-                        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">
-                            <tr>
-                                <td style="height:14px;width:25%;background-color:#FFC72C;"></td>
-                                <td style="height:14px;width:25%;background-color:#DA291C;"></td>
-                                <td style="height:14px;width:25%;background-color:#000000;"></td>
-                                <td style="height:14px;width:25%;background-color:#FFFFFF;"></td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="padding:28px 32px 24px 32px;font-family:Arial, sans-serif;color:#000000;">
-                        <div style="font-family:Arial, sans-serif;font-size:34px;line-height:1.15;font-weight:700;color:#000000;margin-bottom:10px;">
-                            Thư mời phỏng vấn
-                        </div>
-                        <div style="font-family:Arial, sans-serif;font-size:16px;line-height:1.7;color:#4b5563;">
-                            Chúng tôi trân trọng mời bạn tham gia buổi phỏng vấn tại MCD.
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="padding:0 32px 28px 32px;font-family:Arial, sans-serif;color:#111111;">
-                        <p style="margin:0 0 16px 0;font-family:Arial, sans-serif;font-size:16px;line-height:1.7;color:#111111;">
-                            Thân gửi <strong><t t-out="object.partner_name"/></strong>,
-                        </p>
-                        <p style="margin:0 0 18px 0;font-family:Arial, sans-serif;font-size:16px;line-height:1.8;color:#111111;">
-                            Cảm ơn bạn đã quan tâm đến cơ hội nghề nghiệp tại công ty. Sau khi xem xét hồ sơ và các bài đánh giá sơ bộ, chúng tôi trân trọng mời bạn tham gia buổi phỏng vấn
-                            <strong><t t-out="ctx.get('interview_label', 'Vòng 1')"/></strong>
-                            cho vị trí
-                            <strong><t t-out="object.job_id.name"/></strong>.
-                        </p>
-                        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;margin:24px 0;background-color:#fffdf8;border:1px solid #ece7df;">
-                            <tr>
-                                <td colspan="2" style="padding:16px 20px;background-color:#FFF4CC;border-bottom:1px solid #ece7df;font-family:Arial, sans-serif;font-size:14px;font-weight:700;color:#000000;letter-spacing:0.04em;text-transform:uppercase;">
-                                    Thông tin phỏng vấn
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding:16px 20px;width:160px;font-family:Arial, sans-serif;font-size:15px;font-weight:700;color:#DA291C;border-bottom:1px solid #ece7df;">
-                                    Thời gian
-                                </td>
-                                <td style="padding:16px 20px;font-family:Arial, sans-serif;font-size:15px;color:#111111;border-bottom:1px solid #ece7df;">
-                                    <t t-out="ctx.get('interview_date', 'Sẽ thông báo sau')"/>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding:16px 20px;width:160px;font-family:Arial, sans-serif;font-size:15px;font-weight:700;color:#DA291C;border-bottom:1px solid #ece7df;">
-                                    Địa điểm
-                                </td>
-                                <td style="padding:16px 20px;font-family:Arial, sans-serif;font-size:15px;color:#111111;border-bottom:1px solid #ece7df;">
-                                    <t t-out="object.company_id.partner_id.contact_address or 'Văn phòng công ty'"/>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding:16px 20px;width:160px;font-family:Arial, sans-serif;font-size:15px;font-weight:700;color:#DA291C;">
-                                    Người phỏng vấn
-                                </td>
-                                <td style="padding:16px 20px;font-family:Arial, sans-serif;font-size:15px;color:#111111;">
-                                    <t t-out="ctx.get('interviewer_name', 'Hội đồng Tuyển dụng')"/>
-                                </td>
-                            </tr>
-                        </table>
-                        <p style="margin:0 0 16px 0;font-family:Arial, sans-serif;font-size:16px;line-height:1.8;color:#111111;">
-                            Vui lòng phản hồi email này để xác nhận tham gia hoặc đề xuất lịch khác nếu thời gian trên chưa phù hợp.
-                        </p>
-                        <p style="margin:0 0 20px 0;font-family:Arial, sans-serif;font-size:16px;line-height:1.8;color:#111111;">
-                            Chúc bạn có buổi phỏng vấn thật thuận lợi.
-                        </p>
-                        <p style="margin:0;font-family:Arial, sans-serif;font-size:16px;line-height:1.8;color:#111111;">
-                            Trân trọng,<br/>
-                            <strong>Bộ phận Tuyển dụng (MCD)</strong>
-                        </p>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>]]></field>
-        </record>
+    <data noupdate="1">
+        <!--
+            mail_template_override.xml
+
+            This file previously contained a duplicate re-definition of
+            email_interview_invitation_office. That record is now
+            canonically defined in mail_template_data.xml only.
+
+            Kept empty to avoid breaking the manifest data list.
+            May be used in the future for overriding templates from
+            other modules if needed.
+        -->
     </data>
 </odoo>

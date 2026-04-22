@@ -89,19 +89,19 @@
 
             <!-- Chèn nhóm Thông tin Tuyển dụng full width ở dưới header group -->
             <xpath expr="//sheet/group[1]" position="after">
-                <group string="Thông tin Tuyển dụng">
+                <group string="Recruitment Information">
                     <group>
-                        <field name="job_id" string="Vị trí tuyển dụng"/>
+                        <field name="job_id" string="Job Position"/>
                         <field name="recruitment_type"/>
-                        <field name="application_source"/>
+                        <field name="application_source" invisible="1"/>
                     </group>
                     <group>
                         <field name="position_level"/>
                         <field name="department_id" 
                                domain="[('id', 'in', available_department_ids)]"
                                options="{'no_create': True}"/>
-                        <field name="date_closed" string="Ngày trúng tuyển" invisible="not date_closed"/>
-                        <field name="oje_evaluator_user_id" string="Người đánh giá OJE"/>
+                        <field name="date_closed" string="Hired Date" invisible="not date_closed"/>
+                        <field name="oje_evaluator_user_id" string="OJE Evaluator" invisible="recruitment_type == 'office'"/>
                     </group>
                     <field name="company_id" invisible="1"/>
                     <field name="available_department_ids" invisible="1"/>
@@ -148,9 +148,9 @@
 
             <!-- Move detailed sections to Notebook for full-width display -->
             <xpath expr="//notebook" position="inside">
-                <page string="Thông tin cá nhân" name="personal_info_page">
+                <page string="Personal Information" name="personal_info_page">
                     <group>
-                        <group string="Thông tin cá nhân">
+                        <group string="Personal Information">
                             <field name="x_portrait_image" widget="image" class="oe_avatar" options="{'size': [90, 90]}"/>
                             <field name="x_birthday"/>
                             <field name="x_gender"/>
@@ -166,7 +166,7 @@
                             <field name="x_permanent_address"/>
                             <field name="x_current_address"/>
                         </group>
-                        <group string="Học vấn &amp; Kinh nghiệm">
+                        <group string="Education &amp; Experience">
                             <field name="x_education_level"/>
                             <field name="x_school_name"/>
                             <field name="x_years_experience"/>
@@ -179,71 +179,71 @@
                         </group>
                     </group>
                 </page>
-                <page string="Phỏng vấn" name="survey_interview_details">
+                <page string="Interview" name="survey_interview_details" invisible="recruitment_type == 'office'">
                     <group>
-                        <group string="Biểu mẫu Ứng tuyển">
+                        <group string="Application Form">
                             <field name="pre_interview_survey_id" invisible="1"/>
-                            <field name="survey_url" widget="url" readonly="1" string="Link biểu mẫu" invisible="survey_state == 'done'"/>
-                            <field name="survey_result_url" widget="url" readonly="1" string="Xem kết quả biểu mẫu" invisible="survey_state != 'done'"/>
+                            <field name="survey_url" widget="url" readonly="1" string="Form Link" invisible="survey_state == 'done'"/>
+                            <field name="survey_result_url" widget="url" readonly="1" string="View Form Result" invisible="survey_state != 'done'"/>
                             <field name="survey_state"
                                    readonly="1"
-                                   string="Trạng thái"
+                                   string="Status"
                                    invisible="not survey_user_input_id"/>
 
                             <field name="survey_user_input_id" invisible="1"/>
                             <field name="survey_under_review_date" readonly="1"
                                    invisible="current_stage_name != 'Under Review' or not survey_under_review_date"
-                                   string="Deadline Xem Xét (24h từ đây)"/>
+                                   string="Review Deadline (24h)"/>
                         </group>
-                        <group string="Lịch hẹn Phỏng vấn">
+                        <group string="Interview Schedule">
                             <field name="interview_schedule_id" 
                                    domain="[('department_id', '=', department_id), ('state', '=', 'confirmed')]"
                                    options="{'no_create': True}"/>
-                            <field name="invitation_sent_date" readonly="1" string="Ngày Gửi Thư Mời"/>
+                            <field name="invitation_sent_date" readonly="1" string="Invitation Sent Date"/>
                             <field name="interview_confirmation_state"
                                    readonly="1"
-                                   string="Xác nhận lịch"/>
+                                   string="Confirmation Status"/>
                             <field name="interview_confirmation_sent_date" readonly="1"
                                    invisible="interview_confirmation_state == 'not_sent'"
-                                   string="Ngày gửi mail"/>
+                                   string="Email Sent Date"/>
                             <field name="interview_confirmed_datetime" readonly="1"
                                    invisible="interview_confirmation_state != 'accepted'"
-                                   string="Lịch PV chốt"/>
+                                   string="Confirmed Schedule"/>
                             <field name="interview_booked_slot" readonly="1"
                                    invisible="interview_booking_status != 'booked'"
-                                   string="Slot đã book"/>
+                                   string="Booked Slot"/>
                             <field name="interview_booking_status"
                                    readonly="1"
-                                   string="Trạng thái đặt lịch"/>
+                                   string="Booking Status"/>
                         </group>
                     </group>
                 </page>
-                <page string="Đánh giá Interview"
+                <page string="Interview Evaluation"
                       name="interview_details"
                       invisible="recruitment_type != 'store' or position_level != 'management'">
                     <field name="can_backend_evaluate_interview" invisible="1"/>
 
                     <group>
-                        <group string="Kết quả Interview">
+                        <group string="Interview Result">
                             <field name="interview_evaluation_id" readonly="1"/>
                             <field name="interview_evaluation_state"/>
                             <field name="interview_result"/>
                             <field name="interview_final_score"/>
                         </group>
-                        <group string="Người đánh giá">
+                        <group string="Evaluator">
                             <field name="interview_evaluator_user_id"/>
                             <field name="interview_evaluated_by"/>
                             <field name="interview_evaluated_at"/>
                         </group>
                     </group>
 
-                    <group string="Lý do không đạt" invisible="interview_result != 'reject'">
+                    <group string="Rejection Reason" invisible="interview_result != 'reject'">
                         <field name="interview_fail_reason" nolabel="1"/>
                     </group>
                 </page>
-                <page string="Đánh giá OJE" name="oje_details">
+                <page string="OJE Evaluation" name="oje_details" invisible="recruitment_type == 'office'">
                     <button name="action_open_backend_oje_evaluation"
-                            string="Đánh giá OJE"
+                            string="OJE Evaluation"
                             type="object"
                             class="btn-primary"
                             invisible="not can_backend_evaluate_oje"
@@ -251,19 +251,19 @@
                     <field name="can_backend_evaluate_oje" invisible="1"/>
                     <field name="oje_template_scope" invisible="1"/>
                     <group>
-                        <group string="Kết quả OJE">
+                        <group string="OJE Result">
                             <field name="oje_evaluation_id" readonly="1"/>
                             <field name="oje_evaluation_state"/>
                             <field name="reject_reason" invisible="not reject_reason" readonly="1"/>
                             <field name="oje_result"/>
                         </group>
-                        <group string="Người đánh giá">
+                        <group string="Evaluator">
                             <field name="oje_evaluated_by"/>
                             <field name="oje_evaluated_at"/>
                         </group>
                     </group>
 
-                    <group string="Tóm tắt OJE - Staff" invisible="oje_template_scope != 'store_staff'">
+                    <group string="OJE Summary - Staff" invisible="oje_template_scope != 'store_staff'">
                         <group>
                             <field name="oje_staff_decision"/>
                             <field name="oje_staff_ni_count"/>
@@ -276,7 +276,7 @@
                         </group>
                     </group>
 
-                    <group string="Tóm tắt OJE - Management" invisible="oje_template_scope != 'store_management'">
+                    <group string="OJE Summary - Management" invisible="oje_template_scope != 'store_management'">
                         <group>
                             <field name="oje_management_overall_rating"/>
                         </group>
@@ -285,12 +285,12 @@
                         </group>
                     </group>
 
-                    <group string="Lý do không đạt" invisible="oje_result != 'fail'">
+                    <group string="Rejection Reason" invisible="oje_result != 'fail'">
                         <field name="oje_fail_reason" nolabel="1"/>
                     </group>
                     <field name="oje_evaluation_id" invisible="1"/>
                     <notebook invisible="not oje_evaluation_id">
-                        <page string="Chi tiết đánh giá">
+                        <page string="Evaluation Details">
                             <field name="oje_evaluation_id" invisible="1"/>
                             <field name="oje_evaluation_id" mode="form" readonly="1">
                                 <form>
@@ -340,6 +340,26 @@
             <xpath expr="//sheet/group/group/field[@name='partner_phone']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
+
+            <!-- Hiển thị Email + Phone dạng ngang ngay dưới tên Applicant -->
+            <xpath expr="//div[hasclass('oe_title')]" position="after">
+                <div class="ps-1 pb-2">
+                    <div class="d-flex align-items-center mb-1">
+                        <span style="width:72px; flex: 0 0 72px;">Email:</span>
+                        <div class="flex-grow-1" style="min-width:0; max-width: 45%;">
+                            <field name="email_from" nolabel="1" widget="email"/>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span style="width:72px; flex: 0 0 72px;">Phone:</span>
+                        <div class="flex-grow-1" style="min-width:0; max-width: 45%;">
+                            <field name="partner_phone" nolabel="1" widget="phone"/>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+
+
             <xpath expr="//sheet/group/group/field[@name='linkedin_profile']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
@@ -368,10 +388,10 @@
 
             <!-- Group Đánh giá & Phụ trách trước notebook -->
             <xpath expr="//notebook" position="before">
-                <group string="Đánh giá &amp; Phụ trách">
+                <group string="Evaluation &amp; Assignment">
                     <group>
                         <field name="priority" widget="priority"/>
-                        <field name="user_id" string="Người phụ trách (Recruiter)"/>
+                        <field name="user_id" string="Recruiter"/>
                     </group>
                     <group>
                         <field name="interviewer_ids" widget="many2many_tags" options="{'no_create': True}"/>

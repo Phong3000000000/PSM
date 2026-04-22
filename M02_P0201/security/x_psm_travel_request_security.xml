@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Record Rule for HR Admin S: See all travel requests -->
+        <record id="rule_travel_request_admin_s_all" model="ir.rule">
+            <field name="name">Travel Request: Admin S all</field>
+            <field name="model_id" ref="model_x_psm_travel_request"/>
+            <field name="groups" eval="[(4, ref('M02_P0200.GDH_RST_HR_ADMIN_S'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+
+        <!-- Record Rule for Base User: See personal, created or involved requests -->
+        <record id="rule_travel_request_base_s_personal" model="ir.rule">
+            <field name="name">Travel Request: Personal OR Involved</field>
+            <field name="model_id" ref="model_x_psm_travel_request"/>
+            <field name="groups" eval="[(4, ref('M02_P0200.GDH_RST_ALL_BASE_S'))]"/>
+            <field name="domain_force">['|', '|', ('create_uid', '=', user.id), ('x_psm_employee_id.user_id', '=', user.id), ('x_psm_traveler_ids.x_psm_employee_id.user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+    </data>
+</odoo>

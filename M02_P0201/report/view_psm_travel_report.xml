@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_psm_travel_analysis_report_pivot" model="ir.ui.view">
+        <field name="name">x_psm_travel_analysis_report.pivot</field>
+        <field name="model">x_psm_travel_analysis_report</field>
+        <field name="arch" type="xml">
+            <pivot string="Travel Analysis" sample="1">
+                <field name="x_psm_department_id" type="row"/>
+                <field name="x_psm_destination_id" type="col"/>
+                <field name="x_psm_budget_total" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_psm_travel_analysis_report_graph" model="ir.ui.view">
+        <field name="name">x_psm_travel_analysis_report.graph</field>
+        <field name="model">x_psm_travel_analysis_report</field>
+        <field name="arch" type="xml">
+            <graph string="Travel Analysis" type="bar" sample="1">
+                <field name="x_psm_department_id"/>
+                <field name="x_psm_budget_total" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_psm_travel_analysis_report_search" model="ir.ui.view">
+        <field name="name">x_psm_travel_analysis_report.search</field>
+        <field name="model">x_psm_travel_analysis_report</field>
+        <field name="arch" type="xml">
+            <search string="Travel Analysis">
+                <field name="x_psm_name"/>
+                <field name="x_psm_employee_id"/>
+                <field name="x_psm_department_id"/>
+                <field name="x_psm_destination_id"/>
+                <filter string="Approved" name="approved" domain="[('x_psm_state', '=', 'approved')]"/>
+                <filter string="Done" name="done" domain="[('x_psm_state', '=', 'done')]"/>
+                <separator/>
+                <filter string="Start Date" name="x_psm_date_start" date="x_psm_date_start"/>
+                <separator/>
+                <filter string="Employee" name="employee" context="{'group_by':'x_psm_employee_id'}"/>
+                <filter string="Department" name="department" context="{'group_by':'x_psm_department_id'}"/>
+                <filter string="Destination" name="destination" context="{'group_by':'x_psm_destination_id'}"/>
+                <filter string="Status" name="status" context="{'group_by':'x_psm_state'}"/>
+                <filter string="Company" name="company" context="{'group_by':'x_psm_company_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_psm_travel_analysis_report" model="ir.actions.act_window">
+        <field name="name">Travel Analysis</field>
+        <field name="res_model">x_psm_travel_analysis_report</field>
+        <field name="view_mode">pivot,graph</field>
+        <field name="search_view_id" ref="view_psm_travel_analysis_report_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No travel requests found.
+            </p>
+        </field>
+    </record>
+</odoo>

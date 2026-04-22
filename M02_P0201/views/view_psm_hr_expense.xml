@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_psm_hr_expense_form_ext" model="ir.ui.view">
+        <field name="name">x_psm_hr_expense.form.inherit.travel</field>
+        <field name="model">hr.expense</field>
+        <field name="inherit_id" ref="hr_expense.hr_expense_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='employee_id']" position="after">
+                <field name="x_psm_0201_travel_request_id" options="{'no_create': True}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

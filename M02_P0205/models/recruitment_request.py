@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api, _, Command
+from html import escape
+
+from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
 
 class RecruitmentRequestApprover(models.Model):
@@ -157,64 +159,20 @@ class RecruitmentRequest(models.Model):
             return self.env['res.users'].browse()
         return groups.mapped('user_ids').filtered(lambda user: not user.share)
 
-    def _get_0205_company_for_config(self):
-        self.ensure_one()
-        return self.company_id or self.env.company
-
-    def _is_0205_ceo_approval_enabled(self):
-        self.ensure_one()
-        company = self._get_0205_company_for_config()
-        return bool(company.x_psm_0205_enable_ceo_approval) if company else True
-
-    def _get_0205_hr_approval_sequence(self):
-        self.ensure_one()
-        company = self._get_0205_company_for_config()
-        return company._x_psm_0205_get_hr_approval_sequence() if company else 10
-
-    def _get_0205_ceo_approval_sequence(self):
-        self.ensure_one()
-        company = self._get_0205_company_for_config()
-        return company._x_psm_0205_get_ceo_approval_sequence() if company else 20
-
     def _get_0205_target_state_for_pending_approver(self, pending_approver=False):
         self.ensure_one()
         if self.recruitment_block == 'store':
             return 'rgm_approval'
-        if self._is_0205_ceo_approval_enabled() and pending_approver and (
-            (pending_approver.sequence or 0) >= self._get_0205_ceo_approval_sequence()
-        ):
-            return 'ceo_approval'
-        return 'hr_validation'
-
-    def _get_department_group_users(self, group_xmlid, department=False, excluded_user_ids=None):
-        self.ensure_one()
-        department = department or self.department_id or self.user_department_id
-        excluded_user_ids = excluded_user_ids or set()
-        group = self.env.ref(group_xmlid, raise_if_not_found=False)
-        if not group or not department:
-            return self.env['res.users'].browse()
-
-        users = group.user_ids.filtered(
-            lambda user: (
-                user.active
-                and not user.share
-                and user.id not in excluded_user_ids
-                and bool(
-                    (user.employee_id and user.employee_id.department_id == department)
-                    or (department in user.employee_ids.mapped('department_id'))
-                )
+        if pending_approver and self.x_psm_approval_request_id:
+            ordered_approvers = self.x_psm_approval_request_id.approver_ids.sorted(
+                lambda approver: (approver.sequence, approver.id)
             )
-        )
-        return users.sorted('id')
-
-    def _get_store_rgm_approval_users(self):
-        self.ensure_one()
-        excluded_user_ids = {self.user_id.id} if self.user_id else set()
-        return self._get_department_group_users(
-            'M02_P0200.GDH_OPS_STORE_RGM_M',
-            department=self.department_id,
-            excluded_user_ids=excluded_user_ids,
-        )
+            for approver in ordered_approvers:
+                if approver.id == pending_approver.id:
+                    break
+                if approver.status == 'approved':
+                    return 'ceo_approval'
+        return 'hr_validation'
 
     def _get_store_department_hr_users(self):
         self.ensure_one()
@@ -233,17 +191,17 @@ class RecruitmentRequest(models.Model):
 
     def _get_store_rgm_activity_users(self):
         self.ensure_one()
-        users = self.env['res.users'].browse()
+        return self._get_pending_approval_users()
+
+    def _get_pending_approval_users(self):
+        self.ensure_one()
         approval = self.x_psm_approval_request_id
-        if approval:
-            users = approval.approver_ids.filtered(
-                lambda approver: approver.user_id and approver.status in ('new', 'pending', 'waiting')
-            ).mapped('user_id')
-        if not users:
-            users = self._get_store_rgm_approval_users()
-        return users.filtered(
-            lambda user: user.active and not user.share
-        ).sorted('id')
+        if not approval:
+            return self.env['res.users'].browse()
+        users = approval.approver_ids.filtered(
+            lambda approver: approver.user_id and approver.status in ('new', 'pending', 'waiting')
+        ).mapped('user_id')
+        return users.filtered(lambda user: user.active and not user.share).sorted('id')
 
     def _send_activity_to_store_rgm(self):
         self.ensure_one()
@@ -254,130 +212,167 @@ class RecruitmentRequest(models.Model):
             _("Yêu cầu khối Cửa Hàng '%s' đang chờ RGM duyệt trên luồng Approval.") % self.name,
         )
 
-    def _get_ceo_approval_user(self):
-        """Pick one CEO approver: company CEO first, then CEO group fallback."""
-        self.ensure_one()
-        excluded_user_ids = {self.user_id.id} if self.user_id else set()
-        users = self.env['res.users'].browse()
-
-        ceo_employee = self.company_id.x_psm_0205_ceo_id if self.company_id else False
-        if ceo_employee and ceo_employee.user_id:
-            users |= ceo_employee.user_id
-
-        users = users.filtered(
-            lambda user: user.active and not user.share and user.id not in excluded_user_ids
-        )
-        if users:
-            return users[:1]
-
-        company = self._get_0205_company_for_config()
-        ceo_group = company._x_psm_0205_get_ceo_approval_group() if company else False
-        if not ceo_group:
-            return self.env['res.users'].browse()
-
-        fallback_users = ceo_group.user_ids.filtered(
-            lambda user: user.active and not user.share and user.id not in excluded_user_ids
-        ).sorted('id')
-        return fallback_users[:1]
-
-    def _get_hr_approval_user(self):
-        """Pick one HR approver: job owner first, then HR group fallback."""
-        self.ensure_one()
-        excluded_user_ids = {self.user_id.id} if self.user_id else set()
-        ceo_user = self._get_ceo_approval_user() if self._is_0205_ceo_approval_enabled() else self.env['res.users']
-        if ceo_user:
-            excluded_user_ids.add(ceo_user.id)
-
-        users = self.env['res.users'].browse()
-        if self.job_id and self.job_id.user_id:
-            users |= self.job_id.user_id
-
-        users = users.filtered(
-            lambda user: user.active and not user.share and user.id not in excluded_user_ids
-        )
-        if users:
-            return users[:1]
-
-        company = self._get_0205_company_for_config()
-        hr_group = company._x_psm_0205_get_hr_approval_group() if company else False
-        if not hr_group:
-            return self.env['res.users'].browse()
-
-        fallback_users = hr_group.user_ids.filtered(
-            lambda user: user.active and not user.share and user.id not in excluded_user_ids
-        ).sorted('id')
-        return fallback_users[:1]
-
     def _get_approval_category(self):
-        return self.env.ref('M02_P0205.approval_category_recruitment_request', raise_if_not_found=False)
-
-    def _prepare_dynamic_approvers(self):
         self.ensure_one()
-        approver_commands = []
-        used_user_ids = set()
-
         if self.recruitment_block == 'store':
-            rgm_users = self._get_store_rgm_approval_users()
-            if not rgm_users:
-                raise UserError(_(
-                    "Không tìm thấy RGM hợp lệ để duyệt Yêu Cầu Tuyển Dụng khối Cửa Hàng. "
-                    "Vui lòng kiểm tra group GDH_OPS_STORE_RGM_M, user active/internal và phòng ban."
-                ))
+            xmlids = [
+                'M02_P0205.approval_category_recruitment_request_ops',
+                'M02_P0205.approval_category_recruitment_request',
+            ]
+        else:
+            xmlids = [
+                'M02_P0205.approval_category_recruitment_request',
+            ]
 
-            for seq, rgm_user in enumerate(rgm_users, start=10):
-                approver_commands.append(Command.create({
-                    'user_id': rgm_user.id,
-                    'required': True,
-                    'sequence': seq,
-                }))
-                used_user_ids.add(rgm_user.id)
+        for xmlid in xmlids:
+            category = self.env.ref(xmlid, raise_if_not_found=False)
+            if category:
+                return category
+        return False
 
-            return approver_commands
+    def _build_approval_reason_html(self):
+        self.ensure_one()
 
-        hr_user = self._get_hr_approval_user()
-        if hr_user and hr_user.id not in used_user_ids:
-            approver_commands.append(Command.create({
-                'user_id': hr_user.id,
-                'required': True,
-                'sequence': self._get_0205_hr_approval_sequence(),
-            }))
-            used_user_ids.add(hr_user.id)
+        request_type_label = dict(self._fields['request_type'].selection).get(
+            self.request_type,
+            self.request_type or '-',
+        )
+        recruitment_block_label = dict(self._fields['recruitment_block'].selection).get(
+            self.recruitment_block,
+            self.recruitment_block or '-',
+        )
 
-        # Store requests created from portal only need recruitment admin approval.
-        if self.recruitment_block != 'store' and self._is_0205_ceo_approval_enabled():
-            ceo_user = self._get_ceo_approval_user()
-            if ceo_user and ceo_user.id not in used_user_ids:
-                approver_commands.append(Command.create({
-                    'user_id': ceo_user.id,
-                    'required': True,
-                    'sequence': self._get_0205_ceo_approval_sequence(),
-                }))
-                used_user_ids.add(ceo_user.id)
+        total_quantity = sum(self.line_ids.mapped('quantity')) if self.line_ids else (self.quantity or 0)
+        request_line_count = len(self.line_ids) if self.line_ids else (1 if self.job_id else 0)
+        request_reason = escape((self.reason or '-').strip() or '-').replace('\n', '<br/>')
 
-        if not approver_commands:
-            raise UserError(_(
-                "Không tìm thấy người duyệt hợp lệ cho Yêu Cầu Tuyển Dụng. "
-                "Vui lòng cấu hình HR (phụ trách job hoặc group HR Recruitment) "
-                "hoặc CEO (CEO công ty hoặc group CEO Recruitment)."
-            ))
+        line_rows = []
+        for line in self.line_ids:
+            position_level_label = dict(line._fields['position_level'].selection).get(
+                line.position_level,
+                line.position_level or '-',
+            )
+            line_rows.append({
+                'position_name': line.display_position_name or line.job_id.display_name or line.position_name or '-',
+                'position_level': position_level_label,
+                'work_location': line.work_location_id.display_name or '-',
+                'department': line.department_id.display_name or self.department_id.display_name or '-',
+                'quantity': line.quantity or 0,
+                'reason': (line.reason or '-').strip() or '-',
+            })
 
-        return approver_commands
+        if not line_rows:
+            job = self.job_id
+            level_value = job.position_level if job and 'position_level' in job._fields else False
+            position_level_label = '-'
+            if job and level_value:
+                position_level_label = dict(job._fields['position_level'].selection).get(level_value, level_value)
+            work_location = '-'
+            if job and 'work_location_id' in job._fields and job.work_location_id:
+                work_location = job.work_location_id.display_name
+            line_rows.append({
+                'position_name': job.display_name if job else '-',
+                'position_level': position_level_label,
+                'work_location': work_location,
+                'department': self.department_id.display_name or '-',
+                'quantity': self.quantity or 0,
+                'reason': (self.reason or '-').strip() or '-',
+            })
+
+        line_html = ''.join(
+            """
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #f4b4b4;">{position_name}</td>
+                    <td style="padding: 8px; border: 1px solid #f4b4b4;">{position_level}</td>
+                    <td style="padding: 8px; border: 1px solid #f4b4b4;">{work_location}</td>
+                    <td style="padding: 8px; border: 1px solid #f4b4b4;">{department}</td>
+                    <td style="padding: 8px; border: 1px solid #f4b4b4; text-align: center;">{quantity}</td>
+                    <td style="padding: 8px; border: 1px solid #f4b4b4;">{reason}</td>
+                </tr>
+            """.format(
+                position_name=escape(row['position_name']),
+                position_level=escape(row['position_level']),
+                work_location=escape(row['work_location']),
+                department=escape(row['department']),
+                quantity=escape(str(row['quantity'])),
+                reason=escape(row['reason']).replace('\n', '<br/>'),
+            )
+            for row in line_rows
+        )
+
+        return """
+            <div style="font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #202124;">
+                <h3 style="margin: 0 0 12px 0; padding: 10px 12px; background: #b71c1c; color: #fff; border-radius: 6px;">
+                    THONG TIN YEU CAU TUYEN DUNG
+                </h3>
+
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 14px; background: #fff4f4;">
+                    <tbody>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #f4b4b4; width: 24%;"><strong>Ma yeu cau</strong></td>
+                            <td style="padding: 8px; border: 1px solid #f4b4b4; width: 26%;">{request_code}</td>
+                            <td style="padding: 8px; border: 1px solid #f4b4b4; width: 24%;"><strong>Phong ban</strong></td>
+                            <td style="padding: 8px; border: 1px solid #f4b4b4; width: 26%;">{department_name}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #f4b4b4;"><strong>Khoi tuyen dung</strong></td>
+                            <td style="padding: 8px; border: 1px solid #f4b4b4;">{recruitment_block}</td>
+                            <td style="padding: 8px; border: 1px solid #f4b4b4;"><strong>Loai yeu cau</strong></td>
+                            <td style="padding: 8px; border: 1px solid #f4b4b4;">{request_type}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #f4b4b4;"><strong>Tong so vi tri</strong></td>
+                            <td style="padding: 8px; border: 1px solid #f4b4b4;">{total_quantity}</td>
+                            <td style="padding: 8px; border: 1px solid #f4b4b4;"><strong>So dong tuyen dung</strong></td>
+                            <td style="padding: 8px; border: 1px solid #f4b4b4;">{request_line_count}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="margin: 0 0 14px 0; padding: 10px 12px; border: 1px solid #f4b4b4; background: #fff9f9; border-radius: 6px;">
+                    <div style="font-weight: 600; margin-bottom: 6px;">Ly do tuyen dung</div>
+                    <div>{request_reason}</div>
+                </div>
+
+                <div style="font-weight: 600; margin: 0 0 8px 0;">Danh sach line tuyen dung</div>
+                <table style="width: 100%; border-collapse: collapse; background: #fff;">
+                    <thead>
+                        <tr style="background: #ffe8e8;">
+                            <th style="padding: 8px; border: 1px solid #f4b4b4; text-align: left;">Vi tri tuyen dung</th>
+                            <th style="padding: 8px; border: 1px solid #f4b4b4; text-align: left;">Cap bac</th>
+                            <th style="padding: 8px; border: 1px solid #f4b4b4; text-align: left;">Job Location</th>
+                            <th style="padding: 8px; border: 1px solid #f4b4b4; text-align: left;">Phong ban</th>
+                            <th style="padding: 8px; border: 1px solid #f4b4b4; text-align: center;">So luong</th>
+                            <th style="padding: 8px; border: 1px solid #f4b4b4; text-align: left;">Ghi chu/Mo ta</th>
+                        </tr>
+                    </thead>
+                    <tbody>{line_html}</tbody>
+                </table>
+            </div>
+        """.format(
+            request_code=escape(self.name or '-'),
+            department_name=escape(self.department_id.display_name or '-'),
+            recruitment_block=escape(recruitment_block_label or '-'),
+            request_type=escape(request_type_label or '-'),
+            total_quantity=escape(str(total_quantity)),
+            request_line_count=escape(str(request_line_count)),
+            request_reason=request_reason,
+            line_html=line_html,
+        )
 
     def _prepare_approval_request_vals(self):
         self.ensure_one()
         category = self._get_approval_category()
         if not category:
-            raise UserError(_("Chưa cấu hình Approval Category cho Yêu Cầu Tuyển Dụng."))
+            raise UserError(_("Chưa cấu hình Approval Category cho Yêu Cầu Tuyển Dụng theo khối OPS/RTX."))
 
-        approver_commands = self._prepare_dynamic_approvers()
-        reason_text = (self.reason or '').strip() or '-'
+        reason_html = self._build_approval_reason_html()
         return {
             'name': self.name,
             'category_id': category.id,
             'request_owner_id': self.user_id.id,
             'reference': self.name,
-            'reason': reason_text,
-            'approver_ids': approver_commands,
+            'reason': reason_html,
             'x_psm_0205_recruitment_request_id': self.id,
         }
 
@@ -389,13 +384,29 @@ class RecruitmentRequest(models.Model):
 
             status = approval.request_status
 
-            if status == 'new':
+            if status in ('new', 'pending'):
+                pending_approver = approval.approver_ids.filtered(
+                    lambda approver: approver.status == 'pending'
+                ).sorted(lambda approver: (approver.sequence, approver.id))[:1]
+                if not pending_approver:
+                    pending_approver = approval.approver_ids.filtered(
+                        lambda approver: approver.status in ('waiting', 'new')
+                    ).sorted(lambda approver: (approver.sequence, approver.id))[:1]
+
+                target_state = rec._get_0205_target_state_for_pending_approver(pending_approver)
+
+                if rec.state not in ('in_progress', 'done', 'cancel') and rec.state != target_state:
+                    if rec.recruitment_block == 'store':
+                        rec.sudo().write({'state': target_state})
+                    else:
+                        rec.write({'state': target_state})
+
                 if rec.recruitment_block == 'store':
-                    if rec.state not in ('rgm_approval', 'in_progress', 'done', 'cancel'):
-                        rec.sudo().write({'state': 'rgm_approval'})
                     rec.sudo()._send_activity_to_store_rgm()
-                elif rec.state not in ('draft', 'done', 'cancel'):
-                    rec.write({'state': 'draft'})
+                elif target_state == 'ceo_approval':
+                    rec._send_activity_to_ceo()
+                else:
+                    rec._send_activity_to_hr()
                 continue
 
             if status == 'cancel':
@@ -430,31 +441,7 @@ class RecruitmentRequest(models.Model):
                     rec.message_post(body=_("Yêu cầu đã được phê duyệt hoàn tất qua Approval."))
                 continue
 
-            if status != 'pending':
-                continue
-
-            pending_approver = approval.approver_ids.filtered(
-                lambda approver: approver.status == 'pending'
-            ).sorted(lambda approver: (approver.sequence, approver.id))[:1]
-            if not pending_approver:
-                pending_approver = approval.approver_ids.filtered(
-                    lambda approver: approver.status in ('waiting', 'new')
-                ).sorted(lambda approver: (approver.sequence, approver.id))[:1]
-
-            target_state = rec._get_0205_target_state_for_pending_approver(pending_approver)
-
-            if rec.state != target_state:
-                if rec.recruitment_block == 'store':
-                    rec.sudo().write({'state': target_state})
-                else:
-                    rec.write({'state': target_state})
-
-            if rec.recruitment_block == 'store':
-                rec.sudo()._send_activity_to_store_rgm()
-            elif target_state == 'ceo_approval':
-                rec._send_activity_to_ceo()
-            else:
-                rec._send_activity_to_hr()
+            continue
 
     def _validate_before_submit(self):
         for rec in self:
@@ -478,7 +465,7 @@ class RecruitmentRequest(models.Model):
         """Tạo approval request và submit luồng duyệt."""
         for rec in self:
             rec._validate_before_submit()
-            if rec.x_psm_approval_request_id and rec.x_psm_approval_request_id.request_status == 'pending':
+            if rec.x_psm_approval_request_id and rec.x_psm_approval_request_id.request_status in ('new', 'pending'):
                 raise UserError(_("Yêu cầu này đang chờ duyệt trên Approval."))
             approval_vals = rec._prepare_approval_request_vals()
             approval_request = rec.env['approval.request'].sudo().create(approval_vals)
@@ -491,7 +478,7 @@ class RecruitmentRequest(models.Model):
                 rec.message_post(
                     body=_(
                         "Khối Cửa Hàng đã gửi yêu cầu duyệt. "
-                        "RGM cùng phòng ban cần phê duyệt trước khi cập nhật nhu cầu tuyển dụng."
+                        "Người duyệt được lấy theo cấu hình category Approvals (OPS)."
                     )
                 )
 
@@ -510,18 +497,9 @@ class RecruitmentRequest(models.Model):
             summary = _("Phê duyệt yêu cầu tuyển dụng: %s") % self.name
             note = _("Yêu cầu '%s' đã được RGM duyệt đầy đủ và sẵn sàng để HR xử lý đăng tuyển.") % self.name
         else:
-            approval = self.x_psm_approval_request_id
-            if approval:
-                hr_approver = approval.approver_ids.filtered(
-                    lambda approver: approver.status == 'pending'
-                    and approver.sequence == self._get_0205_hr_approval_sequence()
-                )[:1]
-                if hr_approver:
-                    users = hr_approver.user_id
-            if not users:
-                users = self._get_hr_approval_user()
+            users = self._get_pending_approval_users()
             summary = _("Kiểm tra Yêu cầu tuyển dụng: %s") % self.name
-            note = _("Yêu cầu '%s' vừa được tạo và cần HR kiểm tra.") % self.name
+            note = _("Yêu cầu '%s' đang chờ bước duyệt tiếp theo theo cấu hình category Approvals.") % self.name
 
         self._schedule_activity_for_users(
             users,
@@ -532,23 +510,11 @@ class RecruitmentRequest(models.Model):
     def _send_activity_to_ceo(self):
         """Gửi Activity cho CEO group khi HR Validate"""
         self.ensure_one()
-        if not self._is_0205_ceo_approval_enabled():
-            return
-        users = self.env['res.users'].browse()
-        approval = self.x_psm_approval_request_id
-        if approval:
-            ceo_approver = approval.approver_ids.filtered(
-                lambda approver: approver.status == 'pending'
-                and approver.sequence == self._get_0205_ceo_approval_sequence()
-            )[:1]
-            if ceo_approver:
-                users = ceo_approver.user_id
-        if not users:
-            users = self._get_ceo_approval_user()
+        users = self._get_pending_approval_users()
         self._schedule_activity_for_users(
             users,
             _("Phê duyệt yêu cầu tuyển dụng: %s") % self.name,
-            _("Vui lòng duyệt yêu cầu '%s' đã được HR xác nhận.") % self.name,
+            _("Vui lòng duyệt yêu cầu '%s' theo cấu hình category Approvals.") % self.name,
         )
 
     def _schedule_activity_for_users(self, users, summary, note):
@@ -594,14 +560,11 @@ class RecruitmentRequest(models.Model):
             if rec.recruitment_block == 'store':
                 rec._sync_state_from_approval_requests()
                 continue
-            if rec.x_psm_approval_request_id and rec.x_psm_approval_request_id.request_status == 'pending':
+            if rec.x_psm_approval_request_id and rec.x_psm_approval_request_id.request_status in ('new', 'pending'):
                 rec._sync_state_from_approval_requests()
                 continue
-            if rec._is_0205_ceo_approval_enabled():
-                rec.write({'state': 'ceo_approval'})
-                rec._send_activity_to_ceo()
-            else:
-                rec.action_ceo_approve()
+            rec.write({'state': 'ceo_approval'})
+            rec._send_activity_to_ceo()
 
     def _find_existing_job_for_line(self, line):
         self.ensure_one()

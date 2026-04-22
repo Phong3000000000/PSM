@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Sequence -->
+        <record id="seq_travel_request" model="ir.sequence">
+            <field name="name">Travel Request</field>
+            <field name="code">travel.request.seq</field>
+            <field name="prefix">TRV/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Category -->
+        <record id="approval_category_travel" model="approval.category">
+            <field name="name">Travel Request</field>
+            <field name="description">Approval for Travel Requests</field>
+            <field name="has_amount">required</field>
+        </record>
+
+    </data>
+</odoo>

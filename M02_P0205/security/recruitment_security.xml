@@ -308,8 +308,8 @@
         <field name="groups" eval="[(6, 0, [ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_ceo')])]"/>
         <field name="domain_force">[('applicant_id.x_psm_0205_recruitment_type', '=', 'office'), ('applicant_id.department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
         <field name="perm_read" eval="True"/>
-        <field name="perm_write" eval="True"/>
-        <field name="perm_create" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
         <field name="perm_unlink" eval="False"/>
     </record>
 
@@ -319,8 +319,8 @@
         <field name="groups" eval="[(6, 0, [ref('M02_P0205.group_gdh_rst_office_recruitment_mgr_ceo')])]"/>
         <field name="domain_force">[('evaluation_id.applicant_id.x_psm_0205_recruitment_type', '=', 'office'), ('evaluation_id.applicant_id.department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
         <field name="perm_read" eval="True"/>
-        <field name="perm_write" eval="True"/>
-        <field name="perm_create" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
         <field name="perm_unlink" eval="False"/>
     </record>
 

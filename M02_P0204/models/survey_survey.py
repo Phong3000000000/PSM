@@ -5,11 +5,12 @@ Mô tả: Chuẩn hóa metadata survey theo Survey Usage
     và các cờ logic cho câu hỏi biểu mẫu ứng tuyển.
 """
 
-import re
-import unicodedata
+import logging
 
 from odoo import _, api, models, fields
 from odoo.exceptions import UserError, ValidationError
+
+_logger = logging.getLogger(__name__)
 
 
 class SurveySurvey(models.Model):
@@ -129,6 +130,51 @@ class SurveySurvey(models.Model):
         }
 
     @api.model
+    def _x_psm_get_master_sync_content_fields(self):
+        return (
+            "description",
+            "description_done",
+            "questions_layout",
+            "users_can_go_back",
+            "scoring_type",
+            "certification",
+        )
+
+    @api.model
+    def _x_psm_get_master_sync_content_values(self, master):
+        master.ensure_one()
+        return {
+            field_name: master[field_name]
+            for field_name in self._x_psm_get_master_sync_content_fields()
+            if field_name in master._fields
+        }
+
+    @api.model
+    def _x_psm_replace_custom_content_from_master(self, master, custom):
+        """Replace the whole custom survey structure/content by current master."""
+        master.ensure_one()
+        custom.ensure_one()
+
+        # Remove old structure entirely (both sections/pages and regular questions).
+        custom.sudo().with_context(
+            x_psm_allow_core_question_update=True
+        ).question_and_page_ids.unlink()
+
+        # Rebuild structure from master in deterministic sequence order.
+        master_items = self.env["survey.question"].sudo().search(
+            [("survey_id", "=", master.id)],
+            order="sequence asc",
+        )
+        for item in master_items:
+            item.with_context(
+                x_psm_allow_core_question_update=True
+            ).copy({"survey_id": custom.id})
+
+        sync_vals = self._x_psm_get_master_sync_content_values(master)
+        if sync_vals:
+            custom.sudo().write(sync_vals)
+
+    @api.model
     def _x_psm_normalize_usage_vals(self, vals):
         normalized_vals = dict(vals)
 
@@ -190,7 +236,73 @@ class SurveySurvey(models.Model):
 
         result = super().write(normalized_vals)
         self._x_psm_sync_missing_owner_department()
+
+        # Propagate master → all custom surveys khi nội dung master thay đổi
+        content_keys = {"question_and_page_ids"}
+        content_keys.update(self._x_psm_get_master_sync_content_fields())
+        if content_keys & set(normalized_vals.keys()):
+            masters = self.filtered(lambda r: r._x_psm_is_master_template())
+            if masters:
+                masters._x_psm_propagate_master_to_customs()
+
         return result
+
+    def _x_psm_propagate_master_to_customs(self):
+        """
+        Khi master survey bị sửa, ghi đè toàn bộ custom surveys cùng usage/scope.
+        Chạy với sudo để không bị chặn bởi permission check thông thường.
+        Giữ lại: title, owner_job_id, owner_department_id, usage, scope, active.
+        """
+        for master in self:
+            usage_map = self._x_psm_get_default_template_usage_scope_map()
+            template_key = master.x_psm_0204_default_template_for or master.x_psm_default_template_for
+            if not template_key:
+                continue
+            usage, scope = usage_map.get(template_key, (False, False))
+            if not usage:
+                continue
+
+            # Tìm tất cả custom survey active cùng usage/scope
+            domain = [
+                ('active', '=', True),
+                ('x_psm_survey_usage', '=', usage),
+                ('x_psm_0204_is_runtime_isolated_copy', '=', False),
+                ('x_psm_0204_owner_job_id', '!=', False),
+            ]
+            if usage == 'oje' and scope:
+                domain.append(('x_psm_oje_scope', '=', scope))
+
+            customs = self.env['survey.survey'].sudo().search(domain)
+            if not customs:
+                continue
+
+            _logger.info(
+                "[SURVEY_PROPAGATE] Master '%s' changed, propagating to %d custom surveys.",
+                master.title, len(customs),
+            )
+
+            for custom in customs:
+                try:
+                    job = custom.x_psm_0204_owner_job_id
+                    if not job:
+                        continue
+
+                    self._x_psm_replace_custom_content_from_master(master, custom)
+
+                    # Refresh applicant properties nếu là pre_interview
+                    if usage == 'pre_interview':
+                        job._x_psm_refresh_applicant_properties_from_pre_interview_survey()
+
+                    _logger.info(
+                        "[SURVEY_PROPAGATE] Custom '%s' (job: %s) updated from master.",
+                        custom.title, job.name,
+                    )
+                except Exception as err:
+                    _logger.exception(
+                        "[SURVEY_PROPAGATE] Failed to propagate master '%s' to custom '%s': %s",
+                        master.title, custom.title, err,
+                    )
+
 
     def unlink(self):
         if not self._x_psm_can_manage_master_templates():
@@ -345,6 +457,26 @@ class SurveyQuestion(models.Model):
         ),
     )
 
+    x_psm_0204_lock_on_custom = fields.Boolean(
+        string="Lock on Custom",
+        default=False,
+        copy=True,
+        help=(
+            "Khi bật trên Master Survey, dòng này sẽ bị khóa trên Custom Survey: "
+            "không sửa và không xóa được."
+        ),
+    )
+
+    x_psm_0204_is_custom_job_question = fields.Boolean(
+        compute="_compute_x_psm_0204_custom_lock_state",
+        string="Is Custom Job Question",
+    )
+
+    x_psm_0204_is_locked_on_custom_ui = fields.Boolean(
+        compute="_compute_x_psm_0204_custom_lock_state",
+        string="Locked on Custom UI",
+    )
+
     x_psm_show_on_webform = fields.Boolean(
         string="Hiển thị trên form ứng tuyển",
         default=True,
@@ -412,26 +544,43 @@ class SurveyQuestion(models.Model):
             """
         )
 
-    def _x_psm_normalize_plain_text(self, value):
-        value = value or ""
-        value = unicodedata.normalize("NFD", value)
-        value = "".join(ch for ch in value if unicodedata.category(ch) != "Mn")
-        value = value.lower()
-        return re.sub(r"[^a-z0-9]+", " ", value).strip()
+    @api.depends(
+        "survey_id",
+        "survey_id.x_psm_0204_owner_job_id",
+        "survey_id.x_psm_0204_is_runtime_isolated_copy",
+        "survey_id.x_psm_survey_usage",
+        "x_psm_0204_lock_on_custom",
+    )
+    def _compute_x_psm_0204_custom_lock_state(self):
+        for question in self:
+            is_custom_question = bool(
+                question.survey_id
+                and question.survey_id.x_psm_0204_owner_job_id
+                and not question.survey_id.x_psm_0204_is_runtime_isolated_copy
+            )
+            question.x_psm_0204_is_custom_job_question = is_custom_question
+            question.x_psm_0204_is_locked_on_custom_ui = bool(
+                is_custom_question and question._x_psm_is_locked_on_custom_policy()
+            )
+
+    def _x_psm_is_custom_job_question(self):
+        self.ensure_one()
+        return bool(
+            self.survey_id
+            and self.survey_id.x_psm_0204_owner_job_id
+            and not self.survey_id.x_psm_0204_is_runtime_isolated_copy
+        )
+
+    def _x_psm_is_locked_on_custom_policy(self):
+        self.ensure_one()
+        if not self._x_psm_is_custom_job_question():
+            return False
+        return bool(self.x_psm_0204_lock_on_custom)
 
     def _x_psm_is_locked_application_core_question(self):
+        """Backward-compatible alias for old callers."""
         self.ensure_one()
-        if self.survey_id.x_psm_survey_usage != "pre_interview":
-            return False
-
-        normalized_title = self._x_psm_normalize_plain_text(self.title or self.question or "")
-        lock_markers = [
-            "ho va ten",
-            "email",
-            "cv",
-            "ho so dinh kem",
-        ]
-        return any(marker in normalized_title for marker in lock_markers)
+        return self._x_psm_is_locked_on_custom_policy()
 
     def _x_psm_allow_locked_question_write(self):
         context = self.env.context
@@ -482,6 +631,23 @@ class SurveyQuestion(models.Model):
 
         for vals in normalized_vals_list:
             vals.setdefault("x_psm_show_on_webform", True)
+
+        if not self._x_psm_allow_locked_question_write():
+            survey_ids = [vals.get("survey_id") for vals in normalized_vals_list if vals.get("survey_id")]
+            custom_survey_ids = set(
+                self.env["survey.survey"].sudo().browse(survey_ids).filtered(
+                    lambda survey: survey.x_psm_0204_owner_job_id
+                    and not survey.x_psm_0204_is_runtime_isolated_copy
+                ).ids
+            )
+            for vals in normalized_vals_list:
+                if (
+                    vals.get("survey_id") in custom_survey_ids
+                    and vals.get("x_psm_0204_lock_on_custom")
+                ):
+                    raise UserError(
+                        _("Chỉ có thể cấu hình 'Lock on Custom' trên Master Survey.")
+                    )
         return super().create(normalized_vals_list)
 
     def write(self, vals):
@@ -490,12 +656,17 @@ class SurveyQuestion(models.Model):
             if master_questions:
                 raise UserError(_("Bạn không có quyền chỉnh sửa câu hỏi của Master Survey."))
 
+        if "x_psm_0204_lock_on_custom" in vals and not self._x_psm_allow_locked_question_write():
+            custom_questions = self.filtered(lambda question: question._x_psm_is_custom_job_question())
+            if custom_questions:
+                raise UserError(_("Chỉ có thể cấu hình 'Lock on Custom' trên Master Survey."))
+
         if not self._x_psm_allow_locked_question_write():
-            locked_questions = self.filtered(lambda question: question._x_psm_is_locked_application_core_question())
+            locked_questions = self.filtered(lambda question: question._x_psm_is_locked_on_custom_policy())
             if locked_questions:
                 raise UserError(
                     _(
-                        "Không thể chỉnh sửa các câu hỏi lõi của biểu mẫu ứng tuyển (Họ và tên / Email / CV)."
+                        "Không thể chỉnh sửa các dòng đã khóa trên Custom Survey."
                     )
                 )
 
@@ -509,11 +680,11 @@ class SurveyQuestion(models.Model):
                 raise UserError(_("Bạn không có quyền xóa câu hỏi của Master Survey."))
 
         if not self._x_psm_allow_locked_question_write():
-            locked_questions = self.filtered(lambda question: question._x_psm_is_locked_application_core_question())
+            locked_questions = self.filtered(lambda question: question._x_psm_is_locked_on_custom_policy())
             if locked_questions:
                 raise UserError(
                     _(
-                        "Không thể xóa các câu hỏi lõi của biểu mẫu ứng tuyển (Họ và tên / Email / CV)."
+                        "Không thể xóa các dòng đã khóa trên Custom Survey."
                     )
                 )
 

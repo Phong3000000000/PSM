@@ -73,6 +73,7 @@
         "views/recruitment_request_approver_views.xml",
         "views/approval_request_views.xml",
         "views/hr_applicant_views.xml",
+        "views/office_evaluation_templates.xml",
         "views/calendar_event_views.xml",
         "views/hr_job_level_views.xml",
         "views/hr_job_views.xml",

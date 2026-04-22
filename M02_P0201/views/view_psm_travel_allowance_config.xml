@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_psm_travel_allowance_config_list" model="ir.ui.view">
+        <field name="name">x_psm_travel_allowance_config.list</field>
+        <field name="model">x_psm_travel_allowance_config</field>
+        <field name="arch" type="xml">
+            <list string="Allowance Configs">
+                <field name="x_psm_sequence" widget="handle"/>
+                <field name="x_psm_name"/>
+                <field name="x_psm_active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_psm_travel_allowance_config_form" model="ir.ui.view">
+        <field name="name">x_psm_travel_allowance_config.form</field>
+        <field name="model">x_psm_travel_allowance_config</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <form string="Allowance Config">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="not x_psm_active"/>
+                    <group>
+                        <group>
+                            <field name="x_psm_name"/>
+                            <field name="x_psm_job_ids" widget="many2many_tags" placeholder="Leave empty to apply to all"/>
+                            <field name="x_psm_sequence"/>
+                            <field name="x_psm_active" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Rates" name="rates">
+                            <group>
+                                <field name="x_psm_rate_na_eu_dubai"/>
+                                <field name="x_psm_rate_sg_hk_jp_au_kr"/>
+                                <field name="x_psm_rate_cn_ph_th_id_my_in"/>
+                                <separator string="Domestic"/>
+                                <field name="x_psm_rate_domestic_zone_1"/>
+                                <field name="x_psm_rate_domestic_zone_2"/>
+                                <field name="x_psm_rate_domestic_zone_3"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_psm_travel_allowance_config" model="ir.actions.act_window">
+        <field name="name">Allowance Configurations</field>
+        <field name="res_model">x_psm_travel_allowance_config</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_psm_travel_allowance_config_view_list" model="ir.actions.act_window.view">
+        <field name="sequence">10</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_psm_travel_allowance_config_list"/>
+        <field name="act_window_id" ref="action_psm_travel_allowance_config"/>
+    </record>
+
+    <record id="action_psm_travel_allowance_config_view_form" model="ir.actions.act_window.view">
+        <field name="sequence">20</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_psm_travel_allowance_config_form"/>
+        <field name="act_window_id" ref="action_psm_travel_allowance_config"/>
+    </record>
+</odoo>

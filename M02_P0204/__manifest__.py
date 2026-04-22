@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "M02_P0204 - Quy Trinh Tuyen Dung Khoi Cua Hang",
-    "version": "1.0.1",
+    "version": "1.1",
     "category": "Human Resources/Recruitment",
     "summary": "Quản lý lịch phỏng vấn cửa hàng, gửi email mời PV kèm khảo sát",
     "description": """
@@ -65,6 +65,7 @@
             "M02_P0204/static/src/js/survey_slot_availability.js",
         ],
         "web.assets_backend": [
+            "M02_P0204/static/src/js/survey_question_lock_backend.js",
             "M02_P0204/static/src/scss/hr_job_config.scss",
         ],
         "web.assets_frontend": [

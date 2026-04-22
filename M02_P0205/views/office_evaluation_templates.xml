@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="office_evaluation_page" name="Office Interview Evaluation Page">
+        <t t-call="website.layout">
+            <div class="container py-4" style="max-width: 960px;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="mb-0">
+                        <t t-if="evaluation and evaluation.exists()">
+                            Interview Evaluation — <t t-esc="round_label"/>
+                        </t>
+                        <t t-else="">Interview Evaluation</t>
+                    </h2>
+                    <a href="/web" class="btn btn-outline-secondary">Quay lại Backend</a>
+                </div>
+
+                <div class="alert alert-success" role="alert" t-if="success_message">
+                    <t t-esc="success_message"/>
+                </div>
+                <div class="alert alert-danger" role="alert" t-if="error_message">
+                    <t t-esc="error_message"/>
+                </div>
+
+                <t t-if="evaluation and evaluation.exists()">
+                    <!-- Applicant Info Card -->
+                    <div class="card mb-3">
+                        <div class="card-header" style="background-color: #004a99; color: white;">
+                            <strong>INTERVIEW EVALUATION</strong>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered mb-0">
+                                <tbody>
+                                    <tr>
+                                        <th style="width: 200px;">Ứng viên</th>
+                                        <td><t t-esc="applicant.partner_name or applicant.name or ''"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Vị trí</th>
+                                        <td><t t-esc="applicant.job_id.name or ''"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Vòng phỏng vấn</th>
+                                        <td><t t-esc="round_label"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ngày phỏng vấn</th>
+                                        <td><t t-esc="interview_date or 'Chưa xác định'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Người phỏng vấn</th>
+                                        <td><t t-esc="evaluation.interviewer_id.name or ''"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Người PV chính</th>
+                                        <td><t t-esc="evaluation.primary_interviewer_user_id.name or 'Chưa gán'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Là người PV chính</th>
+                                        <td>
+                                            <span t-if="evaluation.is_primary_interviewer" class="badge bg-success">Có</span>
+                                            <span t-else="" class="badge bg-secondary">Không</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Evaluation Form -->
+                    <form t-att-action="'/recruitment/office-interview/evaluation/%s/submit' % evaluation.id"
+                          method="post" class="office-eval-form">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                        <!-- Scoring Sections -->
+                        <t t-foreach="sections" t-as="section">
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">
+                                    <strong><t t-esc="section['name']"/></strong>
+                                </div>
+                                <div class="card-body p-0">
+                                    <table class="table table-bordered mb-0">
+                                        <thead>
+                                            <tr class="table-secondary">
+                                                <th style="width: 35%;">Criteria</th>
+                                                <th class="text-center" style="width: 8%;">1</th>
+                                                <th class="text-center" style="width: 8%;">2</th>
+                                                <th class="text-center" style="width: 8%;">3</th>
+                                                <th class="text-center" style="width: 8%;">4</th>
+                                                <th class="text-center" style="width: 8%;">5</th>
+                                                <th style="width: 25%;">Note</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="section['lines']" t-as="line">
+                                                <tr>
+                                                    <td><t t-esc="line.item_label"/></td>
+                                                    <t t-if="line.line_type == 'score' and line.is_scored">
+                                                        <t t-foreach="[('1','1'),('2','2'),('3','3'),('4','4'),('5','5')]" t-as="sv">
+                                                            <td class="text-center">
+                                                                <input type="radio"
+                                                                    t-att-name="'line_%s_score' % line.id"
+                                                                    t-att-value="sv[0]"
+                                                                    t-att-checked="'checked' if line.score_value == sv[0] else None"
+                                                                    t-att-disabled="'disabled' if is_readonly else None"/>
+                                                            </td>
+                                                        </t>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <td colspan="5"></td>
+                                                    </t>
+                                                    <td>
+                                                        <input type="text"
+                                                            class="form-control form-control-sm"
+                                                            t-att-name="'line_%s_note' % line.id"
+                                                            t-att-value="line.note or ''"
+                                                            t-att-disabled="'disabled' if is_readonly else None"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Summary -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-light">
+                                <strong>Summary</strong>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-2">
+                                    <div class="col-md-4">
+                                        <strong>Số tiêu chí đã chấm:</strong>
+                                        <span class="ms-2"><t t-esc="evaluation.scored_line_count or 0"/></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <strong>Tổng điểm:</strong>
+                                        <span class="ms-2"><t t-esc="'%.2f' % (evaluation.weighted_total_score or 0)"/></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <strong>Điểm TB:</strong>
+                                        <span class="ms-2"><t t-esc="'%.2f' % (evaluation.average_score or 0)"/></span>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4">
+                                        <strong>Kết quả:</strong>
+                                        <span t-if="evaluation.final_result == 'pass'" class="badge bg-success ms-2">PASS</span>
+                                        <span t-elif="evaluation.final_result == 'reject'" class="badge bg-danger ms-2">REJECT</span>
+                                        <span t-else="" class="badge bg-secondary ms-2">Chưa đánh giá</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <strong>Kết luận:</strong>
+                                        <span t-if="evaluation.recommendation == 'pass'" class="badge bg-success ms-2">Đạt</span>
+                                        <span t-elif="evaluation.recommendation == 'fail'" class="badge bg-danger ms-2">Không đạt</span>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Onboard Time</label>
+                                        <input type="text" name="onboard_time" class="form-control"
+                                            t-att-value="evaluation.onboard_time or ''"
+                                            t-att-disabled="'disabled' if is_readonly else None"/>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3">
+                                    <label class="form-label fw-bold">Nhận xét cuối</label>
+                                    <textarea name="final_comment" class="form-control" rows="3"
+                                        t-att-disabled="'disabled' if is_readonly else None"><t t-esc="evaluation.final_comment or ''"/></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="d-flex justify-content-end gap-2 mb-4">
+                            <a t-att-href="'/web#id=%s&amp;model=hr.applicant&amp;view_type=form' % evaluation.applicant_id.id"
+                               class="btn btn-outline-secondary">
+                                Quay lại ứng viên
+                            </a>
+                            <a t-att-href="'/recruitment/office-interview/evaluation/%s' % evaluation.id"
+                               class="btn btn-secondary">
+                                Làm mới
+                            </a>
+                            <button type="submit" class="btn btn-primary" t-if="not is_readonly">
+                                Lưu đánh giá
+                            </button>
+                        </div>
+                    </form>
+                </t>
+            </div>
+        </t>
+    </template>
+</odoo>

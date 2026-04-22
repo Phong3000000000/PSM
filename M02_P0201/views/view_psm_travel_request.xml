@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Form View -->
+    <record id="view_psm_travel_request_form" model="ir.ui.view">
+        <field name="name">x_psm_travel_request.form</field>
+        <field name="model">x_psm_travel_request</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <form string="Travel Request">
+                <header>
+                    <button name="action_psm_submit" type="object" string="Submit" class="oe_highlight" invisible="x_psm_state != 'draft'"/>
+                    <button name="action_psm_confirm_booking" type="object" string="Confirm Booking" class="oe_highlight" invisible="x_psm_state != 'approved' or not x_psm_is_travel_admin" groups="M02_P0200.GDH_RST_HR_ADMIN_S,base.group_system"/>
+                    <button name="action_psm_done" type="object" string="Mark as Done" class="oe_highlight" invisible="x_psm_state != 'in_progress' or not x_psm_is_travel_admin" groups="M02_P0200.GDH_RST_HR_ADMIN_S,base.group_system"/>
+                    <field name="x_psm_is_travel_admin" invisible="1"/>
+                    <field name="x_psm_state" widget="statusbar" statusbar_visible="draft,submitted,approved,in_progress,done" invisible="x_psm_state == 'refused'"/>
+                    <field name="x_psm_state" widget="statusbar" statusbar_visible="draft,refused" invisible="x_psm_state != 'refused'"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_psm_view_approval" type="object" class="oe_stat_button" icon="fa-check-square-o" invisible="not x_psm_approval_request_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Approval</span>
+                            </div>
+                        </button>
+                        <button name="%(hr_expense.hr_expense_actions_all)d" type="action" class="oe_stat_button" icon="fa-file-text-o" context="{'search_default_x_psm_0201_travel_request_id': id, 'default_x_psm_0201_travel_request_id': id}" invisible="x_psm_expense_count == 0">
+                            <field name="x_psm_expense_count" widget="statinfo" string="Expenses"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="x_psm_name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="x_psm_employee_id" readonly="x_psm_state != 'draft'"/>
+                            <field name="x_psm_department_id" readonly="x_psm_state != 'draft'"/>
+                            <field name="x_psm_purpose" readonly="x_psm_state != 'draft'"/>
+                            <field name="x_psm_location" readonly="x_psm_state != 'draft'"/>
+                            <field name="x_psm_is_urgent" readonly="x_psm_state != 'draft'"/>
+                            <field name="x_psm_urgent_reason" invisible="not x_psm_is_urgent" required="x_psm_is_urgent" readonly="x_psm_state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="x_psm_destination_id" readonly="x_psm_state != 'draft'"/>
+                            <field name="x_psm_hotel_id" readonly="x_psm_state != 'draft'"/>
+                            <field name="x_psm_date_start" readonly="x_psm_state != 'draft'"/>
+                            <field name="x_psm_date_end" readonly="x_psm_state != 'draft'"/>
+                            <field name="x_psm_duration_days" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Travelers" name="travelers">
+                            <field name="x_psm_traveler_ids" readonly="x_psm_state != 'draft'">
+                                <list editable="bottom">
+                                    <field name="x_psm_employee_id" domain="[('department_id', '=', parent.x_psm_department_id)]"/>
+                                    <field name="x_psm_identification_id" readonly="1"/>
+                                    <field name="x_psm_phone"/>
+                                    <field name="x_psm_email"/>
+                                    <field name="x_psm_job_id"/>
+                                    <field name="x_psm_department_id" optional="hide"/>
+                                    <field name="x_psm_is_eligible_allowance" readonly="1" optional="hide"/>
+                                    <field name="x_psm_allowance_per_day" readonly="1" optional="show"/>
+                                    <field name="x_psm_allowance_total" readonly="1" sum="Total Allowance"/>
+                                    <field name="x_psm_hotel_cost_share" readonly="1" sum="Total Hotel" optional="show"/>
+                                    <field name="x_psm_laundry_cost" invisible="parent.x_psm_duration_days &lt;= 7" sum="Total Laundry"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Lịch trình công tác" name="schedule">
+                            <field name="x_psm_schedule_ids" readonly="x_psm_state in ['done', 'refused']">
+                                <list editable="bottom">
+                                    <field name="x_psm_traveler_line_id" domain="[('x_psm_request_id', '=', parent.id)]" required="1"/>
+                                    <field name="x_psm_date"/>
+                                    <field name="x_psm_type"/>
+                                    <field name="x_psm_content"/>
+                                    <field name="x_psm_allowance" sum="Total Allowance"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Lịch trình di chuyển" name="itinerary">
+                            <field name="x_psm_itinerary_ids" readonly="x_psm_state in ['done', 'refused']">
+                                <list editable="bottom">
+                                    <field name="x_psm_traveler_line_id" domain="[('x_psm_request_id', '=', parent.id)]" required="1" readonly="parent.x_psm_state != 'draft'"/>
+                                    <field name="x_psm_from_city_id" required="1" readonly="parent.x_psm_state != 'draft'"/>
+                                    <field name="x_psm_to_city_id" required="1" readonly="parent.x_psm_state != 'draft'"/>
+                                    <field name="x_psm_departure_datetime" readonly="parent.x_psm_state != 'draft' and not parent.x_psm_is_travel_admin"/>
+                                    <field name="x_psm_transport_mode_id" readonly="parent.x_psm_state != 'draft'"/>
+                                    <field name="x_psm_airline_id" readonly="parent.x_psm_state != 'draft'"/>
+                                    <field name="x_psm_seat_class_id" readonly="parent.x_psm_state != 'draft'"/>
+                                    <field name="x_psm_flight_number" readonly="parent.x_psm_state != 'draft'"/>
+                                    <field name="x_psm_proposed_total" string="Estimated Cost" readonly="parent.x_psm_state != 'draft'"/>
+                                    <field name="x_psm_actual_total" string="Actual Cost" invisible="parent.x_psm_state == 'draft'" readonly="not parent.x_psm_is_travel_admin" sum="Total Actual"/>
+                                    <field name="x_psm_ticket_attachment_ids" widget="many2many_binary" invisible="parent.x_psm_state == 'draft'" readonly="not parent.x_psm_is_travel_admin"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Thông tin lưu trú" name="accommodation">
+                            <field name="x_psm_accommodation_ids" readonly="x_psm_state in ['done', 'refused']">
+                                <list editable="bottom">
+                                    <field name="x_psm_traveler_line_id" domain="[('x_psm_request_id', '=', parent.id)]" required="1" readonly="parent.x_psm_state != 'draft'"/>
+                                    <field name="x_psm_hotel_id" required="1" readonly="parent.x_psm_state != 'draft' and not parent.x_psm_is_travel_admin"/>
+                                    <field name="x_psm_location_id" readonly="parent.x_psm_state != 'draft' and not parent.x_psm_is_travel_admin" optional="hide"/>
+                                    <field name="x_psm_check_in" readonly="parent.x_psm_state != 'draft'"/>
+                                    <field name="x_psm_check_out" readonly="parent.x_psm_state != 'draft'"/>
+                                    <field name="x_psm_night_count" readonly="1"/>
+                                    <field name="x_psm_hotel_cost" sum="Total Predicted Cost"/>
+                                    <field name="x_psm_actual_total" string="Actual Cost" invisible="parent.x_psm_state == 'draft'" readonly="not parent.x_psm_is_travel_admin" sum="Total Actual"/>
+                                    <field name="x_psm_voucher_attachment_ids" widget="many2many_binary" invisible="parent.x_psm_state == 'draft'" readonly="not parent.x_psm_is_travel_admin"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Budget" name="budget">
+                            <group>
+                                <group string="Ngân sách dự kiến">
+                                    <field name="x_psm_budget_allowance" readonly="1"/>
+                                    <field name="x_psm_budget_hotel" readonly="1"/>
+                                    <field name="x_psm_budget_transport" readonly="1" decoration-bf="1"/>
+                                    <field name="x_psm_budget_laundry" readonly="1"/>
+                                </group>
+                                <group string="Chi phí thực tế">
+                                    <field name="x_psm_actual_total" readonly="1" decoration-bf="1" decoration-danger="x_psm_actual_total > x_psm_budget_total"/>
+                                    <field name="x_psm_budget_total" readonly="1" string="Tổng ngân sách dự tính"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Approval" name="approval" invisible="not x_psm_approval_request_id">
+                            <group>
+                                <field name="x_psm_approval_request_id"/>
+                                <field name="x_psm_approval_state"/>
+                            </group>
+                        </page>
+                        <page string="Booking" name="booking" invisible="x_psm_state not in ['approved', 'admin_pending', 'in_progress', 'done']">
+                            <group>
+                                <group string="Tickets">
+                                    <field name="x_psm_flight_ticket_ids" widget="many2many_binary"/>
+                                    <field name="x_psm_hotel_ticket_ids" widget="many2many_binary"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="x_psm_description" widget="html" options="{'collaborative': true, 'resizable': true}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="view_psm_travel_request_list" model="ir.ui.view">
+        <field name="name">x_psm_travel_request.list</field>
+        <field name="model">x_psm_travel_request</field>
+        <field name="arch" type="xml">
+            <list string="Travel Requests">
+                <field name="x_psm_name"/>
+                <field name="x_psm_employee_id"/>
+                <field name="x_psm_department_id"/>
+                <field name="x_psm_destination_id"/>
+                <field name="x_psm_date_start"/>
+                <field name="x_psm_date_end"/>
+                <field name="x_psm_budget_total" sum="Total Budget"/>
+                <field name="x_psm_state" widget="badge" decoration-info="x_psm_state == 'draft'" decoration-warning="x_psm_state == 'submitted'" decoration-success="x_psm_state == 'approved'" decoration-danger="x_psm_state == 'refused'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Kanban View (Pipeline) -->
+    <record id="view_psm_travel_request_kanban" model="ir.ui.view">
+        <field name="name">x_psm_travel_request.kanban</field>
+        <field name="model">x_psm_travel_request</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="x_psm_state" quick_create="false" records_draggable="true">
+                <field name="x_psm_state"/>
+                <field name="x_psm_name"/>
+                <field name="x_psm_employee_id"/>
+                <field name="x_psm_destination_id"/>
+                <field name="x_psm_budget_total"/>
+                <field name="x_psm_date_start"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click container p-2">
+                             <div class="row">
+                                <div class="col-8">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="x_psm_name"/>
+                                    </strong>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <field name="x_psm_budget_total" widget="monetary"/>
+                                </div>
+                            </div>
+                            <div class="text-muted small mb-1">
+                                <i class="fa fa-user me-1"/> <field name="x_psm_employee_id"/>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <div>
+                                     <i class="fa fa-map-marker me-1"/> <field name="x_psm_destination_id"/>
+                                </div>
+                                <div class="badge rounded-pill text-bg-info">
+                                    <field name="x_psm_date_start"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Pivot View (Analysis) -->
+    <record id="view_psm_travel_request_pivot" model="ir.ui.view">
+        <field name="name">x_psm_travel_request.pivot</field>
+        <field name="model">x_psm_travel_request</field>
+        <field name="arch" type="xml">
+            <pivot string="Travel Analysis" display_quantity="true" sample="1">
+                <field name="x_psm_date_start" interval="month" type="row"/>
+                <field name="x_psm_department_id" type="row"/>
+                <field name="x_psm_budget_allowance" type="measure"/>
+                <field name="x_psm_budget_transport" type="measure"/>
+                <field name="x_psm_budget_hotel" type="measure"/>
+                <field name="x_psm_budget_total" type="measure"/>
+                <field name="x_psm_actual_allowance" type="measure"/>
+                <field name="x_psm_actual_transport" type="measure"/>
+                <field name="x_psm_actual_hotel" type="measure"/>
+                <field name="x_psm_actual_total" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Graph View -->
+    <record id="view_psm_travel_request_graph" model="ir.ui.view">
+        <field name="name">x_psm_travel_request.graph</field>
+        <field name="model">x_psm_travel_request</field>
+        <field name="arch" type="xml">
+            <graph string="Cost Structure" type="bar" stacked="True" sample="1">
+                <field name="x_psm_date_start" interval="month"/>
+                <field name="x_psm_budget_allowance" type="measure"/>
+                <field name="x_psm_budget_transport" type="measure"/>
+                <field name="x_psm_budget_hotel" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_psm_travel_request_search" model="ir.ui.view">
+        <field name="name">x_psm_travel_request.search</field>
+        <field name="model">x_psm_travel_request</field>
+        <field name="arch" type="xml">
+            <search string="Travel Requests">
+                <field name="x_psm_name"/>
+                <field name="x_psm_department_id"/>
+                <field name="x_psm_destination_id"/>
+                <filter string="My Requests" name="my_requests" domain="[('create_uid', '=', uid)]"/>
+                <separator/>
+                <filter string="Pending Approval" name="pending_approval" domain="[('x_psm_state', '=', 'submitted')]"/>
+                <filter string="In Progress" name="in_progress" domain="[('x_psm_state', '=', 'in_progress')]"/>
+                <separator/>
+                <filter string="Department" name="groupby_department" context="{'group_by': 'x_psm_department_id'}"/>
+                <filter string="Destination" name="groupby_destination" context="{'group_by': 'x_psm_destination_id'}"/>
+                <filter string="Status" name="groupby_status" context="{'group_by': 'x_psm_state'}"/>
+                <filter string="Start Month" name="groupby_month" context="{'group_by': 'x_psm_date_start:month'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action: My Travel Requests -->
+    <record id="action_psm_travel_request" model="ir.actions.act_window">
+        <field name="name">My Travel Requests</field>
+        <field name="res_model">x_psm_travel_request</field>
+        <field name="view_mode">list,form,kanban</field>
+        <field name="domain">[('create_uid', '=', uid)]</field>
+        <field name="context">{'search_default_my_requests': 1}</field>
+        <field name="search_view_id" ref="view_psm_travel_request_search"/>
+    </record>
+
+    <!-- Action: Travel Requests (Admin) -->
+    <record id="action_psm_travel_request_admin" model="ir.actions.act_window">
+        <field name="name">Travel Requests (Admin)</field>
+        <field name="res_model">x_psm_travel_request</field>
+        <field name="view_mode">kanban,list,form,pivot,graph</field>
+        <field name="context">{'search_default_pending_approval': 1, 'group_by': 'x_psm_state'}</field>
+        <field name="search_view_id" ref="view_psm_travel_request_search"/>
+    </record>
+
+    <!-- Action: Analysis Report -->
+    <record id="action_psm_travel_analysis_report" model="ir.actions.act_window">
+        <field name="name">Travel Analysis (Consolidated)</field>
+        <field name="res_model">x_psm_travel_request</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="context">{}</field>
+    </record>
+
+    <!-- Action: Allowance Report -->
+    <record id="action_psm_report_allowance" model="ir.actions.act_window">
+        <field name="name">Allowance Report</field>
+        <field name="res_model">x_psm_travel_request</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="context">{'pivot_measures': ['x_psm_budget_allowance'], 'group_by': ['x_psm_date_start:month', 'x_psm_department_id']}</field>
+    </record>
+
+    <!-- Action: Transport Report -->
+    <record id="action_psm_report_transport" model="ir.actions.act_window">
+        <field name="name">Transport Cost Report</field>
+        <field name="res_model">x_psm_travel_request</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="context">{'pivot_measures': ['x_psm_budget_transport', 'x_psm_actual_transport'], 'group_by': ['x_psm_date_start:month', 'x_psm_department_id']}</field>
+    </record>
+
+    <!-- Action: Hotel Report -->
+    <record id="action_psm_report_hotel" model="ir.actions.act_window">
+        <field name="name">Hotel Cost Report</field>
+        <field name="res_model">x_psm_travel_request</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="context">{'pivot_measures': ['x_psm_budget_hotel', 'x_psm_actual_hotel'], 'group_by': ['x_psm_date_start:month', 'x_psm_department_id']}</field>
+    </record>
+
+    <record id="action_psm_travel_request_view_list" model="ir.actions.act_window.view">
+        <field name="sequence">10</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_psm_travel_request_list"/>
+        <field name="act_window_id" ref="action_psm_travel_request"/>
+    </record>
+
+    <record id="action_psm_travel_request_view_form" model="ir.actions.act_window.view">
+        <field name="sequence">20</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_psm_travel_request_form"/>
+        <field name="act_window_id" ref="action_psm_travel_request"/>
+    </record>
+</odoo>

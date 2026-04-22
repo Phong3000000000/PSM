@@ -23,50 +23,23 @@
                         groups="hr_recruitment.group_hr_recruitment_user" /> -->
 
 
-                    <button name="action_send_interview_slot_survey" string="Gui lich PV L1"
+                    <button name="action_send_interview_slot_survey" string="Gửi lịch PV"
                         type="object"
                         class="oe_highlight"
-                        invisible="x_psm_0205_recruitment_type != 'office' or x_psm_0205_next_interview_round != '1' or not x_psm_0205_next_round_event_id or x_psm_0205_eval_round_1_toggle"
+                        invisible="x_psm_0205_recruitment_type != 'office' or not x_psm_0205_can_send_slot_survey"
                         groups="hr_recruitment.group_hr_recruitment_user" />
 
-                    <button name="action_send_interview_round2_notification" string="Gui lich PV L2"
+                    <button name="action_pass_interview_current" string="Pass Interview"
                         type="object"
                         class="oe_highlight"
-                        invisible="x_psm_0205_recruitment_type != 'office' or x_psm_0205_next_interview_round != '2' or not x_psm_0205_eval_round_1_toggle or not x_psm_0205_next_round_event_needs_notification"
+                        invisible="x_psm_0205_recruitment_type != 'office' or not x_psm_0205_can_pass_interview"
                         groups="hr_recruitment.group_hr_recruitment_user" />
 
-                    <button name="action_send_interview_round3_notification" string="Gui lich PV L3"
+                    <button name="action_invite_interview_current_round" string="Mời phỏng vấn"
                         type="object"
                         class="oe_highlight"
-                        invisible="x_psm_0205_recruitment_type != 'office' or x_psm_0205_next_interview_round != '3' or not x_psm_0205_eval_round_2_toggle or not x_psm_0205_next_round_event_needs_notification"
-                        groups="hr_recruitment.group_hr_recruitment_user,M02_P0205.group_gdh_rst_office_recruitment_mgr_bod" />
-
-                    <button name="action_send_interview_round4_notification" string="Gui lich PV L4"
-                        type="object"
-                        class="oe_highlight"
-                        invisible="x_psm_0205_recruitment_type != 'office' or x_psm_0205_next_interview_round != '4' or not x_psm_0205_eval_round_3_toggle or not x_psm_0205_next_round_event_needs_notification"
-                        groups="hr_recruitment.group_hr_recruitment_user,M02_P0205.group_gdh_rst_office_recruitment_mgr_abu" />
-
-
-                    <button name="action_invite_interview_l1" string="Mời PV L1" type="object"
-                        class="oe_highlight"
-                        invisible="x_psm_0205_recruitment_type != 'office' or stage_id != %(stage_office_screening)d"
+                        invisible="1"
                         groups="hr_recruitment.group_hr_recruitment_user" />
-
-                    <button name="action_invite_interview_l2" string="Mời PV L2" type="object"
-                        class="oe_highlight"
-                        invisible="x_psm_0205_recruitment_type != 'office' or stage_id != %(stage_office_interview_1)d or not x_psm_0205_eval_round_1_toggle"
-                        groups="hr_recruitment.group_hr_recruitment_user" />
-
-                    <button name="action_invite_interview_l3" string="Mời PV L3" type="object"
-                        class="oe_highlight"
-                        invisible="x_psm_0205_recruitment_type != 'office' or x_psm_0205_max_interview_round &lt; 3 or stage_id != %(stage_office_interview_2)d or not x_psm_0205_eval_round_2_toggle"
-                        groups="hr_recruitment.group_hr_recruitment_user,M02_P0205.group_gdh_rst_office_recruitment_mgr_bod" />
-
-                    <button name="action_invite_interview_l4" string="Mời PV L4" type="object"
-                        class="oe_highlight"
-                        invisible="x_psm_0205_recruitment_type != 'office' or x_psm_0205_max_interview_round &lt; 4 or stage_id != %(stage_office_interview_3)d or not x_psm_0205_eval_round_3_toggle"
-                        groups="hr_recruitment.group_hr_recruitment_user,M02_P0205.group_gdh_rst_office_recruitment_mgr_abu" />
 
 
                     <button name="action_ready_for_offer" string="Sẵn sàng Offer" type="object"
@@ -96,6 +69,11 @@
                     <field name="x_psm_0205_allowed_primary_interviewer_l4_ids" invisible="1" />
                     <field name="x_psm_0205_needs_primary_interviewer_review" invisible="1" />
                     <field name="x_psm_0205_primary_interviewer_review_note" invisible="1" />
+                    <field name="x_psm_0205_can_pass_interview" invisible="1" />
+                    <field name="x_psm_0205_eval_l1_id" invisible="1" />
+                    <field name="x_psm_0205_eval_l2_id" invisible="1" />
+                    <field name="x_psm_0205_eval_l3_id" invisible="1" />
+                    <field name="x_psm_0205_eval_l4_id" invisible="1" />
                     <field name="x_psm_0205_eval_round_1_primary_pending" invisible="1" />
                     <field name="x_psm_0205_eval_round_2_primary_pending" invisible="1" />
                     <field name="x_psm_0205_eval_round_3_primary_pending" invisible="1" />
@@ -111,6 +89,12 @@
                     <field name="x_psm_0205_can_ready_for_offer" invisible="1" />
                     <field name="x_psm_0205_is_offer_stage" invisible="1" />
                     <field name="x_psm_0205_show_offer_result_block" invisible="1" />
+                    <field name="x_psm_0205_can_send_slot_survey" invisible="1" />
+                    <field name="x_psm_0205_can_invite_interview" invisible="1" />
+                    <field name="x_psm_0205_interview_slot_event_id_1" invisible="1" />
+                    <field name="x_psm_0205_interview_slot_event_id_2" invisible="1" />
+                    <field name="x_psm_0205_interview_slot_event_id_3" invisible="1" />
+                    <field name="x_psm_0205_interview_slot_event_id_4" invisible="1" />
                 </xpath>
 
                 <xpath expr="//header/field[@name='stage_id']" position="replace">
@@ -120,7 +104,7 @@
                     <field name="stage_id"
                         widget="rotting_statusbar_duration"
                         options="{'clickable': '0', 'fold_field': 'fold'}"
-                        domain="['|', ('job_ids', '=', False), ('job_ids', '=', job_id), ('recruitment_type', '=', stage_filter_type)]"
+                        domain="['|', ('job_ids', '=', False), ('job_ids', '=', job_id), '|', ('recruitment_type', '=', 'both'), ('recruitment_type', '=', stage_filter_type)]"
                         invisible="((not active and not employee_id) or is_pool_applicant) or x_psm_0205_recruitment_type == 'office'" />
 
                     <!-- Office: filter by office-specific stage list -->
@@ -135,12 +119,6 @@
                 <xpath expr="//button[@name='action_talent_pool_add_applicants']"
                     position="attributes">
                     <attribute name="invisible">1</attribute>
-                </xpath>
-
-                <xpath expr="//sheet/group[1]" position="before">
-                    <group>
-                        <field name="x_psm_0205_cv_checked" string="Đã kiểm tra CV" widget="boolean_toggle" />
-                    </group>
                 </xpath>
 
                 <xpath expr="//header" position="after">
@@ -162,21 +140,22 @@
 
                 <xpath expr="//group" position="after">
 
-                    <group string="Lập lịch phỏng vấn tiếp theo"
-                        invisible="x_psm_0205_recruitment_type != 'office' or not x_psm_0205_can_schedule_next_round">
+                    <!-- Old schedule block hidden - moved to notebook tab -->
+                    <group string="Interview Schedule (Next Round)"
+                        invisible="1">
 
                         <group>
 
-                            <field name="x_psm_0205_interview_date_1" string="Ngày PV Vòng 1"
+                            <field name="x_psm_0205_interview_date_1" string="Interview 1 Date"
                                 invisible="x_psm_0205_next_interview_round != '1'" />
 
-                            <field name="x_psm_0205_interview_date_2" string="Ngày PV Vòng 2"
+                            <field name="x_psm_0205_interview_date_2" string="Interview 2 Date"
                                 invisible="x_psm_0205_next_interview_round != '2'" />
 
-                            <field name="x_psm_0205_interview_date_3" string="Ngày PV Vòng 3"
+                            <field name="x_psm_0205_interview_date_3" string="Interview 3 Date"
                                 invisible="x_psm_0205_next_interview_round != '3'" />
 
-                            <field name="x_psm_0205_interview_date_4" string="Ngày PV Vòng 4"
+                            <field name="x_psm_0205_interview_date_4" string="Interview 4 Date"
                                 invisible="x_psm_0205_next_interview_round != '4'" />
 
                         </group>
@@ -187,26 +166,26 @@
 
                     </group>
 
-                    <group string="Kết quả &amp; Offer"
+                    <group string="Result &amp; Offer"
                         invisible="x_psm_0205_recruitment_type != 'office' or not x_psm_0205_show_offer_result_block">
 
                         <group>
 
-                            <field name="salary_proposed" string="Lương đề nghị (Gross)"
+                            <field name="salary_proposed" string="Proposed Salary (Gross)"
                                 readonly="not x_psm_0205_is_offer_stage" />
 
                             <field name="x_psm_0205_offer_status" widget="radio" options="{'horizontal': True}"
                                 readonly="not x_psm_0205_is_offer_stage" />
 
-                            <field name="date_closed" string="Ngày tuyển" readonly="1"
+                            <field name="date_closed" string="Hired Date" readonly="1"
                                 invisible="not date_closed" />
 
                         </group>
 
                     </group>
 
-                    <group string="Người phỏng vấn chính"
-                        invisible="x_psm_0205_recruitment_type != 'office'"
+                    <group string="Primary Interviewers"
+                        invisible="1"
                         groups="hr_recruitment.group_hr_recruitment_user">
 
                         <group>
@@ -230,10 +209,10 @@
 
                 <xpath expr="//notebook/page[1]" position="before">
 
-                    <page string="PV Vòng 1" name="office_eval_l1"
+                    <page string="Interview 1" name="office_eval_l1"
                         invisible="x_psm_0205_recruitment_type != 'office'">
 
-                        <group name="survey_group" string="Kết Quả Khảo Sát Năng Lực">
+                        <group name="survey_group" string="Survey Results" invisible="1">
 
                             <group>
 
@@ -253,12 +232,8 @@
 
                                 <field name="x_psm_0205_survey_result_url" widget="url"
                                     invisible="not x_psm_0205_survey_result_url" />
-                                <button name="action_start_eval_l1"
-                                    string="Thêm đánh giá Vòng 1"
-                                    type="object" class="oe_highlight" />
-
                                 <button name="action_view_survey_result"
-                                    string="Xem Kết Quả Khảo Sát"
+                                    string="View Survey Result"
                                     type="object" icon="fa-external-link" class="btn-link"
                                     invisible="not x_psm_0205_survey_result_url" />
 
@@ -267,24 +242,29 @@
                         </group>
 
                         <div class="alert alert-warning" role="alert"
-                            invisible="not x_psm_0205_eval_round_1_primary_pending">
+                            invisible="1">
                             <field name="x_psm_0205_eval_round_1_primary_warning" nolabel="1" readonly="1" />
                         </div>
 
-                        <group string="Người phỏng vấn chính vòng 1">
+                        <group string="Interview Schedule">
+                            <field name="x_psm_0205_interview_date_1" string="Interview 1 Date" />
+                            <field name="x_psm_0205_meeting_ids_round_1" widget="one2many_list"
+                                context="{'default_x_psm_0205_interview_round': '1', 'default_applicant_id': id}" />
+                        </group>
+
+                        <group string="Primary Interviewer">
                             <field name="x_psm_0205_primary_interviewer_l1_user_id" />
                         </group>
 
-                        <group string="Kết quả khảo sát năng lực" class="mt-3">
-                            <field name="x_psm_0205_evaluation_line_ids"
+                        <group string="Evaluation Results" class="mt-3">
+                            <field name="x_psm_0205_evaluation_line_ids_round_1"
                                 widget="one2many_list"
                                 nolabel="1"
-                                domain="[('interview_round', '=', '1')]"
-                                context="{'default_interview_round': '1', 'default_interviewer_id': uid, 'form_view_ref': 'M02_P0205.view_psm_applicant_evaluation_form'}"
+                                readonly="1"
                                 view_id="M02_P0205.view_psm_applicant_evaluation_tree" colspan="2" />
                         </group>
 
-                        <group string="Tổng hợp vòng 1" colspan="2">
+                        <group string="Round 1 Summary" colspan="2">
                             <field name="x_psm_0205_eval_round_1_score" readonly="1" />
                             <field name="x_psm_0205_eval_round_1_toggle" widget="boolean_toggle"
                                 options="{'terminology': {'true': 'Pass', 'false': 'Fail'}}"
@@ -297,26 +277,14 @@
 
 
                     <page
-                        string="PV Vòng 2"
+                        string="Interview 2"
                         name="office_eval_l2"
                         invisible="x_psm_0205_recruitment_type != 'office'">
 
-                        <group>
-
-                            <group string="Lịch phòng vấn">
-
-                                <field name="x_psm_0205_interview_date_2" />
-
-                            </group>
-
-                            <group>
-
-                                <button name="action_start_eval_l2"
-                                    string="Thêm đánh giá Vòng 2"
-                                    type="object" class="oe_highlight" />
-
-                            </group>
-
+                        <group string="Interview Schedule">
+                            <field name="x_psm_0205_interview_date_2" string="Interview 2 Date" />
+                            <field name="x_psm_0205_meeting_ids_round_2" widget="one2many_list"
+                                context="{'default_x_psm_0205_interview_round': '2', 'default_applicant_id': id}" />
                         </group>
 
                         <field name="x_psm_0205_eval_l2_id" nolabel="1"
@@ -327,7 +295,7 @@
                                 <sheet>
 
                                     <group>
-                                        <group string="Thông tin chung">
+                                        <group string="General Information">
                                             <field name="interviewer_id" />
                                             <field name="primary_interviewer_user_id" readonly="1" />
                                             <field name="is_primary_interviewer" readonly="1" />
@@ -336,7 +304,7 @@
                                                 options="{'horizontal': true}" />
                                             <field name="onboard_time" />
                                         </group>
-                                        <group string="Tổng hợp">
+                                        <group string="Summary">
                                             <field name="scored_line_count" readonly="1" />
                                             <field name="weighted_total_score" readonly="1" />
                                             <field name="average_score" readonly="1" />
@@ -354,7 +322,7 @@
                                             <field name="section_code" column_invisible="1" />
                                             <field name="line_type" column_invisible="1" />
                                             <field name="is_scored" column_invisible="1" />
-                                            <field name="item_label" string="Tiêu chí" readonly="1"
+                                            <field name="item_label" string="Criteria" readonly="1"
                                                 width="32%%" />
                                             <field name="score_1" string="1"
                                                 readonly="line_type != 'score'" width="6%%" />
@@ -366,7 +334,7 @@
                                                 readonly="line_type != 'score'" width="6%%" />
                                             <field name="score_5" string="5"
                                                 readonly="line_type != 'score'" width="6%%" />
-                                            <field name="note" string="Ghi chú" width="38%%" />
+                                            <field name="note" string="Note" width="38%%" />
                                         </list>
                                     </field>
 
@@ -378,7 +346,7 @@
                                             <field name="section_code" column_invisible="1" />
                                             <field name="line_type" column_invisible="1" />
                                             <field name="is_scored" column_invisible="1" />
-                                            <field name="item_label" string="Tiêu chí" readonly="1"
+                                            <field name="item_label" string="Criteria" readonly="1"
                                                 width="32%%" />
                                             <field name="score_1" string="1"
                                                 readonly="line_type != 'score'" width="6%%" />
@@ -390,7 +358,7 @@
                                                 readonly="line_type != 'score'" width="6%%" />
                                             <field name="score_5" string="5"
                                                 readonly="line_type != 'score'" width="6%%" />
-                                            <field name="note" string="Ghi chú" width="38%%" />
+                                            <field name="note" string="Note" width="38%%" />
                                         </list>
                                     </field>
 
@@ -402,7 +370,7 @@
                                             <field name="section_code" column_invisible="1" />
                                             <field name="line_type" column_invisible="1" />
                                             <field name="is_scored" column_invisible="1" />
-                                            <field name="item_label" string="Tiêu chí" readonly="1"
+                                            <field name="item_label" string="Criteria" readonly="1"
                                                 width="32%%" />
                                             <field name="score_1" string="1"
                                                 readonly="line_type != 'score'" width="6%%" />
@@ -414,14 +382,14 @@
                                                 readonly="line_type != 'score'" width="6%%" />
                                             <field name="score_5" string="5"
                                                 readonly="line_type != 'score'" width="6%%" />
-                                            <field name="note" string="Ghi chú" width="38%%" />
+                                            <field name="note" string="Note" width="38%%" />
                                         </list>
                                     </field>
 
                                     <group colspan="2">
-                                        <group string="Nhận xét cuối">
+                                        <group string="Final Comment">
                                             <field name="final_comment"
-                                                placeholder="Nhập nhận xét tổng hợp..." />
+                                                placeholder="Enter final comment..." />
                                         </group>
                                     </group>
 
@@ -432,23 +400,22 @@
                         </field>
 
                         <div class="alert alert-warning" role="alert"
-                            invisible="not x_psm_0205_eval_round_2_primary_pending">
+                            invisible="1">
                             <field name="x_psm_0205_eval_round_2_primary_warning" nolabel="1" readonly="1" />
                         </div>
 
-                        <group string="Người phỏng vấn chính vòng 2">
+                        <group string="Primary Interviewer">
                             <field name="x_psm_0205_primary_interviewer_l2_user_id" />
                         </group>
 
-                        <group string="Kết quả khảo sát năng lực" class="mt-3">
-                            <field name="x_psm_0205_evaluation_line_ids"
+                        <group string="Evaluation Results" class="mt-3">
+                            <field name="x_psm_0205_evaluation_line_ids_round_2"
                                 widget="one2many_list"
                                 nolabel="1"
-                                domain="[('interview_round', '=', '2')]"
-                                context="{'default_interview_round': '2', 'default_interviewer_id': uid, 'form_view_ref': 'M02_P0205.view_psm_applicant_evaluation_form'}"
+                                readonly="1"
                                 view_id="M02_P0205.view_psm_applicant_evaluation_tree" colspan="2" />
                         </group>
-                        <group string="Tổng hợp vòng 2" colspan="2">
+                        <group string="Round 2 Summary" colspan="2">
                             <field name="x_psm_0205_eval_round_2_score" readonly="1" />
                             <field name="x_psm_0205_eval_round_2_toggle" widget="boolean_toggle"
                                 options="{'terminology': {'true': 'Pass', 'false': 'Fail'}}"
@@ -458,26 +425,13 @@
 
 
                     <page
-                        string="PV Vòng 3" name="office_eval_l3"
+                        string="Interview 3" name="office_eval_l3"
                         invisible="x_psm_0205_recruitment_type != 'office' or x_psm_0205_max_interview_round &lt; 3">
 
-                        <group>
-
-                            <group string="Lịch phòng vấn">
-
-                                <field name="x_psm_0205_interview_date_3" />
-
-                            </group>
-
-                            <group>
-
-                                <button name="action_start_eval_l3"
-                                    string="Thêm đánh giá Vòng 3"
-                                    type="object" class="oe_highlight"
-                                    groups="hr_recruitment.group_hr_recruitment_user,M02_P0205.group_gdh_rst_office_recruitment_mgr_bod" />
-
-                            </group>
-
+                        <group string="Interview Schedule">
+                            <field name="x_psm_0205_interview_date_3" string="Interview 3 Date" />
+                            <field name="x_psm_0205_meeting_ids_round_3" widget="one2many_list"
+                                context="{'default_x_psm_0205_interview_round': '3', 'default_applicant_id': id}" />
                         </group>
 
                         <field name="x_psm_0205_eval_l3_id" nolabel="1"
@@ -488,7 +442,7 @@
                                 <sheet>
 
                                     <group>
-                                        <group string="Thông tin chung">
+                                        <group string="General Information">
                                             <field name="interviewer_id" />
                                             <field name="primary_interviewer_user_id" readonly="1" />
                                             <field name="is_primary_interviewer" readonly="1" />
@@ -497,7 +451,7 @@
                                                 options="{'horizontal': true}" />
                                             <field name="onboard_time" />
                                         </group>
-                                        <group string="Tổng hợp">
+                                        <group string="Summary">
                                             <field name="scored_line_count" readonly="1" />
                                             <field name="weighted_total_score" readonly="1" />
                                             <field name="average_score" readonly="1" />
@@ -515,7 +469,7 @@
                                             <field name="section_code" column_invisible="1" />
                                             <field name="line_type" column_invisible="1" />
                                             <field name="is_scored" column_invisible="1" />
-                                            <field name="item_label" string="Tiêu chí" readonly="1"
+                                            <field name="item_label" string="Criteria" readonly="1"
                                                 width="32%%" />
                                             <field name="score_1" string="1"
                                                 readonly="line_type != 'score'" width="6%%" />
@@ -527,7 +481,7 @@
                                                 readonly="line_type != 'score'" width="6%%" />
                                             <field name="score_5" string="5"
                                                 readonly="line_type != 'score'" width="6%%" />
-                                            <field name="note" string="Ghi chú" width="38%%" />
+                                            <field name="note" string="Note" width="38%%" />
                                         </list>
                                     </field>
 
@@ -539,7 +493,7 @@
                                             <field name="section_code" column_invisible="1" />
                                             <field name="line_type" column_invisible="1" />
                                             <field name="is_scored" column_invisible="1" />
-                                            <field name="item_label" string="Tiêu chí" readonly="1"
+                                            <field name="item_label" string="Criteria" readonly="1"
                                                 width="32%%" />
                                             <field name="score_1" string="1"
                                                 readonly="line_type != 'score'" width="6%%" />
@@ -551,7 +505,7 @@
                                                 readonly="line_type != 'score'" width="6%%" />
                                             <field name="score_5" string="5"
                                                 readonly="line_type != 'score'" width="6%%" />
-                                            <field name="note" string="Ghi chú" width="38%%" />
+                                            <field name="note" string="Note" width="38%%" />
                                         </list>
                                     </field>
 
@@ -563,7 +517,7 @@
                                             <field name="section_code" column_invisible="1" />
                                             <field name="line_type" column_invisible="1" />
                                             <field name="is_scored" column_invisible="1" />
-                                            <field name="item_label" string="Tiêu chí" readonly="1"
+                                            <field name="item_label" string="Criteria" readonly="1"
                                                 width="32%%" />
                                             <field name="score_1" string="1"
                                                 readonly="line_type != 'score'" width="6%%" />
@@ -575,14 +529,14 @@
                                                 readonly="line_type != 'score'" width="6%%" />
                                             <field name="score_5" string="5"
                                                 readonly="line_type != 'score'" width="6%%" />
-                                            <field name="note" string="Ghi chú" width="38%%" />
+                                            <field name="note" string="Note" width="38%%" />
                                         </list>
                                     </field>
 
                                     <group colspan="2">
-                                        <group string="Nhận xét cuối">
+                                        <group string="Final Comment">
                                             <field name="final_comment"
-                                                placeholder="Nhập nhận xét tổng hợp..." />
+                                                placeholder="Enter final comment..." />
                                         </group>
                                     </group>
 
@@ -593,23 +547,22 @@
                         </field>
 
                         <div class="alert alert-warning" role="alert"
-                            invisible="not x_psm_0205_eval_round_3_primary_pending">
+                            invisible="1">
                             <field name="x_psm_0205_eval_round_3_primary_warning" nolabel="1" readonly="1" />
                         </div>
 
-                        <group string="Người phỏng vấn chính vòng 3">
+                        <group string="Primary Interviewer">
                             <field name="x_psm_0205_primary_interviewer_l3_user_id" />
                         </group>
 
-                        <group string="Kết quả khảo sát năng lực" class="mt-3">
-                            <field name="x_psm_0205_evaluation_line_ids"
+                        <group string="Evaluation Results" class="mt-3">
+                            <field name="x_psm_0205_evaluation_line_ids_round_3"
                                 widget="one2many_list"
                                 nolabel="1"
-                                domain="[('interview_round', '=', '3')]"
-                                context="{'default_interview_round': '3', 'default_interviewer_id': uid, 'form_view_ref': 'M02_P0205.view_psm_applicant_evaluation_form'}"
+                                readonly="1"
                                 view_id="M02_P0205.view_psm_applicant_evaluation_tree" colspan="2" />
                         </group>
-                        <group string="Tổng hợp vòng 3" colspan="2">
+                        <group string="Round 3 Summary" colspan="2">
                             <field name="x_psm_0205_eval_round_3_score" readonly="1" />
                             <field name="x_psm_0205_eval_round_3_toggle" widget="boolean_toggle"
                                 options="{'terminology': {'true': 'Pass', 'false': 'Fail'}}"
@@ -619,26 +572,13 @@
 
 
                     <page
-                        string="PV Vòng 4" name="office_eval_l4"
+                        string="Interview 4" name="office_eval_l4"
                         invisible="x_psm_0205_recruitment_type != 'office' or x_psm_0205_max_interview_round &lt; 4">
 
-                        <group>
-
-                            <group string="Lịch phòng vấn">
-
-                                <field name="x_psm_0205_interview_date_4" />
-
-                            </group>
-
-                            <group>
-
-                                <button name="action_start_eval_l4"
-                                    string="Thêm đánh giá Vòng 4"
-                                    type="object" class="oe_highlight"
-                                    groups="hr_recruitment.group_hr_recruitment_user,M02_P0205.group_gdh_rst_office_recruitment_mgr_abu" />
-
-                            </group>
-
+                        <group string="Interview Schedule">
+                            <field name="x_psm_0205_interview_date_4" string="Interview 4 Date" />
+                            <field name="x_psm_0205_meeting_ids_round_4" widget="one2many_list"
+                                context="{'default_x_psm_0205_interview_round': '4', 'default_applicant_id': id}" />
                         </group>
 
                         <field name="x_psm_0205_eval_l4_id" nolabel="1"
@@ -649,7 +589,7 @@
                                 <sheet>
 
                                     <group>
-                                        <group string="Thông tin chung">
+                                        <group string="General Information">
                                             <field name="interviewer_id" />
                                             <field name="primary_interviewer_user_id" readonly="1" />
                                             <field name="is_primary_interviewer" readonly="1" />
@@ -658,7 +598,7 @@
                                                 options="{'horizontal': true}" />
                                             <field name="onboard_time" />
                                         </group>
-                                        <group string="Tổng hợp">
+                                        <group string="Summary">
                                             <field name="scored_line_count" readonly="1" />
                                             <field name="weighted_total_score" readonly="1" />
                                             <field name="average_score" readonly="1" />
@@ -676,7 +616,7 @@
                                             <field name="section_code" column_invisible="1" />
                                             <field name="line_type" column_invisible="1" />
                                             <field name="is_scored" column_invisible="1" />
-                                            <field name="item_label" string="Tiêu chí" readonly="1"
+                                            <field name="item_label" string="Criteria" readonly="1"
                                                 width="32%%" />
                                             <field name="score_1" string="1"
                                                 readonly="line_type != 'score'" width="6%%" />
@@ -688,7 +628,7 @@
                                                 readonly="line_type != 'score'" width="6%%" />
                                             <field name="score_5" string="5"
                                                 readonly="line_type != 'score'" width="6%%" />
-                                            <field name="note" string="Ghi chú" width="38%%" />
+                                            <field name="note" string="Note" width="38%%" />
                                         </list>
                                     </field>
 
@@ -700,7 +640,7 @@
                                             <field name="section_code" column_invisible="1" />
                                             <field name="line_type" column_invisible="1" />
                                             <field name="is_scored" column_invisible="1" />
-                                            <field name="item_label" string="Tiêu chí" readonly="1"
+                                            <field name="item_label" string="Criteria" readonly="1"
                                                 width="32%%" />
                                             <field name="score_1" string="1"
                                                 readonly="line_type != 'score'" width="6%%" />
@@ -712,7 +652,7 @@
                                                 readonly="line_type != 'score'" width="6%%" />
                                             <field name="score_5" string="5"
                                                 readonly="line_type != 'score'" width="6%%" />
-                                            <field name="note" string="Ghi chú" width="38%%" />
+                                            <field name="note" string="Note" width="38%%" />
                                         </list>
                                     </field>
 
@@ -724,7 +664,7 @@
                                             <field name="section_code" column_invisible="1" />
                                             <field name="line_type" column_invisible="1" />
                                             <field name="is_scored" column_invisible="1" />
-                                            <field name="item_label" string="Tiêu chí" readonly="1"
+                                            <field name="item_label" string="Criteria" readonly="1"
                                                 width="32%%" />
                                             <field name="score_1" string="1"
                                                 readonly="line_type != 'score'" width="6%%" />
@@ -736,14 +676,14 @@
                                                 readonly="line_type != 'score'" width="6%%" />
                                             <field name="score_5" string="5"
                                                 readonly="line_type != 'score'" width="6%%" />
-                                            <field name="note" string="Ghi chú" width="38%%" />
+                                            <field name="note" string="Note" width="38%%" />
                                         </list>
                                     </field>
 
                                     <group colspan="2">
-                                        <group string="Nhận xét cuối">
+                                        <group string="Final Comment">
                                             <field name="final_comment"
-                                                placeholder="Nhập nhận xét tổng hợp..." />
+                                                placeholder="Enter final comment..." />
                                         </group>
                                     </group>
 
@@ -754,23 +694,22 @@
                         </field>
 
                         <div class="alert alert-warning" role="alert"
-                            invisible="not x_psm_0205_eval_round_4_primary_pending">
+                            invisible="1">
                             <field name="x_psm_0205_eval_round_4_primary_warning" nolabel="1" readonly="1" />
                         </div>
 
-                        <group string="Người phỏng vấn chính vòng 4">
+                        <group string="Primary Interviewer">
                             <field name="x_psm_0205_primary_interviewer_l4_user_id" />
                         </group>
 
-                        <group string="Kết quả khảo sát năng lực" class="mt-3">
-                            <field name="x_psm_0205_evaluation_line_ids"
+                        <group string="Evaluation Results" class="mt-3">
+                            <field name="x_psm_0205_evaluation_line_ids_round_4"
                                 widget="one2many_list"
                                 nolabel="1"
-                                domain="[('interview_round', '=', '4')]"
-                                context="{'default_interview_round': '4', 'default_interviewer_id': uid, 'form_view_ref': 'M02_P0205.view_psm_applicant_evaluation_form'}"
+                                readonly="1"
                                 view_id="M02_P0205.view_psm_applicant_evaluation_tree" colspan="2" />
                         </group>
-                        <group string="Tổng hợp vòng 4" colspan="2">
+                        <group string="Round 4 Summary" colspan="2">
                             <field name="x_psm_0205_eval_round_4_score" readonly="1" />
                             <field name="x_psm_0205_eval_round_4_toggle" widget="boolean_toggle"
                                 options="{'terminology': {'true': 'Pass', 'false': 'Fail'}}"
@@ -779,10 +718,10 @@
 
                     </page>
 
-                    <page string="Đánh Giá (Evaluation)" name="office_evaluation"
-                        invisible="x_psm_0205_recruitment_type != 'office'">
+                    <page string="Evaluation" name="office_evaluation"
+                        invisible="1">
 
-                        <group string="Tổng hợp kết quả các vòng phỏng vấn">
+                        <group string="Interview Round Results">
 
                             <group string="Vòng 1: Manager">
 
@@ -825,6 +764,32 @@
                             </group>
 
                         </group>
+
+                    </page>
+
+                    <!-- Interview Schedule tab removed - schedule now embedded per round -->
+                    <page string="Interview Schedule" name="office_interview_schedule"
+                        invisible="1">
+
+                        <group>
+
+                            <field name="x_psm_0205_interview_date_1" string="Interview 1 Date"
+                                invisible="x_psm_0205_next_interview_round != '1'" />
+
+                            <field name="x_psm_0205_interview_date_2" string="Interview 2 Date"
+                                invisible="x_psm_0205_next_interview_round != '2'" />
+
+                            <field name="x_psm_0205_interview_date_3" string="Interview 3 Date"
+                                invisible="x_psm_0205_next_interview_round != '3'" />
+
+                            <field name="x_psm_0205_interview_date_4" string="Interview 4 Date"
+                                invisible="x_psm_0205_next_interview_round != '4'" />
+
+                        </group>
+
+                        <field name="meeting_ids" widget="one2many_list"
+                            domain="[('x_psm_0205_interview_round', '=', x_psm_0205_next_interview_round)]"
+                            context="{'default_x_psm_0205_interview_round': x_psm_0205_next_interview_round}" />
 
                     </page>
 
@@ -946,8 +911,6 @@
                     <field name="average_score" string="Score" readonly="1" />
                     <field name="final_result" string="Final Result" readonly="1" />
                     <field name="recommendation" string="Status" readonly="1" />
-                    <button name="action_view_form" string="Xem chi tiết" type="object"
-                        icon="fa-search-plus" class="btn-link" />
 
                 </list>
 
@@ -968,6 +931,20 @@
             </field>
         </record>
 
+    </data>
+
+    <data>
+        <!-- Hide 'Send Interview' button for office flow -->
+        <record id="view_hr_applicant_form_hide_send_interview_office" model="ir.ui.view">
+            <field name="name">hr.applicant.form.hide.send.interview.office</field>
+            <field name="model">hr.applicant</field>
+            <field name="inherit_id" ref="hr_recruitment_survey.hr_applicant_view_form_inherit"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_send_survey']" position="attributes">
+                    <attribute name="invisible">recruitment_type == 'store' or recruitment_type == 'office' or not active or not survey_id</attribute>
+                </xpath>
+            </field>
+        </record>
     </data>
 
 </odoo>

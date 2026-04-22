@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root Menu -->
+    <menuitem id="menu_travel_root" name="Travel" sequence="100" web_icon="hr_expense,static/description/icon.png"/>
+
+    <!-- Main Menus -->
+    <menuitem id="menu_travel_requests" name="My Travel Requests" parent="menu_travel_root" action="action_psm_travel_request" sequence="10"/>
+    <menuitem id="menu_travel_requests_admin" name="Travel Requests (Admin)" parent="menu_travel_root" action="action_psm_travel_request_admin" sequence="20" groups="M02_P0200.GDH_RST_HR_ADMIN_S"/>
+    
+    <!-- Reporting -->
+    <menuitem id="menu_travel_reporting" name="Reporting" parent="menu_travel_root" sequence="90" groups="M02_P0200.GDH_RST_HR_ADMIN_M,M02_P0200.GDH_RST_HR_ADMIN_S"/>
+    <menuitem id="menu_travel_analysis" name="Travel Analysis (Consolidated)" parent="menu_travel_reporting" action="action_psm_travel_analysis_report" sequence="10"/>
+    <menuitem id="menu_travel_report_allowance" name="Allowance Analysis" parent="menu_travel_reporting" action="action_psm_report_allowance" sequence="20"/>
+    <menuitem id="menu_travel_report_transport" name="Transport Cost Analysis" parent="menu_travel_reporting" action="action_psm_report_transport" sequence="30"/>
+    <menuitem id="menu_travel_report_hotel" name="Hotel Cost Analysis" parent="menu_travel_reporting" action="action_psm_report_hotel" sequence="40"/>
+
+    <!-- Configuration -->
+    <menuitem id="menu_travel_config" name="Configuration" parent="menu_travel_root" sequence="100" groups="M02_P0200.GDH_RST_HR_ADMIN_M"/>
+    <menuitem id="menu_travel_zone" name="Zones" parent="menu_travel_config" action="action_psm_travel_zone" sequence="10"/>
+    <menuitem id="menu_travel_admin_config" name="Travel Administrators" parent="menu_travel_config" action="action_psm_travel_admin_config" sequence="20"/>
+    <menuitem id="menu_travel_destination" name="Destinations" parent="menu_travel_config" action="action_psm_travel_destination" sequence="30"/>
+    <menuitem id="menu_travel_hotel" name="Hotels" parent="menu_travel_config" action="action_psm_travel_hotel" sequence="40"/>
+    <menuitem id="menu_travel_airline" name="Airlines" parent="menu_travel_config" action="action_x_psm_airline" sequence="50"/>
+    <menuitem id="menu_travel_seat_class" name="Seat Classes" parent="menu_travel_config" action="action_x_psm_seat_class" sequence="60"/>
+    <menuitem id="menu_travel_transport_mode" name="Transport Modes" parent="menu_travel_config" action="action_x_psm_transport_mode" sequence="70"/>
+</odoo>

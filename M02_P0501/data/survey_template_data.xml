@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="m02_p0501_survey_area_survey" model="survey.survey">
+            <field name="title">0501 - S&amp;I Area Survey</field>
+            <field name="survey_type">custom</field>
+            <field name="access_mode">public</field>
+            <field name="questions_layout">page_per_section</field>
+            <field name="users_login_required" eval="False"/>
+            <field name="users_can_go_back" eval="True"/>
+            <field name="description" type="html"><p>Demo survey for the 0501 store package happy path.</p></field>
+        </record>
+
+        <record id="m02_p0501_survey_area_page" model="survey.question">
+            <field name="title">S&amp;I Area Survey</field>
+            <field name="survey_id" ref="m02_p0501_survey_area_survey"/>
+            <field name="sequence">1</field>
+            <field name="is_page" eval="True"/>
+            <field name="question_type" eval="False"/>
+            <field name="description" type="html"><p>Location and S&amp;I screening inputs.</p></field>
+        </record>
+
+        <record id="m02_p0501_q_location_code_name" model="survey.question">
+            <field name="survey_id" ref="m02_p0501_survey_area_survey"/>
+            <field name="sequence">10</field>
+            <field name="title">Candidate Location Code / Name</field>
+            <field name="question_type">text_box</field>
+            <field name="question_placeholder">Enter the candidate location code or name</field>
+        </record>
+
+        <record id="m02_p0501_q_trade_area_traffic" model="survey.question">
+            <field name="survey_id" ref="m02_p0501_survey_area_survey"/>
+            <field name="sequence">20</field>
+            <field name="title">Trade Area Traffic Level</field>
+            <field name="question_type">simple_choice</field>
+            <field name="constr_mandatory" eval="True"/>
+        </record>
+        <record id="m02_p0501_q_trade_area_traffic_low" model="survey.question.answer">
+            <field name="question_id" ref="m02_p0501_q_trade_area_traffic"/>
+            <field name="sequence">1</field>
+            <field name="value">Low</field>
+        </record>
+        <record id="m02_p0501_q_trade_area_traffic_medium" model="survey.question.answer">
+            <field name="question_id" ref="m02_p0501_q_trade_area_traffic"/>
+            <field name="sequence">2</field>
+            <field name="value">Medium</field>
+        </record>
+        <record id="m02_p0501_q_trade_area_traffic_high" model="survey.question.answer">
+            <field name="question_id" ref="m02_p0501_q_trade_area_traffic"/>
+            <field name="sequence">3</field>
+            <field name="value">High</field>
+        </record>
+
+        <record id="m02_p0501_q_population_density" model="survey.question">
+            <field name="survey_id" ref="m02_p0501_survey_area_survey"/>
+            <field name="sequence">30</field>
+            <field name="title">Population Density</field>
+            <field name="question_type">simple_choice</field>
+            <field name="constr_mandatory" eval="True"/>
+        </record>
+        <record id="m02_p0501_q_population_density_low" model="survey.question.answer">
+            <field name="question_id" ref="m02_p0501_q_population_density"/>
+            <field name="sequence">1</field>
+            <field name="value">Low</field>
+        </record>
+        <record id="m02_p0501_q_population_density_medium" model="survey.question.answer">
+            <field name="question_id" ref="m02_p0501_q_population_density"/>
+            <field name="sequence">2</field>
+            <field name="value">Medium</field>
+        </record>
+        <record id="m02_p0501_q_population_density_high" model="survey.question.answer">
+            <field name="question_id" ref="m02_p0501_q_population_density"/>
+            <field name="sequence">3</field>
+            <field name="value">High</field>
+        </record>
+
+        <record id="m02_p0501_q_competitor_intensity" model="survey.question">
+            <field name="survey_id" ref="m02_p0501_survey_area_survey"/>
+            <field name="sequence">40</field>
+            <field name="title">Competitor Intensity</field>
+            <field name="question_type">simple_choice</field>
+            <field name="constr_mandatory" eval="True"/>
+        </record>
+        <record id="m02_p0501_q_competitor_intensity_low" model="survey.question.answer">
+            <field name="question_id" ref="m02_p0501_q_competitor_intensity"/>
+            <field name="sequence">1</field>
+            <field name="value">Low</field>
+        </record>
+        <record id="m02_p0501_q_competitor_intensity_medium" model="survey.question.answer">
+            <field name="question_id" ref="m02_p0501_q_competitor_intensity"/>
+            <field name="sequence">2</field>
+            <field name="value">Medium</field>
+        </record>
+        <record id="m02_p0501_q_competitor_intensity_high" model="survey.question.answer">
+            <field name="question_id" ref="m02_p0501_q_competitor_intensity"/>
+            <field name="sequence">3</field>
+            <field name="value">High</field>
+        </record>
+
+        <record id="m02_p0501_q_estimated_sales_band" model="survey.question">
+            <field name="survey_id" ref="m02_p0501_survey_area_survey"/>
+            <field name="sequence">50</field>
+            <field name="title">Estimated Monthly Sales Band</field>
+            <field name="question_type">simple_choice</field>
+            <field name="constr_mandatory" eval="True"/>
+        </record>
+        <record id="m02_p0501_q_estimated_sales_band_a" model="survey.question.answer">
+            <field name="question_id" ref="m02_p0501_q_estimated_sales_band"/>
+            <field name="sequence">1</field>
+            <field name="value">Below target</field>
+        </record>
+        <record id="m02_p0501_q_estimated_sales_band_b" model="survey.question.answer">
+            <field name="question_id" ref="m02_p0501_q_estimated_sales_band"/>
+            <field name="sequence">2</field>
+            <field name="value">Target band</field>
+        </record>
+        <record id="m02_p0501_q_estimated_sales_band_c" model="survey.question.answer">
+            <field name="question_id" ref="m02_p0501_q_estimated_sales_band"/>
+            <field name="sequence">3</field>
+            <field name="value">Above target</field>
+        </record>
+
+        <record id="m02_p0501_q_si_recommendation" model="survey.question">
+            <field name="survey_id" ref="m02_p0501_survey_area_survey"/>
+            <field name="sequence">60</field>
+            <field name="title">S&amp;I Recommendation</field>
+            <field name="question_type">text_box</field>
+            <field name="question_placeholder">Summarize the S&amp;I recommendation for this location</field>
+        </record>
+    </data>
+</odoo>

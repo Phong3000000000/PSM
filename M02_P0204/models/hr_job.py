@@ -16,11 +16,11 @@ class HrJob(models.Model):
 
     recruitment_type = fields.Selection(
         [
-            ("store", "Khoi Cua Hang"),
-            ("office", "Khoi Van Phong"),
+            ("store", "Store"),
+            ("office", "Office"),
         ],
-        string="Loai Tuyen Dung",
-        help="Phan loai job position theo khoi",
+        string="Recruitment Type",
+        help="Job scope determines which pipeline and surveys apply.",
         compute="_compute_recruitment_logic",
         store=True,
         readonly=False,
@@ -28,11 +28,11 @@ class HrJob(models.Model):
 
     position_level = fields.Selection(
         [
-            ("management", "Quan Ly"),
-            ("staff", "Nhan Vien"),
+            ("management", "Management"),
+            ("staff", "Staff"),
         ],
-        string="Cap Bac",
-        help="Cap bac tuyen dung xac dinh pipeline su dung",
+        string="Level",
+        help="Position level determines pipeline and survey templates.",
         compute="_compute_recruitment_logic",
         store=True,
         readonly=False,
@@ -112,6 +112,18 @@ class HrJob(models.Model):
 
     def write(self, vals):
         vals = dict(vals)
+
+        # Guard: block manual edits to scope fields unless internal context provided
+        if not self.env.context.get('x_psm_0204_allow_scope_sync'):
+            blocked = {k for k in ('recruitment_type', 'position_level') if k in vals}
+            if blocked:
+                raise exceptions.UserError(
+                    _(
+                        "Recruitment Type and Level are managed by the system and cannot be "
+                        "changed manually. Contact your system administrator if a correction is needed."
+                    )
+                )
+
         scope_key_changed = any(k in vals for k in ("recruitment_type", "position_level"))
 
         if "no_of_recruitment" in vals:
@@ -1429,6 +1441,49 @@ class HrJob(models.Model):
             self._x_psm_refresh_applicant_properties_from_pre_interview_survey()
         return custom_survey, True
 
+    def _x_psm_overwrite_custom_from_master(self, usage, scope=False):
+        """
+        [Load Default] — Restore/overwrite custom survey content from master.
+
+        Behaviour:
+        - If no custom exists: create a new one from master (clone).
+        - If custom exists: delete all questions and re-copy from master.
+          Preserved: title, owner_job_id, owner_department_id, usage, scope, active.
+
+        Returns:
+            tuple(survey, was_freshly_created)
+        """
+        self.ensure_one()
+        master = self._x_psm_find_default_survey(usage, scope=scope)
+        if not master:
+            return False, False
+
+        self._x_psm_ensure_owner_department()
+        existing = self._x_psm_find_existing_custom_survey(usage, scope=scope)
+
+        if not existing:
+            # No custom yet — create fresh from master
+            custom = self._x_psm_clone_survey_for_job(master, usage, scope=scope)
+            self._x_psm_set_bound_survey(usage, custom)
+            if usage == "pre_interview":
+                self._x_psm_refresh_applicant_properties_from_pre_interview_survey()
+            return custom, True
+
+        # Custom exists — overwrite all questions/sections from master
+        custom = existing
+
+        # Replace full structure/content from master using shared logic
+        # to keep Load Default and master->custom propagate consistent.
+        self.env["survey.survey"]._x_psm_replace_custom_content_from_master(master, custom)
+
+        # Keep custom title consistent with this job
+        self._x_psm_ensure_custom_survey_title(custom, source_survey=master)
+
+        self._x_psm_set_bound_survey(usage, custom)
+        if usage == "pre_interview":
+            self._x_psm_refresh_applicant_properties_from_pre_interview_survey()
+        return custom, False
+
     def _x_psm_auto_bind_custom_surveys_on_create(self):
         self.ensure_one()
         if not self.department_id:
@@ -1469,90 +1524,68 @@ class HrJob(models.Model):
         }
 
     def action_load_default_pre_interview_template(self):
+        """Load Default: overwrite Application custom survey from master template."""
         self.ensure_one()
-        source_survey = self._x_psm_find_default_survey("pre_interview")
-        if not source_survey:
-            raise exceptions.UserError(_("Chua co survey Application mac dinh (x_psm_survey_usage = pre_interview)."))
-
-        survey, created = self._x_psm_ensure_custom_survey_binding("pre_interview", source_survey=source_survey)
+        survey, created = self._x_psm_overwrite_custom_from_master("pre_interview")
         if not survey:
-            raise exceptions.UserError(_("Không thể tạo/gắn Application Survey custom từ master."))
-
-        message = (
-            f"Da tao survey custom tu master va gan vao Job: {survey.title}"
+            raise exceptions.UserError(_(
+                "No Application master survey found (x_psm_survey_usage = pre_interview). "
+                "Please configure a master survey first."
+            ))
+        msg = (
+            _("Application Survey created from master: %s") % survey.title
             if created
-            else f"Da gan lai survey custom da ton tai: {survey.title}"
+            else _("Application Survey restored from master: %s") % survey.title
         )
         return {
             "type": "ir.actions.client",
             "tag": "display_notification",
-            "params": {
-                "title": "Thanh cong",
-                "message": message,
-                "type": "success",
-                "sticky": False,
-            },
+            "params": {"title": _("Done"), "message": msg, "type": "success", "sticky": False},
         }
 
     def action_load_default_interview_template(self):
+        """Load Default: overwrite Interview custom survey from master template."""
         self.ensure_one()
         if not self._is_interview_template_supported():
-            raise exceptions.UserError(_("Chi ho tro tai mau Interview cho job Store + Management."))
-
-        source_survey = self._x_psm_find_default_survey("interview")
-        if not source_survey:
-            raise exceptions.UserError(_("Chua co survey Interview mac dinh (x_psm_survey_usage = interview)."))
-
-        survey, created = self._x_psm_ensure_custom_survey_binding("interview", source_survey=source_survey)
+            raise exceptions.UserError(_(
+                "Interview survey is only supported for Store + Management jobs."
+            ))
+        survey, created = self._x_psm_overwrite_custom_from_master("interview")
         if not survey:
-            raise exceptions.UserError(_("Không thể tạo/gắn Interview Survey custom từ master."))
-
-        message = (
-            f"Da tao survey Interview custom tu master: {survey.title}"
+            raise exceptions.UserError(_(
+                "No Interview master survey found. Please configure a master survey first."
+            ))
+        msg = (
+            _("Interview Survey created from master: %s") % survey.title
             if created
-            else f"Da gan lai survey Interview custom da ton tai: {survey.title}"
+            else _("Interview Survey restored from master: %s") % survey.title
         )
         return {
             "type": "ir.actions.client",
             "tag": "display_notification",
-            "params": {
-                "title": "Thanh cong",
-                "message": message,
-                "type": "success",
-                "sticky": False,
-            },
+            "params": {"title": _("Done"), "message": msg, "type": "success", "sticky": False},
         }
 
     def action_load_default_oje_template(self):
+        """Load Default: overwrite OJE custom survey from master template."""
         self.ensure_one()
         scope = self._get_oje_template_scope()
         if not scope:
-            raise exceptions.UserError(_("Chi ho tro tai mau OJE cho job thuoc khoi Cua hang."))
-
-        source_survey = self._x_psm_find_default_survey("oje", scope=scope)
-        if not source_survey:
             raise exceptions.UserError(_(
-                "Chua co survey OJE mac dinh cho scope %(scope)s."
-            ) % {"scope": scope})
-
-        survey, created = self._x_psm_ensure_custom_survey_binding("oje", scope=scope, source_survey=source_survey)
+                "OJE survey is only supported for Store jobs."
+            ))
+        survey, created = self._x_psm_overwrite_custom_from_master("oje", scope=scope)
         if not survey:
-            raise exceptions.UserError(_("Không thể tạo/gắn OJE Survey custom từ master."))
-
-        message = (
-            f"Da tao survey OJE custom tu master: {survey.title}"
+            raise exceptions.UserError(_("No OJE master survey found for scope %s.") % scope)
+        msg = (
+            _("OJE Survey created from master: %s") % survey.title
             if created
-            else f"Da gan lai survey OJE custom da ton tai: {survey.title}"
+            else _("OJE Survey restored from master: %s") % survey.title
         )
         return {
             "type": "ir.actions.client",
             "tag": "display_notification",
-            "params": {
-                "title": "Thanh cong",
-                "message": message,
-                "type": "success",
-                "sticky": False,
-            },
+            "params": {"title": _("Done"), "message": msg, "type": "success", "sticky": False},
         }
 
     def action_open_pre_interview_survey_dialog(self):
@@ -1641,113 +1674,37 @@ class HrJob(models.Model):
 
         return self._x_psm_open_survey_dialog_action(survey, _("OJE Survey"))
 
-    def action_create_custom_pre_interview_survey(self):
-        self.ensure_one()
-        source_survey = self._x_psm_get_template_source_survey(
-            "pre_interview",
-            current_survey=self.survey_id,
-        )
-        custom_survey, _created = self._x_psm_ensure_custom_survey_binding(
-            "pre_interview",
-            source_survey=source_survey,
-        )
-        if not custom_survey:
-            raise exceptions.UserError(_("Chua co survey Application master de tao ban custom."))
+    # ── Deprecated stubs (buttons removed from UI, kept to prevent RPC errors) ──
 
-        return self._x_psm_open_survey_dialog_action(custom_survey, _("Custom Application Survey"))
+    def action_create_custom_pre_interview_survey(self):
+        """[DEPRECATED] Use Load Default instead."""
+        _logger.warning("[0204] action_create_custom_pre_interview_survey is deprecated. Redirecting to Load Default.")
+        return self.action_load_default_pre_interview_template()
 
     def action_create_custom_interview_survey(self):
-        self.ensure_one()
-        if not self._is_interview_template_supported():
-            raise exceptions.UserError(_("Chi ho tro tao survey Interview custom cho job Store + Management."))
-
-        source_survey = self._x_psm_get_template_source_survey(
-            "interview",
-            current_survey=self.x_psm_interview_survey_id,
-        )
-        custom_survey, _created = self._x_psm_ensure_custom_survey_binding(
-            "interview",
-            source_survey=source_survey,
-        )
-        if not custom_survey:
-            raise exceptions.UserError(_("Chua co survey Interview master de tao ban custom."))
-
-        return self._x_psm_open_survey_dialog_action(custom_survey, _("Custom Interview Survey"))
+        """[DEPRECATED] Use Load Default instead."""
+        _logger.warning("[0204] action_create_custom_interview_survey is deprecated. Redirecting to Load Default.")
+        return self.action_load_default_interview_template()
 
     def action_create_custom_oje_survey(self):
-        self.ensure_one()
-        scope = self._get_oje_template_scope()
-        if not scope:
-            raise exceptions.UserError(_("Chi ho tro tao survey OJE custom cho job thuoc khoi Cua hang."))
-
-        source_survey = self._x_psm_get_template_source_survey(
-            "oje",
-            current_survey=self.x_psm_oje_survey_id,
-            scope=scope,
-        )
-        custom_survey, _created = self._x_psm_ensure_custom_survey_binding(
-            "oje",
-            scope=scope,
-            source_survey=source_survey,
-        )
-        if not custom_survey:
-            raise exceptions.UserError(_("Chua co survey OJE master de tao ban custom."))
-
-        return self._x_psm_open_survey_dialog_action(custom_survey, _("Custom OJE Survey"))
+        """[DEPRECATED] Use Load Default instead."""
+        _logger.warning("[0204] action_create_custom_oje_survey is deprecated. Redirecting to Load Default.")
+        return self.action_load_default_oje_template()
 
     def action_replace_custom_pre_interview_survey(self):
-        self.ensure_one()
-        self._x_psm_ensure_owner_department()
-        source_survey = self._x_psm_get_template_source_survey(
-            "pre_interview",
-            current_survey=self.survey_id,
-        )
-        if not source_survey:
-            raise exceptions.UserError(_("Khong tim thay survey Application mac dinh/chung de thay the ban custom."))
-
-        self._x_psm_archive_existing_custom_survey("pre_interview")
-        custom_survey = self._x_psm_clone_survey_for_job(source_survey, "pre_interview")
-        self._x_psm_set_bound_survey("pre_interview", custom_survey)
-        self._x_psm_refresh_applicant_properties_from_pre_interview_survey()
-        return self._x_psm_open_survey_dialog_action(custom_survey, _("Custom Application Survey"))
+        """[DEPRECATED] Use Load Default instead."""
+        _logger.warning("[0204] action_replace_custom_pre_interview_survey is deprecated. Redirecting to Load Default.")
+        return self.action_load_default_pre_interview_template()
 
     def action_replace_custom_interview_survey(self):
-        self.ensure_one()
-        if not self._is_interview_template_supported():
-            raise exceptions.UserError(_("Chi ho tro thao tac Interview cho job Store + Management."))
-        self._x_psm_ensure_owner_department()
-
-        source_survey = self._x_psm_get_template_source_survey(
-            "interview",
-            current_survey=self.x_psm_interview_survey_id,
-        )
-        if not source_survey:
-            raise exceptions.UserError(_("Khong tim thay survey Interview mac dinh/chung de thay the ban custom."))
-
-        self._x_psm_archive_existing_custom_survey("interview")
-        custom_survey = self._x_psm_clone_survey_for_job(source_survey, "interview")
-        self._x_psm_set_bound_survey("interview", custom_survey)
-        return self._x_psm_open_survey_dialog_action(custom_survey, _("Custom Interview Survey"))
+        """[DEPRECATED] Use Load Default instead."""
+        _logger.warning("[0204] action_replace_custom_interview_survey is deprecated. Redirecting to Load Default.")
+        return self.action_load_default_interview_template()
 
     def action_replace_custom_oje_survey(self):
-        self.ensure_one()
-        scope = self._get_oje_template_scope()
-        if not scope:
-            raise exceptions.UserError(_("Chi ho tro thao tac OJE cho job thuoc khoi Cua hang."))
-        self._x_psm_ensure_owner_department()
-
-        source_survey = self._x_psm_get_template_source_survey(
-            "oje",
-            current_survey=self.x_psm_oje_survey_id,
-            scope=scope,
-        )
-        if not source_survey:
-            raise exceptions.UserError(_("Khong tim thay survey OJE mac dinh/chung de thay the ban custom."))
-
-        self._x_psm_archive_existing_custom_survey("oje", scope=scope)
-        custom_survey = self._x_psm_clone_survey_for_job(source_survey, "oje", scope=scope)
-        self._x_psm_set_bound_survey("oje", custom_survey)
-        return self._x_psm_open_survey_dialog_action(custom_survey, _("Custom OJE Survey"))
+        """[DEPRECATED] Use Load Default instead."""
+        _logger.warning("[0204] action_replace_custom_oje_survey is deprecated. Redirecting to Load Default.")
+        return self.action_load_default_oje_template()
 
     def action_preview_interview_form(self):
         self.ensure_one()

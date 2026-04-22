@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_psm_travel_admin_config_tree" model="ir.ui.view">
+        <field name="name">x_psm_travel_admin_config.list</field>
+        <field name="model">x_psm_travel_admin_config</field>
+        <field name="arch" type="xml">
+            <list string="Travel Admin Configuration" editable="bottom">
+                <field name="x_psm_user_id"/>
+                <field name="x_psm_active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_psm_travel_admin_config" model="ir.actions.act_window">
+        <field name="name">Travel Administrators</field>
+        <field name="res_model">x_psm_travel_admin_config</field>
+        <field name="view_mode">list</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configure Travel Administrators
+            </p>
+            <p>
+                Users configured here will be notified to handle bookings when a travel request is approved.
+            </p>
+        </field>
+    </record>
+</odoo>

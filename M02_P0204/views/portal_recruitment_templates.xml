@@ -550,13 +550,13 @@
                                                 <tr>
                                                     <td><t t-esc="job.name"/></td>
                                                     <td>
-                                                        <t t-if="job.recruitment_type == 'store'">Cửa Hàng</t>
-                                                        <t t-elif="job.recruitment_type == 'office'">Văn Phòng</t>
+                                                        <t t-if="job.recruitment_type == 'store'">Store</t>
+                                                        <t t-elif="job.recruitment_type == 'office'">Office</t>
                                                         <t t-else="">—</t>
                                                     </td>
                                                     <td>
-                                                        <t t-if="job.position_level == 'management'">Quản Lý</t>
-                                                        <t t-elif="job.position_level == 'staff'">Nhân Viên</t>
+                                                        <t t-if="job.position_level == 'management'">Management</t>
+                                                        <t t-elif="job.position_level == 'staff'">Staff</t>
                                                         <t t-else="">—</t>
                                                     </td>
                                                     <td><t t-esc="job.department_id.name or '—'"/></td>
@@ -1555,8 +1555,8 @@
                                 <tr>
                                     <th>Cấp bậc</th>
                                     <td>
-                                        <t t-if="applicant.position_level == 'management'">Quản Lý</t>
-                                        <t t-elif="applicant.position_level == 'staff'">Nhân Viên</t>
+                                        <t t-if="applicant.position_level == 'management'">Management</t>
+                                        <t t-elif="applicant.position_level == 'staff'">Staff</t>
                                         <t t-else="—"/>
                                     </td>
                                 </tr>

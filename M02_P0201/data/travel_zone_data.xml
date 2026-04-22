@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- VÙNG NỘI ĐỊA 1 -->
+        <record id="zone_domestic_1" model="x_psm_travel_zone">
+            <field name="x_psm_name">Vùng Nội địa 1 (Office)</field>
+            <field name="x_psm_laundry_limit">500000</field>
+        </record>
+        <record id="allowance_domestic_1_mgr" model="x_psm_travel_zone_allowance">
+            <field name="x_psm_zone_id" ref="zone_domestic_1"/>
+            <field name="x_psm_job_ids" eval="[(6, 0, [ref('M02_P0200.job_rst_admin_manager'), ref('M02_P0200.job_rst_hr_manager')])]"/>
+            <field name="x_psm_allowance_rate">300000</field>
+            <field name="x_psm_hotel_rate">700000</field>
+            <field name="x_psm_currency_id" ref="base.VND"/>
+        </record>
+        <record id="allowance_domestic_1_staff" model="x_psm_travel_zone_allowance">
+            <field name="x_psm_zone_id" ref="zone_domestic_1"/>
+            <field name="x_psm_job_ids" eval="[(6, 0, [ref('M02_P0200.job_rst_hr_specialist'), ref('M02_P0200.job_rst_admin_officer')])]"/>
+            <field name="x_psm_allowance_rate">300000</field>
+            <field name="x_psm_hotel_rate">500000</field>
+            <field name="x_psm_currency_id" ref="base.VND"/>
+        </record>
+
+        <!-- VÙNG NỘI ĐỊA 2 -->
+        <record id="zone_domestic_2" model="x_psm_travel_zone">
+            <field name="x_psm_name">Vùng Nội địa 2 (Office)</field>
+            <field name="x_psm_laundry_limit">500000</field>
+        </record>
+        <record id="allowance_domestic_2_mgr" model="x_psm_travel_zone_allowance">
+            <field name="x_psm_zone_id" ref="zone_domestic_2"/>
+            <field name="x_psm_job_ids" eval="[(6, 0, [ref('M02_P0200.job_rst_admin_manager'), ref('M02_P0200.job_rst_hr_manager')])]"/>
+            <field name="x_psm_allowance_rate">250000</field>
+            <field name="x_psm_hotel_rate">600000</field>
+            <field name="x_psm_currency_id" ref="base.VND"/>
+        </record>
+        <record id="allowance_domestic_2_staff" model="x_psm_travel_zone_allowance">
+            <field name="x_psm_zone_id" ref="zone_domestic_2"/>
+            <field name="x_psm_job_ids" eval="[(6, 0, [ref('M02_P0200.job_rst_hr_specialist'), ref('M02_P0200.job_rst_admin_officer')])]"/>
+            <field name="x_psm_allowance_rate">250000</field>
+            <field name="x_psm_hotel_rate">400000</field>
+            <field name="x_psm_currency_id" ref="base.VND"/>
+        </record>
+
+        <!-- VÙNG NỘI ĐỊA 3 -->
+        <record id="zone_domestic_3" model="x_psm_travel_zone">
+            <field name="x_psm_name">Vùng Nội địa 3 (Office)</field>
+            <field name="x_psm_laundry_limit">500000</field>
+        </record>
+        <record id="allowance_domestic_3_mgr" model="x_psm_travel_zone_allowance">
+            <field name="x_psm_zone_id" ref="zone_domestic_3"/>
+            <field name="x_psm_job_ids" eval="[(6, 0, [ref('M02_P0200.job_rst_admin_manager'), ref('M02_P0200.job_rst_hr_manager')])]"/>
+            <field name="x_psm_allowance_rate">200000</field>
+            <field name="x_psm_hotel_rate">500000</field>
+            <field name="x_psm_currency_id" ref="base.VND"/>
+        </record>
+        <record id="allowance_domestic_3_staff" model="x_psm_travel_zone_allowance">
+            <field name="x_psm_zone_id" ref="zone_domestic_3"/>
+            <field name="x_psm_job_ids" eval="[(6, 0, [ref('M02_P0200.job_rst_hr_specialist'), ref('M02_P0200.job_rst_admin_officer')])]"/>
+            <field name="x_psm_allowance_rate">200000</field>
+            <field name="x_psm_hotel_rate">300000</field>
+            <field name="x_psm_currency_id" ref="base.VND"/>
+        </record>
+
+        <!-- VÙNG QUỐC TẾ 1: NA, EU, Dubai -->
+        <record id="zone_intl_1" model="x_psm_travel_zone">
+            <field name="x_psm_name">Quốc tế - Nhóm 1 (NA, EU, Dubai)</field>
+            <field name="x_psm_laundry_limit">500000</field>
+        </record>
+        <record id="allowance_intl_1_all" model="x_psm_travel_zone_allowance">
+            <field name="x_psm_zone_id" ref="zone_intl_1"/>
+            <field name="x_psm_allowance_rate">30</field>
+            <field name="x_psm_hotel_rate">120</field>
+            <field name="x_psm_currency_id" ref="base.USD"/>
+        </record>
+
+        <!-- VÙNG QUỐC TẾ 2: High-cost Asia -->
+        <record id="zone_intl_2" model="x_psm_travel_zone">
+            <field name="x_psm_name">Quốc tế - Nhóm 2 (Singapore, Japan, Korea...)</field>
+            <field name="x_psm_laundry_limit">500000</field>
+        </record>
+        <record id="allowance_intl_2_all" model="x_psm_travel_zone_allowance">
+            <field name="x_psm_zone_id" ref="zone_intl_2"/>
+            <field name="x_psm_allowance_rate">25</field>
+            <field name="x_psm_hotel_rate">100</field>
+            <field name="x_psm_currency_id" ref="base.USD"/>
+        </record>
+
+        <!-- VÙNG QUỐC TẾ 3: Other Asia -->
+        <record id="zone_intl_3" model="x_psm_travel_zone">
+            <field name="x_psm_name">Quốc tế - Nhóm 3 (Other Asia)</field>
+            <field name="x_psm_laundry_limit">500000</field>
+        </record>
+        <record id="allowance_intl_3_all" model="x_psm_travel_zone_allowance">
+            <field name="x_psm_zone_id" ref="zone_intl_3"/>
+            <field name="x_psm_allowance_rate">15</field>
+            <field name="x_psm_hotel_rate">100</field>
+            <field name="x_psm_currency_id" ref="base.USD"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Airlines -->
+    <record id="airline_vna" model="x_psm_airline">
+        <field name="name">Vietnam Airlines</field>
+    </record>
+    <record id="airline_vj" model="x_psm_airline">
+        <field name="name">Vietjet Air</field>
+    </record>
+    <record id="airline_bamboo" model="x_psm_airline">
+        <field name="name">Bamboo Airways</field>
+    </record>
+
+    <!-- Seat Classes -->
+    <record id="seat_class_biz" model="x_psm_seat_class">
+        <field name="name">Business Class</field>
+    </record>
+    <record id="seat_class_eco" model="x_psm_seat_class">
+        <field name="name">Economy Class</field>
+    </record>
+    <record id="seat_class_first" model="x_psm_seat_class">
+        <field name="name">First Class</field>
+    </record>
+
+    <!-- Transport Modes -->
+    <record id="transport_plane" model="x_psm_transport_mode">
+        <field name="name">Máy bay</field>
+        <field name="type">airplane</field>
+    </record>
+    <record id="transport_train" model="x_psm_transport_mode">
+        <field name="name">Tàu hỏa</field>
+        <field name="type">train</field>
+    </record>
+    <record id="transport_car" model="x_psm_transport_mode">
+        <field name="name">Xe khách/Ô tô</field>
+        <field name="type">car</field>
+    </record>
+</odoo>

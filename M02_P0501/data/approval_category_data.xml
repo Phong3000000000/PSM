@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="m02_p0501_approval_category_store_package" model="approval.category">
+            <field name="name">0501 Store Package Approval</field>
+            <field name="description">Approval category for the store package happy path.</field>
+            <field name="approval_minimum">1</field>
+        </record>
+    </data>
+</odoo>

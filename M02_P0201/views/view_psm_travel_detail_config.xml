@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Airline View -->
+    <record id="view_x_psm_airline_tree" model="ir.ui.view">
+        <field name="name">x_psm_airline.list</field>
+        <field name="model">x_psm_airline</field>
+        <field name="arch" type="xml">
+            <list string="Airlines" editable="bottom">
+                <field name="name"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_x_psm_airline" model="ir.actions.act_window">
+        <field name="name">Airlines</field>
+        <field name="res_model">x_psm_airline</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Seat Class View -->
+    <record id="view_x_psm_seat_class_tree" model="ir.ui.view">
+        <field name="name">x_psm_seat_class.list</field>
+        <field name="model">x_psm_seat_class</field>
+        <field name="arch" type="xml">
+            <list string="Seat Classes" editable="bottom">
+                <field name="name"/>
+                <field name="x_psm_transport_mode_id"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_x_psm_seat_class" model="ir.actions.act_window">
+        <field name="name">Seat Classes</field>
+        <field name="res_model">x_psm_seat_class</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Transport Mode View -->
+    <record id="view_x_psm_transport_mode_tree" model="ir.ui.view">
+        <field name="name">x_psm_transport_mode.list</field>
+        <field name="model">x_psm_transport_mode</field>
+        <field name="arch" type="xml">
+            <list string="Transport Modes" editable="bottom">
+                <field name="name"/>
+                <field name="type"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_x_psm_transport_mode" model="ir.actions.act_window">
+        <field name="name">Transport Modes</field>
+        <field name="res_model">x_psm_transport_mode</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

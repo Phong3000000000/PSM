@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_psm_travel_zone_list" model="ir.ui.view">
+        <field name="name">x_psm_travel_zone.list</field>
+        <field name="model">x_psm_travel_zone</field>
+        <field name="arch" type="xml">
+            <list string="Zones">
+                <field name="x_psm_name"/>
+                <field name="x_psm_active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_psm_travel_zone_form" model="ir.ui.view">
+        <field name="name">x_psm_travel_zone.form</field>
+        <field name="model">x_psm_travel_zone</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <form string="Zone">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="x_psm_name"/>
+                        <h1><field name="x_psm_name" placeholder="Ví dụ: Vùng 1 (Office)"/></h1>
+                    </div>
+                    <group>
+                        <group string="Thông tin chung">
+                            <field name="x_psm_name"/>
+                            <field name="x_psm_active" widget="boolean_toggle"/>
+                            <field name="x_psm_is_allowance"/>
+                            <field name="x_psm_laundry_limit"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Allowance &amp; Hotel Rates" name="allowance_rates">
+                            <field name="x_psm_allowance_line_ids">
+                                <list editable="bottom">
+                                    <field name="x_psm_job_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                                    <field name="x_psm_allowance_rate"/>
+                                    <field name="x_psm_hotel_rate"/>
+                                    <field name="x_psm_currency_id"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Destinations" name="destinations">
+                            <field name="x_psm_destination_ids" readonly="1">
+                                <list>
+                                    <field name="x_psm_name"/>
+                                    <field name="x_psm_is_international"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_psm_travel_zone" model="ir.actions.act_window">
+        <field name="name">Zones</field>
+        <field name="res_model">x_psm_travel_zone</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_psm_travel_zone_view_list" model="ir.actions.act_window.view">
+        <field name="sequence">10</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_psm_travel_zone_list"/>
+        <field name="act_window_id" ref="action_psm_travel_zone"/>
+    </record>
+
+    <record id="action_psm_travel_zone_view_form" model="ir.actions.act_window.view">
+        <field name="sequence">20</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_psm_travel_zone_form"/>
+        <field name="act_window_id" ref="action_psm_travel_zone"/>
+    </record>
+</odoo>

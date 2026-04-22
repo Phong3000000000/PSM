@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Stage structure: always updated on upgrade (noupdate=0 default) -->
     <data>
         <!-- Recruitment Stages for Office (M02_P0205) -->
         <record id="stage_office_new" model="hr.recruitment.stage">
@@ -65,6 +66,29 @@
             <field name="sequence">85</field>
             <field name="recruitment_type">office</field>
             <field name="fold">True</field>
+        </record>
+    </data>
+
+    <!--
+        Default stage templates: only set on first install (noupdate=1).
+        If users customize the stage template_id manually in Recruitment
+        configuration, upgrades will NOT overwrite their choice.
+    -->
+    <data noupdate="1">
+        <record id="stage_office_interview_1" model="hr.recruitment.stage">
+            <field name="template_id" ref="M02_P0205.email_interview_slot_survey" />
+        </record>
+
+        <record id="stage_office_interview_2" model="hr.recruitment.stage">
+            <field name="template_id" ref="M02_P0205.email_interview_slot_survey" />
+        </record>
+
+        <record id="stage_office_interview_3" model="hr.recruitment.stage">
+            <field name="template_id" ref="M02_P0205.email_interview_slot_survey" />
+        </record>
+
+        <record id="stage_office_interview_4" model="hr.recruitment.stage">
+            <field name="template_id" ref="M02_P0205.email_interview_slot_survey" />
         </record>
     </data>
 </odoo>

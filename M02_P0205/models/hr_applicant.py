@@ -22,7 +22,7 @@ class HrApplicant(models.Model):
     stage_id = fields.Many2one(
         domain=(
             "['|', ('job_ids', '=', False), ('job_ids', '=', job_id), "
-            "('recruitment_type', '=', stage_filter_type), "
+            "'|', ('recruitment_type', '=', 'both'), ('recruitment_type', '=', stage_filter_type), "
             "'|', ('office_pipeline_visible', '=', True), ('recruitment_type', '!=', 'office')]"
         )
     )
@@ -194,10 +194,7 @@ class HrApplicant(models.Model):
     def _x_psm_get_stage_scope_type(self, applicant):
         if hasattr(applicant, '_get_pipeline_stage_type'):
             return applicant._get_pipeline_stage_type()
-        fallback_type = applicant.x_psm_0205_recruitment_type or False
-        if fallback_type == 'store':
-            return applicant.position_level if applicant.position_level in ('staff', 'management') else False
-        return fallback_type if fallback_type in ('office', 'staff', 'management') else False
+        return applicant.x_psm_0205_recruitment_type or False
 
     def _x_psm_get_stage_job_scope_domain(self, applicant):
         if applicant.job_id:
@@ -211,11 +208,12 @@ class HrApplicant(models.Model):
     def _get_stage_search_domain(self, applicant):
         search_domain = list(self._x_psm_get_stage_job_scope_domain(applicant))
         stage_type = self._x_psm_get_stage_scope_type(applicant)
-        if not stage_type:
-            search_domain.append(('id', '=', 0))
-            return search_domain
-
-        search_domain.append(('recruitment_type', '=', stage_type))
+        if stage_type:
+            search_domain.extend([
+                '|',
+                ('recruitment_type', '=', 'both'),
+                ('recruitment_type', '=', stage_type),
+            ])
         if stage_type == 'office':
             search_domain.extend([
                 '|',
@@ -499,6 +497,148 @@ class HrApplicant(models.Model):
     }
     x_psm_0205_cv_checked = fields.Boolean(string='Đã kiểm tra CV', default=False, tracking=True)
 
+    # Per-round chosen slot event fields
+    x_psm_0205_interview_slot_event_id_1 = fields.Many2one(
+        'calendar.event', string='Slot Event Round 1', copy=False,
+    )
+    x_psm_0205_interview_slot_event_id_2 = fields.Many2one(
+        'calendar.event', string='Slot Event Round 2', copy=False,
+    )
+    x_psm_0205_interview_slot_event_id_3 = fields.Many2one(
+        'calendar.event', string='Slot Event Round 3', copy=False,
+    )
+    x_psm_0205_interview_slot_event_id_4 = fields.Many2one(
+        'calendar.event', string='Slot Event Round 4', copy=False,
+    )
+
+    ROUND_SLOT_EVENT_FIELD_MAP = {
+        '1': 'x_psm_0205_interview_slot_event_id_1',
+        '2': 'x_psm_0205_interview_slot_event_id_2',
+        '3': 'x_psm_0205_interview_slot_event_id_3',
+        '4': 'x_psm_0205_interview_slot_event_id_4',
+    }
+    ROUND_DATE_FIELD_MAP = {
+        '1': 'x_psm_0205_interview_date_1',
+        '2': 'x_psm_0205_interview_date_2',
+        '3': 'x_psm_0205_interview_date_3',
+        '4': 'x_psm_0205_interview_date_4',
+    }
+
+    # Visibility flags for generic office buttons
+    x_psm_0205_can_send_slot_survey = fields.Boolean(
+        string='Can Send Slot Survey',
+        compute='_compute_office_button_visibility',
+    )
+    x_psm_0205_can_invite_interview = fields.Boolean(
+        string='Can Invite Interview',
+        compute='_compute_office_button_visibility',
+    )
+    x_psm_0205_can_pass_interview = fields.Boolean(
+        string='Can Pass Interview',
+        compute='_compute_office_button_visibility',
+    )
+
+    @api.depends(
+        'x_psm_0205_recruitment_type',
+        'x_psm_0205_can_schedule_next_round',
+        'x_psm_0205_next_interview_round',
+        'x_psm_0205_next_round_date_missing',
+        'meeting_ids', 'meeting_ids.x_psm_0205_interview_round',
+        'x_psm_0205_interview_slot_event_id_1',
+        'x_psm_0205_interview_slot_event_id_2',
+        'x_psm_0205_interview_slot_event_id_3',
+        'x_psm_0205_interview_slot_event_id_4',
+        'x_psm_0205_interview_date_1',
+        'x_psm_0205_interview_date_2',
+        'x_psm_0205_interview_date_3',
+        'x_psm_0205_interview_date_4',
+        'x_psm_0205_primary_interviewer_l1_user_id',
+        'x_psm_0205_primary_interviewer_l2_user_id',
+        'x_psm_0205_primary_interviewer_l3_user_id',
+        'x_psm_0205_primary_interviewer_l4_user_id',
+    )
+    def _compute_office_button_visibility(self):
+        PRIMARY_FIELD_MAP = {
+            '1': 'x_psm_0205_primary_interviewer_l1_user_id',
+            '2': 'x_psm_0205_primary_interviewer_l2_user_id',
+            '3': 'x_psm_0205_primary_interviewer_l3_user_id',
+            '4': 'x_psm_0205_primary_interviewer_l4_user_id',
+        }
+        current_user = self.env.user
+        for rec in self:
+            rec.x_psm_0205_can_send_slot_survey = False
+            rec.x_psm_0205_can_invite_interview = False
+            rec.x_psm_0205_can_pass_interview = False
+
+            if rec.x_psm_0205_recruitment_type != 'office':
+                continue
+            if not rec.x_psm_0205_can_schedule_next_round:
+                continue
+
+            current_round = rec.x_psm_0205_next_interview_round
+            if not current_round or current_round not in ('1', '2', '3', '4'):
+                continue
+
+            # Check if round has meetings
+            round_meetings = rec.meeting_ids.filtered(
+                lambda ev: ev.x_psm_0205_interview_round == current_round
+            )
+
+            # Check if a slot has been confirmed for this round
+            slot_field = rec.ROUND_SLOT_EVENT_FIELD_MAP.get(current_round)
+            slot_confirmed = bool(getattr(rec, slot_field, False)) if slot_field else False
+
+            # Check if a date has been set for this round
+            date_field = rec.ROUND_DATE_FIELD_MAP.get(current_round)
+            date_set = bool(getattr(rec, date_field, False)) if date_field else False
+
+            # Gửi lịch PV: visible when meetings exist but no slot confirmed yet
+            rec.x_psm_0205_can_send_slot_survey = bool(round_meetings and not slot_confirmed)
+
+            # Mời phỏng vấn: visible when slot confirmed and date set
+            rec.x_psm_0205_can_invite_interview = bool(slot_confirmed and date_set)
+
+            # Pass Interview: visible when slot confirmed and user is primary interviewer of current round
+            if slot_confirmed:
+                primary_field = PRIMARY_FIELD_MAP.get(current_round)
+                primary_user = getattr(rec, primary_field, False) if primary_field else False
+                rec.x_psm_0205_can_pass_interview = bool(primary_user and primary_user == current_user)
+
+    # Per-round filtered meeting fields for office tab UI
+    x_psm_0205_meeting_ids_round_1 = fields.One2many(
+        'calendar.event', compute='_compute_meeting_ids_per_round',
+        string='Round 1 Meetings',
+    )
+    x_psm_0205_meeting_ids_round_2 = fields.One2many(
+        'calendar.event', compute='_compute_meeting_ids_per_round',
+        string='Round 2 Meetings',
+    )
+    x_psm_0205_meeting_ids_round_3 = fields.One2many(
+        'calendar.event', compute='_compute_meeting_ids_per_round',
+        string='Round 3 Meetings',
+    )
+    x_psm_0205_meeting_ids_round_4 = fields.One2many(
+        'calendar.event', compute='_compute_meeting_ids_per_round',
+        string='Round 4 Meetings',
+    )
+
+    @api.depends('meeting_ids', 'meeting_ids.x_psm_0205_interview_round')
+    def _compute_meeting_ids_per_round(self):
+        for rec in self:
+            all_meetings = rec.meeting_ids
+            rec.x_psm_0205_meeting_ids_round_1 = all_meetings.filtered(
+                lambda ev: ev.x_psm_0205_interview_round == '1'
+            )
+            rec.x_psm_0205_meeting_ids_round_2 = all_meetings.filtered(
+                lambda ev: ev.x_psm_0205_interview_round == '2'
+            )
+            rec.x_psm_0205_meeting_ids_round_3 = all_meetings.filtered(
+                lambda ev: ev.x_psm_0205_interview_round == '3'
+            )
+            rec.x_psm_0205_meeting_ids_round_4 = all_meetings.filtered(
+                lambda ev: ev.x_psm_0205_interview_round == '4'
+            )
+
     # Step 29-31: Offer
     x_psm_0205_offer_status = fields.Selection([
         ('proposed', 'Đã đề xuất'),
@@ -601,6 +741,14 @@ class HrApplicant(models.Model):
     def action_invite_interview_l2(self): return self.action_invite_interview(2)
     def action_invite_interview_l3(self): return self.action_invite_interview(3)
     def action_invite_interview_l4(self): return self.action_invite_interview(4)
+
+    def action_invite_interview_current_round(self):
+        """Generic office button: invite for the current interview round using confirmed slot."""
+        self.ensure_one()
+        current_round = self.x_psm_0205_next_interview_round
+        if not current_round or current_round not in ('1', '2', '3', '4'):
+            raise exceptions.UserError(_("Không xác định được vòng phỏng vấn hiện tại."))
+        return self.action_invite_interview(int(current_round))
 
     def _ensure_interview_slot_token(self):
         if not self.x_psm_0205_interview_slot_token:
@@ -782,47 +930,61 @@ class HrApplicant(models.Model):
             )
 
     def action_send_interview_slot_survey(self):
-        """Gui email de ung vien chon lich phong van vong 1"""
+        """Validate and move applicant to Interview X stage.
+
+        This is the single office progression button ('Gửi lịch PV').
+        It validates round prerequisites, ensures token, prepares
+        meeting_slots context, then writes stage_id.
+
+        Mail is sent ONLY by Odoo's standard stage-change tracking
+        via _track_template, NOT by this method directly.
+        """
         self.ensure_one()
         if not self.email_from:
-            raise exceptions.UserError("Ung vien chua co dia chi email!")
-        if self.x_psm_0205_next_interview_round != '1':
-            raise exceptions.UserError(_("Chỉ gửi email chọn lịch cho vòng 1."))
-        if not self.meeting_ids:
-            raise exceptions.UserError("Chua co lich phong van nao de gui lua chon.")
+            raise exceptions.UserError("Ứng viên chưa có địa chỉ email!")
+
+        current_round = self.x_psm_0205_next_interview_round
+        if not current_round or current_round not in ('1', '2', '3', '4'):
+            raise exceptions.UserError(_("Không xác định được vòng phỏng vấn hiện tại để gửi email chọn lịch."))
+
+        level = int(current_round)
+        # Validate prerequisites for rounds > 1
+        if level > 1:
+            self._ensure_previous_round_completed(level)
+
+        round_meetings = self.meeting_ids.filtered(
+            lambda ev: ev.x_psm_0205_interview_round == current_round
+        )
+        if not round_meetings:
+            raise exceptions.UserError(
+                _("Chưa có lịch phỏng vấn nào cho vòng %(round)s. Vui lòng tạo lịch trước khi gửi.") % {
+                    'round': current_round,
+                }
+            )
 
         self._ensure_interview_slot_token()
 
-        template = self.env.ref("M02_P0205.email_interview_slot_survey", raise_if_not_found=False)
-        if not template:
-            raise exceptions.UserError("Khong tim thay mau email gui lua chon lich phong van!")
+        # Resolve target stage
+        stage_xmlid = f'M02_P0205.stage_office_interview_{current_round}'
+        target_stage = self.env.ref(stage_xmlid, raise_if_not_found=False)
+        if not target_stage:
+            raise exceptions.UserError(_("Không tìm thấy stage Interview %s.") % current_round)
 
-        slots = []
-        tz = self.env.context.get('tz') or self.env.user.tz or 'Asia/Ho_Chi_Minh'
-        for event in self.meeting_ids.sorted(key=lambda ev: ev.start or ev.start_date or fields.Datetime.now()):
-            slot_dt = event.start or event.start_date
-            if slot_dt:
-                slot_time = self._format_local_datetime_for_display(slot_dt, tz=tz)
-            else:
-                slot_time = "Đang cập nhật"
-            slots.append({
-                'time': slot_time,
-                'url': self.get_interview_slot_url(event),
-            })
-        ctx = {
-            'meeting_slots': slots or [{'time': 'Đang cập nhật', 'url': '#'}],
-        }
-        body_html = self._build_interview_slot_email_body(ctx['meeting_slots'])
-        template.with_context(**ctx).send_mail(
-            self.id,
-            force_send=True,
-            email_values={'body_html': body_html},
-        )
+        # Build meeting_slots context for the stage template to render
+        round_label = f"Interview {current_round}"
+        slots = self._prepare_interview_slots_context(round_meetings)
 
-        # Tao activity cho HR va Manager de tham gia phong van lan 1
-        partner_name = self.partner_name or self.name or "ung vien"
-        summary = "Tham gia phong van lan 1"
-        note_body = f"Vui long tham gia phong van lan 1 cua {partner_name}."
+        # Write stage_id — triggers _track_template which sends the stage email
+        # with meeting_slots injected into context via _track_template override.
+        self.with_context(
+            office_interview_slots=slots,
+            office_round_label=round_label,
+        ).write({'stage_id': target_stage.id})
+
+        # Create activity for HR and Manager
+        partner_name = self.partner_name or self.name or "ứng viên"
+        summary = f"Tham gia phỏng vấn {round_label}"
+        note_body = f"Vui lòng tham gia phỏng vấn {round_label} của {partner_name}."
         users = self.env['res.users']
         if self.user_id:
             users |= self.user_id
@@ -834,87 +996,65 @@ class HrApplicant(models.Model):
             "type": "ir.actions.client",
             "tag": "display_notification",
             "params": {
-                "title": "Thanh cong",
-                "message": "Da gui email lua chon lich phong van cho ung vien.",
+                "title": "Thành công",
+                "message": f"Đã gửi email chọn lịch {round_label} và chuyển stage cho ứng viên.",
                 "type": "success",
+                "next": {
+                    "type": "ir.actions.client",
+                    "tag": "reload",
+                },
             }
         }
 
-    def _build_interview_slot_email_body(self, meeting_slots):
+    def _prepare_interview_slots_context(self, round_meetings):
+        """Build meeting_slots list for template rendering context."""
         self.ensure_one()
-        lines = []
-        for slot in meeting_slots or []:
-            slot_time = slot.get('time') or 'Đang cập nhật'
-            slot_url = slot.get('url') or '#'
-            lines.append(
-                '<tr>'
-                '<td style="padding: 14px 18px; border-bottom: 1px solid #e5e7eb; '
-                'font-family: Arial, sans-serif; font-size: 15px; font-weight: 700; color: #111827;">'
-                f'{slot_time}'
-                '</td>'
-                '<td style="padding: 14px 18px; border-bottom: 1px solid #e5e7eb; text-align: right;">'
-                '<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="right">'
-                '<tr>'
-                '<td style="background-color: #1f4e79; border-radius: 4px; text-align: center;">'
-                f'<a href="{slot_url}" '
-                'style="display: inline-block; padding: 10px 16px; font-family: Arial, sans-serif; '
-                'font-size: 14px; font-weight: 700; color: #ffffff; text-decoration: none;">'
-                'Chọn lịch này</a>'
-                '</td>'
-                '</tr>'
-                '</table>'
-                '</td>'
-                '</tr>'
-            )
-        slot_rows = ''.join(lines) if lines else (
-            '<tr><td style="padding: 14px 18px; font-family: Arial, sans-serif; font-size: 14px; '
-            'color: #6b7280;">Đang cập nhật</td></tr>'
-        )
-        applicant_name = self.partner_name or self.display_name or 'ứng viên'
-        job_name = self.job_id.name or 'vị trí ứng tuyển'
-        return (
-            '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
-            'style="width:100%; border-collapse:collapse; background-color:#f3f4f6; margin:0; padding:0;">'
-            '<tr>'
-            '<td align="center" style="padding:24px 12px;">'
-            '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="680" '
-            'style="width:680px; max-width:680px; border-collapse:collapse; background-color:#ffffff; border:1px solid #e5e7eb;">'
-            '<tr>'
-            '<td style="padding:20px 24px; border-bottom:4px solid #f6c343; font-family:Arial, sans-serif; '
-            'font-size:30px; font-weight:700; line-height:1.2; color:#111827;">'
-            'Chọn lịch phỏng vấn'
-            '</td>'
-            '</tr>'
-            '<tr>'
-            '<td style="padding:24px; font-family:Arial, sans-serif; font-size:16px; line-height:1.7; color:#111827;">'
-            f'<p style="margin:0 0 14px; font-family:Arial, sans-serif; font-size:16px; line-height:1.7; color:#111827;">'
-            f'Chào <strong>{applicant_name}</strong>,</p>'
-            f'<p style="margin:0 0 22px; font-family:Arial, sans-serif; font-size:16px; line-height:1.7; color:#111827;">'
-            f'Cảm ơn bạn đã ứng tuyển vị trí <strong>{job_name}</strong>. '
-            'Vui lòng chọn một khung giờ phù hợp dưới đây để tham gia phỏng vấn vòng 1.'
-            '</p>'
-            '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
-            'style="width:100%; border-collapse:collapse; border:1px solid #e5e7eb; background-color:#ffffff;">'
-            '<tr>'
-            '<td style="padding:14px 18px; background-color:#fff8e1; border-bottom:1px solid #e5e7eb; '
-            'font-family:Arial, sans-serif; font-size:14px; color:#6b7280;">'
-            'Khung giờ được hiển thị theo giờ địa phương của lịch hẹn.'
-            '</td>'
-            '</tr>'
-            f'{slot_rows}'
-            '</table>'
-            '<p style="margin:24px 0 8px; font-family:Arial, sans-serif; font-size:15px; line-height:1.7; color:#111827;">'
-            'Sau khi bạn chọn lịch, hệ thống sẽ ghi nhận ngay và đội ngũ tuyển dụng sẽ liên hệ lại sớm nhất.'
-            '</p>'
-            '<p style="margin:0; font-family:Arial, sans-serif; font-size:15px; line-height:1.7; color:#111827;">'
-            'Trân trọng,<br/><strong>Bộ phận Tuyển dụng</strong></p>'
-            '</td>'
-            '</tr>'
-            '</table>'
-            '</td>'
-            '</tr>'
-            '</table>'
-        )
+        slots = []
+        tz = self.env.context.get('tz') or self.env.user.tz or 'Asia/Ho_Chi_Minh'
+        for event in round_meetings.sorted(key=lambda ev: ev.start or ev.start_date or fields.Datetime.now()):
+            slot_dt = event.start or event.start_date
+            if slot_dt:
+                slot_time = self._format_local_datetime_for_display(slot_dt, tz=tz)
+            else:
+                slot_time = "Đang cập nhật"
+            slots.append({
+                'time': slot_time,
+                'url': self.get_interview_slot_url(event),
+            })
+        return slots or [{'time': 'Đang cập nhật', 'url': '#'}]
+
+    def _track_template(self, changes):
+        """Override to inject meeting_slots context into stage template for office interview stages.
+
+        When an office applicant moves to Interview 1/2/3/4 via action_send_interview_slot_survey,
+        the context contains 'office_interview_slots' and 'office_round_label'.
+        This override passes them to the template so it can render the slot list.
+        """
+        res = super()._track_template(changes)
+        if 'stage_id' not in changes:
+            return res
+        if 'stage_id' not in res:
+            return res
+
+        applicant = self[0]
+        if applicant.x_psm_0205_recruitment_type != 'office':
+            return res
+
+        # Inject meeting_slots and round_label into the template rendering context
+        slots = self.env.context.get('office_interview_slots')
+        round_label = self.env.context.get('office_round_label')
+        if slots or round_label:
+            template, post_kwargs = res['stage_id']
+            # Enrich the template's context so QWeb rendering has access
+            # to meeting_slots and round_label via ctx.get(...)
+            res['stage_id'] = (template.with_context(
+                meeting_slots=slots or [],
+                round_label=round_label or '',
+            ), post_kwargs)
+
+        return res
+
+
 
     def _build_round_notification_email_body(self, event, round_no):
         self.ensure_one()
@@ -1521,6 +1661,20 @@ class HrApplicant(models.Model):
     x_psm_0205_evaluation_line_ids = fields.One2many(
         'x_psm_applicant_evaluation', 'applicant_id', string='Danh sách đánh giá')
 
+    # Round-filtered One2many for per-tab display (read-only in view)
+    x_psm_0205_evaluation_line_ids_round_1 = fields.One2many(
+        'x_psm_applicant_evaluation', compute='_compute_evaluation_line_ids_per_round',
+        string='Đánh giá vòng 1')
+    x_psm_0205_evaluation_line_ids_round_2 = fields.One2many(
+        'x_psm_applicant_evaluation', compute='_compute_evaluation_line_ids_per_round',
+        string='Đánh giá vòng 2')
+    x_psm_0205_evaluation_line_ids_round_3 = fields.One2many(
+        'x_psm_applicant_evaluation', compute='_compute_evaluation_line_ids_per_round',
+        string='Đánh giá vòng 3')
+    x_psm_0205_evaluation_line_ids_round_4 = fields.One2many(
+        'x_psm_applicant_evaluation', compute='_compute_evaluation_line_ids_per_round',
+        string='Đánh giá vòng 4')
+
     x_psm_0205_eval_round_1_score = fields.Float(string='Điểm vòng 1', compute='_compute_eval_round_metrics', store=True, digits=(16, 2))
     x_psm_0205_eval_round_2_score = fields.Float(string='Điểm vòng 2', compute='_compute_eval_round_metrics', store=True, digits=(16, 2))
     x_psm_0205_eval_round_3_score = fields.Float(string='Điểm vòng 3', compute='_compute_eval_round_metrics', store=True, digits=(16, 2))
@@ -1751,6 +1905,94 @@ class HrApplicant(models.Model):
     def action_start_eval_l2(self): return self.action_start_evaluation(2)
     def action_start_eval_l3(self): return self.action_start_evaluation(3)
     def action_start_eval_l4(self): return self.action_start_evaluation(4)
+
+    @api.depends('x_psm_0205_evaluation_line_ids', 'x_psm_0205_evaluation_line_ids.interview_round')
+    def _compute_evaluation_line_ids_per_round(self):
+        """Compute round-filtered evaluation records for each tab display."""
+        for rec in self:
+            all_evals = rec.x_psm_0205_evaluation_line_ids
+            rec.x_psm_0205_evaluation_line_ids_round_1 = all_evals.filtered(
+                lambda e: e.interview_round == '1')
+            rec.x_psm_0205_evaluation_line_ids_round_2 = all_evals.filtered(
+                lambda e: e.interview_round == '2')
+            rec.x_psm_0205_evaluation_line_ids_round_3 = all_evals.filtered(
+                lambda e: e.interview_round == '3')
+            rec.x_psm_0205_evaluation_line_ids_round_4 = all_evals.filtered(
+                lambda e: e.interview_round == '4')
+
+    ROUND_EVAL_FIELD_MAP = {
+        1: 'x_psm_0205_eval_l1_id',
+        2: 'x_psm_0205_eval_l2_id',
+        3: 'x_psm_0205_eval_l3_id',
+        4: 'x_psm_0205_eval_l4_id',
+    }
+
+    def action_pass_interview_round(self, round_num):
+        """Create or open the canonical evaluation for the given round.
+
+        If no canonical eval exists, create one and assign it.
+        Then redirect to the page-based evaluation form (0204 pattern).
+        """
+        self.ensure_one()
+        round_num = int(round_num)
+        self._ensure_round_enabled(round_num)
+
+        eval_field = self.ROUND_EVAL_FIELD_MAP.get(round_num)
+        if not eval_field:
+            raise exceptions.UserError(_("Vòng phỏng vấn không hợp lệ."))
+
+        evaluation = getattr(self, eval_field)
+        if not evaluation:
+            # Create new canonical evaluation
+            evaluation = self.env['x_psm_applicant_evaluation'].create({
+                'applicant_id': self.id,
+                'interview_round': str(round_num),
+                'interviewer_id': self.env.user.id,
+            })
+            self.write({eval_field: evaluation.id})
+
+        # Redirect to page-based evaluation form
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/recruitment/office-interview/evaluation/{evaluation.id}',
+            'target': 'self',
+        }
+
+    def action_pass_interview_l1(self): return self.action_pass_interview_round(1)
+    def action_pass_interview_l2(self): return self.action_pass_interview_round(2)
+    def action_pass_interview_l3(self): return self.action_pass_interview_round(3)
+    def action_pass_interview_l4(self): return self.action_pass_interview_round(4)
+
+    def action_pass_interview_current(self):
+        """Header button action — resolve current round and open Pass Interview page."""
+        self.ensure_one()
+        current_round = self.x_psm_0205_next_interview_round
+        if not current_round or current_round not in ('1', '2', '3', '4'):
+            raise exceptions.UserError(_("Không xác định được vòng phỏng vấn hiện tại."))
+        return self.action_pass_interview_round(int(current_round))
+
+    def action_view_eval_round(self, round_num):
+        """Open canonical eval for the given round in read-only page view."""
+        self.ensure_one()
+        round_num = int(round_num)
+        eval_field = self.ROUND_EVAL_FIELD_MAP.get(round_num)
+        if not eval_field:
+            raise exceptions.UserError(_("Vòng phỏng vấn không hợp lệ."))
+
+        evaluation = getattr(self, eval_field)
+        if not evaluation:
+            raise exceptions.UserError(_("Chưa có phiếu đánh giá cho vòng %s.") % round_num)
+
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/recruitment/office-interview/evaluation/{evaluation.id}',
+            'target': 'self',
+        }
+
+    def action_view_eval_l1(self): return self.action_view_eval_round(1)
+    def action_view_eval_l2(self): return self.action_view_eval_round(2)
+    def action_view_eval_l3(self): return self.action_view_eval_round(3)
+    def action_view_eval_l4(self): return self.action_view_eval_round(4)
 
     def _update_interview_round_outcome(self, interview_round):
         if not interview_round:
@@ -2356,16 +2598,12 @@ class HrApplicantEvaluation(models.Model):
         return result
 
     def action_view_form(self):
+        """Open evaluation record in page-based review (read-only if done)."""
         self.ensure_one()
-        form_view = self.env.ref('M02_P0205.view_psm_applicant_evaluation_form', raise_if_not_found=False)
         return {
-            'type': 'ir.actions.act_window',
-            'name': 'Đánh giá phòng vấn',
-            'res_model': 'x_psm_applicant_evaluation',
-            'res_id': self.id,
-            'view_mode': 'form',
-            'view_id': form_view.id if form_view else False,
-            'target': 'new',
+            'type': 'ir.actions.act_url',
+            'url': f'/recruitment/office-interview/evaluation/{self.id}',
+            'target': 'self',
         }
 
 

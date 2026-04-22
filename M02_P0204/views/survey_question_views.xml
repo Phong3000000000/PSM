@@ -11,23 +11,48 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='constr_mandatory']" position="before">
                 <field name="x_psm_parent_survey_usage" invisible="1"/>
+                <field name="x_psm_0204_is_custom_job_question" invisible="1"/>
+                <field name="x_psm_0204_is_locked_on_custom_ui" invisible="1"/>
                 <field name="x_psm_show_on_webform"
                     widget="boolean_toggle"
+                    readonly="x_psm_0204_is_locked_on_custom_ui"
                     invisible="x_psm_parent_survey_usage != 'pre_interview'"
                     help="Bật thì hiện trên trang ứng tuyển website; tắt thì không render trên form apply."/>
             </xpath>
             <xpath expr="//field[@name='constr_mandatory']" position="attributes">
                 <attribute name="string">Bắt buộc</attribute>
                 <attribute name="help">Nếu tick, câu này hiển thị dấu * trên form ứng tuyển và bắt buộc phải điền trước khi nộp.</attribute>
+                <attribute name="readonly">x_psm_0204_is_locked_on_custom_ui</attribute>
             </xpath>
             <!-- Thẻ Options -> Group Constraints -->
             <xpath expr="//field[@name='constr_mandatory']" position="after">
                 <field name="x_psm_0204_is_mandatory_correct"
+                      readonly="x_psm_0204_is_locked_on_custom_ui"
                        invisible="not is_scored_question"
                       help="Nếu tick, ứng viên sai câu này sẽ bị đưa vào Under Review (trừ khi bật 'Loại khi sai')."/>
                   <field name="x_psm_0204_is_reject_when_wrong"
+                      readonly="x_psm_0204_is_locked_on_custom_ui"
                       invisible="not is_scored_question or not x_psm_0204_is_mandatory_correct"
                       help="Nếu tick, ứng viên sai câu này sẽ bị chuyển Reject ngay lập tức."/>
+                <field name="x_psm_0204_lock_on_custom"
+                       string="Lock on Custom"
+                       readonly="x_psm_0204_is_custom_job_question or x_psm_0204_is_locked_on_custom_ui"
+                       help="Bật trên Master Survey để khóa dòng tương ứng khi copy sang Custom Survey."/>
+            </xpath>
+            <xpath expr="//field[@name='title']" position="attributes">
+                <attribute name="readonly">x_psm_0204_is_locked_on_custom_ui</attribute>
+            </xpath>
+            <xpath expr="//field[@name='question_type']" position="attributes">
+                <attribute name="readonly">x_psm_0204_is_locked_on_custom_ui</attribute>
+            </xpath>
+            <xpath expr="//page[@name='answers']" position="attributes">
+                <attribute name="readonly">x_psm_0204_is_locked_on_custom_ui</attribute>
+            </xpath>
+            <xpath expr="//page[@name='survey_description']" position="attributes">
+                <attribute name="readonly">x_psm_0204_is_locked_on_custom_ui</attribute>
+            </xpath>
+            <xpath expr="//page[@name='options']" position="attributes">
+                <attribute name="readonly">x_psm_0204_is_locked_on_custom_ui</attribute>
             </xpath>
             <xpath expr="//field[@name='title']" position="after">
                 <field name="x_psm_oje_section_kind" invisible="not is_page"/>

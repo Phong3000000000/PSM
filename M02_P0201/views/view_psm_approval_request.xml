@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_psm_approval_request_form_inherit_travel" model="ir.ui.view">
+        <field name="name">x_psm_approval_request.form.inherit.travel</field>
+        <field name="model">approval.request</field>
+        <field name="inherit_id" ref="approvals.approval_request_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="date_start" invisible="not date_start" readonly="1"/>
+                <field name="date_end" invisible="not date_end" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

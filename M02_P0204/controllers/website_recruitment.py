@@ -909,26 +909,24 @@ class WebsiteRecruitmentCustom(http.Controller):
         stage_type = False
         if hasattr(applicant, '_get_pipeline_stage_type'):
             stage_type = applicant._get_pipeline_stage_type()
-        if applicant.recruitment_type == 'store' and not stage_type:
-            return request.env['hr.recruitment.stage']
 
         Stage = request.env['hr.recruitment.stage'].sudo()
 
         domain = [('name', '=', stage_name)]
         if stage_type:
-            domain.append(('recruitment_type', '=', stage_type))
+            domain.append(('recruitment_type', 'in', [stage_type, 'both']))
         stage = Stage.search(domain, limit=1)
         if stage:
             return stage
 
         ilike_domain = [('name', 'ilike', stage_name)]
         if stage_type:
-            ilike_domain.append(('recruitment_type', '=', stage_type))
+            ilike_domain.append(('recruitment_type', 'in', [stage_type, 'both']))
         stage = Stage.search(ilike_domain, limit=1)
         if stage:
             return stage
 
-        return request.env['hr.recruitment.stage']
+        return Stage.search([('name', 'ilike', stage_name)], limit=1)
 
     def _apply_application_form_outcome(self, applicant, review_questions, reject_questions, review_lines=None):
         failed_html = self._build_failed_questions_html(review_questions, reject_questions)
