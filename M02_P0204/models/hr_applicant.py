@@ -2456,7 +2456,17 @@ class HrApplicant(models.Model):
                         stage_template = rec._get_email_template_resolution(resolve_stage_id=new_stage.id)
                         if stage_template and rec.email_from:
                             try:
-                                rec._send_mail_async(stage_template, rec.id)
+                                # 0205 office flow passes slot context via write() context.
+                                # Map those keys to the template keys that QWeb mail expects.
+                                stage_template_to_send = stage_template
+                                office_slots = self.env.context.get('office_interview_slots')
+                                office_round_label = self.env.context.get('office_round_label')
+                                if office_slots is not None or office_round_label is not None:
+                                    stage_template_to_send = stage_template.with_context(
+                                        meeting_slots=office_slots or [],
+                                        round_label=office_round_label or '',
+                                    )
+                                rec._send_mail_async(stage_template_to_send, rec.id)
                                 _logger.info("[STAGE_EMAIL] Sent dynamic stage email to %s for moving to %s", rec.email_from, new_stage.name)
                             except Exception as e:
                                 _logger.error("[STAGE_EMAIL] Failed to send dynamic stage email to %s: %s", rec.email_from, str(e))

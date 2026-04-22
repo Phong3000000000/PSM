@@ -86,6 +86,9 @@
         "views/website_hr_recruitment_templates.xml",
     ],
     "assets": {
+        "web.assets_backend": [
+            "M02_P0205/static/src/js/office_evaluation_row_open.js",
+        ],
         "web.assets_frontend": [
             "M02_P0205/static/src/scss/office_apply_responsive.scss",
         ],

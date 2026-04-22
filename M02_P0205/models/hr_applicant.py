@@ -3,7 +3,11 @@ import secrets
 from datetime import timedelta, timezone
 from zoneinfo import ZoneInfo
 from odoo import models, fields, api, exceptions, _, Command
-from .interview_round import INTERVIEW_ROUND_SELECTION, INTERVIEW_STAGE_XML_TO_ROUND
+from .interview_round import (
+    INTERVIEW_ROUND_SELECTION,
+    INTERVIEW_STAGE_XML_TO_ROUND,
+    INTERVIEW_STAGE_XML_TO_EVAL_ROUND,
+)
 
 _logger = logging.getLogger(__name__)
 
@@ -448,6 +452,12 @@ class HrApplicant(models.Model):
         compute='_compute_next_interview_round',
         store=True,
     )
+    x_psm_0205_current_stage_interview_round = fields.Selection(
+        INTERVIEW_ROUND_SELECTION,
+        string='Vòng phỏng vấn hiện tại theo stage',
+        compute='_compute_current_stage_interview_round',
+        store=True,
+    )
     x_psm_0205_job_level_code = fields.Char(
         string='Mã level job',
         compute='_compute_job_level_meta',
@@ -476,6 +486,10 @@ class HrApplicant(models.Model):
     )
     x_psm_0205_next_round_date_missing = fields.Boolean(
         string='Thiếu ngày phỏng vấn vòng kế',
+        compute='_compute_office_stage_ui_flags',
+    )
+    x_psm_0205_next_round_meeting_missing = fields.Boolean(
+        string='Thiếu meeting vòng kế',
         compute='_compute_office_stage_ui_flags',
     )
     x_psm_0205_can_ready_for_offer = fields.Boolean(
@@ -542,7 +556,8 @@ class HrApplicant(models.Model):
         'x_psm_0205_recruitment_type',
         'x_psm_0205_can_schedule_next_round',
         'x_psm_0205_next_interview_round',
-        'x_psm_0205_next_round_date_missing',
+        'x_psm_0205_current_stage_interview_round',
+        'x_psm_0205_next_round_meeting_missing',
         'meeting_ids', 'meeting_ids.x_psm_0205_interview_round',
         'x_psm_0205_interview_slot_event_id_1',
         'x_psm_0205_interview_slot_event_id_2',
@@ -556,6 +571,10 @@ class HrApplicant(models.Model):
         'x_psm_0205_primary_interviewer_l2_user_id',
         'x_psm_0205_primary_interviewer_l3_user_id',
         'x_psm_0205_primary_interviewer_l4_user_id',
+        'x_psm_0205_evaluation_line_ids.recommendation',
+        'x_psm_0205_evaluation_line_ids.interview_round',
+        'x_psm_0205_evaluation_line_ids.interviewer_id',
+        'stage_id',
     )
     def _compute_office_button_visibility(self):
         PRIMARY_FIELD_MAP = {
@@ -572,37 +591,35 @@ class HrApplicant(models.Model):
 
             if rec.x_psm_0205_recruitment_type != 'office':
                 continue
-            if not rec.x_psm_0205_can_schedule_next_round:
-                continue
 
-            current_round = rec.x_psm_0205_next_interview_round
-            if not current_round or current_round not in ('1', '2', '3', '4'):
-                continue
+            # Keep semantics for "Gửi lịch PV": use next round scheduling flow.
+            next_round = rec.x_psm_0205_next_interview_round
+            if rec.x_psm_0205_can_schedule_next_round and next_round in ('1', '2', '3', '4'):
+                round_meetings = rec.meeting_ids.filtered(
+                    lambda ev: ev.x_psm_0205_interview_round == next_round
+                )
+                slot_field = rec.ROUND_SLOT_EVENT_FIELD_MAP.get(next_round)
+                slot_confirmed = bool(getattr(rec, slot_field, False)) if slot_field else False
+                date_field = rec.ROUND_DATE_FIELD_MAP.get(next_round)
+                date_set = bool(getattr(rec, date_field, False)) if date_field else False
+                rec.x_psm_0205_can_send_slot_survey = bool(round_meetings and not slot_confirmed)
+                rec.x_psm_0205_can_invite_interview = bool(slot_confirmed and date_set)
 
-            # Check if round has meetings
-            round_meetings = rec.meeting_ids.filtered(
-                lambda ev: ev.x_psm_0205_interview_round == current_round
-            )
-
-            # Check if a slot has been confirmed for this round
-            slot_field = rec.ROUND_SLOT_EVENT_FIELD_MAP.get(current_round)
-            slot_confirmed = bool(getattr(rec, slot_field, False)) if slot_field else False
-
-            # Check if a date has been set for this round
-            date_field = rec.ROUND_DATE_FIELD_MAP.get(current_round)
-            date_set = bool(getattr(rec, date_field, False)) if date_field else False
-
-            # Gửi lịch PV: visible when meetings exist but no slot confirmed yet
-            rec.x_psm_0205_can_send_slot_survey = bool(round_meetings and not slot_confirmed)
-
-            # Mời phỏng vấn: visible when slot confirmed and date set
-            rec.x_psm_0205_can_invite_interview = bool(slot_confirmed and date_set)
-
-            # Pass Interview: visible when slot confirmed and user is primary interviewer of current round
-            if slot_confirmed:
-                primary_field = PRIMARY_FIELD_MAP.get(current_round)
-                primary_user = getattr(rec, primary_field, False) if primary_field else False
-                rec.x_psm_0205_can_pass_interview = bool(primary_user and primary_user == current_user)
+            # Pass Interview must follow current interview stage, not next-round scheduling.
+            eval_round = rec.x_psm_0205_current_stage_interview_round
+            if eval_round in ('1', '2', '3', '4'):
+                slot_field = rec.ROUND_SLOT_EVENT_FIELD_MAP.get(eval_round)
+                slot_confirmed = bool(getattr(rec, slot_field, False)) if slot_field else False
+                if slot_confirmed:
+                    primary_field = PRIMARY_FIELD_MAP.get(eval_round)
+                    primary_user = getattr(rec, primary_field, False) if primary_field else False
+                    current_decision = rec._get_primary_round_decision(int(eval_round))
+                    already_finalized = current_decision.get('recommendation') in ('pass', 'fail')
+                    rec.x_psm_0205_can_pass_interview = bool(
+                        primary_user
+                        and primary_user == current_user
+                        and not already_finalized
+                    )
 
     # Per-round filtered meeting fields for office tab UI
     x_psm_0205_meeting_ids_round_1 = fields.One2many(
@@ -767,6 +784,14 @@ class HrApplicant(models.Model):
                 stage_map[stage.id] = round_value
         return stage_map
 
+    def _get_eval_stage_round_map(self):
+        stage_map = {}
+        for stage_xml, round_value in INTERVIEW_STAGE_XML_TO_EVAL_ROUND.items():
+            stage = self.env.ref(stage_xml, raise_if_not_found=False)
+            if stage:
+                stage_map[stage.id] = round_value
+        return stage_map
+
     def _get_job_level_code(self):
         self.ensure_one()
         level = self.job_id.level_id
@@ -848,6 +873,15 @@ class HrApplicant(models.Model):
                 round_value = False
             rec.x_psm_0205_next_interview_round = round_value
 
+    @api.depends('stage_id', 'job_id', 'job_id.level_id', 'job_id.level_id.code', 'job_id.x_psm_0205_max_interview_round')
+    def _compute_current_stage_interview_round(self):
+        stage_map = self._get_eval_stage_round_map()
+        for rec in self:
+            round_value = stage_map.get(rec.stage_id.id)
+            if round_value and not rec._is_round_enabled(round_value):
+                round_value = False
+            rec.x_psm_0205_current_stage_interview_round = round_value
+
     @api.depends('meeting_ids.x_psm_0205_interview_round', 'meeting_ids.start', 'x_psm_0205_next_interview_round')
     def _compute_next_round_event(self):
         for rec in self:
@@ -867,11 +901,20 @@ class HrApplicant(models.Model):
     @api.depends(
         'x_psm_0205_recruitment_type',
         'x_psm_0205_next_interview_round',
-        'x_psm_0205_interview_date_1',
-        'x_psm_0205_interview_date_2',
-        'x_psm_0205_interview_date_3',
-        'x_psm_0205_interview_date_4',
         'x_psm_0205_max_interview_round',
+        'x_psm_0205_primary_interviewer_l1_user_id',
+        'x_psm_0205_primary_interviewer_l2_user_id',
+        'x_psm_0205_primary_interviewer_l3_user_id',
+        'x_psm_0205_primary_interviewer_l4_user_id',
+        'x_psm_0205_evaluation_line_ids.recommendation',
+        'x_psm_0205_evaluation_line_ids.interview_round',
+        'x_psm_0205_evaluation_line_ids.interviewer_id',
+        'meeting_ids',
+        'meeting_ids.x_psm_0205_interview_round',
+        'x_psm_0205_interview_slot_event_id_1',
+        'x_psm_0205_interview_slot_event_id_2',
+        'x_psm_0205_interview_slot_event_id_3',
+        'x_psm_0205_interview_slot_event_id_4',
         'x_psm_0205_eval_round_1_toggle',
         'x_psm_0205_eval_round_2_toggle',
         'x_psm_0205_eval_round_3_toggle',
@@ -902,6 +945,7 @@ class HrApplicant(models.Model):
         for rec in self:
             rec.x_psm_0205_can_schedule_next_round = False
             rec.x_psm_0205_next_round_date_missing = False
+            rec.x_psm_0205_next_round_meeting_missing = False
             rec.x_psm_0205_can_ready_for_offer = False
             rec.x_psm_0205_is_offer_stage = False
             rec.x_psm_0205_show_offer_result_block = False
@@ -910,11 +954,22 @@ class HrApplicant(models.Model):
                 continue
 
             in_schedule_stage = bool(rec.stage_id and rec.stage_id.id in schedule_stage_ids)
-            rec.x_psm_0205_can_schedule_next_round = bool(in_schedule_stage and rec.x_psm_0205_next_interview_round)
+            next_round = rec.x_psm_0205_next_interview_round
+            can_open_next_round = bool(
+                in_schedule_stage
+                and next_round
+                and rec._is_next_round_unlocked_for_scheduling(next_round)
+            )
+            rec.x_psm_0205_can_schedule_next_round = can_open_next_round
 
-            if rec.x_psm_0205_can_schedule_next_round:
-                date_field = f'x_psm_0205_interview_date_{rec.x_psm_0205_next_interview_round}'
-                rec.x_psm_0205_next_round_date_missing = not bool(getattr(rec, date_field, False))
+            if can_open_next_round and next_round in ('1', '2', '3', '4'):
+                round_meetings = rec.meeting_ids.filtered(
+                    lambda ev: ev.x_psm_0205_interview_round == next_round
+                )
+                slot_field = rec.ROUND_SLOT_EVENT_FIELD_MAP.get(next_round)
+                slot_confirmed = bool(getattr(rec, slot_field, False)) if slot_field else False
+                rec.x_psm_0205_next_round_meeting_missing = bool(not round_meetings and not slot_confirmed)
+            rec.x_psm_0205_next_round_date_missing = rec.x_psm_0205_next_round_meeting_missing
 
             max_round = max(2, min(int(rec._get_max_interview_round() or 2), 4))
             final_stage = self.env.ref(final_stage_xml_by_round[max_round], raise_if_not_found=False)
@@ -1022,39 +1077,6 @@ class HrApplicant(models.Model):
                 'url': self.get_interview_slot_url(event),
             })
         return slots or [{'time': 'Đang cập nhật', 'url': '#'}]
-
-    def _track_template(self, changes):
-        """Override to inject meeting_slots context into stage template for office interview stages.
-
-        When an office applicant moves to Interview 1/2/3/4 via action_send_interview_slot_survey,
-        the context contains 'office_interview_slots' and 'office_round_label'.
-        This override passes them to the template so it can render the slot list.
-        """
-        res = super()._track_template(changes)
-        if 'stage_id' not in changes:
-            return res
-        if 'stage_id' not in res:
-            return res
-
-        applicant = self[0]
-        if applicant.x_psm_0205_recruitment_type != 'office':
-            return res
-
-        # Inject meeting_slots and round_label into the template rendering context
-        slots = self.env.context.get('office_interview_slots')
-        round_label = self.env.context.get('office_round_label')
-        if slots or round_label:
-            template, post_kwargs = res['stage_id']
-            # Enrich the template's context so QWeb rendering has access
-            # to meeting_slots and round_label via ctx.get(...)
-            res['stage_id'] = (template.with_context(
-                meeting_slots=slots or [],
-                round_label=round_label or '',
-            ), post_kwargs)
-
-        return res
-
-
 
     def _build_round_notification_email_body(self, event, round_no):
         self.ensure_one()
@@ -1258,18 +1280,47 @@ class HrApplicant(models.Model):
             return False
         return events.sorted(key=lambda ev: ev.start or ev.start_date or fields.Datetime.now())[0]
 
+    def _is_next_round_unlocked_for_scheduling(self, next_round):
+        self.ensure_one()
+        if not next_round or str(next_round) not in ('1', '2', '3', '4'):
+            return False
+        next_round = int(next_round)
+        if not self._is_round_enabled(next_round):
+            return False
+        if next_round == 1:
+            return True
+        decision = self._get_primary_round_decision(next_round - 1)
+        return decision.get('recommendation') == 'pass'
+
     def _ensure_previous_round_completed(self, round_no):
         self.ensure_one()
         self._ensure_round_enabled(round_no)
         if round_no <= 1:
             return
-        previous_toggle = getattr(self, f'x_psm_0205_eval_round_{round_no-1}_toggle', False)
-        if not previous_toggle:
-            warning_message = getattr(self, f'x_psm_0205_eval_round_{round_no-1}_primary_warning', False)
-            if warning_message:
-                raise exceptions.UserError(warning_message)
+        previous_round = int(round_no) - 1
+        decision = self._get_primary_round_decision(previous_round)
+        primary_user = decision.get('primary_user')
+        primary_eval = decision.get('primary_eval')
+        recommendation = decision.get('recommendation')
+
+        if not primary_user:
             raise exceptions.UserError(
-                _("Ứng viên chưa hoàn thành vòng %(round)s, không thể gửi lịch tiếp theo.") % {'round': round_no-1}
+                _("Vòng %(round)s chưa có người phỏng vấn chính, không thể gửi lịch vòng tiếp theo.") % {
+                    'round': previous_round,
+                }
+            )
+        if not primary_eval or recommendation not in ('pass', 'fail'):
+            raise exceptions.UserError(
+                _("Vòng %(round)s đang chờ đánh giá từ người phỏng vấn chính: %(user)s.") % {
+                    'round': previous_round,
+                    'user': primary_user.display_name,
+                }
+            )
+        if recommendation != 'pass':
+            raise exceptions.UserError(
+                _("Vòng %(round)s đã có kết luận không đạt, không thể gửi lịch vòng tiếp theo.") % {
+                    'round': previous_round,
+                }
             )
 
     def _ensure_round_passed(self, round_no):
@@ -1951,6 +2002,11 @@ class HrApplicant(models.Model):
             })
             self.write({eval_field: evaluation.id})
 
+        if evaluation.state != 'done':
+            evaluation._ensure_default_evaluation_lines()
+            if evaluation.state != 'in_progress':
+                evaluation.write({'state': 'in_progress'})
+
         # Redirect to page-based evaluation form
         return {
             'type': 'ir.actions.act_url',
@@ -1966,7 +2022,7 @@ class HrApplicant(models.Model):
     def action_pass_interview_current(self):
         """Header button action — resolve current round and open Pass Interview page."""
         self.ensure_one()
-        current_round = self.x_psm_0205_next_interview_round
+        current_round = self.x_psm_0205_current_stage_interview_round
         if not current_round or current_round not in ('1', '2', '3', '4'):
             raise exceptions.UserError(_("Không xác định được vòng phỏng vấn hiện tại."))
         return self.action_pass_interview_round(int(current_round))
@@ -2261,6 +2317,35 @@ class HrApplicantEvaluation(models.Model):
     )
     date = fields.Date(string='Ngày đánh giá', default=fields.Date.today(), tracking=True)
     
+    job_id = fields.Many2one(
+        'hr.job',
+        string='Job Position',
+        related='applicant_id.job_id',
+        store=True,
+        readonly=True,
+    )
+    state = fields.Selection(
+        [
+            ('new', 'New'),
+            ('in_progress', 'In Progress'),
+            ('done', 'Done'),
+        ],
+        string='State',
+        default='new',
+        required=True,
+        tracking=True,
+    )
+    interview_date = fields.Date(
+        string='Interview Date',
+        compute='_compute_compatibility_fields',
+        readonly=True,
+    )
+    interviewer_name = fields.Char(
+        string='Interviewer',
+        compute='_compute_compatibility_fields',
+        readonly=True,
+    )
+
     # Criteria - using Selection for easier scoring in UI
     attitude_score = fields.Selection([
         ('1', 'Rất kém'), ('2', 'Kém'), ('3', 'Trung bình'), ('4', 'Khá'), ('5', 'Tốt')
@@ -2310,12 +2395,139 @@ class HrApplicantEvaluation(models.Model):
         store=True,
     )
     onboard_time = fields.Char(string='Onboard Time', tracking=True)
+    overall_note = fields.Text(
+        string='Overall Note',
+        compute='_compute_compatibility_fields',
+        inverse='_inverse_overall_note',
+        readonly=False,
+    )
+    score_1_count = fields.Integer(
+        string='Score 1 Count',
+        compute='_compute_compatibility_summary',
+        store=True,
+    )
+    score_2_count = fields.Integer(
+        string='Score 2 Count',
+        compute='_compute_compatibility_summary',
+        store=True,
+    )
+    score_3_count = fields.Integer(
+        string='Score 3 Count',
+        compute='_compute_compatibility_summary',
+        store=True,
+    )
+    score_4_count = fields.Integer(
+        string='Score 4 Count',
+        compute='_compute_compatibility_summary',
+        store=True,
+    )
+    score_5_count = fields.Integer(
+        string='Score 5 Count',
+        compute='_compute_compatibility_summary',
+        store=True,
+    )
+    weighted_total = fields.Float(
+        string='Weighted Total',
+        compute='_compute_compatibility_summary',
+        store=True,
+    )
+    rated_line_count = fields.Integer(
+        string='Rated Line Count',
+        compute='_compute_compatibility_summary',
+        store=True,
+    )
+    final_score = fields.Float(
+        string='Final Score',
+        compute='_compute_compatibility_summary',
+        store=True,
+        digits=(16, 2),
+    )
+    result = fields.Selection(
+        [('pass', 'Pass'), ('reject', 'Reject')],
+        string='Final Result',
+        compute='_compute_compatibility_summary',
+        store=True,
+    )
     final_comment = fields.Text(string='Nhận xét cuối', tracking=True)
     
+    x_psm_0205_score_display = fields.Char(
+        string='Score Display',
+        compute='_compute_compatibility_summary',
+        store=True,
+    )
+    x_psm_0205_result_display = fields.Char(
+        string='Final Result Display',
+        compute='_compute_compatibility_summary',
+        store=True,
+    )
+    x_psm_0205_status_display = fields.Char(
+        string='Status Display',
+        compute='_compute_compatibility_summary',
+        store=True,
+    )
     recommendation = fields.Selection([
         ('pass', 'Đạt - Tiếp tục vòng sau'),
         ('fail', 'Không đạt - Loại'),
     ], string='Kết luận', required=True, default='pass', tracking=True)
+
+    @api.depends(
+        'applicant_id.x_psm_0205_interview_date_1',
+        'applicant_id.x_psm_0205_interview_date_2',
+        'applicant_id.x_psm_0205_interview_date_3',
+        'applicant_id.x_psm_0205_interview_date_4',
+        'interviewer_id',
+        'final_comment',
+        'interview_round',
+    )
+    def _compute_compatibility_fields(self):
+        for rec in self:
+            rec.interviewer_name = rec.interviewer_id.name or False
+            rec.overall_note = rec.final_comment or False
+            interview_dt = False
+            if rec.applicant_id and rec.interview_round in ('1', '2', '3', '4'):
+                interview_dt = getattr(rec.applicant_id, f'x_psm_0205_interview_date_{rec.interview_round}', False)
+            rec.interview_date = fields.Date.to_date(interview_dt) if interview_dt else False
+
+    def _inverse_overall_note(self):
+        for rec in self:
+            rec.final_comment = rec.overall_note or False
+
+    @api.depends(
+        'evaluation_item_ids.line_type',
+        'evaluation_item_ids.is_scored',
+        'evaluation_item_ids.score_value',
+        'state',
+        'recommendation',
+        'final_result',
+    )
+    def _compute_compatibility_summary(self):
+        for rec in self:
+            counts = {score: 0 for score in range(1, 6)}
+            scored_lines = rec.evaluation_item_ids.filtered(
+                lambda line: line.line_type == 'score' and line.is_scored
+            )
+            for line in scored_lines:
+                score_value = int(line.score_value) if line.score_value and str(line.score_value).isdigit() else 0
+                if score_value in counts:
+                    counts[score_value] += 1
+
+            rec.score_1_count = counts[1]
+            rec.score_2_count = counts[2]
+            rec.score_3_count = counts[3]
+            rec.score_4_count = counts[4]
+            rec.score_5_count = counts[5]
+            rec.rated_line_count = sum(counts.values())
+            rec.weighted_total = sum(score * count for score, count in counts.items())
+            rec.final_score = (rec.weighted_total / rec.rated_line_count) if rec.rated_line_count else 0.0
+            rec.result = 'pass' if rec.rated_line_count and rec.final_score >= 3.0 else 'reject'
+            if rec.state != 'done':
+                rec.x_psm_0205_score_display = False
+                rec.x_psm_0205_result_display = False
+                rec.x_psm_0205_status_display = 'In Progress'
+            else:
+                rec.x_psm_0205_score_display = f"{rec.final_score:.2f}" if rec.rated_line_count else False
+                rec.x_psm_0205_result_display = 'Pass' if rec.final_result == 'pass' else 'Failed'
+                rec.x_psm_0205_status_display = 'Pass' if rec.recommendation == 'pass' else 'Failed'
 
     @api.depends(
         'evaluation_item_ids.line_type',
@@ -2353,6 +2565,27 @@ class HrApplicantEvaluation(models.Model):
         for rec in updates:
             rec.with_context(skip_eval_recommendation_sync=True).write({
                 'recommendation': rec._get_recommendation_from_final_result(),
+            })
+
+    def action_submit(self):
+        for rec in self:
+            if rec.state == 'done':
+                raise exceptions.UserError(_("Phieu Interview da nop va bi khoa chinh sua."))
+
+            question_lines = rec.evaluation_item_ids.filtered(
+                lambda line: line.line_type == 'score' and line.is_scored
+            )
+            if not question_lines:
+                raise exceptions.UserError(_("Chua co dong Question active de danh gia Interview."))
+
+            invalid_lines = question_lines.filtered(
+                lambda line: line.score_value not in ('1', '2', '3', '4', '5')
+            )
+            if invalid_lines:
+                raise exceptions.UserError(_("Vui long chon diem 1..5 cho tat ca dong Question."))
+
+            rec.write({
+                'state': 'done',
             })
 
     def _get_default_evaluation_line_vals(self):

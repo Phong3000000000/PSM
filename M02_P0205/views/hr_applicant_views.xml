@@ -86,6 +86,7 @@
                     <field name="x_psm_0205_max_interview_round" invisible="1" />
                     <field name="x_psm_0205_can_schedule_next_round" invisible="1" />
                     <field name="x_psm_0205_next_round_date_missing" invisible="1" />
+                    <field name="x_psm_0205_next_round_meeting_missing" invisible="1" />
                     <field name="x_psm_0205_can_ready_for_offer" invisible="1" />
                     <field name="x_psm_0205_is_offer_stage" invisible="1" />
                     <field name="x_psm_0205_show_offer_result_block" invisible="1" />
@@ -129,9 +130,8 @@
                     </div>
 
                     <div class="alert alert-warning text-center o_form_header" role="alert"
-                        invisible="x_psm_0205_recruitment_type != 'office' or not x_psm_0205_can_schedule_next_round or not x_psm_0205_next_round_date_missing">
-                        Vui lòng cập nhật ngày phỏng vấn cho vòng hiện tại để kích hoạt các nút mời
-                        phỏng vấn và gửi khảo sát đánh giá ứng viên.
+                        invisible="x_psm_0205_recruitment_type != 'office' or not x_psm_0205_can_schedule_next_round or not x_psm_0205_next_round_meeting_missing">
+                        Chưa có meeting cho vòng phỏng vấn kế tiếp. Vui lòng tạo lịch phỏng vấn (meeting slots)
 
                     </div>
 
@@ -287,7 +287,7 @@
                                 context="{'default_x_psm_0205_interview_round': '2', 'default_applicant_id': id}" />
                         </group>
 
-                        <field name="x_psm_0205_eval_l2_id" nolabel="1"
+                        <field name="x_psm_0205_eval_l2_id" nolabel="1" invisible="1"
                             context="{'default_applicant_id': id, 'default_interview_round': '2'}">
 
                             <form>
@@ -434,7 +434,7 @@
                                 context="{'default_x_psm_0205_interview_round': '3', 'default_applicant_id': id}" />
                         </group>
 
-                        <field name="x_psm_0205_eval_l3_id" nolabel="1"
+                        <field name="x_psm_0205_eval_l3_id" nolabel="1" invisible="1"
                             context="{'default_applicant_id': id, 'default_interview_round': '3'}">
 
                             <form>
@@ -581,7 +581,7 @@
                                 context="{'default_x_psm_0205_interview_round': '4', 'default_applicant_id': id}" />
                         </group>
 
-                        <field name="x_psm_0205_eval_l4_id" nolabel="1"
+                        <field name="x_psm_0205_eval_l4_id" nolabel="1" invisible="1"
                             context="{'default_applicant_id': id, 'default_interview_round': '4'}">
 
                             <form>
@@ -908,9 +908,9 @@
                     <field name="is_primary_interviewer" string="Người chính" />
 
                     <field name="date" string="Date" />
-                    <field name="average_score" string="Score" readonly="1" />
-                    <field name="final_result" string="Final Result" readonly="1" />
-                    <field name="recommendation" string="Status" readonly="1" />
+                    <field name="x_psm_0205_score_display" string="Score" readonly="1" />
+                    <field name="x_psm_0205_result_display" string="Final Result" readonly="1" />
+                    <field name="x_psm_0205_status_display" string="Status" readonly="1" />
 
                 </list>
 
