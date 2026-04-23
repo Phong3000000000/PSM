@@ -91,15 +91,15 @@
             <xpath expr="//sheet/group[1]" position="after">
                 <group string="Recruitment Information">
                     <group>
-                        <field name="job_id" string="Job Position"/>
-                        <field name="recruitment_type"/>
-                        <field name="application_source" invisible="1"/>
-                    </group>
-                    <group>
-                        <field name="position_level"/>
-                        <field name="department_id" 
+                        <field name="department_id" string="Department"
                                domain="[('id', 'in', available_department_ids)]"
                                options="{'no_create': True}"/>
+                        <field name="position_level" string="Level"/>
+                    </group>
+                    <group>
+                        <field name="recruitment_type" string="Recruitment Type"/>
+                        <field name="job_id" string="Job Position"/>
+                        <field name="application_source" invisible="1"/>
                         <field name="date_closed" string="Hired Date" invisible="not date_closed"/>
                         <field name="oje_evaluator_user_id" string="OJE Evaluator" invisible="recruitment_type == 'office'"/>
                     </group>
@@ -147,7 +147,7 @@
             </xpath>
 
             <!-- Move detailed sections to Notebook for full-width display -->
-            <xpath expr="//notebook" position="inside">
+            <xpath expr="//notebook/page[1]" position="before">
                 <page string="Personal Information" name="personal_info_page">
                     <group>
                         <group string="Personal Information">
@@ -345,13 +345,13 @@
             <xpath expr="//div[hasclass('oe_title')]" position="after">
                 <div class="ps-1 pb-2">
                     <div class="d-flex align-items-center mb-1">
-                        <span style="width:72px; flex: 0 0 72px;">Email:</span>
+                        <span class="fw-bold" style="width:72px; flex: 0 0 72px;">Email</span>
                         <div class="flex-grow-1" style="min-width:0; max-width: 45%;">
                             <field name="email_from" nolabel="1" widget="email"/>
                         </div>
                     </div>
                     <div class="d-flex align-items-center">
-                        <span style="width:72px; flex: 0 0 72px;">Phone:</span>
+                        <span class="fw-bold" style="width:72px; flex: 0 0 72px;">Phone</span>
                         <div class="flex-grow-1" style="min-width:0; max-width: 45%;">
                             <field name="partner_phone" nolabel="1" widget="phone"/>
                         </div>
@@ -388,14 +388,14 @@
 
             <!-- Group Đánh giá & Phụ trách trước notebook -->
             <xpath expr="//notebook" position="before">
-                <group string="Evaluation &amp; Assignment">
+                <group string="Assignment">
                     <group>
-                        <field name="priority" widget="priority"/>
+                        <field name="priority" widget="priority" invisible="1"/>
                         <field name="user_id" string="Recruiter"/>
+                        <field name="categ_ids" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}"/>
                     </group>
                     <group>
                         <field name="interviewer_ids" widget="many2many_tags" options="{'no_create': True}"/>
-                        <field name="categ_ids" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}"/>
                     </group>
                 </group>
             </xpath>

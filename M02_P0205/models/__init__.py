@@ -10,4 +10,3 @@ from . import hr_recruitment_stage
 from . import recruitment_approval
 from . import mail_activity
 from . import calendar
-from . import survey_ext

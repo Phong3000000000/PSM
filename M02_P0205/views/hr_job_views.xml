@@ -86,4 +86,16 @@
             </xpath>
         </field>
     </record>
+
+    <record id="view_psm_hr_job_form_office_survey_config" model="ir.ui.view">
+        <field name="name">hr.job.form.inherit.office.survey.config.0205</field>
+        <field name="model">hr.job</field>
+        <field name="inherit_id" ref="M02_P0204.view_hr_job_form_inherit" />
+        <field name="priority">90</field>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='interview_oje_config']/div[@invisible=&quot;recruitment_type != 'store' or position_level != 'management'&quot;]" position="attributes">
+                <attribute name="invisible">recruitment_type == 'store' and position_level != 'management'</attribute>
+            </xpath>
+        </field>
+    </record>
 </odoo>

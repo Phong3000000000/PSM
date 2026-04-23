@@ -601,10 +601,9 @@ class RecruitmentRequest(models.Model):
             'no_of_recruitment': 0,
             'active': True,
         }
-        if 'recruitment_type' in job_model._fields and line_block:
-            vals['recruitment_type'] = line_block
-        if 'position_level' in job_model._fields and line.position_level:
-            vals['position_level'] = line.position_level
+        # recruitment_type and position_level are owned by M02_P0204
+        # (computed from department.block_id and level_id/name).
+        # Do NOT set them here — let 0204's compute engine handle scope.
         if 'work_location_id' in job_model._fields and line.work_location_id:
             vals['work_location_id'] = line.work_location_id.id
         if 'user_id' in job_model._fields and self.user_id:

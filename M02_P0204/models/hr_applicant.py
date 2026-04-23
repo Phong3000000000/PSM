@@ -2452,7 +2452,7 @@ class HrApplicant(models.Model):
                     new_stage = self.env['hr.recruitment.stage'].browse(vals['stage_id'])
                     
                     # === KIỂM TRA EMAIL CONFIGURE THEO STAGE TEMPLATE ===
-                    if not self.env.context.get('skip_stage_email') and not self.env.context.get('skip_rejection_email'):
+                    if not self.env.context.get('skip_stage_email') and not self.env.context.get('skip_rejection_email') and not self.env.context.get('skip_0204_stage_mail'):
                         stage_template = rec._get_email_template_resolution(resolve_stage_id=new_stage.id)
                         if stage_template and rec.email_from:
                             try:

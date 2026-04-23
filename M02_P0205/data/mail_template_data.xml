@@ -164,11 +164,11 @@
         </record>
 
 
-        <!-- Interview 1: Applicant Slot-Choice (FULL premium template) -->
+        <!-- Interview Slot-Choice (Dynamic for all rounds) -->
         <record id="email_interview_slot_survey" model="mail.template">
-            <field name="name">Chọn lịch phỏng vấn - Interview 1</field>
+            <field name="name">Chọn lịch phỏng vấn</field>
             <field name="model_id" ref="hr_recruitment.model_hr_applicant" />
-            <field name="subject">Chọn lịch phỏng vấn - {{ ctx.get('round_label', 'Interview 1') }} - {{ object.job_id.name }}</field>
+            <field name="subject">Chọn lịch phỏng vấn - {{ ctx.get('round_label', 'vòng tiếp theo') }} - {{ object.job_id.name }}</field>
             <field name="email_from">{{ (object.user_id.email_formatted or
                 object.company_id.email_formatted or 'recruitment@example.com') }}</field>
             <field name="email_to">{{ object.email_from }}</field>
@@ -181,9 +181,10 @@
                    style="width:680px; max-width:680px; border-collapse:collapse; background-color:#ffffff; border:1px solid #e5e7eb;">
                 <!-- Header -->
                 <tr>
-                    <td style="padding:20px 24px; border-bottom:4px solid #f6c343; font-family:Arial, sans-serif;
-                               font-size:30px; font-weight:700; line-height:1.2; color:#111827;">
-                        Chọn lịch phỏng vấn - <t t-out="ctx.get('round_label', 'Interview 1')"/>
+                    <td style="padding:20px 24px; background-color:#DA291C; border-bottom:4px solid #FFC72C; 
+                               font-family:Arial, sans-serif; font-size:30px; font-weight:700; 
+                               line-height:1.2; color:#ffffff; text-align:center;">
+                        Chọn lịch phỏng vấn - <t t-out="ctx.get('round_label', 'với chúng tôi')"/>
                     </td>
                 </tr>
                 <!-- Body -->
@@ -194,14 +195,14 @@
                         </p>
                         <p style="margin:0 0 22px; font-family:Arial, sans-serif; font-size:16px; line-height:1.7; color:#111827;">
                             Cảm ơn bạn đã ứng tuyển vị trí <strong><t t-out="object.job_id.name or 'vị trí ứng tuyển'"/></strong>.
-                            Vui lòng chọn một khung giờ phù hợp dưới đây để tham gia phỏng vấn <t t-out="ctx.get('round_label', 'Interview 1')"/>.
+                            Vui lòng chọn một khung giờ phù hợp dưới đây để tham gia phỏng vấn <t t-out="ctx.get('round_label', 'vòng tiếp theo')"/>.
                         </p>
 
                         <!-- Slot table -->
                         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"
                                style="width:100%; border-collapse:collapse; border:1px solid #e5e7eb; background-color:#ffffff;">
                             <tr>
-                                <td style="padding:14px 18px; background-color:#fff8e1; border-bottom:1px solid #e5e7eb;
+                                <td style="padding:14px 18px; background-color:#FFF5D1; border-bottom:1px solid #e5e7eb;
                                            font-family:Arial, sans-serif; font-size:14px; color:#6b7280;" colspan="2">
                                     Khung giờ được hiển thị theo giờ địa phương của lịch hẹn.
                                 </td>
@@ -215,7 +216,7 @@
                                     <td style="padding:14px 18px; border-bottom:1px solid #e5e7eb; text-align:right;">
                                         <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="right">
                                             <tr>
-                                                <td style="background-color:#1f4e79; border-radius:4px; text-align:center;">
+                                                <td style="background-color:#DA291C; border-radius:4px; text-align:center;">
                                                     <a t-attf-href="{{ slot.get('url', '#') }}"
                                                        style="display:inline-block; padding:10px 16px; font-family:Arial, sans-serif;
                                                               font-size:14px; font-weight:700; color:#ffffff; text-decoration:none;">
@@ -260,14 +261,14 @@
             <field name="email_to">{{ object.email_from }}</field>
             <field name="body_html"><![CDATA[
 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
-    <div style="text-align: center; background-color: #28a745; color: white; padding: 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px;">
-        <h2 style="margin: 0;">THƯ MỜI NHẬN VIỆC (OFFER LETTER)</h2>
+    <div style="text-align: center; background-color: #da291c; padding: 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px;">
+        <h2 style="margin: 0; color: #ffc72c;">THƯ MỜI NHẬN VIỆC (OFFER LETTER)</h2>
     </div>
     <div style="line-height: 1.6; color: #333; margin-top: 20px;">
         <p>Thân gửi <strong><t t-out="object.partner_name"/></strong>,</p>
         <p>MCD vô cùng ấn tượng với năng lực và kinh nghiệm của bạn qua các vòng phỏng vấn vừa qua. Chúng tôi rất vui mừng mời bạn gia nhập đội ngũ MCD tại vị trí <strong><t t-out="object.job_id.name"/></strong>.</p>
 
-        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #28a745;">
+        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #da291c;">
             <p style="margin: 0;"><strong>Vị trí:</strong> <t t-out="object.job_id.name"/></p>
             <p style="margin: 10px 0 0 0;"><strong>Ngày bắt đầu dự kiến:</strong> <t t-out="object.availability or 'Sẽ thỏa thuận'"/></p>
             <p style="margin: 10px 0 0 0;"><strong>Bộ phận:</strong> <t t-out="object.department_id.name or 'Công ty'"/></p>

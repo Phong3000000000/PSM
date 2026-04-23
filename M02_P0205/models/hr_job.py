@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api
+from odoo import _, api, exceptions, fields, models
 
 
 class HrJob(models.Model):
@@ -32,15 +32,6 @@ class HrJob(models.Model):
         compute_sudo=True,
         index=True,
         help="Cờ lưu sẵn để nhận diện job thuộc khối văn phòng.",
-    )
-
-    # ==================== SURVEY ====================
-    survey_id = fields.Many2one(
-        'survey.survey',
-        string='Khảo Sát Năng Lực',
-        domain=[('x_psm_0205_is_pre_interview', '=', True)],
-        help='Bài khảo sát năng lực dành riêng cho vị trí này. '
-             'Ứng viên sẽ được yêu cầu làm bài này sau khi nộp đơn.',
     )
 
     # ==================== WEBSITE CONTENT ====================
@@ -94,6 +85,10 @@ class HrJob(models.Model):
         """Check if vals would produce an office job, without saving."""
         temp = self.new(vals)
         return temp._is_office_job()
+
+    def _is_interview_template_supported(self):
+        self.ensure_one()
+        return bool(self._is_office_job() or super()._is_interview_template_supported())
 
     def _get_group_interviewer_users(self, xmlid):
         group = self.env.ref(xmlid, raise_if_not_found=False)

@@ -68,6 +68,8 @@
                     <field name="x_psm_0205_allowed_primary_interviewer_l3_ids" invisible="1" />
                     <field name="x_psm_0205_allowed_primary_interviewer_l4_ids" invisible="1" />
                     <field name="x_psm_0205_needs_primary_interviewer_review" invisible="1" />
+                    <field name="x_psm_0205_header_notice_visible" invisible="1" />
+                    <field name="x_psm_0205_header_notice_level" invisible="1" />
                     <field name="x_psm_0205_primary_interviewer_review_note" invisible="1" />
                     <field name="x_psm_0205_can_pass_interview" invisible="1" />
                     <field name="x_psm_0205_eval_l1_id" invisible="1" />
@@ -125,14 +127,16 @@
                 <xpath expr="//header" position="after">
 
                     <div class="alert alert-warning text-center o_form_header" role="alert"
-                        invisible="x_psm_0205_recruitment_type != 'office' or not x_psm_0205_needs_primary_interviewer_review">
-                        <field name="x_psm_0205_primary_interviewer_review_note" nolabel="1" readonly="1" />
+                        invisible="not x_psm_0205_header_notice_visible or x_psm_0205_header_notice_level != 'warning'">
+                        <field name="x_psm_0205_header_notice_message" nolabel="1" readonly="1" />
                     </div>
-
-                    <div class="alert alert-warning text-center o_form_header" role="alert"
-                        invisible="x_psm_0205_recruitment_type != 'office' or not x_psm_0205_can_schedule_next_round or not x_psm_0205_next_round_meeting_missing">
-                        Chưa có meeting cho vòng phỏng vấn kế tiếp. Vui lòng tạo lịch phỏng vấn (meeting slots)
-
+                    <div class="alert alert-info text-center o_form_header" role="alert"
+                        invisible="not x_psm_0205_header_notice_visible or x_psm_0205_header_notice_level != 'info'">
+                        <field name="x_psm_0205_header_notice_message" nolabel="1" readonly="1" />
+                    </div>
+                    <div class="alert alert-danger text-center o_form_header" role="alert"
+                        invisible="not x_psm_0205_header_notice_visible or x_psm_0205_header_notice_level != 'danger'">
+                        <field name="x_psm_0205_header_notice_message" nolabel="1" readonly="1" />
                     </div>
 
                 </xpath>
@@ -207,7 +211,7 @@
 
                 <!-- phần tab notebook -->
 
-                <xpath expr="//notebook/page[1]" position="before">
+                <xpath expr="//notebook" position="inside">
 
                     <page string="Interview 1" name="office_eval_l1"
                         invisible="x_psm_0205_recruitment_type != 'office'">
@@ -219,7 +223,7 @@
                                 <field name="x_psm_0205_application_source" />
 
                                 <field name="survey_id" options="{'no_create': True}"
-                                    domain="[('x_psm_0205_is_pre_interview', '=', True)]" readonly="0"
+                                    domain="[('x_psm_survey_usage', '=', 'pre_interview'), ('x_psm_0204_is_runtime_isolated_copy', '=', False)]" readonly="0"
                                     force_save="1" />
 
                                 <field name="x_psm_0205_survey_sent" widget="boolean_toggle" readonly="1" />
@@ -246,14 +250,18 @@
                             <field name="x_psm_0205_eval_round_1_primary_warning" nolabel="1" readonly="1" />
                         </div>
 
-                        <group string="Interview Schedule">
-                            <field name="x_psm_0205_interview_date_1" string="Interview 1 Date" />
-                            <field name="x_psm_0205_meeting_ids_round_1" widget="one2many_list"
-                                context="{'default_x_psm_0205_interview_round': '1', 'default_applicant_id': id}" />
-                        </group>
-
                         <group string="Primary Interviewer">
                             <field name="x_psm_0205_primary_interviewer_l1_user_id" />
+                        </group>
+
+                        <group string="Interview Schedule">
+                            <group>
+                                <field name="x_psm_0205_interview_date_1" string="Interview 1 Date" />
+                            </group>
+                        </group>
+                        <group string="Available Meetings">
+                            <field name="x_psm_0205_meeting_ids_round_1" widget="one2many_list" nolabel="1" colspan="2"
+                                context="{'default_x_psm_0205_interview_round': '1', 'default_applicant_id': id}" />
                         </group>
 
                         <group string="Evaluation Results" class="mt-3">
@@ -262,13 +270,6 @@
                                 nolabel="1"
                                 readonly="1"
                                 view_id="M02_P0205.view_psm_applicant_evaluation_tree" colspan="2" />
-                        </group>
-
-                        <group string="Round 1 Summary" colspan="2">
-                            <field name="x_psm_0205_eval_round_1_score" readonly="1" />
-                            <field name="x_psm_0205_eval_round_1_toggle" widget="boolean_toggle"
-                                options="{'terminology': {'true': 'Pass', 'false': 'Fail'}}"
-                                readonly="1" />
                         </group>
 
                         <!-- Offer fields moved outside to be more visible -->
@@ -281,9 +282,17 @@
                         name="office_eval_l2"
                         invisible="x_psm_0205_recruitment_type != 'office'">
 
+                        <group string="Primary Interviewer">
+                            <field name="x_psm_0205_primary_interviewer_l2_user_id" />
+                        </group>
+
                         <group string="Interview Schedule">
-                            <field name="x_psm_0205_interview_date_2" string="Interview 2 Date" />
-                            <field name="x_psm_0205_meeting_ids_round_2" widget="one2many_list"
+                            <group>
+                                <field name="x_psm_0205_interview_date_2" string="Interview 2 Date" />
+                            </group>
+                        </group>
+                        <group string="Available Meetings">
+                            <field name="x_psm_0205_meeting_ids_round_2" widget="one2many_list" nolabel="1" colspan="2"
                                 context="{'default_x_psm_0205_interview_round': '2', 'default_applicant_id': id}" />
                         </group>
 
@@ -404,33 +413,30 @@
                             <field name="x_psm_0205_eval_round_2_primary_warning" nolabel="1" readonly="1" />
                         </div>
 
-                        <group string="Primary Interviewer">
-                            <field name="x_psm_0205_primary_interviewer_l2_user_id" />
-                        </group>
-
                         <group string="Evaluation Results" class="mt-3">
                             <field name="x_psm_0205_evaluation_line_ids_round_2"
                                 widget="one2many_list"
                                 nolabel="1"
                                 readonly="1"
                                 view_id="M02_P0205.view_psm_applicant_evaluation_tree" colspan="2" />
-                        </group>
-                        <group string="Round 2 Summary" colspan="2">
-                            <field name="x_psm_0205_eval_round_2_score" readonly="1" />
-                            <field name="x_psm_0205_eval_round_2_toggle" widget="boolean_toggle"
-                                options="{'terminology': {'true': 'Pass', 'false': 'Fail'}}"
-                                readonly="1" />
-                        </group>
-                    </page>
+                        </group>                    </page>
 
 
                     <page
                         string="Interview 3" name="office_eval_l3"
                         invisible="x_psm_0205_recruitment_type != 'office' or x_psm_0205_max_interview_round &lt; 3">
 
+                        <group string="Primary Interviewer">
+                            <field name="x_psm_0205_primary_interviewer_l3_user_id" />
+                        </group>
+
                         <group string="Interview Schedule">
-                            <field name="x_psm_0205_interview_date_3" string="Interview 3 Date" />
-                            <field name="x_psm_0205_meeting_ids_round_3" widget="one2many_list"
+                            <group>
+                                <field name="x_psm_0205_interview_date_3" string="Interview 3 Date" />
+                            </group>
+                        </group>
+                        <group string="Available Meetings">
+                            <field name="x_psm_0205_meeting_ids_round_3" widget="one2many_list" nolabel="1" colspan="2"
                                 context="{'default_x_psm_0205_interview_round': '3', 'default_applicant_id': id}" />
                         </group>
 
@@ -551,33 +557,30 @@
                             <field name="x_psm_0205_eval_round_3_primary_warning" nolabel="1" readonly="1" />
                         </div>
 
-                        <group string="Primary Interviewer">
-                            <field name="x_psm_0205_primary_interviewer_l3_user_id" />
-                        </group>
-
                         <group string="Evaluation Results" class="mt-3">
                             <field name="x_psm_0205_evaluation_line_ids_round_3"
                                 widget="one2many_list"
                                 nolabel="1"
                                 readonly="1"
                                 view_id="M02_P0205.view_psm_applicant_evaluation_tree" colspan="2" />
-                        </group>
-                        <group string="Round 3 Summary" colspan="2">
-                            <field name="x_psm_0205_eval_round_3_score" readonly="1" />
-                            <field name="x_psm_0205_eval_round_3_toggle" widget="boolean_toggle"
-                                options="{'terminology': {'true': 'Pass', 'false': 'Fail'}}"
-                                readonly="1" />
-                        </group>
-                    </page>
+                        </group>                    </page>
 
 
                     <page
                         string="Interview 4" name="office_eval_l4"
                         invisible="x_psm_0205_recruitment_type != 'office' or x_psm_0205_max_interview_round &lt; 4">
 
+                        <group string="Primary Interviewer">
+                            <field name="x_psm_0205_primary_interviewer_l4_user_id" />
+                        </group>
+
                         <group string="Interview Schedule">
-                            <field name="x_psm_0205_interview_date_4" string="Interview 4 Date" />
-                            <field name="x_psm_0205_meeting_ids_round_4" widget="one2many_list"
+                            <group>
+                                <field name="x_psm_0205_interview_date_4" string="Interview 4 Date" />
+                            </group>
+                        </group>
+                        <group string="Available Meetings">
+                            <field name="x_psm_0205_meeting_ids_round_4" widget="one2many_list" nolabel="1" colspan="2"
                                 context="{'default_x_psm_0205_interview_round': '4', 'default_applicant_id': id}" />
                         </group>
 
@@ -698,10 +701,6 @@
                             <field name="x_psm_0205_eval_round_4_primary_warning" nolabel="1" readonly="1" />
                         </div>
 
-                        <group string="Primary Interviewer">
-                            <field name="x_psm_0205_primary_interviewer_l4_user_id" />
-                        </group>
-
                         <group string="Evaluation Results" class="mt-3">
                             <field name="x_psm_0205_evaluation_line_ids_round_4"
                                 widget="one2many_list"
@@ -709,13 +708,6 @@
                                 readonly="1"
                                 view_id="M02_P0205.view_psm_applicant_evaluation_tree" colspan="2" />
                         </group>
-                        <group string="Round 4 Summary" colspan="2">
-                            <field name="x_psm_0205_eval_round_4_score" readonly="1" />
-                            <field name="x_psm_0205_eval_round_4_toggle" widget="boolean_toggle"
-                                options="{'terminology': {'true': 'Pass', 'false': 'Fail'}}"
-                                readonly="1" />
-                        </group>
-
                     </page>
 
                     <page string="Evaluation" name="office_evaluation"
@@ -793,6 +785,7 @@
 
                     </page>
 
+                    <xpath expr="//page[@name='application_note']" position="move"/>
                 </xpath>
 
                 <!-- phần tab notebook -->

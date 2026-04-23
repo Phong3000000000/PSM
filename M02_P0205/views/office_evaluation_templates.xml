@@ -75,20 +75,11 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <th>Is Primary Interviewer</th>
-                                                <td>
-                                                    <input type="text"
-                                                           class="form-control oje-line-input"
-                                                           t-att-value="'Yes' if evaluation.is_primary_interviewer else 'No'"
-                                                           disabled="disabled"/>
-                                                </td>
-                                            </tr>
-                                            <tr>
                                                 <th>Status</th>
                                                 <td>
                                                     <input type="text"
                                                            class="form-control oje-line-input"
-                                                           t-att-value="evaluation.x_psm_0205_status_display or 'Inprogress'"
+                                                           t-att-value="evaluation.x_psm_0205_status_display or 'In Progress'"
                                                            disabled="disabled"/>
                                                 </td>
                                             </tr>
@@ -96,6 +87,7 @@
                                     </table>
                                 </div>
 
+                                <!-- Main evaluation table with skillset grouping -->
                                 <div class="interview-table-scroll interview-main-scroll">
                                     <table class="table table-bordered interview-main-table mb-0">
                                         <colgroup>
@@ -126,11 +118,25 @@
                                                 </tr>
 
                                                 <t t-foreach="section['rows']" t-as="line">
-                                                    <tr t-att-class="'interview-row-' + (line['display_type'] or 'question')">
+                                                    <tr t-att-class="'interview-row-' + (line['display_type'] or 'question') + (' interview-row-skillset' if line.get('skillset_group') else '')">
                                                         <t t-if="line['display_type'] == 'question'">
-                                                            <td colspan="2" class="interview-question-text">
-                                                                <t t-esc="line['question_text']"/>
-                                                            </td>
+                                                            <!-- Skillset grouped question -->
+                                                            <t t-if="line['skillset_group']">
+                                                                <t t-if="line['skillset_show_left']">
+                                                                    <td class="interview-skillset-group" t-att-rowspan="line['skillset_rowspan']">
+                                                                        <t t-esc="line['skillset_left']"/>
+                                                                    </td>
+                                                                </t>
+                                                                <td class="interview-skillset-question">
+                                                                    <t t-esc="line['skillset_right']"/>
+                                                                </td>
+                                                            </t>
+                                                            <!-- Normal question -->
+                                                            <t t-else="">
+                                                                <td colspan="2" class="interview-question-text">
+                                                                    <t t-esc="line['question_text']"/>
+                                                                </td>
+                                                            </t>
 
                                                             <td class="text-center score-col"><input type="radio" t-att-name="'line_%s_score' % line['line_id']" value="1" t-att-checked="'checked' if line['selected_score'] == 1 else None" t-att-disabled="'disabled' if is_readonly else None"/></td>
                                                             <td class="text-center score-col"><input type="radio" t-att-name="'line_%s_score' % line['line_id']" value="2" t-att-checked="'checked' if line['selected_score'] == 2 else None" t-att-disabled="'disabled' if is_readonly else None"/></td>
@@ -163,6 +169,7 @@
                                     </table>
                                 </div>
 
+                                <!-- Score summary (identical to store layout) -->
                                 <div class="interview-table-scroll interview-summary-scroll">
                                     <table class="table table-bordered interview-summary-table mb-3">
                                         <colgroup>

@@ -44,55 +44,149 @@ class OfficeEvaluationController(http.Controller):
             raise exceptions.AccessError(_("Ban khong co quyen truy cap trang nay."))
         return evaluation
 
+    # ── Row building (mirrors BackendInterviewController pattern) ──
+
+    def _split_skillset_label(self, raw_label):
+        if " - " not in raw_label:
+            return False, raw_label
+        left, right = raw_label.split(" - ", 1)
+        left = (left or "").strip()
+        right = (right or "").strip()
+        if not left or not right:
+            return False, raw_label
+        return left, right
+
     def _build_row(self, line):
-        is_question = line.line_type == "score" and line.is_scored
+        """Build a template-ready row dict from an evaluation line record."""
+        display_type = getattr(line, 'display_type', 'question') or 'question'
+        group_kind = (getattr(line, 'x_psm_interview_group_kind', '') or '').strip()
+        group_label = (getattr(line, 'x_psm_interview_group_label', '') or '').strip()
+
+        is_question = display_type == 'question' and line.line_type == 'score' and line.is_scored
+        is_subheader = display_type == 'subheader' or group_kind == 'subheader'
+
         selected_score = False
         if line.score_value and str(line.score_value).isdigit():
             selected_score = int(line.score_value)
+
+        raw_label = line.item_label or ""
+
+        if is_subheader:
+            return {
+                "display_type": "subheader",
+                "label": raw_label,
+                "question_text": "",
+                "skillset_group": False,
+                "skillset_show_left": False,
+                "skillset_left": "",
+                "skillset_right": "",
+                "skillset_rowspan": 0,
+                "line_id": line.id,
+                "selected_score": selected_score,
+                "line_comment": line.note or "",
+                "x_psm_interview_group_kind": "subheader",
+                "x_psm_interview_group_label": "",
+            }
+
+        # Question row — detect skillset grouping
+        skillset_group = False
+        skillset_left = ""
+        skillset_right = raw_label
+
+        if group_kind == "skillset_child" and group_label:
+            skillset_group = True
+            skillset_left = group_label
+            split_left, split_right = self._split_skillset_label(raw_label)
+            if split_left and split_right and split_left.lower() == group_label.lower():
+                skillset_right = split_right
+        elif group_kind == "skillset_child":
+            split_left, split_right = self._split_skillset_label(raw_label)
+            if split_left and split_right:
+                skillset_group = True
+                skillset_left = split_left
+                skillset_right = split_right
+
         return {
             "display_type": "question" if is_question else "subheader",
-            "label": line.item_label if not is_question else "",
-            "question_text": line.item_label if is_question else "",
-            "skillset_group": False,
+            "label": "" if is_question else raw_label,
+            "question_text": raw_label if is_question else "",
+            "skillset_group": skillset_group,
             "skillset_show_left": False,
-            "skillset_left": "",
-            "skillset_right": line.item_label if is_question else "",
+            "skillset_left": skillset_left,
+            "skillset_right": skillset_right if skillset_group else (raw_label if is_question else ""),
             "skillset_rowspan": 0,
             "line_id": line.id,
             "selected_score": selected_score,
             "line_comment": line.note or "",
+            "x_psm_interview_group_kind": group_kind or "question",
+            "x_psm_interview_group_label": group_label if skillset_group else "",
         }
 
+    def _aggregate_skillset_rowspans(self, rows):
+        """Post-process rows to compute skillset rowspans (same logic as 0204)."""
+        index = 0
+        while index < len(rows):
+            row = rows[index]
+            if not row.get("skillset_group"):
+                index += 1
+                continue
+
+            left_key = row.get("skillset_left")
+            tail = index
+            while tail < len(rows):
+                probe = rows[tail]
+                if probe.get("display_type") != "question":
+                    break
+                if not probe.get("skillset_group"):
+                    break
+                if probe.get("skillset_left") != left_key:
+                    break
+                tail += 1
+
+            rowspan = max(1, tail - index)
+            rows[index]["skillset_show_left"] = True
+            rows[index]["skillset_rowspan"] = rowspan
+            for hidden_idx in range(index + 1, tail):
+                rows[hidden_idx]["skillset_show_left"] = False
+                rows[hidden_idx]["skillset_rowspan"] = 0
+
+            index = tail
+        return rows
+
     def _prepare_sections(self, evaluation):
+        """Build sections grouped by section_name/section_code with skillset aggregation."""
         sections = []
         ordered_lines = evaluation.evaluation_item_ids.sorted("sequence")
+
+        # Group lines by section key in order of first appearance.
+        # Prefer section_name (dynamic from survey) over section_code (legacy hardcoded).
+        section_order = []
+        section_lines_map = {}
+        section_display_names = {}
         section_name_map = dict(evaluation.EVALUATION_SECTION_SELECTION or [])
-        used_codes = set()
 
-        for section_code, section_name in evaluation.EVALUATION_SECTION_SELECTION:
-            section_lines = ordered_lines.filtered(lambda line, code=section_code: line.section_code == code)
-            if not section_lines:
-                continue
-            used_codes.add(section_code)
-            sections.append(
-                {
-                    "name": section_name,
-                    "rows": [self._build_row(line) for line in section_lines],
-                }
-            )
+        for line in ordered_lines:
+            # Use section_name when available (survey-loaded), else section_code
+            key = line.section_name or line.section_code or 'default'
+            if key not in section_lines_map:
+                section_order.append(key)
+                section_lines_map[key] = []
+                # Resolve display name
+                if line.section_name:
+                    section_display_names[key] = line.section_name
+                else:
+                    section_display_names[key] = section_name_map.get(line.section_code) or line.section_code or 'Section'
+            section_lines_map[key].append(line)
 
-        for section_code in ordered_lines.mapped("section_code"):
-            if section_code in used_codes:
-                continue
-            section_lines = ordered_lines.filtered(lambda line, code=section_code: line.section_code == code)
-            if not section_lines:
-                continue
-            sections.append(
-                {
-                    "name": section_name_map.get(section_code, section_code or _("Section")),
-                    "rows": [self._build_row(line) for line in section_lines],
-                }
-            )
+        for section_key in section_order:
+            section_lines = section_lines_map[section_key]
+            rows = [self._build_row(line) for line in section_lines]
+            rows = self._aggregate_skillset_rowspans(rows)
+
+            sections.append({
+                "name": section_display_names.get(section_key, section_key),
+                "rows": rows,
+            })
 
         return sections
 

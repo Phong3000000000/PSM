@@ -37,7 +37,7 @@ def create_interview_schedules(env):
 
 def recompute_recruitment_fields(env):
     """Force recompute recruitment_type and position_level for all existing hr.job records"""
-    jobs = env['hr.job'].search([])
+    jobs = env['hr.job'].with_context(x_psm_0204_allow_scope_sync=True).search([])
     if jobs:
         jobs._compute_recruitment_logic()
         _logger.info(f"Recomputed recruitment fields for {len(jobs)} job positions")

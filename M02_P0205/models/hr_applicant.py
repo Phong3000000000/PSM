@@ -255,7 +255,10 @@ class HrApplicant(models.Model):
                 self.survey_id = self.job_id.survey_id
             else:
                 # Fallback: tìm survey pre-interview bất kỳ
-                default_survey = self.env['survey.survey'].search([('x_psm_0205_is_pre_interview', '=', True)], limit=1)
+                default_survey = self.env['survey.survey'].search(
+                    [('x_psm_survey_usage', '=', 'pre_interview'), ('x_psm_0204_is_runtime_isolated_copy', '=', False)],
+                    limit=1,
+                )
                 if default_survey:
                     self.survey_id = default_survey
                 else:
@@ -1034,7 +1037,48 @@ class HrApplicant(models.Model):
         self.with_context(
             office_interview_slots=slots,
             office_round_label=round_label,
+            skip_0204_stage_mail=True,
         ).write({'stage_id': target_stage.id})
+
+    def _message_track_post_template(self, changes):
+        # Apply standard logic but intercept the context for office slots
+        if not self.env.context.get('skip_0204_stage_mail'):
+            return super()._message_track_post_template(changes)
+        
+        slots = self.env.context.get('office_interview_slots')
+        round_label = self.env.context.get('office_round_label')
+        
+        if slots is None or round_label is None:
+            return super()._message_track_post_template(changes)
+
+        if not self or not changes:
+            return True
+
+        from odoo.tools.misc import clean_context
+
+        cleaned_self = self.with_context(clean_context(self.env.context))._fallback_lang()
+        cleaned_self = cleaned_self.with_context(meeting_slots=slots, round_label=round_label)
+
+        try:
+            templates = self._track_template(changes)
+        except Exception:
+            if not self.exists():
+                return
+            raise
+
+        default_composition_mode = 'mass_mail' if len(self) != 1 else 'comment'
+        for (template, post_kwargs) in templates.values():
+            if not template:
+                continue
+
+            composition_mode = post_kwargs.pop('composition_mode', default_composition_mode)
+            post_kwargs.setdefault('message_type', 'auto_comment')
+            post_kwargs.setdefault('notify_author_mention', True)
+            if composition_mode == 'mass_mail':
+                cleaned_self.message_mail_with_source(template, **post_kwargs)
+            else:
+                cleaned_self.message_post_with_source(template, **post_kwargs)
+        return True
 
         # Create activity for HR and Manager
         partner_name = self.partner_name or self.name or "ứng viên"
@@ -1673,28 +1717,28 @@ class HrApplicant(models.Model):
         compute='_compute_eval_round_metrics', store=True, copy=False)
     x_psm_0205_primary_interviewer_l1_user_id = fields.Many2one(
         'res.users',
-        string='Người phỏng vấn chính Vòng 1',
+        string='Round 1 Primary Interviewer',
         copy=False,
         tracking=True,
         domain="[('share', '=', False)]",
     )
     x_psm_0205_primary_interviewer_l2_user_id = fields.Many2one(
         'res.users',
-        string='Người phỏng vấn chính Vòng 2',
+        string='Round 2 Primary Interviewer',
         copy=False,
         tracking=True,
         domain="[('share', '=', False)]",
     )
     x_psm_0205_primary_interviewer_l3_user_id = fields.Many2one(
         'res.users',
-        string='Người phỏng vấn chính Vòng 3',
+        string='Round 3 Primary Interviewer',
         copy=False,
         tracking=True,
         domain="[('id', 'in', x_psm_0205_allowed_primary_interviewer_l3_ids)]",
     )
     x_psm_0205_primary_interviewer_l4_user_id = fields.Many2one(
         'res.users',
-        string='Người phỏng vấn chính Vòng 4',
+        string='Round 4 Primary Interviewer',
         copy=False,
         tracking=True,
         domain="[('id', 'in', x_psm_0205_allowed_primary_interviewer_l4_ids)]",
@@ -1780,6 +1824,112 @@ class HrApplicant(models.Model):
         string='Ghi chú rà người phỏng vấn chính',
         compute='_compute_primary_interviewer_review',
     )
+    x_psm_0205_header_notice_visible = fields.Boolean(
+        string='Hiện Notice Header',
+        compute='_compute_x_psm_0205_header_notice',
+    )
+    x_psm_0205_header_notice_message = fields.Char(
+        string='Nội dung Notice Header',
+        compute='_compute_x_psm_0205_header_notice',
+    )
+    x_psm_0205_header_notice_level = fields.Selection(
+        [('info', 'Info'), ('warning', 'Warning'), ('danger', 'Danger')],
+        string='Mức độ Notice',
+        compute='_compute_x_psm_0205_header_notice',
+    )
+
+    @api.depends(
+        'x_psm_0205_recruitment_type',
+        'stage_id',
+        'x_psm_0205_current_stage_interview_round',
+        'x_psm_0205_next_interview_round',
+        'x_psm_0205_primary_interviewer_l1_user_id',
+        'x_psm_0205_primary_interviewer_l2_user_id',
+        'x_psm_0205_primary_interviewer_l3_user_id',
+        'x_psm_0205_primary_interviewer_l4_user_id',
+        'x_psm_0205_evaluation_line_ids.state',
+        'x_psm_0205_evaluation_line_ids.recommendation',
+        'meeting_ids.x_psm_0205_interview_round',
+        'x_psm_0205_interview_slot_event_id_1',
+        'x_psm_0205_interview_slot_event_id_2',
+        'x_psm_0205_interview_slot_event_id_3',
+        'x_psm_0205_interview_slot_event_id_4',
+    )
+    def _compute_x_psm_0205_header_notice(self):
+        for rec in self:
+            if rec.x_psm_0205_recruitment_type != 'office':
+                rec.x_psm_0205_header_notice_visible = False
+                rec.x_psm_0205_header_notice_message = False
+                rec.x_psm_0205_header_notice_level = False
+                continue
+
+            target_round = False
+            current_round_str = rec.x_psm_0205_current_stage_interview_round
+            next_round_str = rec.x_psm_0205_next_interview_round
+            
+            if current_round_str:
+                primary_eval = rec._get_primary_evaluation_for_round(int(current_round_str))
+                if primary_eval and primary_eval.state == 'done':
+                    target_round = int(next_round_str) if next_round_str else False
+                else:
+                    target_round = int(current_round_str)
+            else:
+                target_round = int(next_round_str) if next_round_str else 1
+            
+            if not target_round:
+                rec.x_psm_0205_header_notice_visible = False
+                rec.x_psm_0205_header_notice_message = False
+                rec.x_psm_0205_header_notice_level = False
+                continue
+
+            round_label = f"Interview {target_round}"
+            primary_user = rec._get_primary_interviewer_user(target_round)
+            
+            message = False
+            level = 'warning'
+
+            if not primary_user:
+                message = _("%(round)s chưa có người phỏng vấn chính.", round=round_label)
+                level = 'danger'
+            else:
+                has_meeting = any(ev.x_psm_0205_interview_round == str(target_round) for ev in rec.meeting_ids)
+                event_id = getattr(rec, f'x_psm_0205_interview_slot_event_id_{target_round}', False)
+                
+                if not event_id:
+                    if not has_meeting:
+                        if target_round == 1:
+                            message = _("Chưa có meeting cho %(round)s. Vui lòng tạo lịch phỏng vấn (meeting slots).", round=round_label)
+                        else:
+                            message = _("Hãy tạo meeting cho %(round)s để gửi lịch phỏng vấn.", round=round_label)
+                        level = 'warning'
+                    else:
+                        message = _("Đang chờ xác nhận lịch phỏng vấn cho %(round)s.", round=round_label)
+                        level = 'info'
+                else:
+                    primary_eval = rec._get_primary_evaluation_for_round(target_round)
+                    if not primary_eval or primary_eval.state == 'draft':
+                        if self.env.user == primary_user:
+                            message = _("Bạn cần nhấn Pass Interview để đánh giá %(round)s.", round=round_label)
+                            level = 'warning'
+                        else:
+                            message = _("Đang chờ người phỏng vấn chính %(round)s: %(user)s đánh giá.", round=round_label, user=primary_user.display_name)
+                            level = 'info'
+                    elif primary_eval.state == 'in_progress':
+                        if self.env.user == primary_user:
+                            message = _("Bạn đang có đánh giá %(round)s cần hoàn tất. Hãy vào %(round)s để tiếp tục đánh giá.", round=round_label)
+                            level = 'warning'
+                        else:
+                            message = _("Người phỏng vấn chính %(round)s: %(user)s đang làm đánh giá interview.", round=round_label, user=primary_user.display_name)
+                            level = 'info'
+
+            if message:
+                rec.x_psm_0205_header_notice_visible = True
+                rec.x_psm_0205_header_notice_message = message
+                rec.x_psm_0205_header_notice_level = level
+            else:
+                rec.x_psm_0205_header_notice_visible = False
+                rec.x_psm_0205_header_notice_message = False
+                rec.x_psm_0205_header_notice_level = False
 
     def _recommendation_score(self, recommendation):
         return {'pass': 1, 'fail': -1}.get(recommendation, 0)
@@ -2584,12 +2734,29 @@ class HrApplicantEvaluation(models.Model):
             if invalid_lines:
                 raise exceptions.UserError(_("Vui long chon diem 1..5 cho tat ca dong Question."))
 
-            rec.write({
-                'state': 'done',
-            })
+        self.write({
+            'state': 'done',
+        })
+        self._apply_submitted_eval_outcome()
 
     def _get_default_evaluation_line_vals(self):
+        """Build evaluation lines from the job's interview survey.
+
+        Falls back to EVALUATION_TEMPLATE_LINES when the job has no survey
+        configured (backward compatibility).
+        """
         self.ensure_one()
+        job = self.applicant_id.job_id
+        if job and hasattr(job, '_x_psm_prepare_interview_snapshot_sections'):
+            survey_sections = job._x_psm_prepare_interview_snapshot_sections()
+            if survey_sections:
+                return self._build_evaluation_lines_from_survey_sections(survey_sections)
+
+        # Fallback: hardcoded template lines
+        return self._get_hardcoded_template_line_vals()
+
+    def _get_hardcoded_template_line_vals(self):
+        """Original hardcoded EVALUATION_TEMPLATE_LINES loader (fallback)."""
         line_vals = []
         for sequence, (_section_key, section_code, item_code, item_label, line_type, is_scored) in enumerate(
             self.EVALUATION_TEMPLATE_LINES, start=1
@@ -2601,10 +2768,53 @@ class HrApplicantEvaluation(models.Model):
                 'item_label': item_label,
                 'line_type': line_type,
                 'is_scored': is_scored,
+                'display_type': 'question',
+                'x_psm_interview_group_kind': 'question',
+                'x_psm_interview_group_label': False,
             }
             if line_type == 'score':
                 vals['score_value'] = False
             line_vals.append(vals)
+        return line_vals
+
+    def _build_evaluation_lines_from_survey_sections(self, survey_sections):
+        """Convert survey snapshot payload into evaluation_item_ids vals.
+
+        Maps the dict payload produced by
+        ``hr.job._x_psm_prepare_interview_snapshot_sections()`` into the flat
+        evaluation-line format expected by ``x_psm_applicant_evaluation_line``.
+        """
+        line_vals = []
+        global_seq = 1
+        for section in sorted(survey_sections, key=lambda s: s.get('sequence', 10)):
+            section_display_name = section.get('name') or 'Section'
+            for line in sorted(section.get('lines', []), key=lambda l: l.get('sequence', 10)):
+                display_type = line.get('display_type', 'question')
+                group_kind = line.get('x_psm_interview_group_kind', 'question')
+                group_label = line.get('x_psm_interview_group_label') or False
+                question_text = line.get('question_text') or line.get('label') or ''
+                label = line.get('label') or ''
+                item_label = label if display_type == 'subheader' else question_text
+
+                is_scored = display_type == 'question'
+                line_type = 'score' if is_scored else 'text'
+
+                vals = {
+                    'sequence': global_seq,
+                    'section_code': False,
+                    'section_name': section_display_name,
+                    'item_code': f"survey_q_{line.get('source_question_id', global_seq)}",
+                    'item_label': item_label,
+                    'line_type': line_type,
+                    'is_scored': is_scored,
+                    'display_type': display_type,
+                    'x_psm_interview_group_kind': group_kind,
+                    'x_psm_interview_group_label': group_label,
+                }
+                if line_type == 'score':
+                    vals['score_value'] = False
+                line_vals.append(vals)
+                global_seq += 1
         return line_vals
 
     def _get_evaluation_template_map(self):
@@ -2625,10 +2835,28 @@ class HrApplicantEvaluation(models.Model):
     def _ensure_default_evaluation_lines(self):
         for rec in self:
             if rec.evaluation_item_ids:
-                continue
+                # If lines exist but were loaded from hardcoded template
+                # (no section_name) and a survey is now available, refresh them.
+                if rec.state != 'done' and rec._should_refresh_from_survey():
+                    rec.evaluation_item_ids.unlink()
+                else:
+                    continue
             rec.with_context(skip_eval_line_sync=True).write({
                 'evaluation_item_ids': [(0, 0, vals) for vals in rec._get_default_evaluation_line_vals()],
             })
+
+    def _should_refresh_from_survey(self):
+        """Check if current hardcoded lines should be replaced by survey lines."""
+        self.ensure_one()
+        # If any line has section_name set, it was loaded from survey → no need to refresh
+        if any(line.section_name for line in self.evaluation_item_ids):
+            return False
+        # Check if a survey is available
+        job = self.applicant_id.job_id
+        if not job or not hasattr(job, '_x_psm_prepare_interview_snapshot_sections'):
+            return False
+        survey_sections = job._x_psm_prepare_interview_snapshot_sections()
+        return bool(survey_sections)
 
     def _sync_evaluation_line_templates(self):
         for rec in self:
@@ -2643,7 +2871,7 @@ class HrApplicantEvaluation(models.Model):
                         updates[field_name] = value
                 if updates:
                     line.with_context(skip_eval_line_sync=True).write(updates)
-        self._after_eval_change()
+        self._refresh_eval_summary_only()
 
     def _build_legacy_final_comment(self):
         self.ensure_one()
@@ -2680,7 +2908,7 @@ class HrApplicantEvaluation(models.Model):
                     rec.with_context(skip_eval_recommendation_sync=True).write({
                         'final_comment': legacy_comment,
                     })
-        self._after_eval_change()
+        self._refresh_eval_summary_only()
 
     @api.model
     def _register_hook(self):
@@ -2791,27 +3019,23 @@ class HrApplicantEvaluation(models.Model):
         records = super(HrApplicantEvaluation, self).create(vals_list)
         records._ensure_default_evaluation_lines()
         records._sync_evaluation_line_templates()
-        records._after_eval_change()
+        records._refresh_eval_summary_only()
         return records
 
     def write(self, vals):
         res = super(HrApplicantEvaluation, self).write(vals)
-        self._after_eval_change()
+        self._refresh_eval_summary_only()
         return res
 
     def unlink(self):
-        rounds_by_applicant = {}
-        for rec in self:
-            if not rec.applicant_id:
-                continue
-            rounds_by_applicant.setdefault(rec.applicant_id, set()).add(rec.interview_round)
         res = super(HrApplicantEvaluation, self).unlink()
-        for applicant, rounds in rounds_by_applicant.items():
-            for interview_round in rounds:
-                applicant._update_interview_round_outcome(interview_round)
+        self._refresh_eval_summary_only()
         return res
 
-    def _after_eval_change(self):
+    def _refresh_eval_summary_only(self):
+        pass
+
+    def _apply_submitted_eval_outcome(self):
         self._sync_recommendation_from_final_result()
         rounds_by_applicant = {}
         for rec in self:
@@ -2855,11 +3079,26 @@ class HrApplicantEvaluationLine(models.Model):
     section_code = fields.Selection(
         HrApplicantEvaluation.EVALUATION_SECTION_SELECTION,
         string='Nhóm tiêu chí',
-        required=True,
+    )
+    section_name = fields.Char(
+        string='Tên section (dynamic)',
+        help='Section name loaded from survey. Used for display when available.',
     )
     section_label = fields.Char(string='Nhóm', compute='_compute_section_label')
     item_code = fields.Char(string='Mã tiêu chí', required=True)
     item_label = fields.Char(string='Tiêu chí', required=True)
+    display_type = fields.Selection(
+        [('question', 'Question'), ('subheader', 'Subheader')],
+        string='Display Type',
+        default='question',
+    )
+    x_psm_interview_group_kind = fields.Char(
+        string='Group Kind',
+        help='subheader, skillset_child, or question',
+    )
+    x_psm_interview_group_label = fields.Char(
+        string='Skillset Group Label',
+    )
     line_type = fields.Selection(
         HrApplicantEvaluation.EVALUATION_LINE_TYPE_SELECTION,
         string='Loại dòng',
@@ -2909,11 +3148,14 @@ class HrApplicantEvaluationLine(models.Model):
             ]
             rec.score_value = checked_scores[-1] if checked_scores else False
 
-    @api.depends('section_code')
+    @api.depends('section_code', 'section_name')
     def _compute_section_label(self):
         selection_map = dict(HrApplicantEvaluation.EVALUATION_SECTION_SELECTION)
         for rec in self:
-            rec.section_label = selection_map.get(rec.section_code, rec.section_code or '')
+            if rec.section_name:
+                rec.section_label = rec.section_name
+            else:
+                rec.section_label = selection_map.get(rec.section_code) or rec.section_code or ''
 
     def _set_score_flag_value(self, target_score):
         for rec in self:
@@ -3022,7 +3264,7 @@ class HrApplicantEvaluationLine(models.Model):
         normalized_vals_list = [self._normalize_score_checkbox_vals(dict(vals)) for vals in vals_list]
         records = super().create(normalized_vals_list)
         if not self.env.context.get('skip_eval_line_sync'):
-            records.mapped('evaluation_id')._after_eval_change()
+            records.mapped('evaluation_id')._refresh_eval_summary_only()
         return records
 
     def write(self, vals):
@@ -3032,12 +3274,12 @@ class HrApplicantEvaluationLine(models.Model):
             results.append(super(HrApplicantEvaluationLine, rec).write(normalized_vals))
         res = all(results) if results else True
         if not self.env.context.get('skip_eval_line_sync'):
-            self.mapped('evaluation_id')._after_eval_change()
+            self.mapped('evaluation_id')._refresh_eval_summary_only()
         return res
 
     def unlink(self):
         evaluations = self.mapped('evaluation_id')
         res = super().unlink()
         if not self.env.context.get('skip_eval_line_sync'):
-            evaluations._after_eval_change()
+            evaluations._refresh_eval_summary_only()
         return res

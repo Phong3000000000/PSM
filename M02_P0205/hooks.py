@@ -24,9 +24,74 @@ def _migrate_legacy_groups(env):
             )
 
 
+def _needs_custom_survey_rebind(job, survey, usage):
+    if not survey:
+        return True
+    if survey.x_psm_0204_is_runtime_isolated_copy:
+        return True
+    if survey.x_psm_survey_usage != usage:
+        return True
+    if survey.x_psm_0204_owner_job_id and survey.x_psm_0204_owner_job_id != job:
+        return True
+    if not survey.x_psm_0204_owner_job_id:
+        return True
+    return False
+
+
+def _backfill_office_job_custom_surveys(env):
+    jobs = env['hr.job'].sudo().search([('recruitment_type', '=', 'office')])
+    if not jobs:
+        return
+
+    rebound_pre = 0
+    rebound_interview = 0
+    missing_pre = []
+    missing_interview = []
+
+    for job in jobs:
+        if not job.department_id:
+            continue
+
+        pre_source = job._x_psm_find_default_survey('pre_interview')
+        if pre_source:
+            if _needs_custom_survey_rebind(job, job.survey_id.sudo(), 'pre_interview'):
+                job._x_psm_ensure_custom_survey_binding('pre_interview', source_survey=pre_source)
+                rebound_pre += 1
+        else:
+            missing_pre.append(job.display_name)
+
+        if not job._is_interview_template_supported():
+            continue
+
+        interview_source = job._x_psm_find_default_survey('interview')
+        if interview_source:
+            if _needs_custom_survey_rebind(job, job.x_psm_interview_survey_id.sudo(), 'interview'):
+                job._x_psm_ensure_custom_survey_binding('interview', source_survey=interview_source)
+                rebound_interview += 1
+        else:
+            missing_interview.append(job.display_name)
+
+    _logger.info(
+        "0205 survey backfill: rebound %s office application surveys and %s office interview surveys.",
+        rebound_pre,
+        rebound_interview,
+    )
+    if missing_pre:
+        _logger.warning(
+            "0205 survey backfill: missing application master survey for office jobs: %s",
+            ", ".join(missing_pre),
+        )
+    if missing_interview:
+        _logger.warning(
+            "0205 survey backfill: missing interview master for office jobs: %s",
+            ", ".join(missing_interview),
+        )
+
+
 def post_init_hook(env):
     """Cleanup legacy interview evaluations and map legacy groups on install."""
     _migrate_legacy_groups(env)
+    _backfill_office_job_custom_surveys(env)
     Evaluation = env['x_psm_applicant_evaluation'].sudo()
     legacy_evaluations = Evaluation.search([('recommendation', '=', 'consider')])
     if not legacy_evaluations:

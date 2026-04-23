@@ -486,8 +486,8 @@ class BackendInterviewController(http.Controller):
         job.with_user(user).check_access_rights('read')
         job.with_user(user).check_access_rule('read')
 
-        if not (job.recruitment_type == 'store' and job.position_level == 'management'):
-            raise exceptions.UserError(_("Chi ho tro preview Interview cho job Store + Management."))
+        if not job._is_interview_template_supported():
+            raise exceptions.UserError(_("Job nay chua ho tro preview Interview. Kiem tra cau hinh recruitment type va level."))
 
         if not job.x_psm_interview_survey_id:
             raise exceptions.UserError(_("Job chua cau hinh Survey Interview."))

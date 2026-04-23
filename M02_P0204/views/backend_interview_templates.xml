@@ -124,11 +124,11 @@
                                                     </td>
                                                 </t>
 
-                                                <td class="text-center score-col"><input type="radio" t-att-name="'line_%s_score' % line['line_id']" value="1" t-att-checked="'checked' if line['selected_score'] == 1 else None" t-att-disabled="'disabled' if is_readonly else None"/></td>
-                                                <td class="text-center score-col"><input type="radio" t-att-name="'line_%s_score' % line['line_id']" value="2" t-att-checked="'checked' if line['selected_score'] == 2 else None" t-att-disabled="'disabled' if is_readonly else None"/></td>
-                                                <td class="text-center score-col"><input type="radio" t-att-name="'line_%s_score' % line['line_id']" value="3" t-att-checked="'checked' if line['selected_score'] == 3 else None" t-att-disabled="'disabled' if is_readonly else None"/></td>
-                                                <td class="text-center score-col"><input type="radio" t-att-name="'line_%s_score' % line['line_id']" value="4" t-att-checked="'checked' if line['selected_score'] == 4 else None" t-att-disabled="'disabled' if is_readonly else None"/></td>
-                                                <td class="text-center score-col"><input type="radio" t-att-name="'line_%s_score' % line['line_id']" value="5" t-att-checked="'checked' if line['selected_score'] == 5 else None" t-att-disabled="'disabled' if is_readonly else None"/></td>
+                                                <td class="text-center score-col align-middle" style="cursor: pointer;" onclick="var r = this.querySelector('input[type=radio]'); if(r &amp;&amp; !r.disabled) r.click();"><input type="radio" t-att-name="'line_%s_score' % line['line_id']" value="1" t-att-checked="'checked' if line['selected_score'] == 1 else None" t-att-disabled="'disabled' if is_readonly else None" style="pointer-events: none;"/></td>
+                                                <td class="text-center score-col align-middle" style="cursor: pointer;" onclick="var r = this.querySelector('input[type=radio]'); if(r &amp;&amp; !r.disabled) r.click();"><input type="radio" t-att-name="'line_%s_score' % line['line_id']" value="2" t-att-checked="'checked' if line['selected_score'] == 2 else None" t-att-disabled="'disabled' if is_readonly else None" style="pointer-events: none;"/></td>
+                                                <td class="text-center score-col align-middle" style="cursor: pointer;" onclick="var r = this.querySelector('input[type=radio]'); if(r &amp;&amp; !r.disabled) r.click();"><input type="radio" t-att-name="'line_%s_score' % line['line_id']" value="3" t-att-checked="'checked' if line['selected_score'] == 3 else None" t-att-disabled="'disabled' if is_readonly else None" style="pointer-events: none;"/></td>
+                                                <td class="text-center score-col align-middle" style="cursor: pointer;" onclick="var r = this.querySelector('input[type=radio]'); if(r &amp;&amp; !r.disabled) r.click();"><input type="radio" t-att-name="'line_%s_score' % line['line_id']" value="4" t-att-checked="'checked' if line['selected_score'] == 4 else None" t-att-disabled="'disabled' if is_readonly else None" style="pointer-events: none;"/></td>
+                                                <td class="text-center score-col align-middle" style="cursor: pointer;" onclick="var r = this.querySelector('input[type=radio]'); if(r &amp;&amp; !r.disabled) r.click();"><input type="radio" t-att-name="'line_%s_score' % line['line_id']" value="5" t-att-checked="'checked' if line['selected_score'] == 5 else None" t-att-disabled="'disabled' if is_readonly else None" style="pointer-events: none;"/></td>
                                                 <td>
                                                     <input type="text"
                                                            class="form-control form-control-sm oje-line-input"
@@ -296,11 +296,11 @@
                                                     </td>
                                                 </t>
 
-                                                <td class="text-center score-col"><input type="radio" disabled="disabled"/></td>
-                                                <td class="text-center score-col"><input type="radio" disabled="disabled"/></td>
-                                                <td class="text-center score-col"><input type="radio" disabled="disabled"/></td>
-                                                <td class="text-center score-col"><input type="radio" disabled="disabled"/></td>
-                                                <td class="text-center score-col"><input type="radio" disabled="disabled"/></td>
+                                                <td class="text-center score-col align-middle"><input type="radio" disabled="disabled"/></td>
+                                                <td class="text-center score-col align-middle"><input type="radio" disabled="disabled"/></td>
+                                                <td class="text-center score-col align-middle"><input type="radio" disabled="disabled"/></td>
+                                                <td class="text-center score-col align-middle"><input type="radio" disabled="disabled"/></td>
+                                                <td class="text-center score-col align-middle"><input type="radio" disabled="disabled"/></td>
                                                 <td><input type="text" class="form-control form-control-sm oje-line-input" disabled="disabled"/></td>
                                             </t>
                                             <t t-else="">
@@ -336,11 +336,11 @@
                             <tbody>
                                 <tr>
                                     <th colspan="2">Score totals</th>
-                                    <td class="text-center"><input type="text" readonly="readonly" class="form-control form-control-sm text-center" value="0"/></td>
-                                    <td class="text-center"><input type="text" readonly="readonly" class="form-control form-control-sm text-center" value="0"/></td>
-                                    <td class="text-center"><input type="text" readonly="readonly" class="form-control form-control-sm text-center" value="0"/></td>
-                                    <td class="text-center"><input type="text" readonly="readonly" class="form-control form-control-sm text-center" value="0"/></td>
-                                    <td class="text-center"><input type="text" readonly="readonly" class="form-control form-control-sm text-center" value="0"/></td>
+                                    <td class="text-center"><input id="interview_count_1" type="text" readonly="readonly" class="form-control form-control-sm text-center" value="0"/></td>
+                                    <td class="text-center"><input id="interview_count_2" type="text" readonly="readonly" class="form-control form-control-sm text-center" value="0"/></td>
+                                    <td class="text-center"><input id="interview_count_3" type="text" readonly="readonly" class="form-control form-control-sm text-center" value="0"/></td>
+                                    <td class="text-center"><input id="interview_count_4" type="text" readonly="readonly" class="form-control form-control-sm text-center" value="0"/></td>
+                                    <td class="text-center"><input id="interview_count_5" type="text" readonly="readonly" class="form-control form-control-sm text-center" value="0"/></td>
                                     <td class="text-end"><strong>Count</strong>: 0</td>
                                 </tr>
                                 <tr>
