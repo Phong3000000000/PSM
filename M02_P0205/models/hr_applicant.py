@@ -1,5 +1,6 @@
 import logging
 import secrets
+import html
 from datetime import timedelta, timezone
 from zoneinfo import ZoneInfo
 from odoo import models, fields, api, exceptions, _, Command
@@ -449,6 +450,22 @@ class HrApplicant(models.Model):
 
     x_psm_0205_interview_slot_token = fields.Char(string='Mã chọn lịch PV', copy=False)
     x_psm_0205_interview_slot_event_id = fields.Many2one('calendar.event', string='Lịch PV đã chọn', copy=False)
+    x_psm_0205_mail_round_label = fields.Char(
+        string='Mail Interview Round Label',
+        compute='_compute_interview_slot_mail_payload',
+        store=True,
+    )
+    x_psm_0205_mail_slot_rows_html = fields.Html(
+        string='Mail Interview Slot Rows',
+        compute='_compute_interview_slot_mail_payload',
+        sanitize=False,
+        store=True,
+    )
+    x_psm_0205_mail_has_slots = fields.Boolean(
+        string='Mail Interview Has Slots',
+        compute='_compute_interview_slot_mail_payload',
+        store=True,
+    )
     x_psm_0205_next_interview_round = fields.Selection(
         INTERVIEW_ROUND_SELECTION,
         string='Vòng phỏng vấn tiếp theo',
@@ -1028,28 +1045,13 @@ class HrApplicant(models.Model):
         if not target_stage:
             raise exceptions.UserError(_("Không tìm thấy stage Interview %s.") % current_round)
 
-        # Build meeting_slots context for the stage template to render
-        round_label = f"Interview {current_round}"
-        slots = self._prepare_interview_slots_context(round_meetings)
-
-        # Write stage_id — triggers _track_template which sends the stage email
-        # with meeting_slots injected into context via _track_template override.
+        # Write stage_id so the standard stage template reads slot data from object.* fields.
         self.with_context(
-            office_interview_slots=slots,
-            office_round_label=round_label,
             skip_0204_stage_mail=True,
         ).write({'stage_id': target_stage.id})
 
     def _message_track_post_template(self, changes):
-        # Apply standard logic but intercept the context for office slots
-        if not self.env.context.get('skip_0204_stage_mail'):
-            return super()._message_track_post_template(changes)
-        
-        slots = self.env.context.get('office_interview_slots')
-        round_label = self.env.context.get('office_round_label')
-        
-        if slots is None or round_label is None:
-            return super()._message_track_post_template(changes)
+        return super()._message_track_post_template(changes)
 
         if not self or not changes:
             return True
@@ -1105,8 +1107,83 @@ class HrApplicant(models.Model):
             }
         }
 
+    def _get_mail_interview_round(self):
+        self.ensure_one()
+        round_no = self.x_psm_0205_current_stage_interview_round
+        if round_no in ('1', '2', '3', '4'):
+            return round_no
+
+        stage_name = (self.stage_id.name or '').strip().lower()
+        if 'interview' in stage_name:
+            for round_candidate in ('1', '2', '3', '4'):
+                if round_candidate in stage_name:
+                    return round_candidate
+        return False
+
+    @api.depends(
+        'x_psm_0205_recruitment_type',
+        'stage_id',
+        'stage_id.name',
+        'x_psm_0205_current_stage_interview_round',
+        'meeting_ids',
+        'meeting_ids.start',
+        'meeting_ids.start_date',
+        'meeting_ids.x_psm_0205_interview_round',
+        'x_psm_0205_interview_slot_token',
+    )
+    def _compute_interview_slot_mail_payload(self):
+        for rec in self:
+            rec.x_psm_0205_mail_round_label = False
+            rec.x_psm_0205_mail_slot_rows_html = False
+            rec.x_psm_0205_mail_has_slots = False
+
+            if rec.x_psm_0205_recruitment_type != 'office' or not rec.stage_id:
+                continue
+
+            round_no = rec._get_mail_interview_round()
+            if not round_no:
+                continue
+
+            round_meetings = rec.meeting_ids.filtered(
+                lambda ev: ev.x_psm_0205_interview_round == round_no
+            )
+            rec.x_psm_0205_mail_round_label = f"Interview {round_no}"
+            if not round_meetings:
+                continue
+
+            slot_rows = []
+            for slot in rec._prepare_interview_slots_context(round_meetings):
+                slot_time = html.escape(slot.get('time') or _("Đang cập nhật"))
+                slot_url = html.escape(slot.get('url') or '#', quote=True)
+                slot_rows.append(
+                    """
+                    <tr>
+                        <td style="padding:14px 18px; border-bottom:1px solid #e5e7eb;
+                                   font-family:Arial, sans-serif; font-size:15px; font-weight:700; color:#111827;">
+                            %s
+                        </td>
+                        <td style="padding:14px 18px; border-bottom:1px solid #e5e7eb; text-align:right;">
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="right">
+                                <tr>
+                                    <td style="background-color:#DA291C; border-radius:4px; text-align:center;">
+                                        <a href="%s"
+                                           style="display:inline-block; padding:10px 16px; font-family:Arial, sans-serif;
+                                                  font-size:14px; font-weight:700; color:#ffffff; text-decoration:none;">
+                                            Chọn lịch này
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    """ % (slot_time, slot_url)
+                )
+
+            rec.x_psm_0205_mail_has_slots = bool(slot_rows)
+            rec.x_psm_0205_mail_slot_rows_html = ''.join(slot_rows) if slot_rows else False
+
     def _prepare_interview_slots_context(self, round_meetings):
-        """Build meeting_slots list for template rendering context."""
+        """Build interview slot payload for mail and UI rendering."""
         self.ensure_one()
         slots = []
         tz = self.env.context.get('tz') or self.env.user.tz or 'Asia/Ho_Chi_Minh'
@@ -1120,7 +1197,7 @@ class HrApplicant(models.Model):
                 'time': slot_time,
                 'url': self.get_interview_slot_url(event),
             })
-        return slots or [{'time': 'Đang cập nhật', 'url': '#'}]
+        return slots
 
     def _build_round_notification_email_body(self, event, round_no):
         self.ensure_one()

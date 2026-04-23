@@ -168,7 +168,7 @@
         <record id="email_interview_slot_survey" model="mail.template">
             <field name="name">Chọn lịch phỏng vấn</field>
             <field name="model_id" ref="hr_recruitment.model_hr_applicant" />
-            <field name="subject">Chọn lịch phỏng vấn - {{ ctx.get('round_label', 'vòng tiếp theo') }} - {{ object.job_id.name }}</field>
+            <field name="subject">Chọn lịch phỏng vấn - {{ object.x_psm_0205_mail_round_label or object.stage_id.name or 'vòng tiếp theo' }} - {{ object.job_id.name }}</field>
             <field name="email_from">{{ (object.user_id.email_formatted or
                 object.company_id.email_formatted or 'recruitment@example.com') }}</field>
             <field name="email_to">{{ object.email_from }}</field>
@@ -184,7 +184,7 @@
                     <td style="padding:20px 24px; background-color:#DA291C; border-bottom:4px solid #FFC72C; 
                                font-family:Arial, sans-serif; font-size:30px; font-weight:700; 
                                line-height:1.2; color:#ffffff; text-align:center;">
-                        Chọn lịch phỏng vấn - <t t-out="ctx.get('round_label', 'với chúng tôi')"/>
+                        Chọn lịch phỏng vấn - <t t-out="object.x_psm_0205_mail_round_label or object.stage_id.name or 'với chúng tôi'"/>
                     </td>
                 </tr>
                 <!-- Body -->
@@ -195,7 +195,7 @@
                         </p>
                         <p style="margin:0 0 22px; font-family:Arial, sans-serif; font-size:16px; line-height:1.7; color:#111827;">
                             Cảm ơn bạn đã ứng tuyển vị trí <strong><t t-out="object.job_id.name or 'vị trí ứng tuyển'"/></strong>.
-                            Vui lòng chọn một khung giờ phù hợp dưới đây để tham gia phỏng vấn <t t-out="ctx.get('round_label', 'vòng tiếp theo')"/>.
+                            Vui lòng chọn một khung giờ phù hợp dưới đây để tham gia phỏng vấn <t t-out="object.x_psm_0205_mail_round_label or object.stage_id.name or 'vòng tiếp theo'"/>.
                         </p>
 
                         <!-- Slot table -->
@@ -207,28 +207,10 @@
                                     Khung giờ được hiển thị theo giờ địa phương của lịch hẹn.
                                 </td>
                             </tr>
-                            <t t-foreach="ctx.get('meeting_slots', [])" t-as="slot">
-                                <tr>
-                                    <td style="padding:14px 18px; border-bottom:1px solid #e5e7eb;
-                                               font-family:Arial, sans-serif; font-size:15px; font-weight:700; color:#111827;">
-                                        <t t-esc="slot.get('time', 'Đang cập nhật')"/>
-                                    </td>
-                                    <td style="padding:14px 18px; border-bottom:1px solid #e5e7eb; text-align:right;">
-                                        <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="right">
-                                            <tr>
-                                                <td style="background-color:#DA291C; border-radius:4px; text-align:center;">
-                                                    <a t-attf-href="{{ slot.get('url', '#') }}"
-                                                       style="display:inline-block; padding:10px 16px; font-family:Arial, sans-serif;
-                                                              font-size:14px; font-weight:700; color:#ffffff; text-decoration:none;">
-                                                        Chọn lịch này
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
+                            <t t-if="object.x_psm_0205_mail_has_slots">
+                                <t t-raw="object.x_psm_0205_mail_slot_rows_html"/>
                             </t>
-                            <t t-if="not ctx.get('meeting_slots')">
+                            <t t-if="not object.x_psm_0205_mail_has_slots">
                                 <tr>
                                     <td style="padding:14px 18px; font-family:Arial, sans-serif; font-size:14px; color:#6b7280;" colspan="2">
                                         Đang cập nhật
