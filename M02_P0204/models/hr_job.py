@@ -78,11 +78,8 @@ class HrJob(models.Model):
         help="Survey dung lam template tieu chi OJE cho job nay.",
     )
 
-    job_refuse_reason_ids = fields.One2many(
-        "hr.applicant.refuse.reason",
-        "job_id",
-        string="Cau hinh ly do tu choi",
-    )
+    # job_refuse_reason_ids removed — refuse reasons are now shared global records,
+    # not per-job. See M02_P0204.system_refuse_reason and shared seed data.
 
     oje_pass_score = fields.Float(string="Diem dat OJE", default=6.0)
     oje_evaluator_user_id = fields.Many2one(
@@ -376,11 +373,7 @@ class HrJob(models.Model):
                     err,
                 )
 
-            try:
-                if not job.job_refuse_reason_ids:
-                    job.action_load_default_refuse_reasons()
-            except Exception as err:
-                _logger.warning("[JOB_BOOTSTRAP] Cannot load default refuse reasons for job %s: %s", job.id, err)
+            # Refuse reasons are now global — no per-job bootstrap needed.
 
             try:
                 job._x_psm_auto_bind_custom_surveys_on_create()
@@ -827,50 +820,10 @@ class HrJob(models.Model):
             },
         }
 
-    def action_load_default_refuse_reasons(self):
-        """Nap cac ly do tu choi mac dinh vao cau hinh Job"""
-        self.ensure_one()
+    # action_load_default_refuse_reasons() removed — refuse reasons are now
+    # seeded as shared global records in data/refuse_reason_data.xml.
+    # HR manages them via Configuration > Refuse Reasons. No per-job setup needed.
 
-        default_reasons = [
-            "TA_KHONG PHU HOP VOI NHU CAU HIEN TAI CUA CUA HANG",
-            "TA_KHONG LAM T7/CN/LE TET",
-            "TA_KHONG DI SOM/VE TRE/CA DEM",
-            "KINH NGHIEM KHONG PHU HOP",
-            "FAIL PHONG VAN/OJE (GHI RO LI DO FAIL)",
-            "KHONG LIEN HE DUOC",
-            "LY DO KHAC (VUI LONG GHI RO)",
-            "CHUA DU TUOI",
-            "KHONG CON NHU CAU NHAN VIEC (NO SHOW)",
-        ]
-
-        existing_reasons = self.job_refuse_reason_ids.mapped("name")
-
-        vals_list = []
-        for reason in default_reasons:
-            if reason not in existing_reasons:
-                reason_type = "text" if any(kw in reason.lower() for kw in ["fail phong van/oje", "ly do khac"]) else "checkbox"
-                vals_list.append(
-                    {
-                        "job_id": self.id,
-                        "name": reason,
-                        "reason_type": reason_type,
-                        "active": True,
-                    }
-                )
-
-        if vals_list:
-            self.env["hr.applicant.refuse.reason"].create(vals_list)
-
-        return {
-            "type": "ir.actions.client",
-            "tag": "display_notification",
-            "params": {
-                "title": "Thanh cong",
-                "message": f"Da tai {len(vals_list)} ly do mac dinh.",
-                "type": "success",
-                "sticky": False,
-            },
-        }
 
     def _is_interview_template_supported(self):
         self.ensure_one()

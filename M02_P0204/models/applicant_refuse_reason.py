@@ -3,6 +3,9 @@
 Override applicant.get.refuse.reason để đồng bộ stage_id = Reject
 và x_psm_0205_document_approval_status = 'refused' sau khi wizard Refuse xác nhận.
 Đồng thời gửi email từ chối tuỳ chỉnh của module 0204.
+
+Refactored: Removed job-scoped reason configuration.
+Reasons are now shared globally (all active hr.applicant.refuse.reason records).
 """
 from odoo import models, fields, api, exceptions
 import logging
@@ -13,8 +16,7 @@ _logger = logging.getLogger(__name__)
 class HrApplicantRefuseReason(models.Model):
     _inherit = 'hr.applicant.refuse.reason'
 
-    job_id = fields.Many2one('hr.job', string='Job Position', ondelete='cascade', index=True,
-                             help='Lý do từ chối gắn với vị trí tuyển dụng cụ thể.')
+    # job_id removed — reasons are now global, not per-job
     reason_type = fields.Selection([
         ('checkbox', 'Checkbox (Mặc định)'),
         ('text', 'Bắt buộc nhập Lý do chi tiết')
@@ -26,12 +28,9 @@ class ApplicantGetRefuseReasonLine(models.TransientModel):
     _description = 'Dòng lý do từ chối'
 
     wizard_id = fields.Many2one('applicant.get.refuse.reason', string='Wizard', ondelete='cascade')
-    job_refuse_reason_id = fields.Many2one('hr.applicant.refuse.reason', string='Lý do cấu hình', required=True)
+    job_refuse_reason_id = fields.Many2one('hr.applicant.refuse.reason', string='Lý do', required=True)
     name = fields.Char(related='job_refuse_reason_id.name', string='Tiêu đề', readonly=True)
     reason_type = fields.Selection(related='job_refuse_reason_id.reason_type', readonly=True)
-    
-    is_selected = fields.Boolean(string='Chọn', default=False)
-    custom_text = fields.Char(string='Lý do chi tiết')
 
     is_selected = fields.Boolean(string='Chọn', default=False)
     custom_text = fields.Char(string='Lý do chi tiết')
@@ -40,7 +39,7 @@ class ApplicantGetRefuseReasonLine(models.TransientModel):
 class ApplicantGetRefuseReason(models.TransientModel):
     _inherit = 'applicant.get.refuse.reason'
 
-    refuse_reason_ids = fields.Many2many('hr.applicant.refuse.reason', string='Lý do từ chối (Tại vị trí)')
+    refuse_reason_ids = fields.Many2many('hr.applicant.refuse.reason', string='Lý do từ chối')
     source_action = fields.Selection([
         ('archive_applicant', 'Archive Applicant'),
         ('reject_stage', 'Reject Stage'),
@@ -48,39 +47,27 @@ class ApplicantGetRefuseReason(models.TransientModel):
         ('reject_documents', 'Reject Documents'),
     ], string='Hành động gốc', default='archive_applicant')
 
-    job_id = fields.Many2one('hr.job', string='Job Position', readonly=True)
-    
-    wizard_line_ids = fields.One2many('x_psm_applicant_get_refuse_reason_line', 'wizard_id', string='Danh sách lý do')
+    wizard_line_ids = fields.One2many(
+        'x_psm_applicant_get_refuse_reason_line', 'wizard_id', string='Danh sách lý do'
+    )
 
     @api.model
     def default_get(self, fields_list):
         res = super().default_get(fields_list)
-        active_ids = self.env.context.get('active_ids', [])
-        if active_ids:
-            applicants = self.env['hr.applicant'].browse(active_ids)
-            job_ids = applicants.mapped('job_id')
-            if len(job_ids) > 1:
-                raise exceptions.UserError('Chỉ có thể từ chối nhiều ứng viên cùng một lúc nếu họ ứng tuyển vào cùng một vị trí.')
-            if job_ids:
-                res['job_id'] = job_ids[0].id
-                active_reasons = self.env['hr.applicant.refuse.reason'].search([('job_id', '=', job_ids[0].id), ('active', '=', True)], order='sequence asc')
-                # Nếu flow manual từ Odoo mặc định vào, user bắt buộc cấu hình lý do riêng cho Job
-                if not active_reasons:
-                    raise exceptions.UserError(f'Vị trí "{job_ids[0].name}" chưa được cấu hình lý do từ chối (active). Vui lòng cấu hình trước khi reject.')
-                
-                # Auto-fix data for legacy reasons that were created as checkbox but should be text
-                for r in active_reasons:
-                    if r.reason_type == 'checkbox' and any(kw in r.name.lower() for kw in ['fail phóng vấn/oje', 'lý do khác']):
-                        r.reason_type = 'text'
 
-                # Pre-populate lines
-                lines = []
-                for r in active_reasons:
-                    lines.append((0, 0, {
-                        'job_refuse_reason_id': r.id,
-                        'is_selected': False,
-                    }))
-                res['wizard_line_ids'] = lines
+        # Load ALL active global reasons, ordered by sequence — no job filter
+        active_reasons = self.env['hr.applicant.refuse.reason'].search(
+            [('active', '=', True)], order='sequence asc'
+        )
+
+        lines = []
+        for r in active_reasons:
+            lines.append((0, 0, {
+                'job_refuse_reason_id': r.id,
+                'is_selected': False,
+            }))
+        if lines:
+            res['wizard_line_ids'] = lines
 
         return res
 
@@ -91,9 +78,6 @@ class ApplicantGetRefuseReason(models.TransientModel):
         + reject_reason = tên lý do từ chối
         + gửi email từ chối custom.
         """
-        rejection_template = self.env.ref(
-            'M02_P0204.email_rejection', raise_if_not_found=False
-        )
         sys_refuse_reason = self.env.ref('M02_P0204.system_refuse_reason', raise_if_not_found=False)
 
         # Trỏ refuse_reason_id (bắt buộc của Odoo) về record hệ thống
@@ -104,7 +88,7 @@ class ApplicantGetRefuseReason(models.TransientModel):
 
         if not selected_lines:
             raise exceptions.UserError('Vui lòng chọn ít nhất một lý do từ chối.')
-            
+
         for line in selected_lines:
             if line.reason_type == 'text' and not line.custom_text:
                 raise exceptions.UserError(f'Vui lòng nhập "Lý do chi tiết" cho phần: {line.name}')
@@ -114,13 +98,13 @@ class ApplicantGetRefuseReason(models.TransientModel):
         applicants = self.applicant_ids
         refuse_texts = []
         selected_reason_ids = selected_lines.mapped('job_refuse_reason_id.id')
-        
+
         for line in selected_lines:
             if line.reason_type == 'text' and line.custom_text:
                 refuse_texts.append(f"{line.name}: {line.custom_text}")
             else:
                 refuse_texts.append(line.name)
-                
+
         refuse_name = " | ".join(refuse_texts)
         send_email = getattr(self, 'send_email', False)
 
@@ -153,7 +137,7 @@ class ApplicantGetRefuseReason(models.TransientModel):
                     rec.id, stage.id if stage else None, refuse_name
                 )
 
-                # Gửi email từ chối custom (email_rejection) nếu chưa gửi qua wizard
+                # Gửi email từ chối custom nếu chưa gửi qua wizard
                 rejection_template = rec._get_email_template_resolution(
                     event_code="reject",
                     fallback_xml_id='M02_P0204.email_rejection'

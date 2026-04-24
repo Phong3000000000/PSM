@@ -120,12 +120,15 @@
         <field name="perm_unlink">0</field>
     </record>
 
-    <!-- Store Refuse Reason line by owning Job department (staff scope). -->
+    <!-- Refuse Reason Line rule deactivated: job_id removed from hr.applicant.refuse.reason
+         (reasons are now global shared, not per-job). Domain referencing job_id would cause
+         a startup error. Store HR staff still see all global reasons via model-level access. -->
     <record id="rule_refuse_reason_line_store_department_manager" model="ir.rule">
-        <field name="name">Refuse Reason Line: Store HR by Department</field>
+        <field name="name">Refuse Reason Line: Store HR by Department (Disabled)</field>
         <field name="model_id" ref="model_x_psm_applicant_get_refuse_reason_line"/>
         <field name="groups" eval="[(6, 0, [ref('M02_P0200.GDH_RST_HR_RECRUITMENT_S')])]"/>
-        <field name="domain_force">[('job_refuse_reason_id.job_id.recruitment_type', '=', 'store'), ('job_refuse_reason_id.job_id.department_id', 'in', user.employee_ids.mapped('department_id').ids)]</field>
+        <field name="active" eval="False"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
         <field name="perm_read">1</field>
         <field name="perm_write">1</field>
         <field name="perm_create">1</field>

@@ -12,7 +12,7 @@
                 <attribute name="required">0</attribute>
             </xpath>
 
-            <!-- Thêm logic danh sách lý do mới -->
+            <!-- Thêm danh sách multi-select lý do từ chối toàn cục -->
             <xpath expr="//field[@name='refuse_reason_id']" position="after">
                 <field name="source_action" invisible="1"/>
                 <field name="wizard_line_ids" nolabel="1">

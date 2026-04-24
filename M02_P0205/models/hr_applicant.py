@@ -711,6 +711,18 @@ class HrApplicant(models.Model):
         ('refused', 'Đã từ chối')
     ], string='Trạng thái Offer', tracking=True)
 
+    def _move_to_hired_stage(self):
+        """Override: office applicants of M02_P0205 must go to stage_office_hired,
+        not the generic hired_stage used by hr_contract_salary."""
+        self.ensure_one()
+        if self.x_psm_0205_recruitment_type == 'office':
+            hired_stage = self.env.ref('M02_P0205.stage_office_hired', raise_if_not_found=False)
+            if hired_stage and self.stage_id != hired_stage:
+                self.stage_id = hired_stage.id
+            return
+        # Non-office: fall back to standard behaviour
+        return super()._move_to_hired_stage()
+
     def _format_local_datetime_for_display(self, dt_value, tz=None, fmt='%Y-%m-%d %H:%M'):
         self.ensure_one()
         if not dt_value:

@@ -4,6 +4,7 @@ from . import recruitment_plan
 from . import recruitment_request
 from . import interview_round
 from . import hr_applicant
+from . import hr_contract_salary_offer
 from . import hr_job
 from . import hr_job_level
 from . import hr_recruitment_stage

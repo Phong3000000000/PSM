@@ -1,10 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
-        <!-- System Refuse Reason Record dùng cho Refuse qua wizard -->
+        <!-- ================================================================
+             System fallback — used as refuse_reason_id (Many2one) by the
+             custom wizard to satisfy standard Odoo's required field.
+             The true multi-select business meaning is stored in
+             refuse_reason_m2m_ids + reject_reason on the applicant.
+             noupdate="1" so HR changes via UI are not overwritten.
+             ================================================================ -->
         <record id="system_refuse_reason" model="hr.applicant.refuse.reason">
             <field name="name">System: Từ chối (Lý do chi tiết trong Profile)</field>
             <field name="active" eval="True"/>
+            <field name="reason_type">checkbox</field>
+        </record>
+
+        <!-- ================================================================
+             Shared global refuse reasons — apply to ALL applicants
+             (store + office). HR can add/edit more via the standard
+             Configuration > Refuse Reasons menu.
+             ================================================================ -->
+
+        <!-- 1 — Không đáp ứng yêu cầu năng lực -->
+        <record id="refuse_reason_skill_mismatch" model="hr.applicant.refuse.reason">
+            <field name="name">Không đáp ứng yêu cầu năng lực / chuyên môn</field>
+            <field name="active" eval="True"/>
+            <field name="reason_type">checkbox</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <!-- 2 — Không phù hợp văn hoá / thái độ -->
+        <record id="refuse_reason_culture_fit" model="hr.applicant.refuse.reason">
+            <field name="name">Không phù hợp văn hóa / thái độ làm việc</field>
+            <field name="active" eval="True"/>
+            <field name="reason_type">checkbox</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- 3 — Kinh nghiệm chưa đủ -->
+        <record id="refuse_reason_experience" model="hr.applicant.refuse.reason">
+            <field name="name">Kinh nghiệm chưa đủ yêu cầu</field>
+            <field name="active" eval="True"/>
+            <field name="reason_type">checkbox</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- 4 — Yêu cầu lương quá cao -->
+        <record id="refuse_reason_salary" model="hr.applicant.refuse.reason">
+            <field name="name">Yêu cầu mức lương vượt ngân sách</field>
+            <field name="active" eval="True"/>
+            <field name="reason_type">checkbox</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <!-- 5 — Vị trí đã được tuyển -->
+        <record id="refuse_reason_position_filled" model="hr.applicant.refuse.reason">
+            <field name="name">Vị trí đã được tuyển dụng thành công</field>
+            <field name="active" eval="True"/>
+            <field name="reason_type">checkbox</field>
+            <field name="sequence">50</field>
+        </record>
+
+        <!-- 6 — Fail phỏng vấn / OJE (yêu cầu ghi chi tiết) -->
+        <record id="refuse_reason_fail_interview_oje" model="hr.applicant.refuse.reason">
+            <field name="name">Fail phỏng vấn / OJE</field>
+            <field name="active" eval="True"/>
+            <field name="reason_type">text</field>
+            <field name="sequence">60</field>
+        </record>
+
+        <!-- 7 — Ứng viên tự rút hồ sơ -->
+        <record id="refuse_reason_candidate_withdraw" model="hr.applicant.refuse.reason">
+            <field name="name">Ứng viên tự rút hồ sơ / không còn có nhu cầu</field>
+            <field name="active" eval="True"/>
+            <field name="reason_type">checkbox</field>
+            <field name="sequence">70</field>
+        </record>
+
+        <!-- 8 — Lý do khác (yêu cầu ghi chi tiết) -->
+        <record id="refuse_reason_other" model="hr.applicant.refuse.reason">
+            <field name="name">Lý do khác</field>
+            <field name="active" eval="True"/>
+            <field name="reason_type">text</field>
+            <field name="sequence">80</field>
         </record>
     </data>
 </odoo>

@@ -37,6 +37,7 @@
         "M02_P0204",  # Base recruitment module (store + shared logic)
         "portal_custom",
         "hr_recruitment_survey",  # For survey integration in recruitment
+        "hr_contract_salary",     # Standard salary offer flow
     ],
     "data": [
         "security/hr_validator_group.xml",
