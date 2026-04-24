@@ -482,7 +482,7 @@
             <div class="container oje-backend-page py-4">
                 <div class="d-flex justify-content-between align-items-center mb-3 oje-page-head">
                     <h2 class="mb-0"><t t-esc="preview_title"/></h2>
-                    <a t-att-href="back_url" class="btn btn-outline-secondary">Quay lại cấu hình</a>
+                    <a t-att-href="back_url" class="btn btn-outline-secondary">Back</a>
                 </div>
 
                 <div class="alert alert-info" role="alert">

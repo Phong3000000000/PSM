@@ -644,18 +644,22 @@ class HrApplicant(models.Model):
     # Per-round filtered meeting fields for office tab UI
     x_psm_0205_meeting_ids_round_1 = fields.One2many(
         'calendar.event', compute='_compute_meeting_ids_per_round',
+        inverse='_inverse_meeting_ids_round_1',
         string='Round 1 Meetings',
     )
     x_psm_0205_meeting_ids_round_2 = fields.One2many(
         'calendar.event', compute='_compute_meeting_ids_per_round',
+        inverse='_inverse_meeting_ids_round_2',
         string='Round 2 Meetings',
     )
     x_psm_0205_meeting_ids_round_3 = fields.One2many(
         'calendar.event', compute='_compute_meeting_ids_per_round',
+        inverse='_inverse_meeting_ids_round_3',
         string='Round 3 Meetings',
     )
     x_psm_0205_meeting_ids_round_4 = fields.One2many(
         'calendar.event', compute='_compute_meeting_ids_per_round',
+        inverse='_inverse_meeting_ids_round_4',
         string='Round 4 Meetings',
     )
 
@@ -675,6 +679,30 @@ class HrApplicant(models.Model):
             rec.x_psm_0205_meeting_ids_round_4 = all_meetings.filtered(
                 lambda ev: ev.x_psm_0205_interview_round == '4'
             )
+
+    def _inverse_meeting_ids_round_1(self):
+        for rec in self:
+            for ev in rec.x_psm_0205_meeting_ids_round_1:
+                if not ev.x_psm_0205_interview_round:
+                    ev.x_psm_0205_interview_round = '1'
+
+    def _inverse_meeting_ids_round_2(self):
+        for rec in self:
+            for ev in rec.x_psm_0205_meeting_ids_round_2:
+                if not ev.x_psm_0205_interview_round:
+                    ev.x_psm_0205_interview_round = '2'
+
+    def _inverse_meeting_ids_round_3(self):
+        for rec in self:
+            for ev in rec.x_psm_0205_meeting_ids_round_3:
+                if not ev.x_psm_0205_interview_round:
+                    ev.x_psm_0205_interview_round = '3'
+
+    def _inverse_meeting_ids_round_4(self):
+        for rec in self:
+            for ev in rec.x_psm_0205_meeting_ids_round_4:
+                if not ev.x_psm_0205_interview_round:
+                    ev.x_psm_0205_interview_round = '4'
 
     # Step 29-31: Offer
     x_psm_0205_offer_status = fields.Selection([
@@ -2573,6 +2601,14 @@ class HrApplicantEvaluation(models.Model):
         readonly=True,
     )
 
+    x_psm_0204_runtime_interview_survey_id = fields.Many2one(
+        "survey.survey",
+        string="Runtime Survey Interview",
+        ondelete="set null",
+        help="Runtime survey cloned specifically for this evaluation."
+    )
+    x_psm_0204_runtime_skill_signature = fields.Text(string="Runtime Skill Signature")
+
     # Criteria - using Selection for easier scoring in UI
     attitude_score = fields.Selection([
         ('1', 'Rất kém'), ('2', 'Kém'), ('3', 'Trung bình'), ('4', 'Khá'), ('5', 'Tốt')
@@ -2824,7 +2860,11 @@ class HrApplicantEvaluation(models.Model):
         """
         self.ensure_one()
         job = self.applicant_id.job_id
-        if job and hasattr(job, '_x_psm_prepare_interview_snapshot_sections'):
+        if self.x_psm_0204_runtime_interview_survey_id and job and hasattr(job, '_x_psm_prepare_interview_snapshot_sections_from_survey'):
+            survey_sections = job._x_psm_prepare_interview_snapshot_sections_from_survey(self.x_psm_0204_runtime_interview_survey_id)
+            if survey_sections:
+                return self._build_evaluation_lines_from_survey_sections(survey_sections)
+        elif job and hasattr(job, '_x_psm_prepare_interview_snapshot_sections'):
             survey_sections = job._x_psm_prepare_interview_snapshot_sections()
             if survey_sections:
                 return self._build_evaluation_lines_from_survey_sections(survey_sections)
@@ -2911,6 +2951,28 @@ class HrApplicantEvaluation(models.Model):
 
     def _ensure_default_evaluation_lines(self):
         for rec in self:
+            job = rec.applicant_id.job_id
+            if job and hasattr(job, '_x_psm_clone_runtime_interview_survey_for_applicant'):
+                current_signature = job._x_psm_build_applicant_skill_signature(rec.applicant_id)
+                if rec.x_psm_0204_runtime_interview_survey_id:
+                    if rec.x_psm_0204_runtime_skill_signature != current_signature and rec.state != 'done':
+                        old_survey = rec.x_psm_0204_runtime_interview_survey_id
+                        runtime_survey = job._x_psm_clone_runtime_interview_survey_for_applicant(rec.applicant_id, round_no=rec.interview_round)
+                        old_survey.sudo().write({'active': False})
+                        rec.write({
+                            'x_psm_0204_runtime_interview_survey_id': runtime_survey.id,
+                            'x_psm_0204_runtime_skill_signature': current_signature,
+                        })
+                        if rec.evaluation_item_ids:
+                            rec.evaluation_item_ids.unlink()
+                else:
+                    runtime_survey = job._x_psm_clone_runtime_interview_survey_for_applicant(rec.applicant_id, round_no=rec.interview_round)
+                    if runtime_survey:
+                        rec.write({
+                            'x_psm_0204_runtime_interview_survey_id': runtime_survey.id,
+                            'x_psm_0204_runtime_skill_signature': current_signature,
+                        })
+
             if rec.evaluation_item_ids:
                 # If lines exist but were loaded from hardcoded template
                 # (no section_name) and a survey is now available, refresh them.

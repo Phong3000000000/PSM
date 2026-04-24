@@ -965,7 +965,7 @@
         <t t-call="portal.portal_layout">
             <div class="psm-portal-page psm-portal-schedule">
             <!-- <t t-call="portal.portal_searchbar">
-                <t t-set="title">Lịch phỏng vấn dự kiến</t>
+                <t t-set="title">Planned Interview Schedule</t>
             </t> -->
 
             <!-- Flatpickr for interactive datetime dialog -->

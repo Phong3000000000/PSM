@@ -352,7 +352,7 @@
 
                                     <div class="card survey-card schedule-card mb-4 psm-store-apply-schedule-card" t-if="schedule" style="border-radius: 24px;">
                                         <div class="card-header border-0 py-3 px-4" style="border-radius: 24px 24px 0 0;">
-                                            <h4 class="mb-1 fw-bold">Lịch phỏng vấn dự kiến</h4>
+                                            <h4 class="mb-1 fw-bold">Planned Interview Schedule</h4>
                                             <p class="mb-0 opacity-75">Vui lòng chọn 1 khung giờ phỏng vấn phù hợp với bạn (cập nhật trực tuyến).</p>
                                         </div>
                                         <div class="card-body p-4 p-lg-5" id="interview_slots_container" t-att-data-schedule-id="schedule.id">

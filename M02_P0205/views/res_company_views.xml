@@ -58,7 +58,7 @@
                         </group>
                     </group>
                     <group string="Approval category" col="1">
-                        <div class="o_form_label">Luồng duyệt tuyển dụng được cấu hình trực tiếp trên Approvals &gt; Configuration theo category OPS/RTX.</div>
+                        <div class="o_form_label">Luồng duyệt tuyển dụng được cấu hình trực tiếp trên Approvals &gt; Configuration theo category OPS/RST.</div>
                     </group>
                 </sheet>
             </form>

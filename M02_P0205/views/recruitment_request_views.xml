@@ -6,7 +6,7 @@
             <field name="name">x_psm_recruitment_request.form</field>
             <field name="model">x_psm_recruitment_request</field>
             <field name="arch" type="xml">
-                <form string="Yêu Cầu Tuyển Dụng">
+                <form string="Recruitment Request">
                     <header>
                         <button name="action_submit" string="Gửi duyệt" type="object"
                             class="oe_highlight"
@@ -79,7 +79,7 @@
                                 invisible="not x_psm_approval_request_id" />
                         </group>
                         <notebook>
-                            <page string="Vị trí tuyển dụng" invisible="request_type == 'unplanned'">
+                            <page string="Job Position" invisible="request_type == 'unplanned'">
                                 <group>
                                     <field name="job_id" />
                                     <field name="department_id" />
@@ -88,26 +88,25 @@
                                     <field name="date_end" />
                                 </group>
                             </page>
-                            <page string="Danh sách tuyển dụng">
+                            <page string="Recruitment List">
                                 <field name="line_ids"
                                     readonly="x_psm_is_rgm_readonly_user"
                                     context="{'default_department_id': department_id or (user_department_id and user_department_id.id), 'default_request_id': id, 'default_recruitment_block': recruitment_block}">
                                     <list editable="bottom">
-                                        <field name="position_name" />
-                                        <field name="job_id"
-                                            domain="[('department_id', '=', department_id)]" />
-                                        <field name="position_level" />
-                                        <field name="work_location_id" options="{'no_create': True}" />
-                                        <field name="recruitment_block" readonly="1" />
-                                        <field name="department_id" />
-                                        <field name="quantity" />
-                                        <field name="reason" />
+                                        <field name="position_name" string="Position Name"/>
+                                        <field name="job_id" string="Job Position" domain="[('department_id', '=', department_id)]" />
+                                        <field name="position_level" string="Level"/>
+                                        <field name="work_location_id" string="Job Location" options="{'no_create': True}" />
+                                        <field name="recruitment_block" string="Recruitment Block" column_invisible="parent.recruitment_block == 'office'" readonly="1" />
+                                        <field name="department_id" string="Department" column_invisible="parent.recruitment_block == 'office'" />
+                                        <field name="quantity" string="Quantity"/>
+                                        <field name="reason" string="Note"/>
                                     </list>
                                 </field>
                             </page>
-                            <page string="Lý do &amp; Mô tả">
+                            <page string="Reason &amp; Note">
                                 <field name="reason"
-                                    placeholder="Mô tả chi tiết lý do tuyển dụng..." />
+                                    placeholder="Detailed reason for recruitment..." />
                             </page>
                         </notebook>
                     </sheet>
@@ -121,7 +120,7 @@
             <field name="name">x_psm_recruitment_request.tree</field>
             <field name="model">x_psm_recruitment_request</field>
             <field name="arch" type="xml">
-                <list string="Yêu Cầu Tuyển Dụng">
+                <list string="Recruitment Request">
                     <field name="name" />
                     <field name="batch_id" optional="show" />
                     <field name="recruitment_block" optional="show" />
@@ -137,7 +136,7 @@
 
         <!-- Action cho YCTD Đột xuất -->
         <record id="action_psm_recruitment_request_unplanned" model="ir.actions.act_window">
-            <field name="name">Yêu Cầu Tuyển Dụng</field>
+            <field name="name">Recruitment Requests</field>
             <field name="res_model">x_psm_recruitment_request</field>
             <field name="view_mode">list,form</field>
             <field name="domain">[('request_type', '=', 'unplanned')]</field>
@@ -151,7 +150,7 @@
 
         <!-- Action cho YCTD Theo kế hoạch -->
         <record id="action_psm_recruitment_request_planned" model="ir.actions.act_window">
-            <field name="name">YC Tuyển Dụng Theo KH</field>
+            <field name="name">Planned Recruitment Requests</field>
             <field name="res_model">x_psm_recruitment_request</field>
             <field name="view_mode">list,form</field>
             <field name="domain">[('request_type', '=', 'planned')]</field>
@@ -169,10 +168,10 @@
             <field name="inherit_id" ref="M02_P0205.view_psm_recruitment_request_form" />
             <field name="arch" type="xml">
                 <xpath expr="//sheet/group[field[@name='user_id'] and field[@name='company_id']]" position="after">
-                    <group string="L&#253; do &amp; M&#244; t&#7843;">
+                    <group string="Reason &amp; Note">
                         <field name="reason"
                             nolabel="1"
-                            placeholder="M&#244; t&#7843; chi ti&#7871;t l&#253; do tuy&#7875;n d&#7909;ng..." />
+                            placeholder="Detailed reason for recruitment..." />
                     </group>
                 </xpath>
                 <xpath expr="//notebook/page[field[@name='reason']]" position="attributes">
@@ -183,13 +182,13 @@
 
         <!-- Menu -->
         <menuitem id="menu_psm_recruitment_request_unplanned"
-            name="Yêu Cầu Tuyển Dụng"
+            name="Recruitment Requests"
             parent="menu_psm_office_recruitment_root"
             action="action_psm_recruitment_request_unplanned"
             sequence="1" />
 
         <menuitem id="menu_psm_recruitment_request_root"
-            name="Yêu Cầu Tuyển Dụng"
+            name="Recruitment Requests"
             parent="hr_recruitment.menu_hr_recruitment_root"
             action="action_psm_recruitment_request_unplanned"
             sequence="5" />

@@ -29,38 +29,38 @@ class RecruitmentRequest(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'id desc'
 
-    name = fields.Char(string='Mã Yêu Cầu', required=True, copy=False, readonly=True, index=True, default=lambda self: 'New')
+    name = fields.Char(string='Request Code', required=True, copy=False, readonly=True, index=True, default=lambda self: 'New')
 
     # Đợt tuyển dụng (chọn từ danh sách đợt)
     batch_id = fields.Many2one(
-        'x_psm_recruitment_batch', string='Đợt tuyển dụng',
+        'x_psm_recruitment_batch', string='Recruitment Batch',
         tracking=True,
         domain="[('state', '=', 'open')]",
         help='Chọn đợt tuyển dụng')
 
     # Step 1: Lập nhu cầu
     request_type = fields.Selection([
-        ('unplanned', 'Đột xuất'),
-        ('planned', 'Theo kế hoạch')
-    ], string='Loại yêu cầu', default='unplanned', required=True, tracking=True)
+        ('unplanned', 'Unplanned'),
+        ('planned', 'Planned')
+    ], string='Request Type', default='unplanned', required=True, tracking=True)
 
     recruitment_block = fields.Selection([
-        ('store', 'Khối Cửa Hàng'),
-        ('office', 'Khối Văn Phòng'),
-    ], string='Khối tuyển dụng', default='office', required=True, tracking=True)
+        ('store', 'Store'),
+        ('office', 'Office'),
+    ], string='Recruitment Block', default='office', required=True, tracking=True)
 
-    job_id = fields.Many2one('hr.job', string='Vị trí tuyển dụng', tracking=True)
-    department_id = fields.Many2one('hr.department', string='Phòng ban', tracking=True)
-    quantity = fields.Integer(string='Số lượng', default=1, tracking=True)
-    date_start = fields.Date(string='Ngày bắt đầu', tracking=True)
-    date_end = fields.Date(string='Ngày kết thúc', tracking=True)
-    reason = fields.Text(string='Lý do tuyển dụng', required=True)
+    job_id = fields.Many2one('hr.job', string='Job Position', tracking=True)
+    department_id = fields.Many2one('hr.department', string='Department', tracking=True)
+    quantity = fields.Integer(string='Quantity', default=1, tracking=True)
+    date_start = fields.Date(string='Start Date', tracking=True)
+    date_end = fields.Date(string='End Date', tracking=True)
+    reason = fields.Text(string='Reason', required=True)
 
     line_ids = fields.One2many('x_psm_recruitment_request_line', 'request_id', string='Chi tiết vị trí')
     approver_ids = fields.One2many('x_psm_recruitment_request_approver', 'request_id', string='Manager duyệt')
 
-    user_id = fields.Many2one('res.users', string='Người yêu cầu', default=lambda self: self.env.user, tracking=True)
-    company_id = fields.Many2one('res.company', string='Công ty', default=lambda self: self.env.company)
+    user_id = fields.Many2one('res.users', string='Requester', default=lambda self: self.env.user, tracking=True)
+    company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
     recruitment_plan_id = fields.Many2one('x_psm_recruitment_plan', string='Kế hoạch tuyển dụng', readonly=True, tracking=True)
     x_psm_approval_request_id = fields.Many2one(
         'approval.request',
@@ -71,13 +71,13 @@ class RecruitmentRequest(models.Model):
     )
     x_psm_approval_status = fields.Selection(
         related='x_psm_approval_request_id.request_status',
-        string='Trạng thái phê duyệt',
+        string='Approval Status',
         readonly=True,
     )
 
     user_department_id = fields.Many2one(
         'hr.department',
-        string='Phòng ban (người yêu cầu)',
+        string='Requester Department',
         compute='_compute_user_department',
         store=True,
     )
@@ -90,7 +90,7 @@ class RecruitmentRequest(models.Model):
         ('in_progress', 'Đang tuyển'),
         ('done', 'Hoàn thành'),
         ('cancel', 'Từ chối')
-    ], string='Trạng thái', default='draft', tracking=True)
+    ], string='Status', default='draft', tracking=True)
 
     is_published = fields.Boolean(string='Đã đăng Portal', default=False, copy=False)
     x_psm_is_rgm_readonly_user = fields.Boolean(
@@ -364,7 +364,7 @@ class RecruitmentRequest(models.Model):
         self.ensure_one()
         category = self._get_approval_category()
         if not category:
-            raise UserError(_("Chưa cấu hình Approval Category cho Yêu Cầu Tuyển Dụng theo khối OPS/RTX."))
+            raise UserError(_("Chưa cấu hình Approval Category cho Yêu Cầu Tuyển Dụng theo khối OPS/RST."))
 
         reason_html = self._build_approval_reason_html()
         return {

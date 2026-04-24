@@ -31,6 +31,14 @@ class HrApplicantInterviewEvaluation(models.Model):
     template_version = fields.Char(string="Template Version")
     config_signature = fields.Text(string="Config Signature")
 
+    x_psm_0204_runtime_interview_survey_id = fields.Many2one(
+        "survey.survey",
+        string="Runtime Survey Interview",
+        ondelete="set null",
+        help="Runtime survey cloned specifically for this evaluation."
+    )
+    x_psm_0204_runtime_skill_signature = fields.Text(string="Runtime Skill Signature")
+
     score_1_count = fields.Integer(string="Score 1 Count", compute="_compute_score_summary", store=True)
     score_2_count = fields.Integer(string="Score 2 Count", compute="_compute_score_summary", store=True)
     score_3_count = fields.Integer(string="Score 3 Count", compute="_compute_score_summary", store=True)

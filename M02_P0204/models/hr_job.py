@@ -899,7 +899,11 @@ class HrJob(models.Model):
             return False, raw_value
         return left, right
 
-    def _x_psm_prepare_interview_snapshot_line(self, question, sequence):
+    def _x_psm_is_skillset_anchor_label(self, label):
+        """Return True when *label* is exactly the '2. Skillset:' anchor."""
+        return (label or "").strip() == "2. Skillset:"
+
+    def _x_psm_prepare_interview_snapshot_line(self, question, sequence, inside_skillset_block=False):
         question_text = (question.title or question.question or "").strip()
         if not question_text:
             return False
@@ -936,6 +940,14 @@ class HrJob(models.Model):
                     if not group_label:
                         group_label = split_left
                     output_question_text = split_right
+
+        # --- skillset block context override ---
+        # Any question inside the skillset block (after the anchor, before next subheader)
+        # that has not already been tagged is promoted to skillset_child.
+        if inside_skillset_block and display_type == "question" and group_kind != "skillset_child":
+            group_kind = "skillset_child"
+            if not group_label:
+                group_label = "Technical/Hard skills"
 
         if group_kind != "skillset_child":
             group_label = False
@@ -987,6 +999,12 @@ class HrJob(models.Model):
         survey = self._x_psm_get_interview_survey()
         if not survey:
             return []
+        return self._x_psm_prepare_interview_snapshot_sections_from_survey(survey)
+
+    def _x_psm_prepare_interview_snapshot_sections_from_survey(self, survey):
+        self.ensure_one()
+        if not survey:
+            return []
 
         prepared_sections = []
         section_sequence = 10
@@ -996,10 +1014,38 @@ class HrJob(models.Model):
             lines = []
             line_sequence = 10
 
+            # Track whether we're inside the "2. Skillset:" block for this page.
+            inside_skillset_block = False
+
             for question in questions:
-                line_payload = self._x_psm_prepare_interview_snapshot_line(question, line_sequence)
+                question_text = (question.title or question.question or "").strip()
+                line_kind_hint = (question.x_psm_interview_line_kind or "auto").strip()
+
+                # A subheader resets (or starts) the skillset block.
+                if line_kind_hint == "subheader" or (question_text and line_kind_hint not in ("skillset_child", "question")):
+                    # Check if this is the anchor itself.
+                    if self._x_psm_is_skillset_anchor_label(question_text):
+                        inside_skillset_block = True
+                    else:
+                        # Any other subheader closes the skillset block.
+                        is_subheader = (
+                            line_kind_hint == "subheader"
+                            or (question.question_type == "text_box" and not question.constr_mandatory and line_kind_hint == "auto")
+                        )
+                        if is_subheader:
+                            inside_skillset_block = False
+
+                line_payload = self._x_psm_prepare_interview_snapshot_line(
+                    question, line_sequence, inside_skillset_block=inside_skillset_block
+                )
                 if not line_payload:
                     continue
+
+                # After processing the line, if we just produced a subheader that is NOT the
+                # skillset anchor, ensure inside_skillset_block is off.
+                if line_payload["display_type"] == "subheader" and not self._x_psm_is_skillset_anchor_label(question_text):
+                    inside_skillset_block = False
+
                 lines.append(line_payload)
                 line_sequence += 10
 
@@ -1016,6 +1062,157 @@ class HrJob(models.Model):
                 section_sequence += 10
 
         return prepared_sections
+
+    def _x_psm_get_applicant_skill_items(self, applicant):
+        self.ensure_one()
+        if not applicant or not hasattr(applicant, "applicant_skill_ids"):
+            return []
+        skills = applicant.applicant_skill_ids
+        # Sort by skill_type, skill_name, id
+        sorted_skills = skills.sorted(lambda s: (
+            s.skill_type_id.name or "",
+            s.skill_id.name or "",
+            s.id
+        ))
+        return [skill.skill_id.name for skill in sorted_skills if skill.skill_id.name]
+
+    def _x_psm_find_interview_skillset_anchor(self, survey):
+        self.ensure_one()
+        if not survey:
+            return False, False, False
+
+        for page in survey.page_ids:
+            questions = page.question_ids.sorted("sequence")
+            for q in questions:
+                title = (q.title or q.question or "").strip()
+                if self._x_psm_is_skillset_anchor_label(title):
+                    return page, q, q.sequence
+        return False, False, False
+
+    def _x_psm_get_interview_skillset_block_questions(self, survey):
+        """Return (page, anchor_q, anchor_seq, custom_rows) where custom_rows
+        are the questions that already exist in the block between the
+        '2. Skillset:' anchor and the next subheader (or end of page).
+        custom_rows is a recordset of survey.question, sorted by sequence.
+        """
+        self.ensure_one()
+        page, anchor_q, anchor_seq = self._x_psm_find_interview_skillset_anchor(survey)
+        if not page or not anchor_q:
+            return False, False, False, self.env['survey.question']
+
+        all_on_page = page.question_ids.sorted("sequence")
+        collecting = False
+        custom_rows = self.env['survey.question']
+        for q in all_on_page:
+            if q.id == anchor_q.id:
+                collecting = True
+                continue
+            if not collecting:
+                continue
+            q_text = (q.title or q.question or "").strip()
+            q_kind = (q.x_psm_interview_line_kind or "auto").strip()
+            # A subheader or another anchor stops collection.
+            is_next_subheader = (
+                q_kind == "subheader"
+                or (q.question_type == "text_box" and not q.constr_mandatory and q_kind == "auto"
+                    and q_text and not self._x_psm_is_skillset_anchor_label(q_text))
+            )
+            if is_next_subheader:
+                break
+            custom_rows |= q
+
+        return page, anchor_q, anchor_seq, custom_rows
+
+    def _x_psm_replace_runtime_skillset_questions(self, runtime_survey, applicant):
+        self.ensure_one()
+        page, anchor_q, anchor_seq, custom_rows = self._x_psm_get_interview_skillset_block_questions(runtime_survey)
+        if not page or not anchor_q:
+            return
+
+        # --- Step 1: Normalize and re-sequence existing custom rows ---
+        custom_seq = anchor_seq + 10
+        for cq in custom_rows:
+            cq_kind = (cq.x_psm_interview_line_kind or "").strip()
+            update_vals = {'sequence': custom_seq}
+            if cq_kind != 'skillset_child':
+                update_vals['x_psm_interview_line_kind'] = 'skillset_child'
+            if not (cq.x_psm_interview_group_label or "").strip():
+                update_vals['x_psm_interview_group_label'] = 'Technical/Hard skills'
+            cq.sudo().write(update_vals)
+            custom_seq += 10
+
+        # --- Step 2: Remove any old applicant-generated skill rows ---
+        # These are skillset_child rows NOT in custom_rows (i.e. previously appended applicant skills).
+        all_below_anchor = page.question_ids.filtered(
+            lambda q: q.sequence > anchor_seq and q.id not in custom_rows.ids
+        )
+        # Only remove rows that were flagged as skillset_child (applicant-generated).
+        applicant_old_rows = all_below_anchor.filtered(
+            lambda q: (q.x_psm_interview_line_kind or "").strip() == 'skillset_child'
+        )
+        applicant_old_rows.sudo().unlink()
+
+        # --- Step 3: Append new applicant skill rows after the last custom row ---
+        skill_labels = self._x_psm_get_applicant_skill_items(applicant)
+        if not skill_labels:
+            return
+
+        new_seq = custom_seq  # continues after last custom row
+        for label in skill_labels:
+            self.env['survey.question'].sudo().create({
+                'survey_id': runtime_survey.id,
+                'page_id': page.id,
+                'title': label,
+                'question_type': 'text_box',
+                'sequence': new_seq,
+                'constr_mandatory': True,
+                'x_psm_interview_line_kind': 'skillset_child',
+                'x_psm_interview_group_label': 'Technical/Hard skills',
+            })
+            new_seq += 10
+
+    def _x_psm_clone_runtime_interview_survey_for_applicant(self, applicant, round_no=False):
+        self.ensure_one()
+        source_survey = self.x_psm_interview_survey_id
+        if not source_survey:
+            return False
+
+        clone_title = _("Interview Runtime - %s - %s") % (self.name, applicant.partner_name or applicant.name)
+        if round_no:
+            clone_title = _("Interview Runtime - %s - Round %s - %s") % (self.name, round_no, applicant.partner_name or applicant.name)
+
+        runtime_survey = source_survey.sudo().copy({
+            'title': clone_title,
+            'x_psm_0204_is_runtime_isolated_copy': True,
+            'x_psm_0204_owner_job_id': False,
+            'x_psm_0204_owner_department_id': False,
+            'x_psm_default_template_for': False,
+            'active': True,
+        })
+        self._x_psm_replace_runtime_skillset_questions(runtime_survey, applicant)
+        return runtime_survey
+
+    def _x_psm_build_applicant_skill_signature(self, applicant):
+        self.ensure_one()
+        if not applicant or not hasattr(applicant, "applicant_skill_ids"):
+            return "[]"
+        
+        payload = []
+        sorted_skills = applicant.applicant_skill_ids.sorted(lambda s: (
+            s.skill_type_id.name or "",
+            s.skill_id.name or "",
+            s.id
+        ))
+        
+        for s in sorted_skills:
+            payload.append((
+                s.skill_type_id.name or "",
+                s.skill_id.name or "",
+                s.skill_level_id.name or "",
+                s.id
+            ))
+            
+        return json.dumps(payload, sort_keys=True, ensure_ascii=False)
 
     def _x_psm_prepare_oje_snapshot_sections(self):
         self.ensure_one()

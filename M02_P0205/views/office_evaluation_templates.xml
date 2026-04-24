@@ -28,7 +28,7 @@
             <div class="container oje-backend-page interview-backend-page py-4">
                 <div class="d-flex justify-content-between align-items-center mb-3 interview-page-head">
                     <h2 class="mb-0">Pass Interview Evaluation</h2>
-                    <a t-att-href="back_url or '/web'" class="btn btn-outline-secondary">Quay lại</a>
+                    <a t-att-href="back_url or '/web'" class="btn btn-outline-secondary">Back</a>
                 </div>
 
                 <div class="alert alert-success" role="alert" t-if="success_message">
@@ -146,7 +146,7 @@
                                                             <!-- Skillset grouped question -->
                                                             <t t-if="line['skillset_group']">
                                                                 <t t-if="line['skillset_show_left']">
-                                                                    <td class="interview-skillset-group" t-att-rowspan="line['skillset_rowspan']">
+                                                                    <td t-att-class="'interview-skillset-group' + (' text-center align-middle' if line['skillset_left'] == 'Technical/Hard skills' else '')" t-att-rowspan="line['skillset_rowspan']">
                                                                         <t t-esc="line['skillset_left']"/>
                                                                     </td>
                                                                 </t>
@@ -255,8 +255,8 @@
                                 </div>
 
                                 <div class="d-flex justify-content-end gap-2 interview-form-actions">
-                                    <a t-att-href="'/recruitment/office-interview/evaluation/%s' % evaluation.id" class="btn btn-secondary">Lam moi</a>
-                                    <button type="submit" class="btn btn-primary" t-if="not is_readonly">Nop ket qua Interview</button>
+                                    <a t-att-href="'/recruitment/office-interview/evaluation/%s' % evaluation.id" class="btn btn-secondary">Renew</a>
+                                    <button type="submit" class="btn btn-primary" t-if="not is_readonly">Submit</button>
                                 </div>
                             </div>
                         </div>

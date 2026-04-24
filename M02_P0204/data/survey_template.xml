@@ -531,26 +531,6 @@
             <field name="constr_mandatory">False</field>
             <field name="x_psm_interview_line_kind">subheader</field>
         </record>
-        <record id="mg_q06a" model="survey.question">
-            <field name="survey_id" ref="survey_manager"/>
-            <field name="page_id" ref="mg_page_functional"/>
-            <field name="title">Inventory Management</field>
-            <field name="question_type">text_box</field>
-            <field name="sequence">70</field>
-            <field name="constr_mandatory">True</field>
-            <field name="x_psm_interview_line_kind">skillset_child</field>
-            <field name="x_psm_interview_group_label">Technical/Hard skills</field>
-        </record>
-        <record id="mg_q06b" model="survey.question">
-            <field name="survey_id" ref="survey_manager"/>
-            <field name="page_id" ref="mg_page_functional"/>
-            <field name="title">System usage</field>
-            <field name="question_type">text_box</field>
-            <field name="sequence">80</field>
-            <field name="constr_mandatory">True</field>
-            <field name="x_psm_interview_line_kind">skillset_child</field>
-            <field name="x_psm_interview_group_label">Technical/Hard skills</field>
-        </record>
 
         <record id="mg_page_leadership" model="survey.question">
             <field name="survey_id" ref="survey_manager"/>

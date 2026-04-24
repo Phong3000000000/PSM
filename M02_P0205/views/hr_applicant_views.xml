@@ -902,8 +902,14 @@
 
                     <field name="date" string="Date" />
                     <field name="x_psm_0205_score_display" string="Score" readonly="1" />
-                    <field name="x_psm_0205_result_display" string="Final Result" readonly="1" />
-                    <field name="x_psm_0205_status_display" string="Status" readonly="1" />
+
+                    <field name="x_psm_0205_status_display" string="Status" readonly="1"
+                        widget="badge"
+                        decoration-success="x_psm_0205_status_display == 'Pass'"
+                        decoration-danger="x_psm_0205_status_display == 'Fail' or x_psm_0205_status_display == 'Reject'"
+                        decoration-warning="not x_psm_0205_status_display or x_psm_0205_status_display == 'In Progress'" />
+                    <field name="state" column_invisible="1" />
+                    <field name="final_result" column_invisible="1" />
 
                 </list>
 

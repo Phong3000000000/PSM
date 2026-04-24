@@ -765,22 +765,40 @@ class HrApplicant(models.Model):
     def _is_interview_stage_allowed(self):
         self.ensure_one()
         return self.current_stage_name == 'Interview'
-
     def _get_interview_snapshot_source(self):
         self.ensure_one()
-        interview_survey = self.job_id._x_psm_get_interview_survey() if hasattr(self.job_id, '_x_psm_get_interview_survey') else False
-        if not interview_survey:
+        current_skill_signature = self.job_id._x_psm_build_applicant_skill_signature(self) if hasattr(self.job_id, '_x_psm_build_applicant_skill_signature') else ""
+        current_config_signature = self.job_id._get_interview_config_signature() if hasattr(self.job_id, '_get_interview_config_signature') else ""
+
+        runtime_survey = False
+        if self.interview_evaluation_id and self.interview_evaluation_id.x_psm_0204_runtime_interview_survey_id:
+            needs_recreate = False
+            if self.interview_evaluation_id.state != 'done':
+                if self.interview_evaluation_id.x_psm_0204_runtime_skill_signature != current_skill_signature:
+                    needs_recreate = True
+                if self.interview_evaluation_id.config_signature != current_config_signature:
+                    needs_recreate = True
+
+            if needs_recreate:
+                old_survey = self.interview_evaluation_id.x_psm_0204_runtime_interview_survey_id
+                runtime_survey = self.job_id._x_psm_clone_runtime_interview_survey_for_applicant(self)
+                old_survey.sudo().write({'active': False})
+            else:
+                runtime_survey = self.interview_evaluation_id.x_psm_0204_runtime_interview_survey_id
+        else:
+            runtime_survey = self.job_id._x_psm_clone_runtime_interview_survey_for_applicant(self) if hasattr(self.job_id, '_x_psm_clone_runtime_interview_survey_for_applicant') else False
+
+        if not runtime_survey:
             raise exceptions.UserError(_("Job chưa cấu hình Survey Interview."))
 
-        snapshot_sections = self.job_id._x_psm_prepare_interview_snapshot_sections() if hasattr(self.job_id, '_x_psm_prepare_interview_snapshot_sections') else []
+        snapshot_sections = self.job_id._x_psm_prepare_interview_snapshot_sections_from_survey(runtime_survey) if hasattr(self.job_id, '_x_psm_prepare_interview_snapshot_sections_from_survey') else []
         if not snapshot_sections:
             raise exceptions.UserError(_("Survey Interview chưa có câu hỏi để sinh phiếu đánh giá."))
 
-        raw_version = interview_survey.write_date or interview_survey.create_date
+        raw_version = runtime_survey.write_date or runtime_survey.create_date
         template_version = fields.Datetime.to_string(raw_version) if raw_version else '1.0'
-        config_signature = self.job_id._get_interview_config_signature() if hasattr(self.job_id, '_get_interview_config_signature') else False
 
-        return template_version, config_signature, snapshot_sections
+        return template_version, current_config_signature, current_skill_signature, snapshot_sections, runtime_survey
 
     def _populate_interview_evaluation_snapshot(self, evaluation, snapshot_sections):
         self.ensure_one()
@@ -830,7 +848,7 @@ class HrApplicant(models.Model):
             raise exceptions.UserError(_("Job chưa cấu hình Survey Interview."))
 
         evaluator = evaluator_user or self.interview_evaluator_user_id or self.job_id.interview_evaluator_user_id or self.env.user
-        template_version, config_signature, snapshot_sections = self._get_interview_snapshot_source()
+        template_version, config_signature, skill_signature, snapshot_sections, runtime_survey = self._get_interview_snapshot_source()
 
         if self.interview_evaluation_id:
             evaluation = self.interview_evaluation_id
@@ -841,20 +859,26 @@ class HrApplicant(models.Model):
                     lambda line: line.is_active and line.display_type == 'question'
                 ))
                 needs_refresh = bool(
-                    evaluation.config_signature != config_signature
+                    evaluation.x_psm_0204_runtime_skill_signature != skill_signature
+                    or evaluation.config_signature != config_signature
                     or not has_sections
                     or not has_questions
                 )
+
+                if not evaluation.x_psm_0204_runtime_interview_survey_id:
+                    evaluation.write({'x_psm_0204_runtime_interview_survey_id': runtime_survey.id})
 
                 if needs_refresh:
                     evaluation.line_ids.unlink()
                     evaluation.section_ids.unlink()
                     evaluation.write({
                         'template_version': template_version,
+                        'x_psm_0204_runtime_skill_signature': skill_signature,
                         'config_signature': config_signature,
                         'evaluator_user_id': evaluator.id,
                         'interviewer_name': evaluation.interviewer_name or evaluator.name,
                         'state': 'in_progress',
+                        'x_psm_0204_runtime_interview_survey_id': runtime_survey.id,
                     })
                     self._populate_interview_evaluation_snapshot(evaluation, snapshot_sections)
                 elif not evaluation.evaluator_user_id:
@@ -871,6 +895,8 @@ class HrApplicant(models.Model):
             'state': 'in_progress',
             'template_version': template_version,
             'config_signature': config_signature,
+            'x_psm_0204_runtime_skill_signature': skill_signature,
+            'x_psm_0204_runtime_interview_survey_id': runtime_survey.id,
             'interview_date': fields.Date.today(),
             'interviewer_name': evaluator.name,
         })

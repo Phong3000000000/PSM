@@ -2,7 +2,7 @@
 <odoo>
     <menuitem 
         id="menu_interview_schedule"
-        name="Lịch phỏng vấn dự kiến"
+        name="Planned Interview Schedule"
         parent="hr_recruitment.menu_hr_recruitment_root"
         action="action_psm_interview_schedule"
         sequence="15"/>
