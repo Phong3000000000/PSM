@@ -44,6 +44,33 @@ class OfficeEvaluationController(http.Controller):
             raise exceptions.AccessError(_("Ban khong co quyen truy cap trang nay."))
         return evaluation
 
+    def _extract_submitted_answers(self, post):
+        answers = {}
+        for key, value in post.items():
+            if key.startswith("line_") and key.endswith("_score"):
+                try:
+                    line_id = int(key.split("_")[1])
+                    answers.setdefault(line_id, {})["selected_score"] = int(value) if value else False
+                except ValueError:
+                    pass
+            elif key.startswith("line_") and key.endswith("_comment"):
+                try:
+                    line_id = int(key.split("_")[1])
+                    answers.setdefault(line_id, {})["line_comment"] = self._clean_text(value)
+                except ValueError:
+                    pass
+        return answers
+
+    def _get_missing_required_line_ids(self, evaluation, submitted_answers):
+        missing = []
+        for line in evaluation.evaluation_item_ids:
+            if getattr(line, 'display_type', 'question') != "question" or not line.is_scored:
+                continue
+            selected = submitted_answers.get(line.id, {}).get("selected_score") or line.score_value
+            if not selected:
+                missing.append(line.id)
+        return missing
+
     # ── Row building (mirrors BackendInterviewController pattern) ──
 
     def _split_skillset_label(self, raw_label):
@@ -153,7 +180,7 @@ class OfficeEvaluationController(http.Controller):
             index = tail
         return rows
 
-    def _prepare_sections(self, evaluation):
+    def _prepare_sections(self, evaluation, submitted_answers=None, missing_line_ids=None):
         """Build sections grouped by section_name/section_code with skillset aggregation."""
         sections = []
         ordered_lines = evaluation.evaluation_item_ids.sorted("sequence")
@@ -180,7 +207,19 @@ class OfficeEvaluationController(http.Controller):
 
         for section_key in section_order:
             section_lines = section_lines_map[section_key]
-            rows = [self._build_row(line) for line in section_lines]
+            rows = []
+            for line in section_lines:
+                row = self._build_row(line)
+                if submitted_answers and line.id in submitted_answers:
+                    row["selected_score"] = submitted_answers[line.id].get("selected_score") or False
+                    row["line_comment"] = submitted_answers[line.id].get("line_comment", row["line_comment"])
+                
+                if missing_line_ids and line.id in missing_line_ids:
+                    row["is_missing_required"] = True
+                else:
+                    row["is_missing_required"] = False
+                rows.append(row)
+            
             rows = self._aggregate_skillset_rowspans(rows)
 
             sections.append({
@@ -222,7 +261,7 @@ class OfficeEvaluationController(http.Controller):
             "is_complete": complete and rated_line_count == len(question_lines),
         }
 
-    def _prepare_values(self, evaluation, success_message=False, error_message=False):
+    def _prepare_values(self, evaluation, success_message=False, error_message=False, submitted_answers=None, missing_line_ids=None, submitted_post=None):
         if not evaluation or not evaluation.exists():
             return {
                 "evaluation": evaluation,
@@ -246,7 +285,7 @@ class OfficeEvaluationController(http.Controller):
 
         return {
             "evaluation": evaluation,
-            "prepared_sections": self._prepare_sections(evaluation),
+            "prepared_sections": self._prepare_sections(evaluation, submitted_answers, missing_line_ids),
             "summary": summary,
             "is_readonly": is_readonly,
             "success_message": success_message,
@@ -254,17 +293,10 @@ class OfficeEvaluationController(http.Controller):
             "preview_mode": False,
             "interview_date": interview_date,
             "back_url": self._get_applicant_backend_url(evaluation),
+            "submitted_post": submitted_post or {},
         }
 
     def _write_answers(self, evaluation, post):
-        evaluation.sudo().write(
-            {
-                "onboard_time": self._clean_text(post.get("onboard_time")),
-                "final_comment": self._clean_text(post.get("overall_note")),
-                "state": "in_progress",
-            }
-        )
-
         updates = []
         missing_required = False
         for line in evaluation.evaluation_item_ids.filtered(lambda rec: rec.line_type == "score" and rec.is_scored):
@@ -275,7 +307,15 @@ class OfficeEvaluationController(http.Controller):
             updates.append((line, score, note))
 
         if missing_required:
-            raise exceptions.UserError(_("Vui long chon diem 1..5 cho tat ca dong Question."))
+            raise exceptions.UserError(_("Vui lòng chọn điểm (1-5) cho tất cả các tiêu chí đánh giá."))
+
+        evaluation.sudo().write(
+            {
+                "onboard_time": self._clean_text(post.get("onboard_time")),
+                "final_comment": self._clean_text(post.get("overall_note")),
+                "state": "in_progress",
+            }
+        )
 
         for line, score, note in updates:
             line.sudo().write(
@@ -326,8 +366,19 @@ class OfficeEvaluationController(http.Controller):
             return request.redirect(self._get_applicant_backend_url(evaluation))
         except Exception as error:
             evaluation = request.env["x_psm_applicant_evaluation"].sudo().browse(evaluation_id)
-            values = self._prepare_values(
-                evaluation,
-                error_message=self._friendly_error_message(error),
-            )
+            if evaluation.exists():
+                submitted_answers = self._extract_submitted_answers(post)
+                missing_line_ids = self._get_missing_required_line_ids(evaluation, submitted_answers)
+                values = self._prepare_values(
+                    evaluation,
+                    error_message=self._friendly_error_message(error),
+                    submitted_answers=submitted_answers,
+                    missing_line_ids=missing_line_ids,
+                    submitted_post=post,
+                )
+            else:
+                values = self._prepare_values(
+                    evaluation,
+                    error_message=self._friendly_error_message(error),
+                )
             return request.render("M02_P0205.office_evaluation_page", values)

@@ -388,7 +388,7 @@
 
             <!-- Group Đánh giá & Phụ trách trước notebook -->
             <xpath expr="//notebook" position="before">
-                <group string="Assignment">
+                <group string="Assignment" invisible="1">
                     <group>
                         <field name="priority" widget="priority" invisible="1"/>
                         <field name="user_id" string="Recruiter"/>
